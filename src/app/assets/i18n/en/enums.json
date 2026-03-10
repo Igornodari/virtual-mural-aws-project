@@ -1,0 +1,150 @@
+{
+	"ENUMS": {
+		"INTERACTIONS": {
+			"FEEDBACK": {
+				"STATUS_ENUM": {
+					"OPEN": "Open",
+					"REPLY": "Replied"
+				},
+				"TYPE_ENUM": {
+					"COMPLAINT": "Complaint",
+					"SUGGESTION": "Suggestion"
+				}
+			},
+			"VISITS": {
+				"STATUS_ENUM": {
+					"SCHEDULED": "Scheduled",
+					"AUTHORIZED": "Authorized",
+					"FINISHED": "Finished",
+					"CANCELED": "Canceled",
+					"LATE": "Late"
+				},
+				"TYPE_USER": {
+					"RESIDENT": "Resident",
+					"COLLABORATORS": "Collaborator",
+					"PARTNER": "Partner",
+					"SERVICE_PROVIDER": "Service Provider"
+				}
+			}
+		},
+		"RESERVATIONS": {
+			"EVENTS": {
+				"STATUS_ENUM": {
+					"CONFIRMED": "Confirmed",
+					"CANCELED": "Canceled"
+				}
+			}
+		},
+		"MAINTENANCE": {
+			"STATUS_ENUM": {
+				"REQUESTED": "Requested",
+				"PROGRESS": "In progress",
+				"FINISHED": "Finished",
+				"REFUSED": "Refused",
+				"CANCELED": "Canceled"
+			},
+			"AREA_TYPE_ENUM": {
+				"APARTMENT": "Apartment",
+				"COMMON": "Common"
+			},
+			"PERIOD_ENUM": {
+				"MORNING": "Morning",
+				"AFTERNOON": "Afternoon"
+			}
+		},
+		"BILLS_TO_RECEIVE": {
+			"INVOICES": {
+				"STATUS_ENUM": {
+					"PAID": "Paid",
+					"IS_DUE": "Due",
+					"PENDING": "Pending",
+					"OVERDUE": "Overdue",
+					"RELEASED": "Released",
+					"PROCESSING": "Processing",
+					"CANCELED": "Canceled",
+					"REFUNDED": "refunded"
+				},
+				"TYPE_ENUM": {
+					"ULIDER": "Ulider",
+					"EMPLOYEE": "Employee",
+					"INFLUENCER": "Influencer",
+					"ACADEMIC_PARTNER": "University Partnership",
+					"SCHOLARSHIP": "Scholarship",
+					"PAID_FULL": "Paid in full",
+					"VISITOR": "Visitor",
+					"DEFAULT": "Default",
+					"RENT": "Rent",
+					"FIRST_RENT": "First Rent",
+					"DDD": "DDD",
+					"SHORT_STAY": "Short Stay",
+					"REGULATION_FINE": "Regulation Fine",
+					"CANCELLATION_FINE": "Cancellation Fine",
+					"BOOKING": "Booking fee"
+				}
+			}
+		},
+		"FINES": {
+			"STATUS_ENUM": {
+				"APPLIED": "Applied",
+				"CANCELED": "Canceled",
+				"NOTIFIED": "Notified"
+			}
+		},
+		"BUSINESS": {
+			"STATUS_ENUM": {
+				"BUSINESS_STAGE": {
+					"INSIDE_SALES": {
+						"NEW": "New",
+						"SECOND_EMAIL": "Second email",
+						"THIRD_EMAIL": "Third email",
+						"FOUR_EMAIL": "Fourth email",
+						"ACCUMULATION_BASE": "Accumulated base",
+						"START_CONTACT": "Initial contact",
+						"EFFECTIVE_CONTACT": "Effective contact (information gathering)",
+						"LAST_ATTEMPT": "Last attempt",
+						"IN_CONNECTION": "In progress",
+						"VIRTUAL_TOUR_OR_VISIT": "Virtual tour/Scheduled visit",
+						"VISIT_CARRIED": "Visit completed",
+						"NEGOCIATION": "Negotiation",
+						"DOCUMENTATION": "Documentation",
+						"FROZEN": "Frozen",
+						"MARKETING_DISCARD": "Marketing discard",
+						"CREDIT_DOCUMENT_ANALYSIS": "Credit and document analysis",
+						"CREDIT_REANALYSIS": "Credit reanalysis",
+						"CONTRACT": "Contracts",
+						"SIGNATURE": "Signature",
+						"DOCUMENT_CHECK": "Document checking",
+						"DOCUMENT_PENDING": "Pending documents",
+						"CLOSED_GAIN": "Closed - Won",
+						"CLOSED_LOST": "Closed - Lost",
+						"PRE_BOOKING_SITE": "Pre-booking Site",
+						"PRE_SCHEDULE_VISIT_SITE": "Pre-schedule visit Site"
+					}
+				}
+			}
+		},
+		"CHECK_LIST": {
+			"TABLE": {
+				"STATUS_ENUM": {
+					"COMPLETED": "Completed",
+					"SCHEDULED": "Scheduled",
+					"OPEN": "Open",
+					"IN_PROGRESS": "In progress",
+					"CANCELED": "Canceled",
+					"OVERDUE": "Overdue"
+				},
+				"FUNIL_ENUM": {
+					"CREDIT_DOCUMENT_ANALYSIS": "Credit and Document Analysis",
+					"CREDIT_REANALYSIS": "Credit Reanalysis",
+					"CONTRACT": "Contracts",
+					"SIGNATURE": "Signature",
+					"DOCUMENTATION": "Documentation",
+					"DOCUMENT_CHECK": "Document Check",
+					"DOCUMENT_PENDING": "Pending Documents",
+					"CLOSED_GAIN": "Closed Won",
+					"CLOSED_LOST": "Closed Lost"
+				}
+			}
+		}
+	}
+}

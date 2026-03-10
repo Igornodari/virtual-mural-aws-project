@@ -1,0 +1,28 @@
+@use '@angular/material' as mat;
+@use '../variables' as *;
+
+.mat-mdc-icon-button {
+	&.mat-primary {
+		color: var(--mat-sys-primary);
+	}
+	&.mat-accent {
+		color: var(--mat-sys-secondary);
+	}
+	&.mat-warn {
+		color: var(--mat-sys-error);
+	}
+	&.mat-secondary {
+		color: $warning;
+	}
+}
+
+.mat-mdc-icon-button[disabled],
+.mat-mdc-icon-button.mat-mdc-button-disabled {
+	cursor: default;
+	pointer-events: none;
+	color: var(--mat-icon-button-disabled-icon-color);
+}
+
+.mat-mdc-icon-button:disabled {
+	color: var(--mat-icon-button-disabled-icon-color);
+}

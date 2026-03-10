@@ -1,0 +1,51 @@
+@use '../variables' as *;
+@use '@angular/material' as mat;
+
+
+
+.mat-mdc-tab.mdc-tab--active {
+	font-weight: 800;
+}
+
+.mat-mdc-tab {
+--mat-tab-container-height : 40px;
+}
+
+
+.mat-accent{
+.mat-mdc-tab {
+--mat-tab-container-height : 40px;
+--mat-tab-active-indicator-color: var(--mat-sys-secondary) !important;
+--mat-tab-active-focus-indicator-color: var(--mat-sys-secondary) !important;
+--mat-tab-active-hover-indicator-color: var(--mat-sys-secondary) !important;
+    background: var(--mat-sys-tertiary) !important;
+	&.mdc-tab--active .mdc-tab__text-label {
+	color: var(--mat-sys-secondary) !important;
+	
+}
+}
+}
+
+.mat-primary{
+.mat-mdc-tab {
+--mat-tab-container-height : 40px;
+--mat-tab-active-indicator-color: var(--mat-sys-primary) !important;
+--mat-tab-active-focus-indicator-color: var(--mat-sys-primary) !important;
+--mat-tab-active-hover-indicator-color: var(--mat-sys-primary) !important;
+    background: var(--mat-sys-tertiary) !important;
+	&.mdc-tab--active .mdc-tab__text-label {
+	color: var(--mat-sys-primary) !important;
+	
+}
+}
+}
+
+.sticky-column {
+  position: sticky;
+  right: 0;             
+  z-index: 1;   
+}
+
+.sticky-column.mat-header-cell {
+  z-index: 2; 
+}

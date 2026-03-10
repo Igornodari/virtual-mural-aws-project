@@ -1,1 +1,92 @@
-/* You can add global styles to this file, and also import other style files */
+@use './app/assets/scss/style';
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px circle at 8% 10%, rgba(250, 137, 107, 0.1), transparent 40%),
+    radial-gradient(900px circle at 92% 80%, rgba(0, 127, 180, 0.12), transparent 42%),
+    var(--mat-sys-surface-bright);
+}
+
+.mainWrapper {
+  min-height: 100vh;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.text-muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.app-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.app-page-shell {
+  width: min(1240px, 100%);
+}
+
+.app-auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--mat-sys-secondary-fixed-dim);
+  color: var(--mat-sys-secondary);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.surface-card {
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: color-mix(in oklab, var(--mat-sys-surface) 92%, white 8%);
+}
+
+.surface-card--elevated {
+  border: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.14);
+  background: var(--mat-sys-surface);
+}
+
+.app-error-box {
+  border: 1px solid color-mix(in oklab, var(--mat-sys-error) 35%, transparent);
+  background: var(--mat-sys-error-fixed-dim);
+  color: var(--mat-sys-error);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.app-success-box {
+  border: 1px solid color-mix(in oklab, #13deb9 40%, transparent);
+  background: color-mix(in oklab, #13deb9 16%, transparent);
+  color: color-mix(in oklab, #13deb9 65%, black);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+@media (max-width: 960px) {
+  .app-auth-grid {
+    grid-template-columns: 1fr;
+  }
+}

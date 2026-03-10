@@ -1,0 +1,5 @@
+@use '@angular/material' as mat;
+.mat-toolbar.rounded.mat-toolbar-single-row {
+	--mat-toolbar-container-background-color: var(--mat-menu-item-hover-state-layer-color);
+	// --mat-toolbar-container-text-color: var(--mat-badge-text-color);
+}

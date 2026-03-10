@@ -1,0 +1,78 @@
+{
+	"HEADER": {
+		"LANGUAGES": {
+			"PORTUGUESE": "Portuguese",
+			"ENGLISH": "English",
+			"SPANISH": "Spanish",
+			"FRENCH": "French"
+		},
+		"NOTIFICATIONS": {
+			"TITLE": "Notifications",
+			"NEW_COUNT": "{{ count }} new",
+			"VIEW_ALL": "View all",
+			"NO_ALERTS": "No alerts available"
+		},
+		"ACCOUNT": {
+			"USER_PROFILE": "User Profile",
+			"LOGOUT": "Logout",
+			"PROFILE_TYPES": {
+				"PROFILE_NAME": "My Profile",
+				"PROFILE_DESCRIPTION": "Account settings",
+				"PROFILE_SLACK": "Slack",
+				"PROFILE_SLACK_DESCRIPTION": "Messages & Emails",
+				"PROFILE_ZOHO": "Zoho",
+				"PROFILE_ZOHO_DESCRIPTION": "CRM"
+			},
+			"INFORMATION": {
+				"TITLE": "Information",
+				"EMAIL": "Email",
+				"PERMISSIONS": "Permissions",
+				"DEPARTMENTS": "Departments",
+				"CHANGE_FOTO": {
+					"TITLE": "Change Photo",
+					"DESCRIPTION": "Change your profile photo here",
+					"SELECT_BUTTON": "Select",
+					"CLEAN_BUTTON": "Clear",
+					"FOTO_DESCRIPTION": "Allowed JPG, GIF, or PNG. Maximum size 2MB"
+				},
+				"PERSONAL_DATA": {
+					"TITLE": "Personal Data",
+					"DESCRIPTION": "To update your personal data, edit and save here",
+					"FORM": {
+						"INPUT_NAME": "First Name",
+						"INPUT_LAST_NAME": "Last Name",
+						"MARITAL_STATUS": "Marital Status",
+						"CELL_PHONE": "Cell Phone"
+					}
+				}
+			},
+			"SECURE": {
+				"TITLE": "Security",
+				"FORM": {
+					"TITLE": "Change Password",
+					"DESCRIPTION": "To change your password, please confirm here",
+					"NEW_PASSWORD": "New password",
+					"CONFIRM_NEW_PASSWORD": "Confirm password"
+				}
+			},
+			"CONFIGURATIONS": {
+				"TITLE": "Settings",
+				"THEME_OPTION": {
+					"TITLE": "Theme options",
+					"LIGHT": "Light",
+					"DARK": "Dark"
+				},
+				"CARD_OPTION": {
+					"TITLE": "Card options",
+					"SHADOW": "Shadow",
+					"BORDER": "Border"
+				},
+				"CONTAINER_OPTION": {
+					"TITLE": "Container options",
+					"FULL": "Full",
+					"BOXED": "Boxed"
+				}
+			}
+		}
+	}
+}

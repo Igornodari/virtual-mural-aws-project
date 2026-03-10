@@ -1,0 +1,49 @@
+@import 'ngx-lightbox/lightbox.css';
+
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+  color: #fa896b;
+  pointer-events: all;
+  z-index: 10;
+  font-size: 24px;
+}
+
+.ngx-lightbox .lightbox-image {
+  max-width: 80vw;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.carousel-control-prev {
+  left: -40px;
+}
+
+.carousel-control-next {
+  right: -40px;
+}
+
+.carousel-control-prev.disabled,
+.carousel-control-next.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.carousel-item {
+  display: none;
+}
+
+.carousel-item.active {
+  display: block;
+}

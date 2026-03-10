@@ -1,0 +1,41 @@
+{
+	"LOGIN": {
+		"TITLE": "AdvancePJ App",
+		"SUBTITLE": "Your tools for agility your work",
+		"GOOGLE": "Sign in with Google",
+		"MICROSOFT": "Sign in with Microsoft",
+		"OR": "Or sign in with",
+		"EMAIL_LABEL": "Email",
+		"EMAIL_REQUIRED": "Email is required",
+		"EMAIL_MINLENGTH": "Name should be at least 6 characters.",
+		"PASSWORD_LABEL": "Password",
+		"PASSWORD_REQUIRED": "Password is required",
+		"REMEMBER": "Remember this device",
+		"FORGOT_PASSWORD_LABEL": "Forgot your password?",
+		"BUTTON": "Log in",
+		"ERROR_NOT_REGISTERED": "You are not registered in the system!",
+		"ERROR_CONTACT_ADMIN": "Please contact the administrator!",
+		"DIALOG_TITLE": "Account already linked",
+		"DIALOG_SUBTITLE": "This email is already linked to a Google account.\nDo you want to link your Microsoft account to it?",
+		"SUCCESS_LINKED": "Microsoft account successfully linked to your Google account!",
+		"SUCCESS": "Login successful!",
+		"FORGOT_PASSWORD": {
+			"SUCCESS_TITLE": "All set!",
+			"SUCCESS_MESSAGE": "Now check your inbox for an email to reset your password!",
+			"BACK_TO_LOGIN": "Back to Login",
+			"TITLE": "Forgot your password?",
+			"INSTRUCTION": "Please enter the email address associated with your account and we'll send you a link to reset your password.",
+			"EMAIL_LABEL": "Email",
+			"EMAIL_REQUIRED": "Email is required",
+			"SUBMIT": "Reset my password",
+			"SUCCESS": "Link sent!",
+			"ERROR": "ERROR: Contact the system administrator!"
+		},
+		"DIALOG_EXISTING_ACCOUNT": {
+			"TITLE": "Existing Account",
+			"LINE1": "We detected that this email has already been used with Google.",
+			"LINE2": "Do you want to link your Microsoft account to this existing account?",
+			"CONFIRM": "Yes, link it"
+		}
+	}
+}

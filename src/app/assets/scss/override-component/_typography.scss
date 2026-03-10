@@ -1,0 +1,31 @@
+@use '../variables' as *;
+html {
+	.mdc-list-item__primary-text,
+	.mat-drawer-container,
+	.mat-drawer,
+	.text-body {
+		color: $text-color;
+	}
+
+	.mat-headline-5,
+	.mat-subtitle-1,
+	.mat-headline-6,
+	.mat-button-toggle-button,
+	.mat-drawer-container,
+	.mdc-data-table__header-cell,
+	.breadcrumb-item a {
+		color: $text-color;
+	}
+
+	.mat-subtitle-2,
+	.mat-body-1,
+	.mat-body-2,
+	.ngx-pagination a,
+	.ngx-pagination button,
+	.mdc-data-table__pagination-total,
+	.mdc-data-table__pagination-rows-per-page-label,
+	.mdc-data-table__cell,
+	.mdc-list-item__secondary-text {
+		color: $text-color;
+	}
+}

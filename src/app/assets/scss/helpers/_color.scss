@@ -1,0 +1,43 @@
+@use 'sass:meta';
+@use '../variables' as *;
+
+@mixin syntax-colors($args...) {
+	@each $name, $color in meta.keywords($args) {
+		html .bg-#{$name} {
+			background-color: $color !important;
+		}
+
+		html .text-#{$name} {
+			color: $color !important;
+		}
+	}
+}
+
+@include syntax-colors(
+	$primary: var(--mat-sys-primary),
+	$secondary: var(--mat-sys-secondary),
+	$success: $success,
+	$warning: $warning,
+	$error: var(--mat-sys-error),
+	$white: $white,
+	$light: $light,
+	$gray-100: $gray-100,
+	$gray: $gray,
+	$light-error: var(--mat-sys-error-fixed-dim),
+	$light-secondary: var(--mat-sys-secondary-fixed-dim),
+	$light-success: $light-success,
+	$light-warning: $light-warning,
+	$light-gray: $light-gray,
+	$light-primary: var(--mat-sys-primary-fixed-dim),
+	$light-tertiary:var(--mat-sys-tertiary),
+);
+
+.fill-warning svg {
+	fill: $warning;
+	color: $warning;
+}
+
+.fill-light svg {
+	fill: $light;
+	color: $light;
+}

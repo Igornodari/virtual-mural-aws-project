@@ -1,0 +1,16 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use '../variables' as *;
+
+@include mat.button-toggle-overrides(
+	(
+		shape: $border-radius,
+	)
+);
+
+@include mat.slide-toggle-overrides(
+	(
+		selected-track-outline-color: #e5eaf0,
+		unselected-handle-color: rgba(0, 0, 0, 0.726),
+	)
+);

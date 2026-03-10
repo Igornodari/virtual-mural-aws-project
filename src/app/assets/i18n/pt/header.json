@@ -1,0 +1,78 @@
+{
+	"HEADER": {
+		"LANGUAGES": {
+			"PORTUGUESE": "Português",
+			"ENGLISH": "Inglês",
+			"SPANISH": "Espanhol",
+			"FRENCH": "Francês"
+		},
+		"NOTIFICATIONS": {
+			"TITLE": "Notificações",
+			"NEW_COUNT": "{{ count }} novas",
+			"VIEW_ALL": "Ver todas",
+			"NO_ALERTS": "Não há alertas disponíveis"
+		},
+		"ACCOUNT": {
+			"USER_PROFILE": "Perfil do Usuario",
+			"LOGOUT": "Sair",
+			"PROFILE_TYPES": {
+				"PROFILE_NAME": "Meu Perfil",
+				"PROFILE_DESCRIPTION": "configurações da conta",
+				"PROFILE_SLACK": "Slack",
+				"PROFILE_SLACK_DESCRIPTION": "Mensagens & Emails",
+				"PROFILE_ZOHO": "Zoho",
+				"PROFILE_ZOHO_DESCRIPTION": "CRM"
+			},
+			"INFORMATION": {
+				"TITLE": "Informações",
+				"EMAIL": "Email",
+				"PERMISSIONS": "Permissões",
+				"DEPARTMENTS": "Departamentos",
+				"CHANGE_FOTO": {
+					"TITLE": "Alterar Foto",
+					"DESCRIPTION": "Altere sua foto de perfil aqui",
+					"SELECT_BUTTON": "Selecionar",
+					"CLEAN_BUTTON": "Limpar",
+					"FOTO_DESCRIPTION": "Permitido JPG, GIF ou PNG. Tamanho máximo 2MB"
+				},
+				"PERSONAL_DATA": {
+					"TITLE": "Dados Pessoais",
+					"DESCRIPTION": "Para alterar seus dados pessoais, edite e salve aqui",
+					"FORM": {
+						"INPUT_NAME": "Nome",
+						"INPUT_LAST_NAME": "Sobrenome",
+						"MARITAL_STATUS": "Estado Civil",
+						"CELL_PHONE": "Celular"
+					}
+				}
+			},
+			"SECURE": {
+				"TITLE": "Segurança",
+				"FORM": {
+					"TITLE": "Alterar Senha",
+					"DESCRIPTION": "Para alterar a sua senha, por favor confirme aqui",
+					"NEW_PASSWORD": "Nova senha",
+					"CONFIRM_NEW_PASSWORD": "Confirmar senha"
+				}
+			},
+			"CONFIGURATIONS": {
+				"TITLE": "Configurações",
+				"THEME_OPTION": {
+					"TITLE": "Opções de tema",
+					"LIGHT": "Claro",
+					"DARK": "Escuro"
+				},
+				"CARD_OPTION": {
+					"TITLE": "Opções de cards",
+					"SHADOW": "Sombra",
+					"BORDER": "Borda"
+				},
+				"CONTAINER_OPTION": {
+					"TITLE": "Opções de container",
+					"FULL": "Cheio",
+					"BOXED": "Encapsulado"
+				}
+			}
+		}
+	}
+}

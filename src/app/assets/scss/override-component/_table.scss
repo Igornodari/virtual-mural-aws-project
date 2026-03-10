@@ -1,0 +1,54 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+
+@include mat.table-overrides(
+  (
+    background-color: var(--mat-card-elevated-container-color),
+  )
+);
+
+
+.mdc-data-table__header-cell {
+	font-weight: 600 !important;
+	font-family: 'Noto Sans', sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	font-variation-settings: 'wdth' 100;
+	// padding: 0 !important;
+
+	// color: rgb(79, 80, 78);
+}
+
+
+.table-responsive td,
+.table-responsive mat-cell {
+	font-size: 14px;
+
+	padding-left: 4px !important;
+	padding-right: 4px !important;
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+
+	font-family: 'Noto Sans', sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	font-variation-settings: 'wdth' 100;
+	font-weight: 500;
+}
+
+@media (max-width: 1200px) {
+	.table-responsive td,
+	.table-responsive mat-cell {
+		font-size: 12px;
+		// font-weight: 500;
+		padding-left: 2px !important;
+		padding-right: 2px !important;
+		padding-top: 0px !important;
+		padding-bottom: 0px !important;
+	}
+}
+
+.mat-mdc-row:hover {
+background-color: var(--mat-sys-tertiary) !important; 
+
+}

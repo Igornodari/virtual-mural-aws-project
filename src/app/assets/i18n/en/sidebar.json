@@ -1,0 +1,140 @@
+{
+	"SIDE_BAR": {
+		"HOME": {
+			"TITLE": "Home",
+			"INFORMATION": "Information",
+			"APARTMENTS": "Apartments",
+			"TYPOLOGIES": "Typologies",
+			"OCCUPANCY_MAP": {
+				"TITLE": "Occupancy Map",
+				"OCCUPATIONS": "Occupations",
+				"CHECK_LIST": {
+					"TITLE": "Check-list",
+					"MOVE_IN": "Move In",
+					"MOVE_OUT": "Move Out"
+				},
+				"INSPECTION": {
+					"TITLE": "Inspection",
+					"MOVE_IN": "Move In",
+					"MOVE_OUT": "Move Out"
+				}
+			},
+			"UNITS": "Units"
+		},
+		"FACILITIES": {
+			"TITLE": "Facilities",
+			"MAINTENANCES": "Maintenance",
+			"AREAS": "Common Areas"
+		},
+		"REPORTS": {
+			"TITLE": "BI-Reports",
+			"OPERATIONAL": {
+				"TITLE": "Operations",
+				"REPORTS_CANCEL": "Contract Cancellation",
+				"RENEWAL": "Renewal"
+			},
+			"FINANCIAL": {
+				"TITLE": "Financial",
+				"ACCOUNT_RECEIVABLE": {
+					"TITLE": "Accounts Receivable",
+					"REVENUE": "Revenue"
+				},
+				"FP&A": {
+					"TITLE": "OPEX Units"
+				}
+			},
+			"RECYCLING": {
+				"TITLE": "Reasons for Discard"
+			},
+			"MAINTENANCE_AND_INFRA": {
+				"TITLE": "Maintenance and Infra",
+				"VISUAL_MANAGER": {
+					"TITLE": "Visual Management"
+				}
+			},
+			"STUDIES_AND_FACILITIES": {
+				"TITLE": "Studies and Analyses",
+				"FOREIGN_ANALYSIS": {
+					"TITLE": "Foreign Analysis"
+				},
+				"CLIENTS_MAPPING": {
+					"TITLE": "Clients Mapping"
+				},
+				"EVENTS_DISCLOSURE": {
+					"TITLE": "Events and Disclosure"
+				},
+				"SURVEY_AND_OFFER": {
+					"TITLE": "PBSA Offer Survey"
+				},
+				"PARTNERSHIP_OPPORTUNITIES": {
+					"TITLE": "Partnership Opportunities"
+				}
+			},
+			"STANDARDIZATION": {
+				"NAMES_STANDARDIZATION": {
+					"TITLE": "Standardizations"
+				}
+			},
+			"COMMERCIAL": {
+				"TITLE": "Commercial",
+				"SALMON_RUN": {
+					"TITLE": "Salmon Run"
+				}
+			}
+		},
+		"NEGOTIATION": {
+			"TITLE": "Negotiations",
+			"BUSINESS": "Business",
+			"SALES_MIRROR": "Sales Mirror"
+		},
+		"INTERACTIONS": {
+			"TITLE": "Interactions",
+			"RESERVATIONS": "Reservations",
+			"SPACES": "Spaces",
+			"EVENTS": "Events",
+			"VISITS": "Visits",
+			"FEEDBACK": "Feedback",
+			"VOUCHERS": "Vouchers"
+		},
+		"FINANCE": {
+			"TITLE": "Finance",
+			"BILLS_TO_PAY": {
+				"TITLE": "Bills to Pay",
+				"PURCHASE_ORDER": "Purchase Orders",
+				"SUPPLIERS": "Suppliers",
+				"DAMAGE_DEPOSIT_REFUND": "Damage Deposit Refund"
+			},
+			"BILLS_TO_RECEIVE": {
+				"TITLE": "Bills to Receive",
+				"SUBSCRIPTIONS": "Subscriptions",
+				"INVOICING": "Invoicing",
+				"INVOICES": "Invoices contract",
+				"INVOICES_INITIAL": "Invoices Initial",
+				"INVOICES_SINGLE": "Invoices single"
+			},
+			"FINES": "Fines"
+		},
+		"NOTIFICATION": {
+			"TITLE": "Notifications",
+			"SMS": "SMS"
+		},
+		"SYSTEM": {
+			"TITLE": "System",
+			"CATEGORIES": {
+				"TITLE": "Categories",
+				"ITEMS": "Items",
+				"GROUP": "Group"
+			},
+			"USERS": {
+				"TITLE": "Users",
+				"CLIENTS": "Clients",
+				"COLLABORATORS": "Collaborators",
+				"LEADS": "Leads",
+				"FINANCIAL_RESPONSIBLE": "Financial Responsible",
+				"RESIDENT": "Resident"
+			},
+			"PERMISSIONS": "Permissions",
+			"QUEUE_ERRORS": "Queue Errors"
+		}
+	}
+}

@@ -1,0 +1,505 @@
+{
+	"HOME": {
+		"APARTMENTS": {
+			"TITLE": "Apartamentos",
+			"ORDER": "Ordenar",
+			"SITUATION": "Situação",
+			"STATUS": "Status",
+			"EMPTY_MESSAGE": "Não há informações disponíveis.",
+			"SITUATIONS": {
+				"NORMAL": "Normal",
+				"MAINTENANCE": "Manutenção",
+				"BLOCKED": "Bloqueado",
+				"DECORATED": "Decorado",
+				"DIRTY": "Sujo"
+			},
+			"BREAD_CRUMB": {
+				"LIST_TITLE": "Apartamentos",
+				"DETAIL_TITLE": "Visualizar apartamento"
+			},
+			"STATUS_LIST": {
+				"VACANT": "Vago",
+				"OCCUPIED": "Ocupado",
+				"RESERVED": "Reservado"
+			},
+			"FILTER": {
+				"TITLE": "Filtro",
+				"NUMBER": "Numero",
+				"ACRONYM": "Sigla",
+				"STATUS": "Status",
+				"FLOOR": "Andar",
+				"SITUATION": "Situação",
+				"FROM": "A partir:",
+				"ALL": "Todos"
+			},
+			"CREATE_APARTMENT": {
+				"TITLE": "Cadastrar apartamento",
+				"SELECT_TYPOLOGY_TITLE": "Tipologia",
+				"INPUT_FLOOR_TITLE": "Andar",
+				"INPUT_CODE_TITLE": "Código",
+				"INPUT_NUMBER_TITLE": "Numero",
+				"SELECT_BED_TITLE": "Cama",
+				"TOOGLE_ACTIVE_TITLE": "Ativa"
+			},
+			"AP_CARD": {
+				"RELEASE_DATE": "Data de Liberação:",
+				"CHECK_OUT": "Saida",
+				"START": "Inicio",
+				"EXIT_IN": "Saida em",
+				"LATE": "Atrasado",
+				"TYPE": "Tipo",
+				"DETAIL": {
+					"STATUS_LIST": {
+						"BLOCKED": "Bloqueado",
+						"DIRTY": "Sujo",
+						"NORMAL": "Normal",
+						"MAINTENANCE": "Manutenção",
+						"OUT_OPERATION": "Inoperante",
+						"DECORETED": "Decorado"
+					},
+					"GENERAL": {
+						"LOADING": "Carregando...",
+						"SITUATIONS": {
+							"BLOCKED": "Bloqueado",
+							"DECORATED": "Decorado",
+							"NORMAL": "Normal",
+							"DIRTY": "Sujo",
+							"MAINTENANCE": "Manutenção",
+							"OUT_OF_ORDER": "Fora de Serviço"
+						},
+						"STATUS": "Status",
+						"CODE": "Código"
+					},
+					"ACTIONS": {
+						"RESERVE": "Reservar",
+						"SHORT_STAY": "Short Stay",
+						"UPDATE_SITUATION": "Atualizar Situação"
+					},
+					"INFO": {
+						"CATEGORY": "Categoria:",
+						"TYPOLOGY": "Tipologia:",
+						"ABBREVIATION": "Sigla:",
+						"FLOOR": "Andar:",
+						"DOOR": "Porta:",
+						"BED": "Cama:"
+					},
+					"TABS": {
+						"OCCUPANCY": "Ocupação",
+						"INFORMATION": "Informações",
+						"OBSERVATIONS": "Observações:",
+						"RELEASE_DATE": "Data de Liberação:",
+						"NO_DATA": "Nenhuma informação disponível."
+					},
+					"ACTIVITIES": {
+						"TITLE": "Atividades"
+					},
+					"SELL_APARTMENT": {
+						"RESERVE": "Reservar",
+						"RESIDENT": "Já é morador?",
+						"YES": "Sim",
+						"NO": "Não",
+						"CLIENT": "Cliente",
+						"BUSINESS_NOT_FOUND": "Não foi encontrado negócio no CRM para esse cliente.",
+						"PET": "Possui pet?",
+						"START_DATE": "Data de início",
+						"END_DATE": "Data de término",
+						"MONTHLY_PAYMENT": "Mensalidade sem desconto",
+						"DISCOUNT": "Desconto mensalidade",
+						"DAMAGE_DEPOSIT_AMOUNT": "Valor Depósito de danos",
+						"DAMAGE_DEPOSIT_DISCOUNT": "Desconto depósito de danos",
+						"RESERVATION_VALUE": "Valor da reserva"
+					},
+					"SHORT_STAY": {
+						"TITLE": "Estadia curta",
+						"RESIDENT": "Residente",
+						"ADMIN": "Colaborador",
+						"RESIDENT_LABEL": "Residente",
+						"ADMIN_LABEL": "Colaborador",
+						"SEARCH": "Buscar",
+						"CHECK_IN": "Entrada",
+						"CHECK_OUT": "Saida",
+						"COMMENT": "Comentario"
+					},
+					"UPDATE_APARTMENT_SITUATION_BUTTON": {
+						"TITLE": "Atualizar situação do apartamento",
+						"SITUATION": "Situação",
+						"RELEASE": "Data de Liberação",
+						"COMMENT": "Comentario"
+					}
+				}
+			}
+		},
+		"OCCUPANCY": {
+			"BREAD_CRUMB": {
+				"TABLE_TITLE": "Ocupações",
+				"DETAIL_TITLE": "Visualizar Ocupações"
+			},
+			"TABLE_OCCUPANCY": {
+				"FILTER_BUTTON": {
+					"TITLE": "Filtro",
+					"ROOM": "Quarto",
+					"RESIDENT": "Morador",
+					"STATUS": "Status",
+					"TYPE": "Tipo",
+					"ENTRY_FROM": "Entrada a partir:",
+					"EXIT_TO": "Saída até:"
+				},
+				"HEADER": {
+					"CREATED": "Criado",
+					"CLIENT": "Cliente",
+					"ENTRY": "Entrada",
+					"EXIT": "Saida",
+					"ROOM": "Habitação",
+					"STATUS": "Status",
+					"ACTIONS": "Ações"
+				}
+			},
+			"DETAIL_OCCUPANCY": {
+				"OCCUPANCY_CARD": {
+					"HEADER": {
+						"DONE_NEGOTIATION_BUTTON": {
+							"TOOLTIP": "Concluir Negociação"
+						},
+						"ACCOUNT_BUTTON": {
+							"TOOLTIP": "Conta"
+						},
+						"UPDATE_NEGOTIATION_BUTTON": {
+							"TOOLTIP": "Editar"
+						},
+						"MOVE_OUT_BUTTON": {
+							"TOOLTIP": "Movout"
+						},
+						"MOVE_IN_BUTTON": {
+							"TOOLTIP": "Movein",
+							"BLOCK_MOVE_IN": "Checkin precisa ser 'Agendado', para concluir essa ação !"
+						},
+						"RELOCATION_BUTTON": {
+							"TOOLTIP": "Realocação",
+							"TITLE": "Ocupação realocada"
+						},
+						"CANCEL_BUTTON": {
+							"TOOLTIP": "Cancelar"
+						},
+						"REVERT_CHECKOUT_BUTTON": {
+							"TOOLTIP": "Reverter Checkout"
+						},
+						"REALOCATED_CLIENT_BUTTON": {
+							"TITLE": "CLIENTE REALOCADO"
+						},
+						"BACK_BUTTON": {
+							"TOOLTIP": "Voltar"
+						}
+					},
+					"BODY": {
+						"CREATED_AT": "Data criação:",
+						"START_DATE": "Data de entrada:",
+						"END_DATE": "Saída:",
+						"TYPE": "Tipo:",
+						"MAIN_RESIDENT": "Morador principal:",
+						"EMAIL": "Email:",
+						"CONTACT": "Contato:",
+						"ROOM_CARD": {
+							"HEADER": {
+								"TITLE": "Quarto",
+								"VIEW_ROOM_BUTTON": {
+									"TOOLTIP": "Visualizar quarto"
+								},
+								"CHANGE_ROOM_BUTTON": {
+									"TOOLTIP": "Alterar quarto"
+								}
+							},
+							"BODY": {
+								"NUMBER": "Numero:",
+								"STATUS": "Status:",
+								"CATEGORY": "Categoria:",
+								"ABBREVIATION": "Sigla:"
+							}
+						},
+						"BUSINESS_CARD": {
+							"HEADER": {
+								"TITLE": "Negócio",
+								"VIEW_BUSINESS_BUTTON": {
+									"TOOLTIP": "Visualizar negócio"
+								}
+							},
+							"BODY": {
+								"CODE": "Codigo:",
+								"BUSINESS_TYPE": "Tipo:",
+								"STAGE": "Estágio:",
+								"CLOSING_STAGE": "Estágio pós fechamento:"
+							}
+						},
+						"ACTIVITIES_CARD": {
+							"TITLE": "Atividades"
+						}
+					}
+				}
+			},
+			"UPDATE_OCCUPANCY": {
+				"TITLE": "Atualizar Ocupação",
+				"END_DATE": "Data Final",
+				"COMMENT": "Comentario"
+			},
+			"DIALOGS": {
+				"SHOW_SUBSCRIPTION": {
+					"TITLE": "Informações do contrato",
+					"START_DATE": "Data de início",
+					"END_DATE": "Data de término",
+					"NUMBER": "Número",
+					"AMOUNT": "Valor",
+					"STATUS": "Status",
+					"FINANCIAL_RESPONSIBLE": "Responsável financeiro"
+				},
+				"REALOCATION_OCCUPANCY": {
+					"APARTMENT": "Apartamento",
+					"COMMENT": "Comentário"
+				},
+				"MOVE_IN": {
+					"TITLE": "Deseja realizar o movein?",
+					"SUBTITLE": "Deseja prosseguir com o movein?"
+				},
+				"MOVE_OUT": {
+					"TITLE": "Deseja realizar o moveout?",
+					"SUBTITLE": "Deseja prosseguir com o moveout?"
+				},
+				"REVERT_CHECKOUT": {
+					"TITLE": "Reverter Mov_out",
+					"SUBTITLE": "Deseja reverter o movout?"
+				},
+				"CANCEL_OCCUPANCY": {
+					"TITLE": "Cancelar reserva",
+					"REFUND": "Estornar valor?",
+					"TYPE": "Tipo",
+					"COMMENT": "Comentário"
+				},
+				"CONFIRMATION": {
+					"GENERATE_BUSINESS": "Deseja gerar um negócio para essa negociação?",
+					"UPDATE_OCCUPANCY": "Ocupação alterada!",
+					"REALLOCATE_SUCCESS": "Realocação realizada!",
+					"CANCEL_OCCUPANCY": "Ocupação cancelada!",
+					"CHECKIN_SUCCESS": "Mov_in realizado!",
+					"CHECKOUT_SUCCESS": "Mov_out realizado!",
+					"REVERT_SUCCESS": "Mov_out revertido com sucesso!"
+				}
+			}
+		},
+
+		"TYPOLOGY": {
+			"BREAD_CRUMB": {
+				"TABLE_TITLE": "Tipologia",
+				"DETAIL_TITLE": "Visualizar tipologia"
+			},
+			"TABLE_TYPOLOGY": {
+				"UPSERT_BUTTON_TOOLTIP": "Cadastrar",
+				"EDIT_BUTTON_TOOLTIP": "Editar",
+
+				"HEADER": {
+					"ABBREVIATION": "Sigla",
+					"CATEGORY": "Categoria",
+					"NAME": "Nome",
+					"APARTMENTS": "Apartamentos",
+					"ACTIONS": "Ações"
+				},
+				"FILTER": {
+					"NEW": "Novo",
+					"REGISTER": "Cadastrar"
+				}
+			},
+			"UPSERT_TYPOLOGY": {
+				"CREATE_TITLE": "Cadastrar",
+				"EDIT_TITLE": "Editar",
+				"NAME": "Nome",
+				"CATEGORY": "Categoria",
+				"DETAILS": "Detalhes",
+				"ACTIVE": "Ativa"
+			},
+			"DETAIL_TYPOLOGY": {
+				"EDIT_BUTTON_TOOLTIP": "Editar",
+				"ACTIVE": "Ativa",
+				"INACTIVE": "Desativada",
+				"NAME": "Nome",
+				"CATEGORY": "Categoria",
+				"ABBREVIATION": "Sigla",
+				"ITEMS_TITLE": "Itens",
+				"ITEMS_SUBTITLE": "Itens que compõem a estrutura da tipologia",
+				"ITEM": "Item",
+				"PRIVATE": "Privativo",
+				"YES": "Sim",
+				"NO": "Não",
+				"ADD": "Incluir",
+				"SHARED": "_ Compartilhado",
+				"PRIVATE_ITEM": "_ Privativo"
+			}
+		},
+		"UNITS": {
+			"BREAD_CRUMB": {
+				"TITLE": "Unidades",
+				"DETAIL_TITLE": "Detalhes da Unidade"
+			},
+			"LABEL": {
+				"OPENING": "Abre",
+				"CLOSURE": "Fecha",
+				"UNIT_CODE": "Cod. Unidade:",
+				"ZOHO_CODE": "Cod. Zoho:",
+				"LATITUDE": "Latitude:",
+				"LONGITUDE": "Longitude:",
+				"WHATSAPP_NUMBER": "Nº. Whatsapp:",
+				"REGULATION": "Regulamento:",
+				"VIEW_REGULATION": "Ver Regulamento:"
+			},
+			"UPSERT": {
+				"EDIT_TITLE": "Editar Unidade",
+				"CREATE_TITLE": "Cadastrar unidade",
+				"NAME": "Nome",
+				"WHATSAPP_NUMBER": "Nº. Whatsapp",
+				"OPENING": "Abertura",
+				"CLOSURE": "Fechamento",
+				"REGULATION_LINK": "Link do regulamento",
+				"ADDRESS": "Endereço",
+				"ACTIVE": "Ativa"
+			}
+		},
+		"USERS": {
+			"FINANCIAL_RESPONSIBLE": {
+				"TABLE_FINANCIAL_RESPONSIBLE": {
+					"TITLE": "Responsavel Financeiro",
+					"FILTER": {
+						"PEER_NAME": "Filtrar nome",
+						"EMAIL": "Email",
+						"CPF": "Cpf",
+						"NATIONALITY": "Nacionalidade",
+						"DOCUMENT": "Documento"
+					},
+					"LABELS": {
+						"CNPJ": "CNPJ",
+						"CPF": "CPF"
+					},
+					"TOOLTIP": {
+						"ADD_BUTTON": "Adicionar Responsavel Financeiro"
+					},
+					"INFO_NO_RESULTS_MODAL": {
+						"TITLE": "Nenhum responsavel Financeiro Encontrado.",
+						"DESCRIPTION": "Clicar no botão ao topo a direita para filtrar um novo responsavel financeiro !"
+					}
+				},
+				"DETAIL_FINANCIAL_RESPONSIBLE": {
+					"TITLE": "Detalhes do Responsavel Financeiro",
+					"LABELS": {
+						"TYPE_RESPONSIBLE": "Tipo de Responsável",
+						"LAST_UPDATE": "Última atualização cadastral",
+						"CLIENTS_DETAILS": {
+							"TITLE": "Clientes",
+							"TYPE": "Tipo de Cliente"
+						}
+					}
+				},
+				"UPSERT_FINANCIAL_RESPONSIBLE": {
+					"TITLE": "Editar Responsável Financeiro",
+					"FORM": {
+						"PERSONAL_DATA": {
+							"FIRST_NAME": "Primeiro Nome",
+							"LAST_NAME": "Último Nome",
+							"EMAIL": "E-mail",
+							"CPF": "CPF",
+							"CNPJ": "CNPJ",
+							"CELLPHONE": "Celular",
+							"BIRTH_DATE": "Data de Nascimento",
+							"GENDER": {
+								"LABEL": "Gênero",
+								"MALE": "Masculino",
+								"FEMALE": "Feminino",
+								"OTHER": "Outro"
+							},
+							"NATIONALITY": "Nacionalidade",
+							"MARITAL_STATUS": {
+								"LABEL": "Estado Civil",
+								"SINGLE": "Solteiro",
+								"MARRIED": "Casado",
+								"DIVORCED": "Divorciado"
+							},
+							"DOCUMENT": "Documento"
+						},
+
+						"BANK_DATA": {
+							"TITLE": "Dados Bancários",
+							"AGENCY": "Agência",
+							"BANK_CODE": "Código do Banco",
+							"ACCOUNT_NUMBER": "Número da Conta",
+							"ACCOUNT_OWNER_NAME": "Nome do Titular da Conta",
+							"ACCOUNT_OWNER_DOCUMENT": "Documento do Titular da Conta",
+							"ACCOUNT_DIGIT": "Dígito da Conta",
+							"PIX": "PIX"
+						}
+					}
+				}
+			},
+			"LEADS": {
+				"TABLE": {
+					"TITLE": "Potenciais Clientes",
+					"HEADER": {
+						"TEMP": "Temperatura"
+					}
+				},
+				"FILTER": {
+					"MATCH_RESPONSE": "Respondeu o Match"
+				},
+				"DETAIL": {
+					"TITLE": "Detalhes de Leads",
+					"SCORE": "Pontuação Score",
+					"LEAD_SCORE": "Lead Score",
+					"MATCH": "Combinar",
+					"NO_PARTICIPATION": "Não Possui Participação !"
+				}
+			},
+			"COLLABORATORS": {
+				"GRID_ADMIN": {
+					"TITLE": "Colaboradores",
+					"FILTER": {
+						"PEER_NAME": "Filtrar nome",
+						"DEPARTMENT": "Departamento"
+					},
+					"INFO_NO_RESULTS_MODAL": {
+						"TITLE": "Nenhum colaborador encontrado nesta unidade.",
+						"DESCRIPTION": "Clique no botão no canto superior direito para adicionar o primeiro colaborador!"
+					}
+				}
+			},
+			"CLIENTS": {
+				"NO_INFO_ACCOUNT": "Sem assinatura",
+				"TABLE": {
+					"TITLE": "Clientes"
+				},
+				"DETAIL": {
+					"TITLE": "Detalhes Clientes"
+				},
+				"FILTER": {
+					"NAME": "Nome",
+					"CPF": "Cpf",
+					"NATIONALITY": "Nacionalidade",
+					"EMAIL": "E-mail"
+				}
+			},
+			"RESIDENT": {
+				"TITLE": "Moradores",
+				"FILTER": {
+					"APARTMENT": "N° Apartamento",
+					"GENDER": "Genero",
+					"FINANCIAL_RESPONSIBLE": "Responsavel Financeiro",
+					"BIRTH_DATE_PERIOD": "Data de Nascimento"
+				},
+				"DETAIL": {
+					"TITLE": "Detalhes de moradores"
+				},
+				"TABLE": {
+					"HEADER": {
+						"RESIDENT": "Morador",
+						"N_APARTMENT": "N° Apartamento",
+						"FINANCIAL_RESPONSIBLE": "Responsável financeiro",
+						"START_DATE": "Inicio Contrato",
+						"END_DATE": "Final Contrato"
+					}
+				}
+			}
+		}
+	}
+}

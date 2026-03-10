@@ -1,0 +1,604 @@
+{
+	"HOME": {
+		"APARTMENTS": {
+			"TITLE": "Apartments",
+			"ORDER": "Order",
+			"SITUATION": "Situation",
+			"STATUS": "Status",
+			"EMPTY_MESSAGE": "No information available.",
+			"SITUATIONS": {
+				"NORMAL": "Normal",
+				"MAINTENANCE": "Maintenance",
+				"BLOCKED": "Blocked",
+				"DECORATED": "Decorated",
+				"DIRTY": "Dirty"
+			},
+			"BREAD_CRUMB": {
+				"LIST_TITLE": "Apartments",
+				"DETAIL_TITLE": "View apartment"
+			},
+			"STATUS_LIST": {
+				"VACANT": "Vacant",
+				"OCCUPIED": "Occupied",
+				"RESERVED": "Reserved"
+			},
+			"FILTER": {
+				"TOOLTIP": "Filter",
+				"TITLE": "Filter",
+				"NUMBER": "Number",
+				"ACRONYM": "Acronym",
+				"STATUS": "Status",
+				"FLOOR": "Floor",
+				"SITUATION": "Situation",
+				"FROM": "From:",
+				"ALL": "All"
+			},
+			"CREATE_APARTMENT": {
+				"TITLE": "Register apartment",
+				"SELECT_TYPOLOGY_TITLE": "Typology",
+				"INPUT_FLOOR_TITLE": "Floor",
+				"INPUT_CODE_TITLE": "Code",
+				"INPUT_NUMBER_TITLE": "Number",
+				"SELECT_BED_TITLE": "Bed",
+				"TOOGLE_ACTIVE_TITLE": "Active"
+			},
+			"AP_CARD": {
+				"RELEASE_DATE": "Release Date",
+				"CHECK_OUT": "Check-out",
+				"START": "Start",
+				"EXIT_IN": "Exit in",
+				"LATE": "Late",
+				"TYPE": "Type",
+				"DETAIL": {
+					"STATUS_LIST": {
+						"BLOCKED": "Blocked",
+						"DIRTY": "Dirty",
+						"NORMAL": "Normal",
+						"MAINTENANCE": "Maintenance",
+						"OUT_OPERATION": "out operation",
+						"DECORETED": "Decoreted"
+					},
+					"GENERAL": {
+						"LOADING": "Loading...",
+						"SITUATIONS": {
+							"BLOCKED": "Blocked",
+							"DECORATED": "Decorated",
+							"NORMAL": "Normal",
+							"DIRTY": "Dirty",
+							"MAINTENANCE": "Maintenance",
+							"OUT_OF_ORDER": "Out of Service"
+						},
+						"STATUS": "Status",
+						"CODE": "Code"
+					},
+					"ACTIONS": {
+						"RESERVE": "Reserve",
+						"SHORT_STAY": "Short Stay",
+						"UPDATE_SITUATION": "Update Situation"
+					},
+					"INFO": {
+						"CATEGORY": "Category",
+						"TYPOLOGY": "Typology",
+						"ABBREVIATION": "Abbreviation",
+						"FLOOR": "Floor",
+						"DOOR": "Door",
+						"BED": "Bed"
+					},
+					"TABS": {
+						"OCCUPANCY": "Occupancy",
+						"INFORMATION": "Information",
+						"OBSERVATIONS": "Observations",
+						"RELEASE_DATE": "Release Date",
+						"NO_DATA": "No information available."
+					},
+					"ACTIVITIES": {
+						"TITLE": "Activities"
+					},
+					"SELL_APARTMENT": {
+						"RESERVE": "Reserve",
+						"RESIDENT": "Already a resident?",
+						"YES": "Yes",
+						"NO": "No",
+						"CLIENT": "Client",
+						"BUSINESS_NOT_FOUND": "No business found in CRM for this client.",
+						"PET": "Has pet?",
+						"START_DATE": "Start date",
+						"END_DATE": "End date",
+						"MONTHLY_PAYMENT": "Monthly payment without discount",
+						"DISCOUNT": "Monthly discount",
+						"DAMAGE_DEPOSIT_AMOUNT": "Damage deposit amount",
+						"DAMAGE_DEPOSIT_DISCOUNT": "Damage deposit discount",
+						"RESERVATION_VALUE": "Reservation value"
+					},
+					"SHORT_STAY": {
+						"TITLE": "Short stay",
+						"RESIDENT": "Resident",
+						"ADMIN": "Collaborator",
+						"RESIDENT_LABEL": "Resident",
+						"ADMIN_LABEL": "Collaborator",
+						"SEARCH": "Search",
+						"CHECK_IN": "Check-in",
+						"CHECK_OUT": "Check-out",
+						"COMMENT": "Comment"
+					},
+					"UPDATE_APARTMENT_SITUATION_BUTTON": {
+						"TITLE": "Update apartment situation",
+						"SITUATION": "Situation",
+						"RELEASE": "Release Date",
+						"COMMENT": "Comment"
+					}
+				}
+			}
+		},
+		"OCCUPANCY": {
+			"BREAD_CRUMB": {
+				"TABLE_TITLE": "Occupancies",
+				"DETAIL_TITLE": "View Occupancies"
+			},
+			"TABLE_OCCUPANCY": {
+				"FILTER_BUTTON": {
+					"TITLE": "Filter",
+					"ROOM": "Room",
+					"RESIDENT": "Resident",
+					"STATUS": "Status",
+					"TYPE": "Type",
+					"ENTRY_FROM": "Entry from:",
+					"EXIT_TO": "Exit to:"
+				},
+				"HEADER": {
+					"CREATED": "Created",
+					"CLIENT": "Client",
+					"ENTRY": "Entry",
+					"EXIT": "Exit",
+					"ROOM": "Room",
+					"STATUS": "Status",
+					"ACTIONS": "Actions"
+				}
+			},
+			"DETAIL_OCCUPANCY": {
+				"OCCUPANCY_CARD": {
+					"HEADER": {
+						"DONE_NEGOTIATION_BUTTON": {
+							"TOOLTIP": "Complete Negotiation"
+						},
+						"ACCOUNT_BUTTON": {
+							"TOOLTIP": "Account"
+						},
+						"UPDATE_NEGOTIATION_BUTTON": {
+							"TOOLTIP": "Edit"
+						},
+						"MOVE_OUT_BUTTON": {
+							"TOOLTIP": "Move_out"
+						},
+						"MOVE_IN_BUTTON": {
+							"TOOLTIP": "Movein",
+							"BLOCK_MOVE_IN": "Check-in must be 'Scheduled' to complete this action!"
+						},
+						"RELOCATION_BUTTON": {
+							"TOOLTIP": "Relocation",
+							"TITLE": "Relocated occupation"
+						},
+						"CANCEL_BUTTON": {
+							"TOOLTIP": "Cancel"
+						},
+						"REVERT_CHECKOUT_BUTTON": {
+							"TOOLTIP": "Revert Checkout"
+						},
+						"REALOCATED_CLIENT_BUTTON": {
+							"TITLE": "RELOCATED CLIENT"
+						},
+						"BACK_BUTTON": {
+							"TOOLTIP": "Back"
+						}
+					},
+					"BODY": {
+						"CREATED_AT": "Created at",
+						"START_DATE": "Entry date",
+						"END_DATE": "Exit",
+						"TYPE": "Type",
+						"MAIN_RESIDENT": "Main resident",
+						"EMAIL": "Email",
+						"CONTACT": "Contact",
+						"ROOM_CARD": {
+							"HEADER": {
+								"TITLE": "Room",
+								"VIEW_ROOM_BUTTON": {
+									"TOOLTIP": "View room"
+								},
+								"CHANGE_ROOM_BUTTON": {
+									"TOOLTIP": "Change room"
+								}
+							},
+							"BODY": {
+								"NUMBER": "Number",
+								"STATUS": "Status",
+								"CATEGORY": "Category",
+								"ABBREVIATION": "Abbreviation"
+							}
+						},
+						"BUSINESS_CARD": {
+							"HEADER": {
+								"TITLE": "Business",
+								"VIEW_BUSINESS_BUTTON": {
+									"TOOLTIP": "View business"
+								}
+							},
+							"BODY": {
+								"CODE": "Code",
+								"BUSINESS_TYPE": "Type",
+								"STAGE": "Stage",
+								"CLOSING_STAGE": "Closing stage"
+							}
+						},
+						"ACTIVITIES_CARD": {
+							"TITLE": "Activities"
+						}
+					}
+				}
+			},
+			"UPDATE_OCCUPANCY": {
+				"TITLE": "Update Occupancy",
+				"END_DATE": "End Date",
+				"COMMENT": "Comment"
+			},
+			"DIALOGS": {
+				"SHOW_SUBSCRIPTION": {
+					"TITLE": "Contract Information",
+					"START_DATE": "Start date",
+					"END_DATE": "End date",
+					"NUMBER": "Number",
+					"AMOUNT": "Amount",
+					"STATUS": "Status",
+					"FINANCIAL_RESPONSIBLE": "Financial responsible"
+				},
+				"REALOCATION_OCCUPANCY": {
+					"APARTMENT": "Apartment",
+					"COMMENT": "Comment"
+				},
+				"MOVE_IN": {
+					"TITLE": "Do you want to perform movein?",
+					"SUBTITLE": "Do you want to proceed with movein?"
+				},
+				"MOVE_OUT": {
+					"TITLE": "Do you want to perform moveout?",
+					"SUBTITLE": "Do you want to proceed with moveout?"
+				},
+				"REVERT_CHECKOUT": {
+					"TITLE": "Revert Move_out",
+					"SUBTITLE": "Do you want to revert moveout?"
+				},
+				"CANCEL_OCCUPANCY": {
+					"TITLE": "Cancel reservation",
+					"REFUND": "Refund amount?",
+					"TYPE": "Type",
+					"COMMENT": "Comment"
+				},
+				"CONFIRMATION": {
+					"GENERATE_BUSINESS": "Do you want to generate a business for this negotiation?",
+					"UPDATE_OCCUPANCY": "Occupancy changed!",
+					"REALLOCATE_SUCCESS": "Reallocation successful!",
+					"CANCEL_OCCUPANCY": "Occupancy canceled!",
+					"CHECKIN_SUCCESS": "Move_in completed!",
+					"CHECKOUT_SUCCESS": "Move_out completed!",
+					"REVERT_SUCCESS": "Move_out successfully reverted!"
+				}
+			}
+		},
+		"OCCUPANCY_MAP": {
+			"CHECK_MOVEIN": {
+				"TITLE": "Move-In Checklist",
+				"TABLE": {
+					"HEADER": {
+						"STATUS": "Status",
+						"FUNNEL": "Funnel",
+						"PROGRESS": "Progress",
+						"BEDROOM": "Bedroom",
+						"NAME": "Name",
+						"CONTACT": "Contact",
+						"START_CONTRACT": "Contract Start",
+						"ENTRY_DATE": "Scheduled Date",
+						"HOURS": "Scheduled Time"
+					}
+				},
+				"DETAIL": {
+					"BREAD_CRUMB_TITLE": "Checklist Details",
+					"TITLE": "Category List",
+					"NOTES": "Notes",
+					"NOTES_PLACEHOLDER": "Type here...",
+					"BUTTON": {
+						"ADD_CATEGORY": "Add Categories"
+					},
+					"TOOLTIP": {
+						"UPDATE_SYSTEM": "Step updated by system !",
+						"INIT_CHECKLIST": "Start Checklist",
+						"CANCEL_CHECKLIST": "Cancel Checklist",
+						"CHECKLIST_CANCELED": "Checklist canceled",
+						"CHECK_LIST_DISABLE": "Checklist is already started",
+						"REVERT_CHECKLIST": "Reverter Checklist",
+						"COMPLETE_MAINTENANCE": "Complete maintenance checklist",
+						"SYSTEM_UPDATE": {
+							"INVOICE_PENDING": "There are outstanding amounts for this invoice.",
+							"SYSTEM_UPDATED": "Step updated automatically by the system.",
+							"MAINTENANCE_PENDING": "Pending step: complete the maintenance to proceed.",
+							"MAINTENANCE_COMPLETED": "Maintenance successfully completed!"
+						}
+					}
+				}
+			},
+			"CHECK_MOVEOUT": {
+				"TITLE": "Move-Out Inspection",
+				"TABLE": {
+					"HEADER": {
+						"STATUS": "Status",
+						"BEDROOM": "Bedroom",
+						"NAME": "Name",
+						"INSPECTION_DATE": "Inspection Date",
+						"END_CONTRACT": "Contract End",
+						"EXIT_DATE": "Move-Out Date",
+						"SCHEDULE": "Time"
+					},
+					"FILTER": {
+						"END_CONTRACT_DATE": "End of Contract"
+					}
+				},
+				"UPSERT": {
+					"OVERDUE_DATE_HINT": "This contract is overdue. To proceed, please schedule the inspection within 5 business days from today's date."
+				},
+				"DETAIL": {
+					"TITLE": "Move-out Detail",
+					"TOOLTIP": {
+						"SCHEDULE_MOVEOUT": "Schedule movout",
+						"NO_SCHEDULE_MOVEOUT": "Movout scheduled",
+						"REVERT_MOVOUT": "Revert movout",
+						"DISABLED_REASON": "Scheduling unavailable: more than 5 business days have passed since the contract ended. Please request Head Office approval."
+					}
+				}
+			}
+		},
+		"TYPOLOGY": {
+			"BREAD_CRUMB": {
+				"TABLE_TITLE": "Typology",
+				"DETAIL_TITLE": "View typology"
+			},
+			"TABLE_TYPOLOGY": {
+				"UPSERT_BUTTON_TOOLTIP": "Register",
+				"EDIT_BUTTON_TOOLTIP": "Edit",
+				"HEADER": {
+					"ABBREVIATION": "Abbreviation",
+					"CATEGORY": "Category",
+					"NAME": "Name",
+					"APARTMENTS": "Apartments",
+					"ACTIONS": "Actions"
+				},
+				"FILTER": {
+					"NEW": "New",
+					"REGISTER": "Register"
+				}
+			},
+			"UPSERT_TYPOLOGY": {
+				"CREATE_TITLE": "Register",
+				"EDIT_TITLE": "Edit",
+				"NAME": "Name",
+				"CATEGORY": "Category",
+				"DETAILS": "Details",
+				"ACTIVE": "Active"
+			},
+			"DETAIL_TYPOLOGY": {
+				"EDIT_BUTTON_TOOLTIP": "Edit",
+				"ACTIVE": "Active",
+				"INACTIVE": "Inactive",
+				"NAME": "Name",
+				"CATEGORY": "Category",
+				"ABBREVIATION": "Abbreviation",
+				"ITEMS_TITLE": "Items",
+				"ITEMS_SUBTITLE": "Items that make up the typology structure",
+				"ITEM": "Item",
+				"PRIVATE": "Private",
+				"YES": "Yes",
+				"NO": "No",
+				"ADD": "Add",
+				"SHARED": "Shared",
+				"PRIVATE_ITEM": "Private"
+			}
+		},
+		"UNITS": {
+			"BREAD_CRUMB": {
+				"TITLE": "Units",
+				"DETAIL_TITLE": "Unit Details"
+			},
+			"LABEL": {
+				"OPENING": "Opens",
+				"CLOSURE": "Closes",
+				"UNIT_CODE": "Unit Code",
+				"ZOHO_CODE": "Zoho Code",
+				"LATITUDE": "Latitude",
+				"LONGITUDE": "Longitude",
+				"WHATSAPP_NUMBER": "Whatsapp Number",
+				"REGULATION": "Regulation",
+				"VIEW_REGULATION": "View Regulation"
+			},
+			"UPSERT_UNITS": {
+				"EDIT_TITLE": "Edit Unit",
+				"CREATE_TITLE": "Register Unit",
+				"NAME": "Name",
+				"WHATSAPP_NUMBER": "Whatsapp Number",
+				"OPENING": "Opening",
+				"CLOSURE": "Closing",
+				"REGULATION_LINK": "Regulation Link",
+				"ADDRESS": "Address",
+				"ACTIVE": "Active"
+			}
+		},
+		"USERS": {
+			"FINANCIAL_RESPONSIBLE": {
+				"TABLE_FINANCIAL_RESPONSIBLE": {
+					"TITLE": "Financial Responsible",
+					"FILTER": {
+						"PEER_NAME": "Filter name",
+						"EMAIL": "Email",
+						"CPF": "Cpf",
+						"NATIONALITY": "Nationality",
+						"DOCUMENT": "Document"
+					},
+					"LABELS": {
+						"CNPJ": "CNPJ",
+						"CPF": "CPF"
+					},
+					"TOOLTIP": {
+						"ADD_BUTTON": "Add a financial responsible"
+					},
+					"INFO_NO_RESULTS_MODAL": {
+						"TITLE": "No financial responsible found.",
+						"DESCRIPTION": "Click the button in the top right corner to filter a new first financial responsible!"
+					}
+				},
+				"DETAIL_FINANCIAL_RESPONSIBLE": {
+					"TITLE": "Financial Responsible Details",
+					"LABELS": {
+						"TYPE_RESPONSIBLE": "Type of Responsible",
+						"LAST_UPDATE": "Last Update",
+						"CLIENTS_DETAILS": {
+							"TITLE": "Clients",
+							"FULL_NAME": "Full Name",
+							"EMAIL": "Email",
+							"CELL_PHONE": "Cell Phone",
+							"CPF": "CPF",
+							"CLIENT_TYPE": "Client Type",
+							"STATUS": "Status"
+						},
+						"PERSONAL_DETAILS": {
+							"FULL_NAME": "Full Name",
+							"TITLE": "Personal Information",
+							"EMAIL": "Email",
+							"PHONE": "Phone",
+							"CPF": "CPF",
+							"CNPJ": "CNPJ",
+							"BIRTH_DATE": "Date of Birth",
+							"GENDER": "Gender",
+							"MARITAL_STATUS": "Marital Status",
+							"DOCUMENT": "Document",
+							"NATIONALITY": "Nationality",
+							"NOT_SPECIFIED": "Not specified"
+						},
+
+						"BANK_DETAILS": {
+							"TITLE": "Bank Details",
+							"BANK": "Bank",
+							"AGENCY": "Agency",
+							"ACCOUNT_NUMBER": "Account Number",
+							"OWNER_NAME": "Account Owner",
+							"OWNER_DOC": "Owner Document",
+							"PIX": "Pix",
+							"NOT_SPECIFIED": "Not specified"
+						}
+					}
+				},
+				"UPSERT_FINANCIAL_RESPONSIBLE": {
+					"TITLE": "Edit Financial Responsible",
+					"FORM": {
+						"PERSONAL_DATA": {
+							"FIRST_NAME": "First Name",
+							"LAST_NAME": "Last Name",
+							"EMAIL": "Email",
+							"CPF": "CPF",
+							"CNPJ": "CNPJ",
+							"CELLPHONE": "Cellphone",
+							"BIRTH_DATE": "Birth Date",
+							"GENDER": {
+								"LABEL": "Gender",
+								"MALE": "Male",
+								"FEMALE": "Female",
+								"OTHER": "Other"
+							},
+							"NATIONALITY": "Nationality",
+							"MARITAL_STATUS": {
+								"LABEL": "Marital Status",
+								"SINGLE": "Single",
+								"MARRIED": "Married",
+								"DIVORCED": "Divorced"
+							},
+							"DOCUMENT": "Document"
+						},
+
+						"BANK_DATA": {
+							"TITLE": "Bank Data",
+							"AGENCY": "Agency",
+							"BANK_CODE": "Bank Code",
+							"ACCOUNT_NUMBER": "Account Number",
+							"ACCOUNT_OWNER_NAME": "Account Owner's Name",
+							"ACCOUNT_OWNER_DOCUMENT": "Account Owner's Document",
+							"ACCOUNT_DIGIT": "Account Digit",
+							"PIX": "PIX"
+						}
+					}
+				}
+			},
+			"LEADS": {
+				"TABLE": {
+					"TITLE": "Leads",
+					"HEADER": {
+						"TEMP": "Temperature"
+					}
+				},
+				"FILTER": {
+					"MATCH_RESPONSE": "Match Response"
+				},
+				"DETAIL": {
+					"TITLE": "Leads Detail",
+					"SCORE": "Score Rating",
+					"LEAD_SCORE": "Lead Score",
+					"MATCH": "Match",
+					"NO_PARTICIPATION": "No Participation!"
+				}
+			},
+			"COLLABORATORS": {
+				"GRID_ADMIN": {
+					"TITLE": "Collaborators",
+					"FILTER": {
+						"PEER_NAME": "Filter name",
+						"DEPARTMENT": "Department"
+					},
+					"INFO_NO_RESULTS_MODAL": {
+						"TITLE": "No collaborators found in this unit.",
+						"DESCRIPTION": "Click the button in the upper right corner to add the first collaborator!"
+					}
+				}
+			},
+			"CLIENTS": {
+				"TABLE": {
+					"TITLE": "Clients"
+				},
+				"DETAIL": {
+					"TITLE": "Clients Details"
+				},
+				"FILTER": {
+					"NAME": "Name",
+					"CPF": "CPF",
+					"NATIONALITY": "Nationality",
+					"EMAIL": "Email"
+				}
+			},
+			"RESIDENT": {
+				"TITLE": "Resident",
+				"FILTER": {
+					"APARTMENT": "Apartment Number",
+					"GENDER": "Gender",
+					"FINANCIAL_RESPONSIBLE": "Financial Responsible",
+					"BIRTH_DATE_PERIOD": "Birth Date Period"
+				},
+				"DETAIL": {
+					"TITLE": "Resident Details"
+				},
+				"TABLE": {
+					"HEADER": {
+						"RESIDENT": "Resident",
+						"N_APARTMENT": "Apartment N°",
+						"FINANCIAL_RESPONSIBLE": "Financial Responsible",
+						"START_DATE": "Contract Start",
+						"END_DATE": "Contract End"
+					}
+				}
+			}
+		}
+	}
+}

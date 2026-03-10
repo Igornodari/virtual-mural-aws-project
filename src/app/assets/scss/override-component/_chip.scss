@@ -1,0 +1,10 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@include mat.chips-overrides(
+	(
+		outline-color: #e9e8e89a,
+		outline-width: 1px,
+		focus-state-layer-color: var(--mat-option-focus-state-layer-color),
+	)
+);

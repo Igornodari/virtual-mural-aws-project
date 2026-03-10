@@ -1,0 +1,53 @@
+@use '../variables' as *;
+
+.pick-content {
+	width: 100%;
+	display: inline-flex;
+	margin-bottom: 10px;
+
+	select {
+		width: 100%;
+		padding-block: 6px;
+		text-align: center;
+		font-size: 0.9rem;
+		// background-color: red !important;
+		border: 1px solid $borderColor !important;
+		border-radius: var(--mat-sys-shape-small, 4px);
+		outline: none;
+		cursor: pointer;
+		appearance: none;
+		// color: var(--mat-mdc-button-persistent-ripple-color) !important;
+	}
+	select:hover {
+		border: 1px solid var(--mat-sys-primary) !important;
+	}
+	option {
+		font-weight: normal;
+		display: block;
+		min-height: 1.2em;
+		padding: 0px 2px 1px;
+		white-space: nowrap;
+		background: rgba(0, 0, 0, 0.3);
+	}
+
+	select::-webkit-scrollbar {
+		width: 2px;
+	}
+
+	/* Track */
+	select::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 5px grey;
+		border-radius: 10px;
+	}
+
+	/* Handle */
+	select::-webkit-scrollbar-thumb {
+		background: rgb(67, 100, 131);
+		border-radius: 10px;
+	}
+
+	/* Handle on hover */
+	select::-webkit-scrollbar-thumb:hover {
+		background: var(--mat-sys-primary);
+	}
+}

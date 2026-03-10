@@ -1,0 +1,41 @@
+{
+	"LOGIN": {
+		"TITLE": "AvançaPJ App",
+		"SUBTITLE": "Seu painel de ferramentas para agilizar seu empreendimento.",
+		"GOOGLE": "Entrar com o Google",
+		"MICROSOFT": "Entrar com Microsoft",
+		"OR": "Ou entrar com",
+		"EMAIL_LABEL": "Email",
+		"EMAIL_REQUIRED": "O email é obrigatório",
+		"EMAIL_MINLENGTH": "O nome deve ter pelo menos 6 caracteres.",
+		"PASSWORD_LABEL": "Senha",
+		"PASSWORD_REQUIRED": "Senha requerida",
+		"REMEMBER": "Lembrar deste dispositivo",
+		"FORGOT_PASSWORD_LABEL": "Esqueceu sua senha ?",
+		"BUTTON": "Logar",
+		"ERROR_NOT_REGISTERED": "Você não está registrado no sistema!",
+		"ERROR_CONTACT_ADMIN": "Entre em contato com o administrador!",
+		"DIALOG_TITLE": "Conta já vinculada",
+		"DIALOG_SUBTITLE": "Este e-mail já está vinculado a uma conta Google.\nDeseja vincular sua conta Microsoft a ela?",
+		"SUCCESS_LINKED": "Conta Microsoft vinculada com sucesso à sua conta Google!",
+		"SUCCESS": "Login realizado com sucesso!",
+		"DIALOG_EXISTING_ACCOUNT": {
+			"TITLE": "Conta já existente",
+			"LINE1": "Detectamos que esse e-mail já foi utilizado com o Google.",
+			"LINE2": "Deseja vincular sua conta Microsoft a essa conta existente?",
+			"CONFIRM": "Sim, vincular"
+		},
+		"FORGOT_PASSWORD": {
+			"SUCCESS_TITLE": "Tudo certo!",
+			"SUCCESS_MESSAGE": "Agora verifique em sua caixa de entrada o e-mail para poder redefinir sua senha!",
+			"BACK_TO_LOGIN": "Voltar para Login",
+			"TITLE": "Esqueceu sua senha?",
+			"INSTRUCTION": "Por favor, insira o endereço de e-mail associado à sua conta e enviaremos um e-mail com um link para redefinir sua senha.",
+			"EMAIL_LABEL": "E-mail",
+			"EMAIL_REQUIRED": "Email obrigatório",
+			"SUBMIT": "Esqueci minha senha",
+			"SUCCESS": "Link enviado!",
+			"ERROR": "ERRO: Contate o administrador do sistema!"
+		}
+	}
+}

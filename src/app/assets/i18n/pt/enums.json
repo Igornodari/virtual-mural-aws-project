@@ -1,0 +1,132 @@
+{
+	"ENUMS": {
+		"CLIENT": {
+			"TYPE": {
+				"ULIDER": "Ulider",
+				"EMPLOYEE": "Colaborador",
+				"INFLUENCER": "Influencer",
+				"ACADEMIC_PARTNER": "Parceria Universidade",
+				"SCHOLARSHIP": "Bolsista",
+				"PAID_FULL": "Contrato a vista",
+				"VISITOR": "Visitante",
+				"DEFAULT": "Padrão"
+			}
+		},
+
+		"RESERVATIONS": {
+			"EVENTS": {
+				"STATUS_ENUM": {
+					"CONFIRMED": "Confirmado",
+					"CANCELED": "Cancelado"
+				}
+			}
+		},
+		"INTERACTIONS": {
+			"FEEDBACK": {
+				"STATUS_ENUM": {
+					"OPEN": "Aberta",
+					"REPLY": "Respondida"
+				},
+				"TYPE_ENUM": {
+					"COMPLAINT": "Reclamação",
+					"SUGGESTION": "Sugestão"
+				}
+			},
+			"VISITS": {
+				"STATUS_ENUM": {
+					"SCHEDULED": "Agendado",
+					"AUTHORIZED": "Autorizado",
+					"FINISHED": "Finalizado",
+					"CANCELED": "Cancelado",
+					"LATE": "Atrasado"
+				},
+				"TYPE_USER": {
+					"RESIDENT": "Morador",
+					"COLLABORATORS": "Colaborador",
+					"PARTNER": "Parceiro",
+					"SERVICE_PROVIDER": "Prestador de serviço"
+				}
+			}
+		},
+		"MAINTENANCE": {
+			"STATUS_ENUM": {
+				"REQUESTED": "solicitado",
+				"PROGRESS": "em progresso",
+				"FINISHED": "concluído",
+				"REFUSED": "recusado",
+				"CANCELED": "cancelado"
+			},
+			"AREA_TYPE_ENUM": {
+				"APARTMENT": "Apartamento",
+				"COMMON": "Comum"
+			},
+			"PERIOD_ENUM": {
+				"MORNING": "Manhã",
+				"AFTERNOON": "Tarde"
+			}
+		},
+		"BILLS_TO_RECEIVE": {
+			"INVOICES": {
+				"STATUS_ENUM": {
+					"PAID": "Pago",
+					"IS_DUE": "Á vencer",
+					"PENDING": "Pendente",
+					"OVERDUE": "Vencida",
+					"RELEASED": "Liberada",
+					"PROCESSING": "Processando",
+					"CANCELED": "Cancelado",
+					"REFUNDED": "Reembolsada"
+				},
+				"TYPE_ENUM": {
+					"RENT": "Mensalidade",
+					"FIRST_RENT": "1º Mensalidade",
+					"DDD": "DDD",
+					"SHORT_STAY": "Short Stay",
+					"REGULATION_FINE": "Multa do regulamento",
+					"CANCELLATION_FINE": "Multa de cancelamento",
+					"BOOKING": "Taxa de reserva"
+				}
+			}
+		},
+		"FINES": {
+			"STATUS_ENUM": {
+				"APPLIED": "Aplicada",
+				"CANCELED": "Cancelada",
+				"NOTIFIED": "Notificada"
+			}
+		},
+		"BUSINESS": {
+			"STATUS_ENUM": {
+				"BUSINESS_STAGE": {
+					"INSIDE_SALES": {
+						"NEW": "Novo",
+						"SECOND_EMAIL": "Segundo e-mail",
+						"THIRD_EMAIL": "Terceiro e-mail",
+						"FOUR_EMAIL": "Quarto e-mail",
+						"ACCUMULATION_BASE": "Base de acumulados",
+						"START_CONTACT": "Iniciar contato",
+						"EFFECTIVE_CONTACT": "Contato Efetivo",
+						"LAST_ATTEMPT": "Última Tentativa",
+						"IN_CONNECTION": "Em Atendimento",
+						"VIRTUAL_TOUR_OR_VISIT": "Tour Virtual/Visita",
+						"VISIT_CARRIED": "Visita Realizada",
+						"NEGOCIATION": "Negociação",
+						"DOCUMENTATION": "Documentação",
+						"FROZEN": "Congelado",
+						"MARKETING_DISCARD": "Descarte de Marketing",
+						"CREDIT_DOCUMENT_ANALYSIS": "Análise de Crédito",
+						"CREDIT_REANALYSIS": "Reanálise de Crédito",
+						"CONTRACT": "Contratos",
+						"SIGNATURE": "Assinatura",
+						"DOCUMENT_CHECK": "Checagem de documentos",
+						"DOCUMENT_PENDING": "Documentos pendentes",
+						"CLOSED_GAIN": "Fechado Ganho",
+						"CLOSED_LOST": "Fechado Perdido",
+						"PRE_BOOKING_SITE": "Pré-reserva Site",
+						"PRE_SCHEDULE_VISIT_SITE": "Pré-agendamento visita Site"
+					}
+				}
+			}
+		}
+	}
+}

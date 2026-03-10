@@ -1,0 +1,141 @@
+{
+	"SIDE_BAR": {
+		"HOME": {
+			"TITLE": "Início",
+			"INFORMATION": "Informações",
+			"APARTMENTS": "Apartamentos",
+			"TYPOLOGIES": "Tipologias",
+			"OCCUPANCY_MAP": {
+				"TITLE": "Mapa Ocupações",
+				"OCCUPATIONS": "Ocupações",
+				"CHECK_LIST": {
+					"TITLE": "Check-list",
+					"MOVE_IN": "Entrada",
+					"MOVE_OUT": "Saída"
+				},
+				"INSPECTION": {
+					"TITLE": "Vistoria",
+					"MOVE_IN": "Entrada",
+					"MOVE_OUT": "Saída"
+				}
+			},
+			"UNITS": "Unidades"
+		},
+		"FACILITIES": {
+			"TITLE": "Instalações",
+			"MAINTENANCES": "Manutenção",
+			"AREAS": "Áreas Comuns"
+		},
+		"REPORTS": {
+			"TITLE": "BI-Reports",
+			"OPERATIONAL": {
+				"TITLE": "Operações",
+				"REPORTS_CANCEL": "Cancelamento de Contratos",
+				"RENEWAL": "Renovação"
+			},
+			"FINANCIAL": {
+				"TITLE": "Financeiro",
+				"ACCOUNT_RECEIVABLE": {
+					"TITLE": "Contas a Receber",
+					"REVENUE": "Faturamento"
+				},
+				"FP&A": {
+					"TITLE": "OPEX Unidades"
+				}
+			},
+			"RECYCLING": {
+				"TITLE": "Motivos de Discarte"
+			},
+			"MAINTENANCE_AND_INFRA": {
+				"TITLE": "Manutenção e Infra",
+				"VISUAL_MANAGER": {
+					"TITLE": "Gestão à vista"
+				}
+			},
+			"STUDIES_AND_FACILITIES": {
+				"TITLE": "Estudos e Analises",
+				"FOREIGN_ANALYSIS": {
+					"TITLE": "Analise de Estrangeiros"
+				},
+				"CLIENTS_MAPPING": {
+					"TITLE": "Mapeamento de Clientes"
+				},
+				"EVENTS_DISCLOSURE": {
+					"TITLE": "Eventos e Divulgação"
+				},
+				"SURVEY_AND_OFFER": {
+					"TITLE": "Levantamento Oferta PBSA"
+				},
+				"PARTNERSHIP_OPPORTUNITIES": {
+					"TITLE": "Oportunidade de Parcerias"
+				}
+			},
+			"STANDARDIZATION": {
+				"NAMES_STANDARDIZATION": {
+					"TITLE": "Padronizações"
+				}
+			},
+			"COMMERCIAL": {
+				"TITLE": "Comercial",
+				"SALMON_RUN": {
+					"TITLE": "Salmon Run"
+				}
+			}
+		},
+		"NEGOTIATION": {
+			"TITLE": "Negociações",
+			"BUSINESS": "Negócios",
+			"SALES_MIRROR": "Espelho de Vendas"
+		},
+		"INTERACTIONS": {
+			"TITLE": "Interações",
+			"RESERVATIONS": "Reservas",
+			"SPACES": "Espaços",
+			"EVENTS": "Eventos",
+			"VISITS": "Visitas",
+			"FEEDBACK": "Feedback",
+			"VOUCHERS": "Vouchers"
+		},
+		"FINANCE": {
+			"TITLE": "Financeiro",
+			"BILLS_TO_PAY": {
+				"TITLE": "Contas a Pagar",
+				"PURCHASE_ORDER": "Pedidos de Compra",
+				"SUPPLIERS": "Fornecedores",
+				"DAMAGE_DEPOSIT_REFUND": "DDD"
+			},
+			"BILLS_TO_RECEIVE": {
+				"TITLE": "Contas a Receber",
+				"SUBSCRIPTIONS": "Assinaturas",
+				"INVOICING": "Faturamento",
+				"INVOICES": "Faturas contratuais",
+				"INVOICES_INITIAL": "Faturas iniciais",
+				"INVOICES_SINGLE": "Faturas avulsa"
+			},
+			"FINES": "Multas"
+		},
+		"COMMUNICATION": {
+			"TITLE": "Comunicações",
+			"SMS": "SMS",
+			"LINKS": "Links"
+		},
+		"SYSTEM": {
+			"TITLE": "Sistema",
+			"CATEGORIES": {
+				"TITLE": "Categorias",
+				"ITEMS": "Itens",
+				"GROUP": "Grupo"
+			},
+			"USERS": {
+				"TITLE": "Usuários",
+				"CLIENTS": "Clientes",
+				"COLLABORATORS": "Colaboradores",
+				"LEADS": "Potenciais Clientes",
+				"FINANCIAL_RESPONSIBLE": "Responsável financeiro",
+				"RESIDENT": "Moradores"
+			},
+			"PERMISSIONS": "Permissões",
+			"QUEUE_ERRORS": "Erros de Fila"
+		}
+	}
+}
