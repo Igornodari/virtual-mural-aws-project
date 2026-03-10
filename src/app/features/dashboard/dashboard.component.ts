@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { AuthService } from '../../core/services/auth.service';
+import BaseComponent from '../../components/base.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -57,11 +57,14 @@ import { AuthService } from '../../core/services/auth.service';
     `,
   ],
 })
-export class DashboardComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+export class DashboardComponent extends BaseComponent implements OnInit {
   private readonly router = inject(Router);
 
   userData: unknown = null;
+
+  constructor() {
+    super();
+  }
 
   async ngOnInit(): Promise<void> {
     const user = await this.authService.getUser();

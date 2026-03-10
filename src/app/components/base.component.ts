@@ -16,7 +16,7 @@ export default class BaseComponent implements OnDestroy {
 	private _authService = inject(AuthService);
 	private _requestService = inject(RequestService);
 	private _location = inject(Location);
-	public _translate = inject(TranslateService);
+	public _translate = inject(TranslateService, { optional: true });
 
 	public queryString = new URLSearchParams();
 	public searchParams: any = {};

@@ -7,7 +7,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AuthService } from '../../core/services/auth.service';
+import { SnackBarService } from '../../core/services/snack-bar.service';
+import BaseComponent from '../../components/base.component';
 
 @Component({
   selector: 'app-login',
@@ -118,9 +119,6 @@ import { AuthService } from '../../core/services/auth.service';
               </button>
             </form>
 
-            @if (errorMessage) {
-              <div class="app-error-box">{{ errorMessage }}</div>
-            }
           </mat-card-content>
 
           <div class="d-flex justify-content-start gap-4 m-t-4">
@@ -175,18 +173,21 @@ import { AuthService } from '../../core/services/auth.service';
     `,
   ],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
+  private readonly snackBarService = inject(SnackBarService);
   private readonly router = inject(Router);
 
-  loading = false;
   errorMessage = '';
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
+
+  constructor() {
+    super({ loadUnit: false });
+  }
 
   async ngOnInit(): Promise<void> {
     const authenticated = await this.authService.isAuthenticated();
@@ -197,7 +198,6 @@ export class LoginComponent implements OnInit {
 
   async onGoogleLogin(): Promise<void> {
     this.loading = true;
-    this.errorMessage = '';
 
     try {
       await this.authService.loginWithGoogle();
@@ -210,7 +210,7 @@ export class LoginComponent implements OnInit {
         return;
       }
 
-      this.errorMessage = error?.message ?? 'Unable to start Google sign in.';
+      this.presentError(this.resolveErrorMessage(error));
       this.loading = false;
     }
   }
@@ -219,7 +219,6 @@ export class LoginComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.loading = true;
-    this.errorMessage = '';
 
     try {
       const { email, password } = this.form.getRawValue();
@@ -234,9 +233,23 @@ export class LoginComponent implements OnInit {
         return;
       }
 
-      this.errorMessage = error?.message ?? 'Unable to sign in.';
+      this.presentError(this.resolveErrorMessage(error));
     } finally {
       this.loading = false;
     }
+  }
+
+  private resolveErrorMessage(error: unknown): string {
+    const e = error as { message?: string; __type?: string; errors?: Array<{ message?: string }> };
+    return (
+      e?.message?.trim() ||
+      e?.errors?.[0]?.message?.trim() ||
+      (e?.__type ? `${e.__type}` : '') ||
+      'Unable to process request.'
+    );
+  }
+
+  private presentError(message: string): void {
+    setTimeout(() => this.snackBarService.error(message));
   }
 }

@@ -6,7 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AuthService } from '../../core/services/auth.service';
+import { SnackBarService } from '../../core/services/snack-bar.service';
+import BaseComponent from '../../components/base.component';
 
 @Component({
   selector: 'app-register',
@@ -90,14 +91,6 @@ import { AuthService } from '../../core/services/auth.service';
               </form>
             }
 
-            @if (successMessage) {
-              <div class="app-success-box">{{ successMessage }}</div>
-            }
-
-            @if (errorMessage) {
-              <div class="app-error-box">{{ errorMessage }}</div>
-            }
-
             <a routerLink="/login">Back to login</a>
           </mat-card-content>
         </mat-card>
@@ -114,12 +107,11 @@ import { AuthService } from '../../core/services/auth.service';
     `,
   ],
 })
-export class RegisterComponent {
+export class RegisterComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
+  private readonly snackBarService = inject(SnackBarService);
   private readonly router = inject(Router);
 
-  loading = false;
   awaitingConfirmation = false;
   registeredEmail = '';
   errorMessage = '';
@@ -137,46 +129,70 @@ export class RegisterComponent {
     code: ['', [Validators.required]],
   });
 
+  constructor() {
+    super({ loadUnit: false });
+  }
+
   async onRegister(): Promise<void> {
     if (this.registerForm.invalid) return;
 
     const { firstName, lastName, email, password, confirmPassword } = this.registerForm.getRawValue();
     if (password !== confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
+      this.presentError('Passwords do not match.');
       return;
     }
 
-    this.loading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.setLoading(true);
 
     try {
       await this.authService.registerWithEmail(email, password, firstName, lastName);
       this.registeredEmail = email;
       this.awaitingConfirmation = true;
-      this.successMessage = 'Account created. Check your email for the confirmation code.';
+      this.presentSuccess('Account created. Check your email for the confirmation code.');
     } catch (error: any) {
-      this.errorMessage = error?.message ?? 'Unable to create account.';
+      this.presentError(this.resolveErrorMessage(error));
     } finally {
-      this.loading = false;
+      this.setLoading(false);
     }
   }
 
   async onConfirmCode(): Promise<void> {
     if (this.confirmationForm.invalid || !this.registeredEmail) return;
 
-    this.loading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.setLoading(true);
 
     try {
       await this.authService.confirmEmailCode(this.registeredEmail, this.confirmationForm.getRawValue().code);
-      this.successMessage = 'Email confirmed. You can now log in.';
+      this.presentSuccess('Email confirmed. You can now log in.');
       await this.router.navigateByUrl('/login');
     } catch (error: any) {
-      this.errorMessage = error?.message ?? 'Unable to confirm code.';
+      this.presentError(this.resolveErrorMessage(error));
     } finally {
-      this.loading = false;
+      this.setLoading(false);
     }
+  }
+
+  private resolveErrorMessage(error: unknown): string {
+    const e = error as { message?: string; __type?: string; errors?: Array<{ message?: string }> };
+    return (
+      e?.message?.trim() ||
+      e?.errors?.[0]?.message?.trim() ||
+      (e?.__type ? `${e.__type}` : '') ||
+      'Unable to process request.'
+    );
+  }
+
+  private presentError(message: string): void {
+    setTimeout(() => this.snackBarService.error(message));
+  }
+
+  private presentSuccess(message: string): void {
+    setTimeout(() => this.snackBarService.success(message));
+  }
+
+  private setLoading(value: boolean): void {
+    setTimeout(() => {
+      this.loading = value;
+    });
   }
 }

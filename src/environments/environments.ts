@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   apiBaseUrl: 'https://SUA_API.execute-api.sa-east-1.amazonaws.com/prod',
+  version: '0.0.1',
   aws: {
     region: 'sa-east-1',
     userPoolId: 'sa-east-1_NiMyy2V3k',
