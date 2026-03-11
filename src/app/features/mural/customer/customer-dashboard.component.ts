@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -17,7 +18,8 @@ import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ServiceApiService, ServiceDto } from '../../../core/services/service-api.service';
 import { AppointmentApiService, CreateAppointmentPayload } from '../../../core/services/appointment-api.service';
 import { ReviewApiService, CreateReviewPayload } from '../../../core/services/review-api.service';
-import { ServiceCard } from '../provider/provider-dashboard.component';
+
+const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
 const CATEGORIES = [
   'Todas',
@@ -30,87 +32,6 @@ const CATEGORIES = [
   'Tecnologia',
   'Saúde e Bem-estar',
   'Outros',
-];
-
-const MOCK_SERVICES: ServiceCard[] = [
-  {
-    id: '1',
-    name: 'Corte de Cabelo Masculino',
-    description: 'Corte profissional em casa ou na sua unidade. Mais de 5 anos de experiência. Atendo adultos e crianças.',
-    price: 'R$ 35,00',
-    contact: '(11) 99123-4567',
-    availableDays: ['Segunda', 'Quarta', 'Sexta', 'Sábado'],
-    category: 'Beleza e Estética',
-    rating: 4.8,
-    totalReviews: 23,
-    active: true,
-    createdAt: '2025-01-10T10:00:00Z',
-  },
-  {
-    id: '2',
-    name: 'Marmitas Fitness',
-    description: 'Marmitas saudáveis e saborosas preparadas diariamente. Cardápio semanal variado. Entrega no condomínio.',
-    price: 'R$ 18,00 / unidade',
-    contact: '(11) 98765-4321',
-    availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
-    category: 'Alimentação',
-    rating: 4.9,
-    totalReviews: 41,
-    active: true,
-    createdAt: '2025-01-15T08:00:00Z',
-  },
-  {
-    id: '3',
-    name: 'Aulas de Inglês',
-    description: 'Aulas particulares de inglês para todos os níveis. Metodologia conversacional. Online ou presencial.',
-    price: 'R$ 80,00 / hora',
-    contact: '(11) 97654-3210',
-    availableDays: ['Terça', 'Quinta', 'Sábado'],
-    category: 'Aulas e Tutoria',
-    rating: 5.0,
-    totalReviews: 12,
-    active: true,
-    createdAt: '2025-02-01T09:00:00Z',
-  },
-  {
-    id: '4',
-    name: 'Manutenção Elétrica',
-    description: 'Serviços elétricos residenciais: instalação de tomadas, lustres, disjuntores e muito mais. Rápido e seguro.',
-    price: 'A partir de R$ 60,00',
-    contact: '(11) 96543-2109',
-    availableDays: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-    category: 'Manutenção e Reparos',
-    rating: 4.7,
-    totalReviews: 18,
-    active: true,
-    createdAt: '2025-02-10T11:00:00Z',
-  },
-  {
-    id: '5',
-    name: 'Pet Sitting e Passeio',
-    description: 'Cuido do seu pet com muito carinho! Passeios diários, visitas e hospedagem. Experiência com cães e gatos.',
-    price: 'R$ 40,00 / passeio',
-    contact: '(11) 95432-1098',
-    availableDays: ['Segunda', 'Quarta', 'Sexta', 'Sábado', 'Domingo'],
-    category: 'Pets',
-    rating: 4.6,
-    totalReviews: 9,
-    active: true,
-    createdAt: '2025-02-20T14:00:00Z',
-  },
-  {
-    id: '6',
-    name: 'Faxina Residencial',
-    description: 'Limpeza completa do apartamento. Produtos de qualidade inclusos. Pontualidade e discrição garantidas.',
-    price: 'R$ 120,00 / diária',
-    contact: '(11) 94321-0987',
-    availableDays: ['Terça', 'Quinta', 'Sábado'],
-    category: 'Limpeza',
-    rating: 4.5,
-    totalReviews: 31,
-    active: true,
-    createdAt: '2025-03-01T07:00:00Z',
-  },
 ];
 
 @Component({
@@ -629,19 +550,35 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   isLoadingServices = signal(false);
   isScheduling = signal<string | null>(null);
   isReviewing = signal<string | null>(null);
+  searchControl = new FormControl('');
+  private readonly searchValue = toSignal(this.searchControl.valueChanges, { initialValue: '' });
 
   readonly categories = ['Todas', ...CATEGORIES];
   readonly weekdays = WEEKDAYS;
+
+  uniqueProviders = computed(() => {
+    const ids = new Set(this.allServices().map((s) => s.providerId));
+    return ids.size;
+  });
 
   filteredServices = computed(() => {
     let list = this.allServices();
     const cat = this.selectedCategory();
     const day = this.selectedDay();
+    const search = (this.searchValue() ?? '').toLowerCase().trim();
     if (cat && cat !== 'Todas') {
       list = list.filter((s) => s.category === cat);
     }
     if (day) {
       list = list.filter((s) => s.availableDays.includes(day));
+    }
+    if (search) {
+      list = list.filter(
+        (s) =>
+          s.name.toLowerCase().includes(search) ||
+          s.description.toLowerCase().includes(search) ||
+          s.category.toLowerCase().includes(search),
+      );
     }
     return list;
   });
@@ -679,8 +616,31 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.expandedId.set(this.expandedId() === id ? null : id);
   }
 
+  selectCategory(cat: string): void {
+    this.selectedCategory.set(cat);
+  }
+
   filterByCategory(cat: string): void {
     this.selectedCategory.set(cat);
+  }
+
+  onContact(service: ServiceDto): void {
+    this.contactWhatsApp(service);
+  }
+
+  /** Seleciona/deseleciona um dia para agendamento (chave = day + serviceId) */
+  selectDay(key: string): void {
+    this.selectedDay.set(this.selectedDay() === key ? null : key);
+  }
+
+  /** Confirma o agendamento do serviço com o dia selecionado */
+  onSchedule(service: ServiceDto): void {
+    const key = this.selectedDay();
+    if (!key) return;
+    // A chave é day + serviceId; extrai o dia removendo o serviceId do final
+    const day = key.replace(service.id, '');
+    this.scheduleService(service, day);
+    this.selectedDay.set(null);
   }
 
   filterByDay(day: string): void {

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -222,6 +223,12 @@ export class LoginComponent extends BaseComponent implements OnInit {
   }
 
   private async redirectAfterLogin(): Promise<void> {
+    // Sincroniza com o backend para garantir o estado correto de onboarding
+    try {
+      await firstValueFrom(this.onboardingService.syncFromBackend());
+    } catch {
+      // Usa estado local se o backend estiver indisponível
+    }
     if (!this.onboardingService.hasCondominium) {
       await this.navigateTo('/onboarding/condominium');
       return;
