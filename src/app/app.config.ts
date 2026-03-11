@@ -1,4 +1,5 @@
-import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom, ErrorHandler } from '@angular/core';
+import { GlobalErrorHandler } from './handler/global-error.handler';
 import { HttpClient, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -32,8 +33,15 @@ const initializeLanguage = (translate: TranslateService) => () => {
   translate.addLangs(['pt', 'en']);
   translate.setDefaultLang('pt');
 
-  const storedLang =
-    typeof window !== 'undefined' ? window.localStorage.getItem('LANGUAGE') : null;
+  let storedLang = null;
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      storedLang = window.localStorage.getItem('LANGUAGE');
+    }
+  } catch (e) {
+    // Ignorar erro se localStorage não estiver disponível
+  }
+
   const browserLang = translate.getBrowserLang();
   const selected = storedLang === 'en' || storedLang === 'pt'
     ? storedLang
@@ -41,19 +49,26 @@ const initializeLanguage = (translate: TranslateService) => () => {
       ? 'en'
       : 'pt';
 
-  if (typeof window !== 'undefined') {
-    window.localStorage.setItem('LANGUAGE', selected);
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem('LANGUAGE', selected);
+    }
+  } catch (e) {
+    // Ignorar erro se localStorage não estiver disponível
   }
 
   return firstValueFrom(translate.use(selected));
 };
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor])),
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandler,
+    },
     {
       provide: LOCALE_ID,
       useValue: 'pt-BR',

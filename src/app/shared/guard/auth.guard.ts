@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
   constructor(private ls: LocalStorageService, private router: Router) {}
 
   canActivate(): boolean | UrlTree {
-    const token = this.ls.getItem(LOCAL_STORAGE.TOKEM);
+    const token = this.ls.getItem(LOCAL_STORAGE.TOKEN);
     const user = this.ls.getItem(LOCAL_STORAGE.USER);
 
     if (token && user) return true;

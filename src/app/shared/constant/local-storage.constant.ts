@@ -1,5 +1,5 @@
 export const LOCAL_STORAGE = {
-    TOKEM: 'TOKEM',
+    TOKEN: 'TOKEN',
     USER: 'USER',
     UNIT: 'UNIT',
     CONFIG: 'CONFIG'

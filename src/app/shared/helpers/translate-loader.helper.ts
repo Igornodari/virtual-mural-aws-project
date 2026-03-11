@@ -13,6 +13,14 @@ export class AppTranslateLoader implements TranslateLoader {
 		const prefix = this.config?.prefix ?? './assets/i18n/';
 		const suffix = this.config?.suffix ?? '.json';
 		const parts = this.config?.parts ?? ['pt', 'en'];
+		
+		// Verifica se estamos no lado do servidor para evitar chamadas relativas que falham
+		const isServer = typeof window === 'undefined';
+		
+		if (isServer) {
+			return of({}); // Retorna objeto vazio no SSR, o cliente carregará as traduções
+		}
+		
 		const requests = parts.map(part =>
 			this.http.get(`${prefix}${lang}/${part}${suffix}`).pipe(catchError(() => of({})))
 		);

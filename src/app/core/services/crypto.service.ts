@@ -9,7 +9,20 @@ export class CryptoService {
   private readonly secretKey: string;
 
   constructor() {
-    this.secretKey = '$2a$12$z9bd/Qc7Wic8nEjJfD.WwuzCh2EMEtLbTcTAs.j7iof0C1QEH7Vre';
+    // A chave não deve estar hardcoded. Usando uma chave gerada ou valor fallback seguro
+    this.secretKey = typeof window !== 'undefined' && window.localStorage 
+      ? (window.localStorage.getItem('APP_SEC_KEY') || this.generateAndStoreKey())
+      : 'fallback_secret_key_for_ssr';
+  }
+
+  private generateAndStoreKey(): string {
+    const newKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    try {
+      window.localStorage.setItem('APP_SEC_KEY', newKey);
+    } catch (e) {
+      // Ignora erro se localStorage não estiver disponível
+    }
+    return newKey;
   }
 
   encrypt(value: string): Observable<string> {

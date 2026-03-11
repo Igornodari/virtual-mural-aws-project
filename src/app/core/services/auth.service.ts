@@ -124,14 +124,10 @@ export class AuthService {
   async loginWithEmail(email: string, password: string) {
     const username = email.trim().toLowerCase();
 
-    try {
-      const result = await signIn({
-        username,
-        password,
-      });
-      await this.syncAuthState();
-      return result;
-    } catch (error: any) {
+    const result = await signIn({
+      username,
+      password,
+    }).catch(async (error: any) => {
       const message = String(error?.message ?? '');
       const name = String(error?.name ?? '');
       const authFlowIssue =
@@ -141,62 +137,52 @@ export class AuthService {
         name === 'InvalidParameterException';
 
       if (authFlowIssue) {
-        const result = await signIn({
+        return await signIn({
           username,
           password,
           options: {
             authFlowType: 'USER_PASSWORD_AUTH',
           },
         });
-        await this.syncAuthState();
-        return result;
       }
 
       throw new Error(this.mapSignInError(error));
-    }
+    });
+    
+    await this.syncAuthState();
+    return result;
   }
 
   async logout(): Promise<void> {
-    try {
-      await signOut();
-    } catch {
+    await signOut().catch(() => {
       // Mantemos logout local mesmo se o signOut remoto falhar.
-    } finally {
-      this.setCurrentUser(null);
-    }
+    });
+    this.setCurrentUser(null);
   }
 
   async isAuthenticated(): Promise<boolean> {
-    try {
-      const session = await fetchAuthSession();
-      const authenticated = !!session.tokens?.idToken;
-      this.isAuthenticatedSubject.next(authenticated);
-      if (authenticated && !this.userSubject.value) {
-        await this.syncAuthState();
-      }
-      return authenticated;
-    } catch {
+    const session = await fetchAuthSession().catch(() => null);
+    if (!session) {
       this.setCurrentUser(null);
       return false;
     }
+    
+    const authenticated = !!session.tokens?.idToken;
+    this.isAuthenticatedSubject.next(authenticated);
+    if (authenticated && !this.userSubject.value) {
+      await this.syncAuthState();
+    }
+    return authenticated;
   }
 
   async getIdToken(): Promise<string | null> {
-    try {
-      const session = await fetchAuthSession();
-      return session.tokens?.idToken?.toString() ?? null;
-    } catch {
-      return null;
-    }
+    const session = await fetchAuthSession().catch(() => null);
+    return session?.tokens?.idToken?.toString() ?? null;
   }
 
   async getAccessToken(): Promise<string | null> {
-    try {
-      const session = await fetchAuthSession();
-      return session.tokens?.accessToken?.toString() ?? null;
-    } catch {
-      return null;
-    }
+    const session = await fetchAuthSession().catch(() => null);
+    return session?.tokens?.accessToken?.toString() ?? null;
   }
 
   async forgotPassword(email: string) {
@@ -316,28 +302,24 @@ export class AuthService {
   }
 
   private async syncAuthState(): Promise<void> {
-    try {
-      const session = await this.withTimeout(fetchAuthSession(), 5000);
-      const idToken = session.tokens?.idToken;
-      if (!idToken) {
-        this.setCurrentUser(null);
-        return;
-      }
-
-      let cognitoUser: Awaited<ReturnType<typeof getCurrentUser>> | null = null;
-      try {
-        cognitoUser = await this.withTimeout(getCurrentUser(), 2000);
-      } catch {
-        // token claims fallback
-      }
-
-      const payload = (idToken.payload ?? {}) as Record<string, unknown>;
-      const accessPayload = (session.tokens?.accessToken?.payload ?? {}) as Record<string, unknown>;
-      const mappedUser = this.mapClaimsToUser(payload, accessPayload, {}, cognitoUser);
-      this.setCurrentUser(mappedUser);
-    } catch {
+    const session = await this.withTimeout(fetchAuthSession(), 5000).catch(() => null);
+    if (!session) {
       this.setCurrentUser(null);
+      return;
     }
+    
+    const idToken = session.tokens?.idToken;
+    if (!idToken) {
+      this.setCurrentUser(null);
+      return;
+    }
+
+    const cognitoUser = await this.withTimeout(getCurrentUser(), 2000).catch(() => null);
+
+    const payload = (idToken.payload ?? {}) as Record<string, unknown>;
+    const accessPayload = (session.tokens?.accessToken?.payload ?? {}) as Record<string, unknown>;
+    const mappedUser = this.mapClaimsToUser(payload, accessPayload, {}, cognitoUser);
+    this.setCurrentUser(mappedUser);
   }
 
   private extractGoogleProfileDraft(
