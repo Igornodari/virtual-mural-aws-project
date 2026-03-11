@@ -1,13 +1,32 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { CondominiumAddress, OnboardingProfile, UserRole } from '../../shared/types';
+import { UserApiService, AppUserProfileDto } from './user-api.service';
+import { CondominiumApiService, CreateCondominiumPayload } from './condominium-api.service';
 
 const STORAGE_KEY = 'APP_ONBOARDING';
 
+/**
+ * Serviço de onboarding.
+ *
+ * Estratégia de persistência:
+ * 1. Lê o estado do localStorage para resposta imediata (sem flickering).
+ * 2. Sincroniza com o backend via UserApiService após cada operação.
+ * 3. Em caso de falha na rede, mantém o estado local para não bloquear o usuário.
+ */
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
-  private readonly profileSubject = new BehaviorSubject<OnboardingProfile>(this.loadFromStorage());
+  private readonly profileSubject = new BehaviorSubject<OnboardingProfile>(
+    this.loadFromStorage(),
+  );
   readonly profile$ = this.profileSubject.asObservable();
+
+  constructor(
+    private readonly userApi: UserApiService,
+    private readonly condominiumApi: CondominiumApiService,
+  ) {}
+
+  // ── Getters ──────────────────────────────────────────────────────────────
 
   get profile(): OnboardingProfile {
     return this.profileSubject.value;
@@ -19,7 +38,7 @@ export class OnboardingService {
   }
 
   get hasCondominium(): boolean {
-    return !!this.profile.condominiumAddress;
+    return !!this.profile.condominiumId;
   }
 
   get hasRole(): boolean {
@@ -30,24 +49,137 @@ export class OnboardingService {
     return this.profile.role;
   }
 
-  saveCondominiumAddress(address: CondominiumAddress): void {
-    const updated: OnboardingProfile = {
-      ...this.profile,
-      condominiumAddress: address,
-      onboardingCompleted: !!(address && this.profile.role),
-    };
-    this.persist(updated);
+  // ── Sincronização com o backend ──────────────────────────────────────────
+
+  /**
+   * Carrega o perfil do usuário a partir do backend e atualiza o estado local.
+   * Deve ser chamado após o login para garantir sincronização.
+   */
+  syncFromBackend(): Observable<AppUserProfileDto> {
+    return this.userApi.getMe().pipe(
+      tap((user) => {
+        const profile: OnboardingProfile = {
+          condominiumId: user.condominiumId,
+          condominiumAddress: user.condominiumId
+            ? this.profile.condominiumAddress
+            : null,
+          role: user.roleInCondominium as UserRole | null,
+          onboardingCompleted: user.onboardingCompleted,
+        };
+        this.persist(profile);
+      }),
+      catchError((err) => {
+        console.warn('[OnboardingService] Falha ao sincronizar com o backend:', err);
+        return of({} as AppUserProfileDto);
+      }),
+    );
   }
 
-  saveRole(role: UserRole): void {
+  /**
+   * Salva o endereço do condomínio.
+   * Se um condomínio com o mesmo CEP já existir no backend, vincula ao existente.
+   * Caso contrário, cria um novo condomínio.
+   */
+  saveCondominiumAddress(address: CondominiumAddress): Observable<unknown> {
+    const zipCode = address.zipCode.replace(/\D/g, '');
+
+    return this.condominiumApi.findByZipCode(zipCode).pipe(
+      tap((existing) => {
+        const condominiumId = existing.length > 0 ? existing[0].id : null;
+
+        const updated: OnboardingProfile = {
+          ...this.profile,
+          condominiumId,
+          condominiumAddress: address,
+          onboardingCompleted: !!(address && this.profile.role),
+        };
+        this.persist(updated);
+
+        if (condominiumId) {
+          this.userApi
+            .updateOnboarding({ condominiumId })
+            .pipe(catchError(() => of(null)))
+            .subscribe();
+        }
+      }),
+      catchError((err) => {
+        console.warn('[OnboardingService] Erro ao buscar condomínio:', err);
+        const updated: OnboardingProfile = {
+          ...this.profile,
+          condominiumAddress: address,
+          onboardingCompleted: !!(address && this.profile.role),
+        };
+        this.persist(updated);
+        return of([]);
+      }),
+    );
+  }
+
+  /**
+   * Cria um novo condomínio no backend e vincula ao usuário.
+   */
+  createCondominium(address: CondominiumAddress): Observable<unknown> {
+    const payload: CreateCondominiumPayload = {
+      name: address.name ?? ('Condomínio ' + address.neighborhood),
+      addressZipCode: address.zipCode.replace(/\D/g, ''),
+      addressStreet: address.street,
+      addressNumber: address.number,
+      addressComplement: address.complement,
+      addressNeighborhood: address.neighborhood,
+      addressCity: address.city,
+      addressState: address.state,
+    };
+
+    return this.condominiumApi.create(payload).pipe(
+      tap((condominium) => {
+        const updated: OnboardingProfile = {
+          ...this.profile,
+          condominiumId: condominium.id,
+          condominiumAddress: address,
+          onboardingCompleted: !!(address && this.profile.role),
+        };
+        this.persist(updated);
+
+        this.userApi
+          .updateOnboarding({ condominiumId: condominium.id })
+          .pipe(catchError(() => of(null)))
+          .subscribe();
+      }),
+      catchError((err) => {
+        console.warn('[OnboardingService] Erro ao criar condomínio:', err);
+        const updated: OnboardingProfile = {
+          ...this.profile,
+          condominiumAddress: address,
+          onboardingCompleted: !!(address && this.profile.role),
+        };
+        this.persist(updated);
+        return of(null);
+      }),
+    );
+  }
+
+  /**
+   * Salva a role do usuário (prestador ou morador) no backend e localmente.
+   */
+  saveRole(role: UserRole): Observable<unknown> {
     const updated: OnboardingProfile = {
       ...this.profile,
       role,
       onboardingCompleted: !!(this.profile.condominiumAddress && role),
     };
     this.persist(updated);
+
+    return this.userApi
+      .updateOnboarding({ roleInCondominium: role })
+      .pipe(
+        catchError((err) => {
+          console.warn('[OnboardingService] Erro ao salvar role no backend:', err);
+          return of(null);
+        }),
+      );
   }
 
+  /** Limpa o estado de onboarding (logout) */
   clear(): void {
     const empty: OnboardingProfile = {
       condominiumId: null,
@@ -58,13 +190,15 @@ export class OnboardingService {
     this.persist(empty);
   }
 
+  // ── Persistência local ───────────────────────────────────────────────────
+
   private persist(profile: OnboardingProfile): void {
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
       }
-    } catch (e) {
-      // Ignorar erro de localStorage
+    } catch {
+      // Ignorar erro de localStorage (ex: modo privado)
     }
     this.profileSubject.next(profile);
   }
@@ -81,7 +215,7 @@ export class OnboardingService {
         const raw = window.localStorage.getItem(STORAGE_KEY);
         if (raw) return JSON.parse(raw) as OnboardingProfile;
       }
-    } catch (e) {
+    } catch {
       // Ignorar erro de parse
     }
     return empty;

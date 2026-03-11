@@ -298,8 +298,31 @@ export class CondominiumOnboardingComponent extends BaseComponent {
       state: raw.state,
     };
 
-    this.onboardingService.saveCondominiumAddress(address);
-    this.setLoadingState(false);
-    await this.navigateTo('/onboarding/role');
+    // Tenta vincular a um condomínio existente pelo CEP;
+    // se não encontrar, cria um novo no backend.
+    this.onboardingService.saveCondominiumAddress(address).subscribe({
+      next: (existing: any) => {
+        const found = Array.isArray(existing) && existing.length > 0;
+        if (!found) {
+          this.onboardingService.createCondominium(address).subscribe({
+            next: () => {
+              this.setLoadingState(false);
+              this.navigateTo('/onboarding/role');
+            },
+            error: () => {
+              this.setLoadingState(false);
+              this.navigateTo('/onboarding/role');
+            },
+          });
+        } else {
+          this.setLoadingState(false);
+          this.navigateTo('/onboarding/role');
+        }
+      },
+      error: () => {
+        this.setLoadingState(false);
+        this.navigateTo('/onboarding/role');
+      },
+    });
   }
 }

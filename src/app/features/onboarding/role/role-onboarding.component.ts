@@ -250,10 +250,18 @@ export class RoleOnboardingComponent extends BaseComponent {
     if (!role) return;
 
     this.setLoadingState(true);
-    this.onboardingService.saveRole(role);
-    this.setLoadingState(false);
-
     const destination = role === 'provider' ? '/mural/provider' : '/mural/customer';
-    await this.navigateTo(destination);
+
+    this.onboardingService.saveRole(role).subscribe({
+      next: () => {
+        this.setLoadingState(false);
+        this.navigateTo(destination);
+      },
+      error: () => {
+        // Em caso de falha de rede, o estado local já foi salvo pelo serviço
+        this.setLoadingState(false);
+        this.navigateTo(destination);
+      },
+    });
   }
 }

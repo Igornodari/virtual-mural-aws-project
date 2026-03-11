@@ -1,6 +1,8 @@
 export const environment = {
   production: true,
   apiBaseUrl: 'https://SUA_API.execute-api.us-east-1.amazonaws.com/prod',
+  // URL do backend NestJS em produção (ECS/ALB)
+  muralApiUrl: 'https://SUA_API_NESTJS.com/api/v1',
   aws: {
     region: 'us-east-1',
     userPoolId: 'us-east-1_XXXX',

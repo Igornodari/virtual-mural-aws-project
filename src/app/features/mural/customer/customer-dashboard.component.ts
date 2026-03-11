@@ -14,6 +14,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../../components/base.component';
 import { OnboardingService } from '../../../core/services/onboarding.service';
+import { ServiceApiService, ServiceDto } from '../../../core/services/service-api.service';
+import { AppointmentApiService, CreateAppointmentPayload } from '../../../core/services/appointment-api.service';
+import { ReviewApiService, CreateReviewPayload } from '../../../core/services/review-api.service';
 import { ServiceCard } from '../provider/provider-dashboard.component';
 
 const CATEGORIES = [
@@ -614,39 +617,41 @@ const MOCK_SERVICES: ServiceCard[] = [
   `],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
+  private readonly serviceApi = inject(ServiceApiService);
+  private readonly appointmentApi = inject(AppointmentApiService);
+  private readonly reviewApi = inject(ReviewApiService);
 
-  readonly categories = CATEGORIES;
-
-  allServices = signal<ServiceCard[]>([]);
+  allServices = signal<ServiceDto[]>([]);
   selectedCategory = signal('Todas');
   expandedId = signal<string | null>(null);
   selectedDay = signal<string | null>(null);
+  isLoadingServices = signal(false);
+  isScheduling = signal<string | null>(null);
+  isReviewing = signal<string | null>(null);
 
-  searchControl = this.fb.control('');
+  readonly categories = ['Todas', ...CATEGORIES];
+  readonly weekdays = WEEKDAYS;
 
   filteredServices = computed(() => {
-    const query = (this.searchControl.value ?? '').toLowerCase();
+    let list = this.allServices();
     const cat = this.selectedCategory();
-    return this.allServices().filter((s) => {
-      const matchCat = cat === 'Todas' || s.category === cat;
-      const matchQuery =
-        !query ||
-        s.name.toLowerCase().includes(query) ||
-        s.description.toLowerCase().includes(query) ||
-        s.category.toLowerCase().includes(query);
-      return matchCat && matchQuery;
-    });
+    const day = this.selectedDay();
+    if (cat && cat !== 'Todas') {
+      list = list.filter((s) => s.category === cat);
+    }
+    if (day) {
+      list = list.filter((s) => s.availableDays.includes(day));
+    }
+    return list;
   });
 
-  uniqueProviders = computed(() => {
-    // Como os dados são mockados, retorna o número de serviços como proxy
+  get totalServices(): number {
     return this.allServices().length;
-  });
+  }
 
   get condoCity(): string {
-    return this.onboardingService.profile.condominiumAddress?.city || 'seu condomínio';
+    return this.onboardingService.profile.condominiumAddress?.city || 'Não definido';
   }
 
   constructor() {
@@ -655,53 +660,85 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   ngOnInit(): void {
     this.loadServices();
-    this.searchControl.valueChanges.subscribe(() => {
-      // Computed signal atualiza automaticamente
-    });
   }
 
   private loadServices(): void {
-    // Carrega serviços do localStorage (criados por prestadores) + mocks de demonstração
-    try {
-      const raw = typeof window !== 'undefined' ? window.localStorage.getItem('PROVIDER_SERVICES') : null;
-      const local: ServiceCard[] = raw ? JSON.parse(raw) : [];
-      const merged = [...MOCK_SERVICES, ...local];
-      this.allServices.set(merged);
-    } catch (e) {
-      this.allServices.set(MOCK_SERVICES);
-    }
-  }
-
-  selectCategory(cat: string): void {
-    this.selectedCategory.set(cat);
+    this.isLoadingServices.set(true);
+    this.serviceApi.findAll().subscribe({
+      next: (list) => {
+        this.allServices.set(list);
+        this.isLoadingServices.set(false);
+      },
+      error: () => {
+        this.isLoadingServices.set(false);
+      },
+    });
   }
 
   toggleExpand(id: string): void {
     this.expandedId.set(this.expandedId() === id ? null : id);
-    this.selectedDay.set(null);
   }
 
-  selectDay(dayKey: string): void {
-    this.selectedDay.set(this.selectedDay() === dayKey ? null : dayKey);
+  filterByCategory(cat: string): void {
+    this.selectedCategory.set(cat);
   }
 
-  onContact(service: ServiceCard): void {
+  filterByDay(day: string): void {
+    this.selectedDay.set(this.selectedDay() === day ? null : day);
+  }
+
+  contactWhatsApp(service: ServiceDto): void {
     const phone = service.contact.replace(/\D/g, '');
     const message = encodeURIComponent(
-      `Olá! Vi seu serviço "${service.name}" no Mural do Condomínio e gostaria de mais informações.`
+      `Olá! Vi seu serviço "${service.name}" no Mural do Condomínio e gostaria de mais informações.`,
     );
     const url = `https://wa.me/55${phone}?text=${message}`;
     window.open(url, '_blank');
   }
 
-  onSchedule(service: ServiceCard): void {
-    const day = this.selectedDay()?.replace(service.id, '');
-    const phone = service.contact.replace(/\D/g, '');
-    const message = encodeURIComponent(
-      `Olá! Vi seu serviço "${service.name}" no Mural do Condomínio e gostaria de agendar para ${day}.`
-    );
-    const url = `https://wa.me/55${phone}?text=${message}`;
-    window.open(url, '_blank');
+  scheduleService(service: ServiceDto, day: string): void {
+    this.isScheduling.set(service.id);
+    const today = new Date();
+    const payload: CreateAppointmentPayload = {
+      serviceId: service.id,
+      scheduledDate: today.toISOString().split('T')[0],
+      scheduledDay: day,
+      notes: `Agendamento solicitado pelo mural para ${day}.`,
+    };
+    this.appointmentApi.create(payload).subscribe({
+      next: () => {
+        this.isScheduling.set(null);
+        // Feedback visual — o snackbar global vai capturar se houver erro
+      },
+      error: () => {
+        this.isScheduling.set(null);
+      },
+    });
+  }
+
+  submitReview(service: ServiceDto, rating: number, comment: string): void {
+    this.isReviewing.set(service.id);
+    const payload: CreateReviewPayload = {
+      serviceId: service.id,
+      rating,
+      comment: comment || undefined,
+    };
+    this.reviewApi.create(payload).subscribe({
+      next: () => {
+        this.isReviewing.set(null);
+        // Recarrega o serviço para atualizar o rating exibido
+        this.serviceApi.findOne(service.id).subscribe({
+          next: (updated) => {
+            this.allServices.update((list) =>
+              list.map((s) => (s.id === updated.id ? updated : s)),
+            );
+          },
+        });
+      },
+      error: () => {
+        this.isReviewing.set(null);
+      },
+    });
   }
 
   async onLogout(): Promise<void> {

@@ -19,6 +19,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../../components/base.component';
 import { OnboardingService } from '../../../core/services/onboarding.service';
+import { ServiceApiService, ServiceDto, CreateServicePayload } from '../../../core/services/service-api.service';
+import { AppointmentApiService } from '../../../core/services/appointment-api.service';
 
 export interface ServiceCard {
   id: string;
@@ -501,13 +503,17 @@ const CATEGORIES = [
 export class ProviderDashboardComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
+  private readonly serviceApi = inject(ServiceApiService);
+  private readonly appointmentApi = inject(AppointmentApiService);
 
   readonly weekdays = WEEKDAYS;
   readonly categories = CATEGORIES;
 
-  services = signal<ServiceCard[]>([]);
+  services = signal<ServiceDto[]>([]);
   showForm = signal(false);
   editingId = signal<string | null>(null);
+  isLoadingServices = signal(false);
+  isSaving = signal(false);
 
   serviceForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -534,31 +540,20 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   }
 
   private loadServices(): void {
-    try {
-      const raw = typeof window !== 'undefined' ? window.localStorage.getItem('PROVIDER_SERVICES') : null;
-      if (raw) {
-        const list = JSON.parse(raw) as ServiceCard[];
+    this.isLoadingServices.set(true);
+    this.serviceApi.findMine().subscribe({
+      next: (list) => {
         this.services.set(list);
         this.recalcStats(list);
-      }
-    } catch (e) {
-      // Ignorar erro
-    }
+        this.isLoadingServices.set(false);
+      },
+      error: () => {
+        this.isLoadingServices.set(false);
+      },
+    });
   }
 
-  private saveServices(list: ServiceCard[]): void {
-    try {
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('PROVIDER_SERVICES', JSON.stringify(list));
-      }
-    } catch (e) {
-      // Ignorar erro
-    }
-    this.services.set(list);
-    this.recalcStats(list);
-  }
-
-  private recalcStats(list: ServiceCard[]): void {
+  private recalcStats(list: ServiceDto[]): void {
     if (list.length === 0) {
       this.averageRating.set(0);
       this.totalReviews.set(0);
@@ -567,7 +562,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     const total = list.reduce((sum, s) => sum + s.totalReviews, 0);
     const avg = list.reduce((sum, s) => sum + s.rating * s.totalReviews, 0) / (total || 1);
     this.totalReviews.set(total);
-    this.averageRating.set(avg);
+    this.averageRating.set(Math.round(avg * 10) / 10);
   }
 
   openForm(): void {
@@ -579,7 +574,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     }, 100);
   }
 
-  editService(service: ServiceCard): void {
+  editService(service: ServiceDto): void {
     this.editingId.set(service.id);
     this.serviceForm.patchValue({
       name: service.name,
@@ -603,36 +598,48 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   onSaveService(): void {
     if (this.serviceForm.invalid) return;
-
     const raw = this.serviceForm.getRawValue();
-    const current = this.services();
     const editId = this.editingId();
+    this.isSaving.set(true);
 
     if (editId) {
-      const updated = current.map((s) =>
-        s.id === editId
-          ? { ...s, ...raw }
-          : s
-      );
-      this.saveServices(updated);
+      this.serviceApi.update(editId, raw).subscribe({
+        next: (updated) => {
+          this.services.update((list) => list.map((s) => s.id === editId ? updated : s));
+          this.recalcStats(this.services());
+          this.isSaving.set(false);
+          this.closeForm();
+        },
+        error: () => this.isSaving.set(false),
+      });
     } else {
-      const newService: ServiceCard = {
-        id: Date.now().toString(),
-        ...raw,
-        rating: 0,
-        totalReviews: 0,
-        active: true,
-        createdAt: new Date().toISOString(),
+      const payload: CreateServicePayload = {
+        name: raw.name,
+        description: raw.description,
+        price: raw.price,
+        contact: raw.contact,
+        category: raw.category,
+        availableDays: raw.availableDays,
       };
-      this.saveServices([...current, newService]);
+      this.serviceApi.create(payload).subscribe({
+        next: (created) => {
+          this.services.update((list) => [...list, created]);
+          this.recalcStats(this.services());
+          this.isSaving.set(false);
+          this.closeForm();
+        },
+        error: () => this.isSaving.set(false),
+      });
     }
-
-    this.closeForm();
   }
 
   removeService(id: string): void {
-    const updated = this.services().filter((s) => s.id !== id);
-    this.saveServices(updated);
+    this.serviceApi.remove(id).subscribe({
+      next: () => {
+        this.services.update((list) => list.filter((s) => s.id !== id));
+        this.recalcStats(this.services());
+      },
+    });
   }
 
   async onLogout(): Promise<void> {
