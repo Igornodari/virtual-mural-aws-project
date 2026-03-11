@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslateModule } from '@ngx-translate/core';
 import { SnackBarService } from '../../core/services/snack-bar.service';
 import BaseComponent from '../../components/base.component';
 
@@ -22,47 +23,42 @@ import BaseComponent from '../../components/base.component';
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
+    TranslateModule,
   ],
   template: `
     <div class="app-auth-page">
       <div class="app-page-shell app-auth-grid">
         <section class="login-hero d-flex flex-col gap-6">
-          <div class="app-badge">Condo marketplace</div>
+          <div class="app-badge">{{ 'APP.LOGIN.BADGE' | translate }}</div>
 
           <div class="d-flex flex-col gap-4">
-            <h1 class="login-title m-0">The virtual board that connects residents and services</h1>
+            <h1 class="login-title m-0">{{ 'APP.LOGIN.TITLE' | translate }}</h1>
 
-            <p class="login-copy m-0">
-              Discover products and local services available inside your condominium.
-              A simple way to connect who offers with who needs.
-            </p>
+            <p class="login-copy m-0">{{ 'APP.LOGIN.SUBTITLE' | translate }}</p>
           </div>
 
           <div class="d-flex flex-col gap-3">
             <div class="d-flex items-center gap-3">
               <span class="login-dot"></span>
-              <span class="text-muted">Haircuts, sweets, maintenance, pets and more</span>
+              <span class="text-muted">{{ 'APP.LOGIN.FEATURE_1' | translate }}</span>
             </div>
 
             <div class="d-flex items-center gap-3">
               <span class="login-dot"></span>
-              <span class="text-muted">More visibility for resident entrepreneurs</span>
+              <span class="text-muted">{{ 'APP.LOGIN.FEATURE_2' | translate }}</span>
             </div>
 
             <div class="d-flex items-center gap-3">
               <span class="login-dot"></span>
-              <span class="text-muted">More convenience for people living in the condo</span>
+              <span class="text-muted">{{ 'APP.LOGIN.FEATURE_3' | translate }}</span>
             </div>
           </div>
 
           <mat-card appearance="outlined" class="surface-card p-6">
             <mat-card-content class="p-0">
               <div class="d-flex flex-col gap-2">
-                <strong>Real world example</strong>
-                <p class="login-copy m-0">
-                  One resident cuts hair, another sells sweets, another offers maintenance.
-                  With the board, everyone becomes visible to neighbors and closes more deals.
-                </p>
+                <strong>{{ 'APP.LOGIN.EXAMPLE_TITLE' | translate }}</strong>
+                <p class="login-copy m-0">{{ 'APP.LOGIN.EXAMPLE_TEXT' | translate }}</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -70,8 +66,8 @@ import BaseComponent from '../../components/base.component';
 
         <mat-card class="login-panel surface-card--elevated p-4">
           <mat-card-header class="p-0 m-b-4">
-            <mat-card-title>Sign in</mat-card-title>
-            <mat-card-subtitle>Access your account and see what is available in your condo.</mat-card-subtitle>
+            <mat-card-title>{{ 'APP.LOGIN.SIGN_IN_TITLE' | translate }}</mat-card-title>
+            <mat-card-subtitle>{{ 'APP.LOGIN.SIGN_IN_SUBTITLE' | translate }}</mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content class="p-0 d-flex flex-col gap-5">
@@ -82,29 +78,41 @@ import BaseComponent from '../../components/base.component';
               (click)="onGoogleLogin()"
               [disabled]="loading"
             >
-              {{ loading ? 'Redirecting...' : 'Continue with Google' }}
+              {{
+                (loading ? 'APP.LOGIN.REDIRECTING' : 'APP.LOGIN.CONTINUE_WITH_GOOGLE') | translate
+              }}
             </button>
 
             <div class="d-flex items-center gap-4">
               <mat-divider class="w-full"></mat-divider>
-              <span class="text-muted">or</span>
+              <span class="text-muted">{{ 'APP.LOGIN.OR' | translate }}</span>
               <mat-divider class="w-full"></mat-divider>
             </div>
 
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-col gap-4">
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Email</mat-label>
-                <input matInput type="email" formControlName="email" placeholder="you@example.com" />
+                <mat-label>{{ 'APP.LOGIN.EMAIL_LABEL' | translate }}</mat-label>
+                <input
+                  matInput
+                  type="email"
+                  formControlName="email"
+                  [placeholder]="'APP.LOGIN.EMAIL_PLACEHOLDER' | translate"
+                />
                 @if (form.controls.email.touched && form.controls.email.invalid) {
-                  <mat-error>Please enter a valid email.</mat-error>
+                  <mat-error>{{ 'APP.LOGIN.EMAIL_INVALID' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Password</mat-label>
-                <input matInput type="password" formControlName="password" placeholder="Your password" />
+                <mat-label>{{ 'APP.LOGIN.PASSWORD_LABEL' | translate }}</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  formControlName="password"
+                  [placeholder]="'APP.LOGIN.PASSWORD_PLACEHOLDER' | translate"
+                />
                 @if (form.controls.password.touched && form.controls.password.invalid) {
-                  <mat-error>Please enter your password.</mat-error>
+                  <mat-error>{{ 'APP.LOGIN.PASSWORD_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
@@ -115,14 +123,18 @@ import BaseComponent from '../../components/base.component';
                 class="w-full"
                 [disabled]="form.invalid || loading"
               >
-                {{ loading ? 'Signing in...' : 'Sign in with email' }}
+                {{
+                  (loading ? 'APP.LOGIN.SIGNING_IN' : 'APP.LOGIN.SIGN_IN_WITH_EMAIL') | translate
+                }}
               </button>
             </form>
 
           </mat-card-content>
 
           <div class="d-flex justify-content-start gap-4 m-t-4">
-            <a class="m-t-10 text-muted" routerLink="/register">Do not have an account? Create one</a>
+            <a class="m-t-10 text-muted" routerLink="/register">
+              {{ 'APP.LOGIN.CREATE_ACCOUNT_LINK' | translate }}
+            </a>
           </div>
         </mat-card>
       </div>

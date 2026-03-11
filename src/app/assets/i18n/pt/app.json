@@ -1,0 +1,56 @@
+{
+  "APP": {
+    "LOGIN": {
+      "BADGE": "Marketplace condominial",
+      "TITLE": "O mural virtual que conecta moradores e serviços",
+      "SUBTITLE": "Descubra produtos e serviços locais disponíveis dentro do seu condomínio. Uma forma simples de conectar quem oferece com quem precisa.",
+      "FEATURE_1": "Cortes de cabelo, doces, manutenção, pets e muito mais",
+      "FEATURE_2": "Mais visibilidade para moradores empreendedores",
+      "FEATURE_3": "Mais conveniência para quem mora no condomínio",
+      "EXAMPLE_TITLE": "Exemplo real",
+      "EXAMPLE_TEXT": "Um morador corta cabelo, outro vende doces, outro oferece manutenção. Com o mural, todos ficam visíveis para os vizinhos e fecham mais negócios.",
+      "SIGN_IN_TITLE": "Entrar",
+      "SIGN_IN_SUBTITLE": "Acesse sua conta e veja o que está disponível no seu condomínio.",
+      "REDIRECTING": "Redirecionando...",
+      "CONTINUE_WITH_GOOGLE": "Continuar com Google",
+      "OR": "ou",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "voce@exemplo.com",
+      "EMAIL_INVALID": "Informe um email válido.",
+      "PASSWORD_LABEL": "Senha",
+      "PASSWORD_PLACEHOLDER": "Sua senha",
+      "PASSWORD_REQUIRED": "Informe sua senha.",
+      "SIGNING_IN": "Entrando...",
+      "SIGN_IN_WITH_EMAIL": "Entrar com email",
+      "CREATE_ACCOUNT_LINK": "Não tem conta? Crie uma"
+    },
+    "REGISTER": {
+      "TITLE": "Criar conta",
+      "SUBTITLE_CREATE": "Cadastre sua conta para acessar o mural do seu condomínio.",
+      "SUBTITLE_CONFIRM": "Digite o código enviado para seu email.",
+      "FIRST_NAME": "Nome",
+      "LAST_NAME": "Sobrenome",
+      "EMAIL": "Email",
+      "PASSWORD": "Senha",
+      "CONFIRM_PASSWORD": "Confirmar senha",
+      "CODE": "Código de confirmação",
+      "CREATING": "Criando...",
+      "CREATE_ACCOUNT": "Criar conta",
+      "CONFIRMING": "Confirmando...",
+      "CONFIRM_EMAIL": "Confirmar email",
+      "BACK_TO_LOGIN": "Voltar para login",
+      "PASSWORDS_DO_NOT_MATCH": "As senhas não conferem.",
+      "ACCOUNT_CREATED": "Conta criada. Verifique o código de confirmação no seu email.",
+      "EMAIL_CONFIRMED": "Email confirmado. Agora você já pode entrar.",
+      "UNKNOWN_ERROR": "Não foi possível processar a solicitação."
+    },
+    "DASHBOARD": {
+      "BADGE": "Mural do condomínio",
+      "TITLE": "Bem-vindo ao seu painel",
+      "SUBTITLE": "Seus assets e sistema global de estilos estão ativos na aplicação.",
+      "SIGN_OUT": "Sair",
+      "SESSION_TITLE": "Sessão autenticada",
+      "SESSION_SUBTITLE": "Dados do usuário retornados pelo Cognito"
+    }
+  }
+}

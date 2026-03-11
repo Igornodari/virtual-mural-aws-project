@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SnackBarService } from '../../core/services/snack-bar.service';
 import BaseComponent from '../../components/base.component';
 
@@ -20,18 +21,19 @@ import BaseComponent from '../../components/base.component';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    TranslateModule,
   ],
   template: `
     <div class="app-auth-page">
       <div class="app-page-shell">
         <mat-card class="register-panel surface-card--elevated p-4">
           <mat-card-header class="p-0 m-b-4">
-            <mat-card-title>Create account</mat-card-title>
+            <mat-card-title>{{ 'APP.REGISTER.TITLE' | translate }}</mat-card-title>
             <mat-card-subtitle>
               @if (!awaitingConfirmation) {
-                Register your account to access your condominium board.
+                {{ 'APP.REGISTER.SUBTITLE_CREATE' | translate }}
               } @else {
-                Enter the code sent to your email.
+                {{ 'APP.REGISTER.SUBTITLE_CONFIRM' | translate }}
               }
             </mat-card-subtitle>
           </mat-card-header>
@@ -40,27 +42,27 @@ import BaseComponent from '../../components/base.component';
             @if (!awaitingConfirmation) {
               <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="d-flex flex-col gap-4">
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>First name</mat-label>
+                  <mat-label>{{ 'APP.REGISTER.FIRST_NAME' | translate }}</mat-label>
                   <input matInput formControlName="firstName" />
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Last name</mat-label>
+                  <mat-label>{{ 'APP.REGISTER.LAST_NAME' | translate }}</mat-label>
                   <input matInput formControlName="lastName" />
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Email</mat-label>
+                  <mat-label>{{ 'APP.REGISTER.EMAIL' | translate }}</mat-label>
                   <input matInput type="email" formControlName="email" />
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Password</mat-label>
+                  <mat-label>{{ 'APP.REGISTER.PASSWORD' | translate }}</mat-label>
                   <input matInput type="password" formControlName="password" />
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Confirm password</mat-label>
+                  <mat-label>{{ 'APP.REGISTER.CONFIRM_PASSWORD' | translate }}</mat-label>
                   <input matInput type="password" formControlName="confirmPassword" />
                 </mat-form-field>
 
@@ -70,13 +72,15 @@ import BaseComponent from '../../components/base.component';
                   type="submit"
                   [disabled]="registerForm.invalid || loading"
                 >
-                  {{ loading ? 'Creating...' : 'Create account' }}
+                  {{
+                    (loading ? 'APP.REGISTER.CREATING' : 'APP.REGISTER.CREATE_ACCOUNT') | translate
+                  }}
                 </button>
               </form>
             } @else {
               <form [formGroup]="confirmationForm" (ngSubmit)="onConfirmCode()" class="d-flex flex-col gap-4">
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Confirmation code</mat-label>
+                  <mat-label>{{ 'APP.REGISTER.CODE' | translate }}</mat-label>
                   <input matInput formControlName="code" />
                 </mat-form-field>
 
@@ -86,12 +90,14 @@ import BaseComponent from '../../components/base.component';
                   type="submit"
                   [disabled]="confirmationForm.invalid || loading"
                 >
-                  {{ loading ? 'Confirming...' : 'Confirm email' }}
+                  {{
+                    (loading ? 'APP.REGISTER.CONFIRMING' : 'APP.REGISTER.CONFIRM_EMAIL') | translate
+                  }}
                 </button>
               </form>
             }
 
-            <a routerLink="/login">Back to login</a>
+            <a routerLink="/login">{{ 'APP.REGISTER.BACK_TO_LOGIN' | translate }}</a>
           </mat-card-content>
         </mat-card>
       </div>
@@ -110,6 +116,7 @@ import BaseComponent from '../../components/base.component';
 export class RegisterComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly translateService = inject(TranslateService);
   private readonly router = inject(Router);
 
   awaitingConfirmation = false;
@@ -138,7 +145,7 @@ export class RegisterComponent extends BaseComponent {
 
     const { firstName, lastName, email, password, confirmPassword } = this.registerForm.getRawValue();
     if (password !== confirmPassword) {
-      this.presentError('Passwords do not match.');
+      this.presentError(this.translateService.instant('APP.REGISTER.PASSWORDS_DO_NOT_MATCH'));
       return;
     }
 
@@ -148,7 +155,7 @@ export class RegisterComponent extends BaseComponent {
       await this.authService.registerWithEmail(email, password, firstName, lastName);
       this.registeredEmail = email;
       this.awaitingConfirmation = true;
-      this.presentSuccess('Account created. Check your email for the confirmation code.');
+      this.presentSuccess(this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED'));
     } catch (error: any) {
       this.presentError(this.resolveErrorMessage(error));
     } finally {
@@ -163,7 +170,7 @@ export class RegisterComponent extends BaseComponent {
 
     try {
       await this.authService.confirmEmailCode(this.registeredEmail, this.confirmationForm.getRawValue().code);
-      this.presentSuccess('Email confirmed. You can now log in.');
+      this.presentSuccess(this.translateService.instant('APP.REGISTER.EMAIL_CONFIRMED'));
       await this.router.navigateByUrl('/login');
     } catch (error: any) {
       this.presentError(this.resolveErrorMessage(error));
@@ -178,7 +185,7 @@ export class RegisterComponent extends BaseComponent {
       e?.message?.trim() ||
       e?.errors?.[0]?.message?.trim() ||
       (e?.__type ? `${e.__type}` : '') ||
-      'Unable to process request.'
+      this.translateService.instant('APP.REGISTER.UNKNOWN_ERROR')
     );
   }
 

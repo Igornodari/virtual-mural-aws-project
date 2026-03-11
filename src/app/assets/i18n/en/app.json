@@ -1,0 +1,56 @@
+{
+  "APP": {
+    "LOGIN": {
+      "BADGE": "Condo marketplace",
+      "TITLE": "The virtual board that connects residents and services",
+      "SUBTITLE": "Discover products and local services available inside your condominium. A simple way to connect who offers with who needs.",
+      "FEATURE_1": "Haircuts, sweets, maintenance, pets and more",
+      "FEATURE_2": "More visibility for resident entrepreneurs",
+      "FEATURE_3": "More convenience for people living in the condo",
+      "EXAMPLE_TITLE": "Real world example",
+      "EXAMPLE_TEXT": "One resident cuts hair, another sells sweets, another offers maintenance. With the board, everyone becomes visible to neighbors and closes more deals.",
+      "SIGN_IN_TITLE": "Sign in",
+      "SIGN_IN_SUBTITLE": "Access your account and see what is available in your condo.",
+      "REDIRECTING": "Redirecting...",
+      "CONTINUE_WITH_GOOGLE": "Continue with Google",
+      "OR": "or",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "you@example.com",
+      "EMAIL_INVALID": "Please enter a valid email.",
+      "PASSWORD_LABEL": "Password",
+      "PASSWORD_PLACEHOLDER": "Your password",
+      "PASSWORD_REQUIRED": "Please enter your password.",
+      "SIGNING_IN": "Signing in...",
+      "SIGN_IN_WITH_EMAIL": "Sign in with email",
+      "CREATE_ACCOUNT_LINK": "Do not have an account? Create one"
+    },
+    "REGISTER": {
+      "TITLE": "Create account",
+      "SUBTITLE_CREATE": "Register your account to access your condominium board.",
+      "SUBTITLE_CONFIRM": "Enter the code sent to your email.",
+      "FIRST_NAME": "First name",
+      "LAST_NAME": "Last name",
+      "EMAIL": "Email",
+      "PASSWORD": "Password",
+      "CONFIRM_PASSWORD": "Confirm password",
+      "CODE": "Confirmation code",
+      "CREATING": "Creating...",
+      "CREATE_ACCOUNT": "Create account",
+      "CONFIRMING": "Confirming...",
+      "CONFIRM_EMAIL": "Confirm email",
+      "BACK_TO_LOGIN": "Back to login",
+      "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+      "ACCOUNT_CREATED": "Account created. Check your email for the confirmation code.",
+      "EMAIL_CONFIRMED": "Email confirmed. You can now log in.",
+      "UNKNOWN_ERROR": "Unable to process request."
+    },
+    "DASHBOARD": {
+      "BADGE": "Condo board",
+      "TITLE": "Welcome to your workspace",
+      "SUBTITLE": "Your assets and global style system are now active across the application.",
+      "SIGN_OUT": "Sign out",
+      "SESSION_TITLE": "Authenticated session",
+      "SESSION_SUBTITLE": "User data returned by Cognito"
+    }
+  }
+}
