@@ -1,23 +1,50 @@
 import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../core/services/auth.service';
+import { OnboardingService } from '../core/services/onboarding.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth-callback',
   standalone: true,
-  template: `<p>Finalizando login...</p>`,
+  template: `
+    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;gap:12px;">
+      <span style="font-size:16px;color:var(--mat-sys-on-surface-variant)">Finalizando login...</span>
+    </div>
+  `,
 })
 export class AuthCallbackComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly onboardingService = inject(OnboardingService);
   private readonly platformId = inject(PLATFORM_ID);
 
   async ngOnInit(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+
     const authenticated = await this.authService.isAuthenticated();
-    await this.router.navigateByUrl(authenticated ? '/dashboard' : '/login');
+
+    if (!authenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    // Redireciona conforme o estado de onboarding do usuário
+    if (!this.onboardingService.hasCondominium) {
+      await this.router.navigateByUrl('/onboarding/condominium');
+      return;
+    }
+
+    if (!this.onboardingService.hasRole) {
+      await this.router.navigateByUrl('/onboarding/role');
+      return;
+    }
+
+    // Onboarding completo: redireciona para a dashboard correta
+    const destination =
+      this.onboardingService.role === 'provider' ? '/mural/provider' : '/mural/customer';
+    await this.router.navigateByUrl(destination);
   }
 }

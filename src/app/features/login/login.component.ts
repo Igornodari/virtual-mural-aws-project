@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
+import { OnboardingService } from '../../core/services/onboarding.service';
 
 @Component({
   selector: 'app-login',
@@ -186,6 +187,7 @@ import BaseComponent from '../../components/base.component';
 })
 export class LoginComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly onboardingService = inject(OnboardingService);
 
   errorMessage = '';
 
@@ -201,7 +203,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const authenticated = await this.authService.isAuthenticated();
     if (authenticated) {
-      await this.navigateTo('/dashboard');
+      await this.redirectAfterLogin();
     }
   }
 
@@ -216,6 +218,20 @@ export class LoginComponent extends BaseComponent implements OnInit {
     this.setLoadingState(true);
     const { email, password } = this.form.getRawValue();
     await this.authService.loginWithEmail(email, password).finally(() => this.setLoadingState(false));
-    await this.navigateTo('/dashboard');
+    await this.redirectAfterLogin();
+  }
+
+  private async redirectAfterLogin(): Promise<void> {
+    if (!this.onboardingService.hasCondominium) {
+      await this.navigateTo('/onboarding/condominium');
+      return;
+    }
+    if (!this.onboardingService.hasRole) {
+      await this.navigateTo('/onboarding/role');
+      return;
+    }
+    const destination =
+      this.onboardingService.role === 'provider' ? '/mural/provider' : '/mural/customer';
+    await this.navigateTo(destination);
   }
 }

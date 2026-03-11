@@ -9,3 +9,4 @@ export * from './user.type';
 export * from './activity-log.type';
 // export * from '../../pages/system/category/category.type'; // Removido - módulo system deletado
 export * from './company.type';
+export * from './onboarding.type';
