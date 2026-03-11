@@ -1,5 +1,5 @@
 import { Status } from '.';
-import { Role } from './acl.type';
+import { Condominium } from './condominium.type';
 import { Unit } from './unit.type';
 import { User } from './user.type';
 
@@ -28,6 +28,8 @@ export type Admin = {
 	nationality: string;
 	maritalStatus: string;
 	document: string;
+	condominium?: Condominium;
+	// Compatibilidade temporária com código legado.
 	unit?: Unit;
 	user: User;
 	photoUrl: string;

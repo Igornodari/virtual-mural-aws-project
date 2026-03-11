@@ -17,7 +17,7 @@ export class AmplifyService {
           loginWith: {
             oauth: {
               domain: environment.aws.domain,
-              scopes: ['openid', 'email','profile'],
+              scopes: ['openid', 'email', 'profile', 'aws.cognito.signin.user.admin'],
               redirectSignIn: [environment.aws.redirectSignIn],
               redirectSignOut: [environment.aws.redirectSignOut],
               responseType: 'code',

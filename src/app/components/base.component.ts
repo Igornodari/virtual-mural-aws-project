@@ -1,6 +1,7 @@
-import { Component, Inject, OnDestroy, Optional, inject } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, Optional, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { Unit, User } from '../shared/types';
+import { Condominium, Unit, User } from '../shared/types';
 import { AuthService } from '../core/services/auth.service';
 import { Location } from '@angular/common';
 import { RequestService } from '../core/services/request.service';
@@ -16,13 +17,15 @@ export default class BaseComponent implements OnDestroy {
 	private _authService = inject(AuthService);
 	private _requestService = inject(RequestService);
 	private _location = inject(Location);
+	private _router = inject(Router);
+	private _ngZone = inject(NgZone);
 	public _translate = inject(TranslateService, { optional: true });
 
 	public queryString = new URLSearchParams();
 	public searchParams: any = {};
 	public loading = false;
 	public user: User | null = null;
-	public unit: Unit | null = null;
+	public condominium: Condominium | null = null;
 
 	constructor(
 		@Optional() @Inject('settings') protected settings?: { loadUnit?: boolean; service?: any }
@@ -30,19 +33,29 @@ export default class BaseComponent implements OnDestroy {
 		this._authService.$user
 			.pipe(takeUntil(this._unsubscribe$))
 			.subscribe((user: User | null) => (this.user = user));
-		this.loadUnit();
+		this.loadCondominium();
 	}
 
-	afterLoadUnit(fun: (unit: Unit | null) => any) {
-		this._authService.$unit.pipe(takeUntil(this._unsubscribe$)).subscribe((unit: Unit | null) => {
-			this.unit = unit;
-			fun(unit);
+	afterLoadCondominium(fun: (condominium: Condominium | null) => any) {
+		this._authService.$condominium.pipe(takeUntil(this._unsubscribe$)).subscribe((condominium: Condominium | null) => {
+			this.condominium = condominium;
+			fun(condominium);
 		});
 	}
-	loadUnit() {
+	loadCondominium() {
 		if (this.settings?.loadUnit === undefined || this.settings?.loadUnit === true) {
-			this.afterLoadUnit(() => {});
+			this.afterLoadCondominium(() => {});
 		}
+	}
+
+	// Compatibilidade temporária com código legado.
+	afterLoadUnit(fun: (unit: Unit | null) => any) {
+		this.afterLoadCondominium((condominium: Condominium | null) => fun(condominium));
+	}
+
+	// Compatibilidade temporária com código legado.
+	loadUnit() {
+		this.loadCondominium();
 	}
 
 	get authService() {
@@ -55,6 +68,22 @@ export default class BaseComponent implements OnDestroy {
 
 	get location() {
 		return this._location;
+	}
+
+	protected async navigateTo(path: string): Promise<void> {
+		await this._router.navigateByUrl(path);
+	}
+
+	protected setLoadingState(value: boolean): void {
+		this._ngZone.run(() => {
+			this.loading = value;
+		});
+	}
+
+	protected updateViewState(update: () => void): void {
+		setTimeout(() => {
+			this._ngZone.run(update);
+		});
 	}
 
 	get unsubscribe$() {

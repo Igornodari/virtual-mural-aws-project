@@ -8,7 +8,7 @@ import { PermissionService } from 'src/app/services/permission.service';
 export class CanPipe implements PipeTransform {
 	constructor(private _permissionService: PermissionService) {}
 
-	transform(permission: string, ...args: unknown[]): unknown {
+	transform(permission: string): unknown {
 		return this._permissionService.can(permission);
 	}
 }

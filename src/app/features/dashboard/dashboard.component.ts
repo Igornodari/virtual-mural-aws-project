@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
@@ -61,26 +60,21 @@ import BaseComponent from '../../components/base.component';
   ],
 })
 export class DashboardComponent extends BaseComponent implements OnInit {
-  private readonly router = inject(Router);
-
-  userData: unknown = null;
+  userData: unknown = { status: 'loading-auth-data' };
 
   constructor() {
     super();
   }
 
   async ngOnInit(): Promise<void> {
-    const user = await this.authService.getUser();
-    const idToken = await this.authService.getIdToken();
-
-    this.userData = {
-      user,
-      idToken,
-    };
+    const authSnapshot = await this.authService.getAuthDebugData();
+    this.updateViewState(() => {
+      this.userData = authSnapshot;
+    });
   }
 
   async onLogout(): Promise<void> {
     await this.authService.logout();
-    await this.router.navigateByUrl('/login');
+    await this.navigateTo('/login');
   }
 }

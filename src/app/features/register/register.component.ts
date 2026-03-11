@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -117,7 +117,6 @@ export class RegisterComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
   private readonly snackBarService = inject(SnackBarService);
   private readonly translateService = inject(TranslateService);
-  private readonly router = inject(Router);
 
   awaitingConfirmation = false;
   registeredEmail = '';
@@ -149,44 +148,24 @@ export class RegisterComponent extends BaseComponent {
       return;
     }
 
-    this.setLoading(true);
-
-    try {
-      await this.authService.registerWithEmail(email, password, firstName, lastName);
-      this.registeredEmail = email;
-      this.awaitingConfirmation = true;
-      this.presentSuccess(this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED'));
-    } catch (error: any) {
-      this.presentError(this.resolveErrorMessage(error));
-    } finally {
-      this.setLoading(false);
-    }
+    this.setLoadingState(true);
+    await this.authService
+      .registerWithEmail(email, password, firstName, lastName)
+      .finally(() => this.setLoadingState(false));
+    this.registeredEmail = email;
+    this.awaitingConfirmation = true;
+    this.presentSuccess(this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED'));
   }
 
   async onConfirmCode(): Promise<void> {
     if (this.confirmationForm.invalid || !this.registeredEmail) return;
 
-    this.setLoading(true);
-
-    try {
-      await this.authService.confirmEmailCode(this.registeredEmail, this.confirmationForm.getRawValue().code);
-      this.presentSuccess(this.translateService.instant('APP.REGISTER.EMAIL_CONFIRMED'));
-      await this.router.navigateByUrl('/login');
-    } catch (error: any) {
-      this.presentError(this.resolveErrorMessage(error));
-    } finally {
-      this.setLoading(false);
-    }
-  }
-
-  private resolveErrorMessage(error: unknown): string {
-    const e = error as { message?: string; __type?: string; errors?: Array<{ message?: string }> };
-    return (
-      e?.message?.trim() ||
-      e?.errors?.[0]?.message?.trim() ||
-      (e?.__type ? `${e.__type}` : '') ||
-      this.translateService.instant('APP.REGISTER.UNKNOWN_ERROR')
-    );
+    this.setLoadingState(true);
+    await this.authService
+      .confirmEmailCode(this.registeredEmail, this.confirmationForm.getRawValue().code)
+      .finally(() => this.setLoadingState(false));
+    this.presentSuccess(this.translateService.instant('APP.REGISTER.EMAIL_CONFIRMED'));
+    await this.navigateTo('/login');
   }
 
   private presentError(message: string): void {
@@ -195,11 +174,5 @@ export class RegisterComponent extends BaseComponent {
 
   private presentSuccess(message: string): void {
     setTimeout(() => this.snackBarService.success(message));
-  }
-
-  private setLoading(value: boolean): void {
-    setTimeout(() => {
-      this.loading = value;
-    });
   }
 }

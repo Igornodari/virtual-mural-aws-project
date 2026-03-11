@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { NewLine } from '../shared/pipe/new-line.pipe';
 
 @Component({
@@ -48,7 +48,6 @@ export class AppDialogConfirmationComponent {
 	public title: string = 'DIALOG_COMPONENT.PROCEED.TITLE';
 	public subTitle: string = 'DIALOG_COMPONENT.PROCEED.SUBTITLE';
 	constructor(
-		private _translate: TranslateService,
 		@Inject(MAT_DIALOG_DATA) public data: any,
 		public dialogRef: MatDialogRef<AppDialogConfirmationComponent>
 	) {

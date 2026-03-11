@@ -14,7 +14,7 @@ import { importBase } from '../../shared/constant/import-base.constant';
 
 @Component({
     selector: 'app-custom-carousel',
-    imports: [importBase, LightboxModule],
+    imports: [...importBase, LightboxModule],
     providers: [Lightbox, LightboxConfig],
     template: `
 		<div class="carousel-container">

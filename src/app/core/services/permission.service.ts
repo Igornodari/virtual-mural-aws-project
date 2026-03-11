@@ -10,11 +10,10 @@ export class PermissionService {
 	can(permission: string): boolean {
 		const user = this._auth.currentUser;
 
-		if (user.role?.name === 'admin') {
+		if (user.groups.some(group => group.toLowerCase().includes('admin'))) {
 			return true;
 		}
 
-		const permissions = user.role.permissions;
-		return permissions.some(({ name }) => name === permission);
+		return user.permissions.includes(permission);
 	}
 }

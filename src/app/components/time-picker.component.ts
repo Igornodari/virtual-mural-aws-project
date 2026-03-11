@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 import {
 	ControlValueAccessor,
 	FormBuilder,
@@ -59,7 +59,7 @@ export class TimePickerComponent implements ControlValueAccessor {
 
 	value!: string;
 	disabled = false;
-	onChange: any = (value: any) => {};
+	onChange: any = () => {};
 	onTouched: any = () => {};
 
 	get maxHour() {
@@ -115,7 +115,7 @@ export class TimePickerComponent implements ControlValueAccessor {
 		return this.minutes.filter(m => m >= this.minMinute);
 	}
 
-	constructor(private cdr: ChangeDetectorRef, private _formBuilder: FormBuilder) {
+	constructor(private _formBuilder: FormBuilder) {
 		this.formGroup = this._formBuilder.nonNullable.group({
 			hour: [null, Validators.required],
 			minute: [null],

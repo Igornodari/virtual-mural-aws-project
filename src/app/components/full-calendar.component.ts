@@ -20,14 +20,10 @@ import listPlugin from '@fullcalendar/list';
 import {
   CalendarApi,
   CalendarOptions,
-  DateSelectArg,
   EventApi,
-  EventClickArg,
   EventInput,
 } from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
-
-import { CalendarData } from '@fullcalendar/core/internal';
 export type ActionDisplay = {
   action: string;
   view: {
@@ -100,7 +96,7 @@ export class AppFullCalendarComponent implements AfterViewInit {
     this.update(this.options);
   }
 
-  handleButtonNext(ev: MouseEvent, element: HTMLElement) {
+  handleButtonNext(_ev: MouseEvent, _element: HTMLElement) {
     this.calendarComponent.getApi().next();
     this.onChangeDisplay.emit({
       action: 'next',
@@ -108,14 +104,14 @@ export class AppFullCalendarComponent implements AfterViewInit {
     });
   }
 
-  handleButtonPrev(ev: MouseEvent, element: HTMLElement) {
+  handleButtonPrev(_ev: MouseEvent, _element: HTMLElement) {
     this.calendarComponent.getApi().prev();
     this.onChangeDisplay.emit({
       action: 'prev',
       view: this.calendarComponent.getApi().getCurrentData().viewApi,
     });
   }
-  handleButtonToday(ev: MouseEvent, element: HTMLElement) {
+  handleButtonToday(_ev: MouseEvent, _element: HTMLElement) {
     this.calendarComponent.getApi().today();
     this.onChangeDisplay.emit({
       action: 'today',

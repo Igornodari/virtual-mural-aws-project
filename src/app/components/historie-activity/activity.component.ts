@@ -16,7 +16,7 @@ import { RequestService } from '../../core/services/request.service';
 			</button>
 		</div>
 	`,
-  imports: [importBase],
+  imports: [...importBase],
 })
 export class ActivityComponent implements OnInit {
   @Input()

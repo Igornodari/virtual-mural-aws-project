@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { SafeUrlPipe } from '../shared/pipe/safeUrl.pipe';
 import BaseComponent from './base.component';
 import { importBase } from '../shared/constant/import-base.constant';
@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-report',
-    imports: [SafeUrlPipe, importBase],
+    imports: [SafeUrlPipe, ...importBase],
     template: `<iframe
 		[src]="reportUrl | safeUrl"
 		width="100%"

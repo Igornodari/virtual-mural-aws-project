@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
-import { SnackBarService } from '../../core/services/snack-bar.service';
 import BaseComponent from '../../components/base.component';
 
 @Component({
@@ -187,8 +186,6 @@ import BaseComponent from '../../components/base.component';
 })
 export class LoginComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly snackBarService = inject(SnackBarService);
-  private readonly router = inject(Router);
 
   errorMessage = '';
 
@@ -204,64 +201,21 @@ export class LoginComponent extends BaseComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const authenticated = await this.authService.isAuthenticated();
     if (authenticated) {
-      await this.router.navigateByUrl('/dashboard');
+      await this.navigateTo('/dashboard');
     }
   }
 
   async onGoogleLogin(): Promise<void> {
-    this.loading = true;
-
-    try {
-      await this.authService.loginWithGoogle();
-    } catch (error: any) {
-      if (
-        error?.message?.includes('already a signed in user') ||
-        error?.name === 'UserAlreadyAuthenticatedException'
-      ) {
-        await this.router.navigateByUrl('/dashboard');
-        return;
-      }
-
-      this.presentError(this.resolveErrorMessage(error));
-      this.loading = false;
-    }
+    this.setLoadingState(true);
+    await this.authService.loginWithGoogle();
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
 
-    this.loading = true;
-
-    try {
-      const { email, password } = this.form.getRawValue();
-      await this.authService.loginWithEmail(email, password);
-      await this.router.navigateByUrl('/dashboard');
-    } catch (error: any) {
-      if (
-        error?.message?.includes('already a signed in user') ||
-        error?.name === 'UserAlreadyAuthenticatedException'
-      ) {
-        await this.router.navigateByUrl('/dashboard');
-        return;
-      }
-
-      this.presentError(this.resolveErrorMessage(error));
-    } finally {
-      this.loading = false;
-    }
-  }
-
-  private resolveErrorMessage(error: unknown): string {
-    const e = error as { message?: string; __type?: string; errors?: Array<{ message?: string }> };
-    return (
-      e?.message?.trim() ||
-      e?.errors?.[0]?.message?.trim() ||
-      (e?.__type ? `${e.__type}` : '') ||
-      'Unable to process request.'
-    );
-  }
-
-  private presentError(message: string): void {
-    setTimeout(() => this.snackBarService.error(message));
+    this.setLoadingState(true);
+    const { email, password } = this.form.getRawValue();
+    await this.authService.loginWithEmail(email, password).finally(() => this.setLoadingState(false));
+    await this.navigateTo('/dashboard');
   }
 }
