@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, of, switchMap } from 'rxjs';
 import { CondominiumAddress, OnboardingProfile, UserRole } from '../../shared/types';
 import { UserApiService, AppUserProfileDto } from './user-api.service';
-import { CondominiumApiService, CreateCondominiumPayload } from './condominium-api.service';
+import { CondominiumApiService, CondominiumDto, CreateCondominiumPayload } from './condominium-api.service';
 
 const STORAGE_KEY = 'APP_ONBOARDING';
 
@@ -57,7 +57,48 @@ export class OnboardingService {
    */
   syncFromBackend(): Observable<AppUserProfileDto> {
     return this.userApi.getMe().pipe(
-      tap((user) => {
+      switchMap((user) => {
+        // Se o backend indica que o usuário tem condomínio mas o localStorage
+        // não tem o endereço (ex: primeiro acesso em outro dispositivo),
+        // busca os dados do condomínio para preencher o condominiumAddress.
+        if (user.condominiumId && !this.profile.condominiumAddress) {
+          return this.condominiumApi.findOne(user.condominiumId).pipe(
+            tap((condo: CondominiumDto) => {
+              const address: CondominiumAddress = {
+                name: condo.name,
+                zipCode: condo.addressZipCode,
+                street: condo.addressStreet,
+                number: condo.addressNumber,
+                complement: condo.addressComplement,
+                neighborhood: condo.addressNeighborhood,
+                city: condo.addressCity,
+                state: condo.addressState,
+              };
+              const profile: OnboardingProfile = {
+                condominiumId: user.condominiumId,
+                condominiumAddress: address,
+                role: user.roleInCondominium as UserRole | null,
+                onboardingCompleted: user.onboardingCompleted,
+              };
+              this.persist(profile);
+            }),
+            catchError(() => {
+              // Se falhar ao buscar o condomínio, usa o que temos
+              const profile: OnboardingProfile = {
+                condominiumId: user.condominiumId,
+                condominiumAddress: null,
+                role: user.roleInCondominium as UserRole | null,
+                onboardingCompleted: user.onboardingCompleted,
+              };
+              this.persist(profile);
+              return of(user);
+            }),
+            // Retorna o user original para manter o tipo do Observable
+            switchMap(() => of(user)),
+          );
+        }
+
+        // Estado já sincronizado ou sem condomínio: apenas atualiza
         const profile: OnboardingProfile = {
           condominiumId: user.condominiumId,
           condominiumAddress: user.condominiumId
@@ -67,6 +108,7 @@ export class OnboardingService {
           onboardingCompleted: user.onboardingCompleted,
         };
         this.persist(profile);
+        return of(user);
       }),
       catchError((err) => {
         console.warn('[OnboardingService] Falha ao sincronizar com o backend:', err);

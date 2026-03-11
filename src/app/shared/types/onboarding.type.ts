@@ -1,6 +1,7 @@
 export type UserRole = 'provider' | 'customer';
 
 export interface CondominiumAddress {
+  name?: string;
   zipCode: string;
   street: string;
   number: string;
