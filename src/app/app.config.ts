@@ -1,4 +1,5 @@
 import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom, ErrorHandler } from '@angular/core';
+import { ThemeService } from './core/services/theme.service';
 import { GlobalErrorHandler } from './handler/global-error.handler';
 import { HttpClient, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
@@ -11,6 +12,7 @@ import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AppTranslateLoader } from './shared/helpers/translate-loader.helper';
 
 registerLocaleData(localePtBr, 'pt-BR', localePtBrExtra);
@@ -63,7 +65,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideAnimations(),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor, authInterceptor, errorInterceptor])),
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
     {
       provide: ErrorHandler,
@@ -77,6 +79,13 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeLanguage,
       deps: [TranslateService],
+      multi: true,
+    },
+    {
+      // Inicializa o ThemeService para aplicar o tema salvo antes da primeira renderização
+      provide: APP_INITIALIZER,
+      useFactory: (themeService: ThemeService) => () => themeService.theme(),
+      deps: [ThemeService],
       multi: true,
     },
   ],

@@ -183,6 +183,15 @@ import { OnboardingService } from '../../core/services/onboarding.service';
           max-width: 100%;
         }
       }
+
+      @media (max-width: 600px) {
+        .login-hero {
+          display: none;
+        }
+        .login-panel {
+          padding: 16px;
+        }
+      }
     `,
   ],
 })

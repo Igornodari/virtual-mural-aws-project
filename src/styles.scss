@@ -17,6 +17,12 @@ body {
   min-height: 100vh;
 }
 
+.app-main-shell {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
 .w-full {
   width: 100%;
 }
@@ -83,6 +89,21 @@ body {
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
+}
+
+.mat-mdc-snack-bar-container.snackbar-success .mdc-snackbar__surface {
+  background: #116f3f;
+  color: #f1fff7;
+}
+
+.mat-mdc-snack-bar-container.snackbar-warning .mdc-snackbar__surface {
+  background: #8a5a00;
+  color: #fff8eb;
+}
+
+.mat-mdc-snack-bar-container.snackbar-error .mdc-snackbar__surface {
+  background: #8f1d1d;
+  color: #fff2f2;
 }
 
 @media (max-width: 960px) {

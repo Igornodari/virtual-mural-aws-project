@@ -10,6 +10,7 @@ export interface User {
   avatarUrl: string;
   locale: string;
   address: string;
+  phone:string;
   authProvider: 'google' | 'cognito' | 'email-password' | 'unknown';
   cognitoUsername: string;
   providerUserId: string;

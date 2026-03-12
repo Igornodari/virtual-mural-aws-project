@@ -70,6 +70,15 @@ export const routes: Routes = [
         (m) => m.CustomerDashboardComponent,
       ),
   },
+  // Área de perfil do usuário
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/profile/profile.component').then(
+        (m) => m.ProfileComponent,
+      ),
+  },
   // Fallback
   {
     path: '**',

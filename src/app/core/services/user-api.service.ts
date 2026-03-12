@@ -20,6 +20,17 @@ export interface AppUserProfileDto {
   roleCompleted: boolean;
   createdAt: string;
   updatedAt: string;
+  condominium?: {
+    id: string;
+    name?: string;
+    addressZipCode?: string;
+    addressStreet?: string;
+    addressNumber?: string;
+    addressComplement?: string;
+    addressNeighborhood?: string;
+    addressCity?: string;
+    addressState?: string;
+  } | null;
 }
 
 export interface UpdateOnboardingPayload {

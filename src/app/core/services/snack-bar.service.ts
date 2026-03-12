@@ -8,10 +8,18 @@ export class SnackBarService {
 	constructor(private readonly snackBar: MatSnackBar) {}
 
 	error(message: string): void {
-		this.snackBar.open(message, 'Fechar', { duration: 4000, panelClass: ['snackbar-error'] });
+		this.open(message, 'snackbar-error', 4000);
+	}
+
+	warning(message: string): void {
+		this.open(message, 'snackbar-warning', 3500);
 	}
 
 	success(message: string): void {
-		this.snackBar.open(message, 'Fechar', { duration: 3000, panelClass: ['snackbar-success'] });
+		this.open(message, 'snackbar-success', 3000);
+	}
+
+	private open(message: string, panelClass: string, duration: number): void {
+		this.snackBar.open(message, 'Fechar', { duration, panelClass: [panelClass] });
 	}
 }
