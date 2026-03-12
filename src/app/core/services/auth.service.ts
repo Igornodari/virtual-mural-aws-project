@@ -28,6 +28,7 @@ export class AuthService {
     avatarUrl: '',
     locale: '',
     address: '',
+    phone: '',
     authProvider: 'unknown',
     cognitoUsername: '',
     providerUserId: '',

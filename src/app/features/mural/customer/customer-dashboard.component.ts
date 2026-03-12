@@ -18,11 +18,11 @@ import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ServiceApiService, ServiceDto } from '../../../core/services/service-api.service';
 import { AppointmentApiService, CreateAppointmentPayload } from '../../../core/services/appointment-api.service';
 import { ReviewApiService, CreateReviewPayload } from '../../../core/services/review-api.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
 const CATEGORIES = [
-  'Todas',
   'Beleza e Estética',
   'Manutenção e Reparos',
   'Alimentação',
@@ -92,7 +92,7 @@ const CATEGORIES = [
           </mat-form-field>
           <div class="category-chips">
             <button class="cat-chip" [class.cat-chip--active]="selectedCategory() === 'Todas'"
-              (click)="selectCategory('Todas')">
+              (click)="selectCategory('')">
               {{ 'APP.CUSTOMER.FILTER_ALL' | translate }}
             </button>
             @for (cat of categories; track cat) {
@@ -362,7 +362,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   searchControl = new FormControl('');
   private readonly searchValue = toSignal(this.searchControl.valueChanges, { initialValue: '' });
 
-  readonly categories = ['Todas', ...CATEGORIES];
+  readonly categories = [...CATEGORIES];
   readonly weekdays = WEEKDAYS;
 
   uniqueProviders = computed(() => {
