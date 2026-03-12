@@ -179,6 +179,22 @@
         "CITY": "City",
         "STATE": "State"
       }
+    },
+    "ANALYTICS": {
+      "TITLE": "Analytics",
+      "SELECT_SERVICE": "Select a service to view analytics",
+      "VIEW_ANALYTICS": "View analytics",
+      "CLICKS": "Views",
+      "INTERESTS": "Interested",
+      "COMPLETIONS": "Completed",
+      "ABANDONMENTS": "Abandoned",
+      "TAB_FUNNEL": "Funnel",
+      "TAB_REVIEWS": "Reviews",
+      "REVIEWS_COUNT": "reviews",
+      "COMMENTS": "Comments",
+      "NO_COMMENTS": "No comments yet",
+      "ANONYMOUS": "Anonymous",
+      "NO_COMMENT_TEXT": "Rating without comment"
     }
   }
 }
