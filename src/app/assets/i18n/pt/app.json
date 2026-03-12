@@ -113,7 +113,20 @@
       "HERO_TITLE": "Serviços para seu condomínio",
       "HERO_SUBTITLE": "Encontre serviços e profissionais no seu condomínio em",
       "STATS_SERVICES": "Serviços disponíveis",
-      "STATS_PROVIDERS": "Prestadores"
+      "STATS_PROVIDERS": "Prestadores",
+      "WRITE_REVIEW": "Escrever uma avaliação",
+      "YOUR_RATING": "Sua nota:",
+      "REVIEW_COMMENT": "Comentário",
+      "REVIEW_COMMENT_HINT": "Conte sua experiência com o serviço...",
+      "REVIEW_ANONYMOUS_HINT": "Sua identidade será mantida anônima",
+      "SUBMIT_REVIEW": "Enviar avaliação",
+      "REVIEW_SENT": "Avaliação enviada com sucesso!",
+      "REVIEW_ERROR": "Erro ao enviar avaliação. Tente novamente.",
+      "RATING_1": "Péssimo",
+      "RATING_2": "Ruim",
+      "RATING_3": "Regular",
+      "RATING_4": "Bom",
+      "RATING_5": "Excelente"
     },
     "PROFILE": {
       "TITLE": "Meu Perfil",
