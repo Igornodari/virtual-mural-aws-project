@@ -17,12 +17,13 @@ import { MuralTopbarComponent } from '../../../components/mural-topbar/mural-top
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ServiceApiService, ServiceDto } from '../../../core/services/service-api.service';
 import { AppointmentApiService, CreateAppointmentPayload } from '../../../core/services/appointment-api.service';
-import { ReviewApiService, CreateReviewPayload } from '../../../core/services/review-api.service';
+import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from '../../../core/services/review-api.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
 const CATEGORIES = [
+  'Todas',
   'Beleza e Estética',
   'Manutenção e Reparos',
   'Alimentação',
@@ -144,7 +145,7 @@ const CATEGORIES = [
                       <mat-icon>whatsapp</mat-icon>
                       {{ 'APP.CUSTOMER.CONTACT' | translate }}
                     </button>
-                    <button mat-raised-button color="primary" (click)="toggleExpand(service.id)">
+                    <button mat-raised-button color="primary" (click)="toggleExpand(service)">
                       <mat-icon>{{ expandedId() === service.id ? 'expand_less' : 'expand_more' }}</mat-icon>
                       {{ 'APP.CUSTOMER.SCHEDULE' | translate }}
                     </button>
@@ -168,10 +169,14 @@ const CATEGORIES = [
                       </button>
                     }
                     <mat-divider class="m-y-3" />
-                    <h4 class="details-title">{{ 'APP.CUSTOMER.REVIEWS_TITLE' | translate }}</h4>
-                    @if (service.totalReviews === 0) {
-                      <p class="text-muted">{{ 'APP.CUSTOMER.NO_REVIEWS' | translate }}</p>
-                    } @else {
+
+                    <!-- Avaliações anônimas -->
+                    <h4 class="details-title">
+                      <mat-icon class="details-icon">star_rate</mat-icon>
+                      {{ 'APP.CUSTOMER.REVIEWS_TITLE' | translate }}
+                    </h4>
+
+                    @if (service.totalReviews > 0) {
                       <div class="reviews-summary">
                         <span class="review-rating-value">{{ service.rating | number:'1.1-1' }}</span>
                         <div class="review-stars">
@@ -182,6 +187,72 @@ const CATEGORIES = [
                         <span class="text-muted">{{ service.totalReviews }} {{ 'APP.CUSTOMER.RATING' | translate }}</span>
                       </div>
                     }
+
+                    @if (isLoadingReviews() === service.id) {
+                      <div class="loading-center"><mat-spinner diameter="28" /></div>
+                    } @else if (reviewsMap()[service.id]?.length) {
+                      <div class="reviews-list">
+                        @for (review of reviewsMap()[service.id]; track review.id) {
+                          <div class="review-item">
+                            <div class="review-stars-row">
+                              @for (star of [1,2,3,4,5]; track star) {
+                                <mat-icon class="star-icon-sm" [class.star--filled]="star <= review.rating">star</mat-icon>
+                              }
+                              <span class="review-date text-muted">{{ review.createdAt | date:'dd/MM/yyyy' }}</span>
+                            </div>
+                            @if (review.comment) {
+                              <p class="review-comment">"{{ review.comment }}"</p>
+                            }
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <p class="text-muted">{{ 'APP.CUSTOMER.NO_REVIEWS' | translate }}</p>
+                    }
+
+                    <mat-divider class="m-y-3" />
+
+                    <!-- Formulário de avaliação anônima -->
+                    <h4 class="details-title">
+                      <mat-icon class="details-icon">rate_review</mat-icon>
+                      {{ 'APP.CUSTOMER.WRITE_REVIEW' | translate }}
+                    </h4>
+                    <div class="review-form">
+                      <div class="star-selector">
+                        <span class="text-muted">{{ 'APP.CUSTOMER.YOUR_RATING' | translate }}</span>
+                        <div class="star-selector-stars">
+                          @for (star of [1,2,3,4,5]; track star) {
+                            <button class="star-btn" type="button"
+                              (mouseenter)="hoverStar(service.id, star)"
+                              (mouseleave)="hoverStar(service.id, 0)"
+                              (click)="setRating(service.id, star)">
+                              <mat-icon class="star-icon-lg"
+                                [class.star--filled]="star <= (hoverRating()[service.id] || pendingRating()[service.id] || 0)">
+                                star
+                              </mat-icon>
+                            </button>
+                          }
+                        </div>
+                        @if (pendingRating()[service.id]) {
+                          <span class="rating-label-text">{{ getRatingLabel(pendingRating()[service.id]) }}</span>
+                        }
+                      </div>
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.CUSTOMER.REVIEW_COMMENT' | translate }}</mat-label>
+                        <textarea matInput rows="3" maxlength="500"
+                          [value]="pendingComment()[service.id] || ''"
+                          (input)="setComment(service.id, $any($event.target).value)"
+                          [placeholder]="'APP.CUSTOMER.REVIEW_COMMENT_HINT' | translate"></textarea>
+                        <mat-hint>{{ 'APP.CUSTOMER.REVIEW_ANONYMOUS_HINT' | translate }}</mat-hint>
+                      </mat-form-field>
+                      <button mat-raised-button color="primary" class="w-full" type="button"
+                        [disabled]="!pendingRating()[service.id] || isReviewing() === service.id"
+                        (click)="submitReview(service)">
+                        @if (isReviewing() === service.id) { <mat-spinner diameter="18" /> }
+                        <mat-icon>send</mat-icon>
+                        {{ 'APP.CUSTOMER.SUBMIT_REVIEW' | translate }}
+                      </button>
+                    </div>
                   }
                 </mat-card-content>
               </mat-card>
@@ -336,6 +407,20 @@ const CATEGORIES = [
     .reviews-summary { display: flex; align-items: center; gap: 12px; }
     .review-rating-value { font-size: 32px; font-weight: 800; }
     .review-stars { display: flex; }
+    .details-title { font-size: 14px; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
+    .details-icon { font-size: 18px; width: 18px; height: 18px; color: var(--mat-sys-primary); }
+    .star-icon-sm { font-size: 14px; width: 14px; height: 14px; color: var(--mat-sys-outline-variant); }
+    .star-icon-lg { font-size: 28px; width: 28px; height: 28px; color: var(--mat-sys-outline-variant); transition: color 0.1s; }
+    .reviews-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
+    .review-item { padding: 10px 12px; border-radius: 10px; background: var(--mat-sys-surface-variant); border-left: 3px solid var(--mat-sys-primary); }
+    .review-stars-row { display: flex; align-items: center; gap: 2px; margin-bottom: 4px; }
+    .review-date { font-size: 11px; margin-left: auto; }
+    .review-comment { font-size: 13px; margin: 4px 0 0; font-style: italic; color: var(--mat-sys-on-surface-variant); }
+    .review-form { display: flex; flex-direction: column; gap: 12px; }
+    .star-selector { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .star-selector-stars { display: flex; gap: 4px; }
+    .star-btn { background: none; border: none; cursor: pointer; padding: 2px; line-height: 0; }
+    .rating-label-text { font-size: 13px; font-weight: 600; color: var(--mat-sys-primary); }
     @media (max-width: 768px) {
       .hero-section { flex-direction: column; align-items: flex-start; }
       .hero-stats { align-self: flex-start; }
@@ -369,6 +454,13 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   isLoadingServices = signal(false);
   isScheduling = signal<string | null>(null);
   isReviewing = signal<string | null>(null);
+  isLoadingReviews = signal<string | null>(null);
+
+  // ── Estado de avaliação ──────────────────────────────────────────────────
+  reviewsMap = signal<Record<string, any[]>>({});
+  pendingRating = signal<Record<string, number>>({});
+  pendingComment = signal<Record<string, string>>({});
+  hoverRating = signal<Record<string, number>>({});
   searchControl = new FormControl('');
   private readonly searchValue = toSignal(this.searchControl.valueChanges, { initialValue: '' });
 
@@ -431,8 +523,25 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
-  toggleExpand(id: string): void {
-    this.expandedId.set(this.expandedId() === id ? null : id);
+  toggleExpand(service: ServiceDto): void {
+    const isOpening = this.expandedId() !== service.id;
+    this.expandedId.set(isOpening ? service.id : null);
+    if (isOpening) {
+      this.serviceApi.trackMetric(service.id, 'clicks').subscribe();
+      this.loadReviews(service.id);
+    }
+  }
+
+  private loadReviews(serviceId: string): void {
+    if (this.reviewsMap()[serviceId]) return;
+    this.isLoadingReviews.set(serviceId);
+    this.reviewApi.findByService(serviceId).subscribe({
+      next: (reviews) => {
+        this.reviewsMap.update((m) => ({ ...m, [serviceId]: reviews }));
+        this.isLoadingReviews.set(null);
+      },
+      error: () => { this.isLoadingReviews.set(null); },
+    });
   }
 
   selectCategory(cat: string): void {
@@ -467,6 +576,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   }
 
   contactWhatsApp(service: ServiceDto): void {
+    this.serviceApi.trackMetric(service.id, 'interests').subscribe();
     const phone = service.contact.replace(/\D/g, '');
     const message = encodeURIComponent(
       `Olá! Vi seu serviço "${service.name}" no Mural do Condomínio e gostaria de mais informações.`,
@@ -495,17 +605,44 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
-  submitReview(service: ServiceDto, rating: number, comment: string): void {
+  // ── Avaliação anônima ────────────────────────────────────────────────────
+  hoverStar(serviceId: string, star: number): void {
+    this.hoverRating.update((m) => ({ ...m, [serviceId]: star }));
+  }
+
+  setRating(serviceId: string, star: number): void {
+    this.pendingRating.update((m) => ({ ...m, [serviceId]: star }));
+  }
+
+  setComment(serviceId: string, text: string): void {
+    this.pendingComment.update((m) => ({ ...m, [serviceId]: text }));
+  }
+
+  getRatingLabel(rating: number): string {
+    const labels: Record<number, string> = {
+      1: 'Péssimo', 2: 'Ruim', 3: 'Regular', 4: 'Bom', 5: 'Excelente',
+    };
+    return labels[rating] ?? '';
+  }
+
+  submitReview(service: ServiceDto): void {
+    const rating = this.pendingRating()[service.id];
+    if (!rating) return;
     this.isReviewing.set(service.id);
     const payload: CreateReviewPayload = {
       serviceId: service.id,
       rating,
-      comment: comment || undefined,
+      comment: this.pendingComment()[service.id] || undefined,
     };
     this.reviewApi.create(payload).subscribe({
-      next: () => {
+      next: (newReview) => {
         this.isReviewing.set(null);
-        // Recarrega o serviço para atualizar o rating exibido
+        this.pendingRating.update((m) => ({ ...m, [service.id]: 0 }));
+        this.pendingComment.update((m) => ({ ...m, [service.id]: '' }));
+        this.reviewsMap.update((m) => ({
+          ...m,
+          [service.id]: [newReview, ...(m[service.id] ?? [])],
+        }));
         this.serviceApi.findOne(service.id).subscribe({
           next: (updated) => {
             this.allServices.update((list) =>
@@ -514,9 +651,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
           },
         });
       },
-      error: () => {
-        this.isReviewing.set(null);
-      },
+      error: () => { this.isReviewing.set(null); },
     });
   }
 

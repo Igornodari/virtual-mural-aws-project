@@ -17,6 +17,7 @@ import { MuralTopbarComponent } from '../../../components/mural-topbar/mural-top
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ServiceApiService, ServiceDto, CreateServicePayload } from '../../../core/services/service-api.service';
 import { AppointmentApiService } from '../../../core/services/appointment-api.service';
+import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 
 const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 const CATEGORIES = [
@@ -34,6 +35,7 @@ const CATEGORIES = [
     MatFormFieldModule, MatIconModule, MatInputModule,
     MatProgressSpinnerModule, MatSelectModule, MatTooltipModule,
     TranslateModule, MuralTopbarComponent,
+    ServiceAnalyticsComponent,
   ],
   template: `
     <div class="provider-layout">
@@ -125,6 +127,11 @@ const CATEGORIES = [
                       [matTooltip]="'APP.PROVIDER.EDIT' | translate">
                       <mat-icon>edit</mat-icon>
                     </button>
+                    <button mat-icon-button (click)="selectedAnalyticsService.set(service)"
+                      [matTooltip]="'APP.ANALYTICS.VIEW_ANALYTICS' | translate"
+                      [style.color]="selectedAnalyticsService()?.id === service.id ? 'var(--mat-sys-primary)' : ''">
+                      <mat-icon>bar_chart</mat-icon>
+                    </button>
                     <button mat-icon-button color="warn" (click)="removeService(service.id)"
                       [matTooltip]="'APP.PROVIDER.REMOVE' | translate">
                       <mat-icon>delete</mat-icon>
@@ -135,6 +142,26 @@ const CATEGORIES = [
             </div>
           }
         </section>
+
+        <!-- Analytics do serviço selecionado -->
+        @if (selectedAnalyticsService()) {
+          <section class="section analytics-section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <mat-icon style="vertical-align:middle;margin-right:6px;color:var(--mat-sys-primary)">bar_chart</mat-icon>
+                {{ 'APP.ANALYTICS.TITLE' | translate }}: {{ selectedAnalyticsService()!.name }}
+              </h2>
+              <button mat-icon-button (click)="selectedAnalyticsService.set(null)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <mat-card class="surface-card--elevated">
+              <mat-card-content>
+                <app-service-analytics [service]="selectedAnalyticsService()" />
+              </mat-card-content>
+            </mat-card>
+          </section>
+        }
 
         @if (showForm()) {
           <section class="section form-section">
@@ -285,6 +312,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   services = signal<ServiceDto[]>([]);
   showForm = signal(false);
+  selectedAnalyticsService = signal<ServiceDto | null>(null);
   editingId = signal<string | null>(null);
   isLoadingServices = signal(false);
   isSaving = signal(false);
