@@ -1,4 +1,5 @@
 import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom, ErrorHandler } from '@angular/core';
+import { ThemeService } from './core/services/theme.service';
 import { GlobalErrorHandler } from './handler/global-error.handler';
 import { HttpClient, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
@@ -77,6 +78,13 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeLanguage,
       deps: [TranslateService],
+      multi: true,
+    },
+    {
+      // Inicializa o ThemeService para aplicar o tema salvo antes da primeira renderização
+      provide: APP_INITIALIZER,
+      useFactory: (themeService: ThemeService) => () => themeService.theme(),
+      deps: [ThemeService],
       multi: true,
     },
   ],
