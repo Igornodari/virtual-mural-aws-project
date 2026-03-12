@@ -2,13 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
 
-export interface ReviewDto {
+/** Avaliação anônima retornada pelo backend — sem dados do autor */
+export interface AnonymousReviewDto {
   id: string;
-  serviceId: string;
-  authorId: string;
   rating: number;
   comment?: string;
-  author?: { displayName: string; avatarUrl?: string };
   createdAt: string;
 }
 
@@ -23,12 +21,12 @@ export class ReviewApiService {
   constructor(private readonly api: MuralApiService) {}
 
   /** Envia uma avaliação para um serviço */
-  create(payload: CreateReviewPayload): Observable<ReviewDto> {
-    return this.api.post<ReviewDto>('/reviews', payload);
+  create(payload: CreateReviewPayload): Observable<AnonymousReviewDto> {
+    return this.api.post<AnonymousReviewDto>('/reviews', payload);
   }
 
-  /** Lista avaliações de um serviço */
-  findByService(serviceId: string): Observable<ReviewDto[]> {
-    return this.api.get<ReviewDto[]>(`/reviews/service/${serviceId}`);
+  /** Lista avaliações anônimas de um serviço */
+  findByService(serviceId: string): Observable<AnonymousReviewDto[]> {
+    return this.api.get<AnonymousReviewDto[]>(`/reviews/service/${serviceId}`);
   }
 }
