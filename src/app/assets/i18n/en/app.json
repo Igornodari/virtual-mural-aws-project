@@ -59,7 +59,8 @@
       "THEME_LIGHT": "Switch to light theme",
       "THEME_DARK": "Switch to dark theme",
       "MY_PROFILE": "My Profile",
-      "LOGOUT": "Logout"
+      "LOGOUT": "Logout",
+      "LANGUAGE": "Language"
     },
     "PROVIDER": {
       "STATS_SERVICES": "Active services",

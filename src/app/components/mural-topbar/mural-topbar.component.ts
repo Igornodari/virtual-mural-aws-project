@@ -16,6 +16,7 @@ export type TopbarRole = 'provider' | 'customer';
  * Topbar reutilizável para as dashboards do Mural do Condomínio.
  * Contém: logo, badge de perfil, nome do usuário, seletor de idioma,
  * toggle de tema dark/light, link para perfil e botão de logout.
+ * Em mobile, o seletor de idioma é movido para dentro do menu do usuário.
  */
 @Component({
   selector: 'app-mural-topbar',
@@ -52,17 +53,21 @@ export type TopbarRole = 'provider' | 'customer';
           <mat-icon>{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
         </button>
 
-        <!-- Seletor de idioma -->
-        <button mat-button [matMenuTriggerFor]="langMenu" class="lang-btn">
+        <!-- Seletor de idioma — visível apenas em desktop -->
+        <button mat-button [matMenuTriggerFor]="langMenu" class="lang-btn desktop-only">
           <mat-icon>language</mat-icon>
           {{ languageService.currentLabel }}
         </button>
         <mat-menu #langMenu="matMenu">
-          <button mat-menu-item (click)="languageService.setLanguage('pt')" [class.active-lang]="languageService.language() === 'pt'">
+          <button mat-menu-item
+            (click)="languageService.setLanguage('pt')"
+            [class.active-lang]="languageService.language() === 'pt'">
             <mat-icon>check</mat-icon>
             Português
           </button>
-          <button mat-menu-item (click)="languageService.setLanguage('en')" [class.active-lang]="languageService.language() === 'en'">
+          <button mat-menu-item
+            (click)="languageService.setLanguage('en')"
+            [class.active-lang]="languageService.language() === 'en'">
             <mat-icon>check</mat-icon>
             English
           </button>
@@ -79,6 +84,27 @@ export type TopbarRole = 'provider' | 'customer';
             <mat-icon>manage_accounts</mat-icon>
             {{ 'APP.TOPBAR.MY_PROFILE' | translate }}
           </button>
+
+          <!-- Idioma dentro do menu — visível apenas em mobile -->
+          <button mat-menu-item [matMenuTriggerFor]="langMenuMobile" class="mobile-only">
+            <mat-icon>language</mat-icon>
+            {{ 'APP.TOPBAR.LANGUAGE' | translate }}: {{ languageService.currentLabel }}
+          </button>
+          <mat-menu #langMenuMobile="matMenu">
+            <button mat-menu-item
+              (click)="languageService.setLanguage('pt')"
+              [class.active-lang]="languageService.language() === 'pt'">
+              <mat-icon>check</mat-icon>
+              Português
+            </button>
+            <button mat-menu-item
+              (click)="languageService.setLanguage('en')"
+              [class.active-lang]="languageService.language() === 'en'">
+              <mat-icon>check</mat-icon>
+              English
+            </button>
+          </mat-menu>
+
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="logout.emit()">
             <mat-icon>logout</mat-icon>
@@ -105,16 +131,19 @@ export type TopbarRole = 'provider' | 'customer';
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
     }
     .brand-icon {
       color: #0284c7;
       font-size: 28px;
       width: 28px;
       height: 28px;
+      flex-shrink: 0;
     }
     .brand-name {
       font-weight: 700;
       font-size: 16px;
+      white-space: nowrap;
     }
     .badge--provider {
       background: color-mix(in oklab, #7c3aed 18%, transparent);
@@ -128,6 +157,7 @@ export type TopbarRole = 'provider' | 'customer';
       display: flex;
       align-items: center;
       gap: 4px;
+      flex-shrink: 0;
     }
     .lang-btn {
       font-size: 13px;
@@ -148,9 +178,16 @@ export type TopbarRole = 'provider' | 'customer';
       color: var(--mat-sys-primary);
       font-weight: 600;
     }
+    /* Controle de visibilidade por breakpoint */
+    .desktop-only { display: flex; }
+    .mobile-only { display: none !important; }
+
     @media (max-width: 600px) {
+      .mural-topbar { padding: 0 12px; height: 56px; }
       .brand-name { display: none; }
       .user-name { display: none; }
+      .desktop-only { display: none !important; }
+      .mobile-only { display: flex !important; }
     }
   `],
 })

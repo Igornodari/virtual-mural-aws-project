@@ -59,7 +59,8 @@
       "THEME_LIGHT": "Mudar para tema claro",
       "THEME_DARK": "Mudar para tema escuro",
       "MY_PROFILE": "Meu Perfil",
-      "LOGOUT": "Sair"
+      "LOGOUT": "Sair",
+      "LANGUAGE": "Idioma"
     },
     "PROVIDER": {
       "STATS_SERVICES": "ServiÃ§os ativos",

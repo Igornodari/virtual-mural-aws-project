@@ -50,11 +50,25 @@ import BaseComponent from '../../components/base.component';
         gap: 12px;
         justify-content: space-between;
         align-items: flex-start;
+        flex-wrap: wrap;
       }
 
       pre {
         overflow: auto;
         white-space: pre-wrap;
+      }
+
+      @media (max-width: 600px) {
+        .dashboard-wrapper {
+          padding: 16px;
+        }
+        .dashboard-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .dashboard-header button {
+          width: 100%;
+        }
       }
     `,
   ],

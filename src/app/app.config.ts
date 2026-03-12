@@ -12,6 +12,7 @@ import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AppTranslateLoader } from './shared/helpers/translate-loader.helper';
 
 registerLocaleData(localePtBr, 'pt-BR', localePtBrExtra);
@@ -64,7 +65,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideAnimations(),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor, authInterceptor, errorInterceptor])),
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
     {
       provide: ErrorHandler,

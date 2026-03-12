@@ -52,15 +52,15 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
   template: `
     <div class="app-auth-page">
       <div class="onboarding-shell">
+
+        <!-- Cabeçalho -->
         <div class="onboarding-header">
-          <span class="app-badge">Mural do Condomínio</span>
-          <h1 class="m-t-3 m-b-1">Onde você mora?</h1>
-          <p class="text-muted m-0">
-            Precisamos do endereço do seu condomínio para exibir os serviços disponíveis perto de você.
-            Essa informação é salva apenas uma vez.
-          </p>
+          <span class="app-badge">{{ 'APP.TOPBAR.BRAND' | translate }}</span>
+          <h1 class="m-t-3 m-b-1">{{ 'APP.ONBOARDING.CONDO_TITLE' | translate }}</h1>
+          <p class="text-muted m-0">{{ 'APP.ONBOARDING.CONDO_SUBTITLE' | translate }}</p>
         </div>
 
+        <!-- Formulário -->
         <mat-card class="surface-card--elevated onboarding-card">
           <mat-card-content class="p-0">
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-col gap-4">
@@ -68,19 +68,20 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
               <!-- CEP com busca automática -->
               <div class="cep-row">
                 <mat-form-field appearance="outline" class="cep-field">
-                  <mat-label>CEP</mat-label>
+                  <mat-label>{{ 'APP.PROFILE.FIELD_CEP' | translate }}</mat-label>
                   <input
                     matInput
                     formControlName="zipCode"
                     placeholder="00000-000"
                     maxlength="9"
+                    inputmode="numeric"
                     (input)="onCepInput($event)"
                   />
                   @if (loadingCep) {
                     <mat-spinner matSuffix diameter="20"></mat-spinner>
                   }
                   @if (form.controls.zipCode.touched && form.controls.zipCode.invalid) {
-                    <mat-error>Informe um CEP válido com 8 dígitos.</mat-error>
+                    <mat-error>{{ 'APP.ONBOARDING.CEP_INVALID' | translate }}</mat-error>
                   }
                 </mat-form-field>
                 <button
@@ -90,7 +91,8 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
                   [disabled]="form.controls.zipCode.invalid || loadingCep"
                   (click)="fetchAddress()"
                 >
-                  Buscar
+                  <mat-icon>search</mat-icon>
+                  {{ 'APP.PROFILE.SEARCH_CEP' | translate }}
                 </button>
               </div>
 
@@ -100,59 +102,59 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
 
               <!-- Logradouro -->
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Rua / Logradouro</mat-label>
+                <mat-label>{{ 'APP.PROFILE.FIELD_STREET' | translate }}</mat-label>
                 <input matInput formControlName="street" placeholder="Ex: Rua das Flores" />
                 @if (form.controls.street.touched && form.controls.street.invalid) {
-                  <mat-error>Informe o logradouro.</mat-error>
+                  <mat-error>{{ 'APP.ONBOARDING.STREET_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <div class="two-col">
                 <!-- Número -->
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Número</mat-label>
-                  <input matInput formControlName="number" placeholder="Ex: 123" />
+                  <mat-label>{{ 'APP.PROFILE.FIELD_NUMBER' | translate }}</mat-label>
+                  <input matInput formControlName="number" placeholder="Ex: 123" inputmode="numeric" />
                   @if (form.controls.number.touched && form.controls.number.invalid) {
-                    <mat-error>Informe o número.</mat-error>
+                    <mat-error>{{ 'APP.ONBOARDING.NUMBER_REQUIRED' | translate }}</mat-error>
                   }
                 </mat-form-field>
 
                 <!-- Complemento -->
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Complemento (opcional)</mat-label>
+                  <mat-label>{{ 'APP.PROFILE.FIELD_COMPLEMENT' | translate }}</mat-label>
                   <input matInput formControlName="complement" placeholder="Apto, Bloco..." />
                 </mat-form-field>
               </div>
 
               <!-- Bairro -->
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Bairro</mat-label>
+                <mat-label>{{ 'APP.PROFILE.FIELD_NEIGHBORHOOD' | translate }}</mat-label>
                 <input matInput formControlName="neighborhood" placeholder="Ex: Centro" />
                 @if (form.controls.neighborhood.touched && form.controls.neighborhood.invalid) {
-                  <mat-error>Informe o bairro.</mat-error>
+                  <mat-error>{{ 'APP.ONBOARDING.NEIGHBORHOOD_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <div class="two-col">
                 <!-- Cidade -->
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Cidade</mat-label>
+                  <mat-label>{{ 'APP.PROFILE.FIELD_CITY' | translate }}</mat-label>
                   <input matInput formControlName="city" placeholder="Ex: São Paulo" />
                   @if (form.controls.city.touched && form.controls.city.invalid) {
-                    <mat-error>Informe a cidade.</mat-error>
+                    <mat-error>{{ 'APP.ONBOARDING.CITY_REQUIRED' | translate }}</mat-error>
                   }
                 </mat-form-field>
 
                 <!-- Estado -->
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Estado</mat-label>
+                  <mat-label>{{ 'APP.PROFILE.FIELD_STATE' | translate }}</mat-label>
                   <mat-select formControlName="state">
                     @for (uf of states; track uf) {
                       <mat-option [value]="uf">{{ uf }}</mat-option>
                     }
                   </mat-select>
                   @if (form.controls.state.touched && form.controls.state.invalid) {
-                    <mat-error>Selecione o estado.</mat-error>
+                    <mat-error>{{ 'APP.ONBOARDING.STATE_REQUIRED' | translate }}</mat-error>
                   }
                 </mat-form-field>
               </div>
@@ -167,7 +169,7 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
                 @if (loading) {
                   <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
                 } @else {
-                  Continuar
+                  {{ 'APP.ONBOARDING.CONTINUE' | translate }}
                 }
               </button>
             </form>
@@ -196,14 +198,18 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
       display: flex;
       gap: 12px;
       align-items: flex-start;
+      flex-wrap: wrap;
     }
     .cep-field {
       flex: 1;
+      min-width: 160px;
     }
     .cep-btn {
       margin-top: 4px;
       height: 56px;
       white-space: nowrap;
+      flex-shrink: 0;
+      gap: 4px;
     }
     .two-col {
       display: grid;
@@ -213,12 +219,26 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
     .btn-spinner {
       display: inline-block;
     }
-    @media (max-width: 480px) {
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .onboarding-card {
+        padding: 20px 16px;
+      }
       .two-col {
         grid-template-columns: 1fr;
       }
-      .onboarding-card {
-        padding: 20px;
+      .cep-row {
+        flex-direction: column;
+      }
+      .cep-field {
+        min-width: unset;
+        width: 100%;
+      }
+      .cep-btn {
+        width: 100%;
+        margin-top: 0;
+        height: 48px;
       }
     }
   `],
@@ -298,8 +318,6 @@ export class CondominiumOnboardingComponent extends BaseComponent {
       state: raw.state,
     };
 
-    // Tenta vincular a um condomínio existente pelo CEP;
-    // se não encontrar, cria um novo no backend.
     this.onboardingService.saveCondominiumAddress(address).subscribe({
       next: (existing: any) => {
         const found = Array.isArray(existing) && existing.length > 0;
