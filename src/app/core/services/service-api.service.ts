@@ -15,23 +15,30 @@ export interface ServiceDto {
   isActive: boolean;
   providerId: string;
   condominiumId: string;
+  clicks: number;
+  interests: number;
+  completions: number;
+  abandonments: number;
   provider?: {
     id: string;
     displayName: string;
     avatarUrl?: string;
   };
-  reviews?: ReviewDto[];
   createdAt: string;
   updatedAt: string;
 }
 
-export interface ReviewDto {
-  id: string;
+export interface ServiceAnalyticsDto {
+  serviceId: string;
+  serviceName: string;
+  clicks: number;
+  interests: number;
+  completions: number;
+  abandonments: number;
   rating: number;
-  comment?: string;
-  authorId: string;
-  author?: { displayName: string; avatarUrl?: string };
-  createdAt: string;
+  totalReviews: number;
+  ratingDistribution: Record<number, number>;
+  recentComments: Array<{ rating: number; comment: string; createdAt: string }>;
 }
 
 export interface CreateServicePayload {
@@ -43,7 +50,9 @@ export interface CreateServicePayload {
   availableDays: string[];
 }
 
-export interface UpdateServicePayload extends Partial<CreateServicePayload> {}
+export type UpdateServicePayload = Partial<CreateServicePayload>;
+
+export type TrackMetric = 'clicks' | 'interests' | 'completions' | 'abandonments';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceApiService {
@@ -59,9 +68,19 @@ export class ServiceApiService {
     return this.api.get<ServiceDto[]>('/services', { mine: true });
   }
 
-  /** Retorna detalhes de um serviço com avaliações */
+  /** Retorna detalhes de um serviço */
   findOne(id: string): Observable<ServiceDto> {
     return this.api.get<ServiceDto>(`/services/${id}`);
+  }
+
+  /** Retorna analytics de todos os serviços do prestador autenticado */
+  getProviderAnalytics(): Observable<ServiceAnalyticsDto[]> {
+    return this.api.get<ServiceAnalyticsDto[]>('/services/analytics/me');
+  }
+
+  /** Retorna analytics de um serviço específico */
+  getAnalytics(id: string): Observable<ServiceAnalyticsDto> {
+    return this.api.get<ServiceAnalyticsDto>(`/services/${id}/analytics`);
   }
 
   /** Cria um novo serviço (apenas prestadores) */
@@ -77,5 +96,13 @@ export class ServiceApiService {
   /** Remove um serviço (soft delete) */
   remove(id: string): Observable<void> {
     return this.api.delete<void>(`/services/${id}`);
+  }
+
+  /**
+   * Registra um evento de engajamento no backend.
+   * Chamado pelo frontend quando o usuário interage com um card.
+   */
+  trackMetric(id: string, metric: TrackMetric): Observable<void> {
+    return this.api.patch<void>(`/services/${id}/track/${metric}`, {});
   }
 }
