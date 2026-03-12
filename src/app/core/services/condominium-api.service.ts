@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
 
@@ -18,19 +19,37 @@ export interface CondominiumDto {
 }
 
 export interface CreateCondominiumPayload {
-  name: string;
-  addressZipCode: string;
-  addressStreet: string;
-  addressNumber: string;
+  name?: string;
+  zipCode?: string;
+  addressZipCode?: string;
+  street?: string;
+  addressStreet?: string;
+  number?: string;
+  addressNumber?: string;
+  complement?: string;
   addressComplement?: string;
-  addressNeighborhood: string;
-  addressCity: string;
-  addressState: string;
+  neighborhood?: string;
+  addressNeighborhood?: string;
+  city?: string;
+  addressCity?: string;
+  state?: string;
+  addressState?: string;
+}
+
+export interface ViaCepResponse {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  erro?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
 export class CondominiumApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly api = inject(MuralApiService);
+  private readonly http = inject(HttpClient);
 
   /** Busca condomínios pelo CEP — usado no onboarding para verificar se já existe */
   findByZipCode(zipCode: string): Observable<CondominiumDto[]> {
@@ -44,5 +63,14 @@ export class CondominiumApiService {
 
   findOne(id: string): Observable<CondominiumDto> {
     return this.api.get<CondominiumDto>(`/condominiums/${id}`);
+  }
+
+  update(id: string, payload: Partial<CreateCondominiumPayload>): Observable<CondominiumDto> {
+    return this.api.patch<CondominiumDto>(`/condominiums/${id}`, payload);
+  }
+
+  /** Consulta o CEP na API pública ViaCEP — sem interceptor de auth */
+  lookupCep(cep: string): Observable<ViaCepResponse> {
+    return this.http.get<ViaCepResponse>(`https://viacep.com.br/ws/${cep}/json/`);
   }
 }
