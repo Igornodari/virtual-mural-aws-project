@@ -1,3 +1,7 @@
+<app-page-loading
+  [visible]="loadingService.isLoading()"
+  message="APP.LOADING.DEFAULT"
+/>
 <main class="mainWrapper">
   <router-outlet />
 </main>

@@ -240,7 +240,16 @@ import { CondominiumApiService, CreateCondominiumPayload } from '../../core/serv
     @media (max-width: 600px) {
       .two-col { grid-template-columns: 1fr; }
       .cep-row { flex-direction: column; }
-      .profile-main { padding: 16px; }
+      .cep-row button { width: 100%; }
+      .profile-main { padding: 16px; gap: 16px; }
+      .profile-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .avatar-circle { width: 56px; height: 56px; }
+      .avatar-icon { font-size: 28px; width: 28px; height: 28px; }
+      .profile-name { font-size: 18px; }
+      .form-actions { flex-direction: column; }
+      .form-actions button { width: 100%; }
+      .tab-content { padding: 16px 0; }
+      .security-info { flex-direction: column; gap: 8px; }
     }
   `],
 })

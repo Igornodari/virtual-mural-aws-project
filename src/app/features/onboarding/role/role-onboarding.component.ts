@@ -12,9 +12,9 @@ import { UserRole } from '../../../shared/types';
 interface RoleOption {
   value: UserRole;
   icon: string;
-  title: string;
-  subtitle: string;
-  features: string[];
+  titleKey: string;
+  subtitleKey: string;
+  featureKeys: string[];
   color: string;
 }
 
@@ -33,11 +33,9 @@ interface RoleOption {
     <div class="app-auth-page">
       <div class="role-shell">
         <div class="role-header">
-          <span class="app-badge">Mural do Condomínio</span>
-          <h1 class="m-t-3 m-b-1">Como você quer usar o mural?</h1>
-          <p class="text-muted m-0">
-            Escolha o seu perfil. Você poderá alterar isso depois nas configurações.
-          </p>
+          <span class="app-badge">{{ 'APP.TOPBAR.BRAND' | translate }}</span>
+          <h1 class="m-t-3 m-b-1">{{ 'APP.ONBOARDING.ROLE_TITLE' | translate }}</h1>
+          <p class="text-muted m-0">{{ 'APP.ONBOARDING.ROLE_SUBTITLE' | translate }}</p>
         </div>
 
         <div class="role-grid">
@@ -53,13 +51,13 @@ interface RoleOption {
                 <mat-icon class="role-card__icon">{{ option.icon }}</mat-icon>
               </div>
               <div class="role-card__body">
-                <strong class="role-card__title">{{ option.title }}</strong>
-                <p class="role-card__subtitle text-muted">{{ option.subtitle }}</p>
+                <strong class="role-card__title">{{ option.titleKey | translate }}</strong>
+                <p class="role-card__subtitle text-muted">{{ option.subtitleKey | translate }}</p>
                 <ul class="role-card__features">
-                  @for (feat of option.features; track feat) {
+                  @for (feat of option.featureKeys; track feat) {
                     <li>
                       <mat-icon class="feat-icon">check_circle</mat-icon>
-                      <span>{{ feat }}</span>
+                      <span>{{ feat | translate }}</span>
                     </li>
                   }
                 </ul>
@@ -81,7 +79,7 @@ interface RoleOption {
           @if (loading) {
             <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
           } @else {
-            Confirmar e entrar no mural
+            {{ 'APP.ONBOARDING.CONFIRM_ROLE' | translate }}
           }
         </button>
       </div>
@@ -196,9 +194,35 @@ interface RoleOption {
     .btn-spinner {
       display: inline-block;
     }
+    /* ── Mobile ── */
     @media (max-width: 600px) {
+      .role-shell {
+        gap: 20px;
+      }
       .role-grid {
         grid-template-columns: 1fr;
+      }
+      .role-card {
+        padding: 20px 16px;
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .role-card__icon-wrap {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+      }
+      .role-card__icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+      }
+      .role-card__title {
+        font-size: 16px;
+      }
+      .confirm-btn {
+        height: 48px;
+        font-size: 15px;
       }
     }
   `],
@@ -212,27 +236,27 @@ export class RoleOnboardingComponent extends BaseComponent {
     {
       value: 'provider',
       icon: 'handyman',
-      title: 'Prestador de Serviço',
-      subtitle: 'Quero anunciar meus serviços para os moradores do condomínio.',
+      titleKey: 'APP.ONBOARDING.ROLE_PROVIDER_TITLE',
+      subtitleKey: 'APP.ONBOARDING.ROLE_PROVIDER_SUBTITLE',
       color: '#7c3aed',
-      features: [
-        'Crie cards de serviços no mural',
-        'Defina preços e disponibilidade',
-        'Receba avaliações dos clientes',
-        'Gerencie seus agendamentos',
+      featureKeys: [
+        'APP.ONBOARDING.ROLE_PROVIDER_F1',
+        'APP.ONBOARDING.ROLE_PROVIDER_F2',
+        'APP.ONBOARDING.ROLE_PROVIDER_F3',
+        'APP.ONBOARDING.ROLE_PROVIDER_F4',
       ],
     },
     {
       value: 'customer',
       icon: 'search',
-      title: 'Morador',
-      subtitle: 'Quero encontrar serviços oferecidos por moradores do meu condomínio.',
+      titleKey: 'APP.ONBOARDING.ROLE_CUSTOMER_TITLE',
+      subtitleKey: 'APP.ONBOARDING.ROLE_CUSTOMER_SUBTITLE',
       color: '#0284c7',
-      features: [
-        'Veja todos os serviços disponíveis',
-        'Entre em contato diretamente',
-        'Marque horários com prestadores',
-        'Avalie os serviços contratados',
+      featureKeys: [
+        'APP.ONBOARDING.ROLE_CUSTOMER_F1',
+        'APP.ONBOARDING.ROLE_CUSTOMER_F2',
+        'APP.ONBOARDING.ROLE_CUSTOMER_F3',
+        'APP.ONBOARDING.ROLE_CUSTOMER_F4',
       ],
     },
   ];

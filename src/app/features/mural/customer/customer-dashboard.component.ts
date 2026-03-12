@@ -339,10 +339,20 @@ const CATEGORIES = [
     @media (max-width: 768px) {
       .hero-section { flex-direction: column; align-items: flex-start; }
       .hero-stats { align-self: flex-start; }
-      .customer-main { padding: 16px; }
+      .customer-main { padding: 16px; gap: 20px; }
     }
-    @media (max-width: 480px) {
+    @media (max-width: 600px) {
       .mural-grid { grid-template-columns: 1fr; }
+      .card-actions { flex-direction: column; }
+      .card-actions button { width: 100%; flex: none; }
+      .card-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .hero-stat-value { font-size: 22px; }
+      .category-chips { gap: 6px; }
+      .cat-chip { padding: 5px 12px; font-size: 12px; }
+      .reviews-summary { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 400px) {
+      .hero-stats { flex-direction: column; gap: 8px; }
     }
   `],
 })

@@ -257,9 +257,20 @@ const CATEGORIES = [
     .form-section { padding-bottom: 40px; }
     @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 600px) {
-      .stats-row { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
       .two-col { grid-template-columns: 1fr; }
-      .provider-main { padding: 16px; }
+      .provider-main { padding: 16px; gap: 24px; }
+      .section-header { flex-direction: column; align-items: stretch; gap: 12px; }
+      .section-header > button:not([mat-icon-button]) { width: 100%; }
+      .form-actions { flex-direction: column; }
+      .form-actions button { width: 100%; }
+      .service-meta { flex-direction: column; gap: 4px; }
+      .stat-card { padding: 14px; gap: 12px; }
+      .stat-value { font-size: 20px; }
+      .services-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 400px) {
+      .stats-row { grid-template-columns: 1fr; }
     }
   `],
 })
