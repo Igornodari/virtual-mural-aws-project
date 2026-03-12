@@ -8,14 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
 import { MuralTopbarComponent } from '../../components/mural-topbar/mural-topbar.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
-import { UserApiService } from '../../core/services/user-api.service';
-import { CondominiumApiService } from '../../core/services/condominium-api.service';
+import { AppUserProfileDto, UpdateProfilePayload, UserApiService } from '../../core/services/user-api.service';
+import { CondominiumApiService, CreateCondominiumPayload } from '../../core/services/condominium-api.service';
 
 @Component({
   selector: 'app-profile',
@@ -73,7 +72,7 @@ import { CondominiumApiService } from '../../core/services/condominium-api.servi
                     </div>
                     <mat-form-field appearance="outline" class="w-full">
                       <mat-label>{{ 'APP.PROFILE.EMAIL' | translate }}</mat-label>
-                      <input matInput formControlName="email" type="email" />
+                      <input matInput formControlName="email" type="email" readonly />
                       <mat-icon matSuffix>email</mat-icon>
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="w-full">
@@ -250,8 +249,6 @@ export class ProfileComponent extends BaseComponent implements OnInit {
   private readonly onboardingService = inject(OnboardingService);
   private readonly userApi = inject(UserApiService);
   private readonly condominiumApi = inject(CondominiumApiService);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly translate = inject(TranslateService);
 
   isSavingPersonal = signal(false);
   isSavingAddress = signal(false);
@@ -283,6 +280,7 @@ export class ProfileComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCurrentData();
+    this.loadProfileFromApi();
   }
 
   private loadCurrentData(): void {
@@ -299,6 +297,36 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     if (addr) {
       this.addressForm.patchValue(addr);
     }
+  }
+
+  private loadProfileFromApi(): void {
+    this.userApi.getMe().subscribe({
+      next: (me: AppUserProfileDto) => {
+        this.personalForm.patchValue({
+          givenName: me.givenName ?? '',
+          familyName: me.familyName ?? '',
+          email: me.email ?? '',
+          phone: me.phone ?? '',
+        });
+
+        const condo = me.condominium;
+        if (condo) {
+          this.addressForm.patchValue({
+            name: condo.name ?? this.addressForm.value.name ?? '',
+            zipCode: condo.addressZipCode ?? this.addressForm.value.zipCode ?? '',
+            street: condo.addressStreet ?? this.addressForm.value.street ?? '',
+            number: condo.addressNumber ?? this.addressForm.value.number ?? '',
+            complement: condo.addressComplement ?? this.addressForm.value.complement ?? '',
+            neighborhood: condo.addressNeighborhood ?? this.addressForm.value.neighborhood ?? '',
+            city: condo.addressCity ?? this.addressForm.value.city ?? '',
+            state: condo.addressState ?? this.addressForm.value.state ?? '',
+          });
+        }
+      },
+      error: () => {
+        // Interceptor global já exibe feedback, aqui só evitamos quebrar a tela.
+      },
+    });
   }
 
   lookupCep(): void {
@@ -324,11 +352,16 @@ export class ProfileComponent extends BaseComponent implements OnInit {
   savePersonal(): void {
     if (this.personalForm.invalid) return;
     this.isSavingPersonal.set(true);
-    const payload = this.personalForm.getRawValue();
+    const formValue = this.personalForm.getRawValue();
+    const payload: UpdateProfilePayload = {
+      givenName: formValue.givenName,
+      familyName: formValue.familyName,
+      phone: formValue.phone,
+    };
+
     this.userApi.updateProfile(payload).subscribe({
       next: () => {
         this.isSavingPersonal.set(false);
-        this.showSuccess('APP.PROFILE.SAVED_SUCCESS');
       },
       error: () => this.isSavingPersonal.set(false),
     });
@@ -338,23 +371,26 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     if (this.addressForm.invalid) return;
     this.isSavingAddress.set(true);
     const addr = this.addressForm.getRawValue();
+    const payload: CreateCondominiumPayload = {
+      name: addr.name,
+      addressZipCode: addr.zipCode.replace(/\D/g, ''),
+      addressStreet: addr.street,
+      addressNumber: addr.number,
+      addressComplement: addr.complement || undefined,
+      addressNeighborhood: addr.neighborhood,
+      addressCity: addr.city,
+      addressState: addr.state,
+    };
     const condominiumId = this.onboardingService.profile.condominiumId;
     const req = condominiumId
-      ? this.condominiumApi.update(condominiumId, addr)
-      : this.condominiumApi.create(addr);
+      ? this.condominiumApi.update(condominiumId, payload)
+      : this.condominiumApi.create(payload);
     req.subscribe({
-      next: (condo: any) => {
-        this.onboardingService.saveCondominiumAddress({ ...addr, id: condo.id });
+      next: (_condo: any) => {
+        this.onboardingService.saveCondominiumAddress(addr);
         this.isSavingAddress.set(false);
-        this.showSuccess('APP.PROFILE.SAVED_SUCCESS');
       },
       error: () => this.isSavingAddress.set(false),
-    });
-  }
-
-  private showSuccess(key: string): void {
-    this.translate.get(key).subscribe((msg) => {
-      this.snackBar.open(msg, undefined, { duration: 3000, panelClass: 'snack--success' });
     });
   }
 

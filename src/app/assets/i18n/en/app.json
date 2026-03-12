@@ -108,7 +108,11 @@
       "SCHEDULE_SELECT_DAY": "Select an available day:",
       "SCHEDULE_CONFIRM": "Confirm appointment",
       "SCHEDULE_CANCEL": "Cancel",
-      "SCHEDULE_SUCCESS": "Appointment requested successfully!"
+      "SCHEDULE_SUCCESS": "Appointment requested successfully!",
+      "HERO_TITLE": "Services for your condominium",
+      "HERO_SUBTITLE": "Find services and professionals in your condominium in",
+      "STATS_SERVICES": "Available services",
+      "STATS_PROVIDERS": "Providers"
     },
     "PROFILE": {
       "TITLE": "My Profile",
@@ -152,6 +156,28 @@
       "SECURITY_COGNITO_DESC": "Your account is authenticated via AWS Cognito. Your credentials are managed securely.",
       "SECURITY_PASSWORD_TITLE": "Change password",
       "SECURITY_PASSWORD_DESC": "To change your password, access the AWS Cognito portal or use the 'Forgot password' option on the login screen."
+    },
+    "FEEDBACK": {
+      "SUCCESS_DEFAULT": "Operation completed successfully.",
+      "UNEXPECTED_ERROR": "Unexpected error. Please try again.",
+      "NETWORK_ERROR": "Unable to connect to the server.",
+      "INVALID_PASSWORD": "Invalid password. Check uppercase, lowercase, number and special character requirements.",
+      "NOT_AUTHORIZED": "You are not authorized for this action.",
+      "USER_NOT_FOUND": "User not found.",
+      "REQUEST_FAILED": "Request failed. Please try again."
+    },
+    "ONBOARDING": {
+      "CONDOMINIUM": {
+        "CEP": "ZIP code",
+        "CEP_PLACEHOLDER": "00000-000",
+        "CEP_SEARCH": "Search ZIP",
+        "STREET": "Street",
+        "NUMBER": "Number",
+        "NEIGHBORHOOD": "Neighborhood",
+        "COMPLEMENT": "Complement",
+        "CITY": "City",
+        "STATE": "State"
+      }
     }
   }
 }

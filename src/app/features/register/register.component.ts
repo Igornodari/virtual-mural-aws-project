@@ -7,7 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SnackBarService } from '../../core/services/snack-bar.service';
 import BaseComponent from '../../components/base.component';
 
 @Component({
@@ -39,6 +38,13 @@ import BaseComponent from '../../components/base.component';
           </mat-card-header>
 
           <mat-card-content class="p-0 d-flex flex-col gap-4">
+            @if (errorMessage) {
+              <div class="app-error-box">{{ errorMessage }}</div>
+            }
+            @if (successMessage) {
+              <div class="app-success-box">{{ successMessage }}</div>
+            }
+
             @if (!awaitingConfirmation) {
               <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="d-flex flex-col gap-4">
                 <mat-form-field appearance="outline" class="w-full">
@@ -115,7 +121,6 @@ import BaseComponent from '../../components/base.component';
 })
 export class RegisterComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly snackBarService = inject(SnackBarService);
   private readonly translateService = inject(TranslateService);
 
   awaitingConfirmation = false;
@@ -142,9 +147,12 @@ export class RegisterComponent extends BaseComponent {
   async onRegister(): Promise<void> {
     if (this.registerForm.invalid) return;
 
+    this.errorMessage = '';
+    this.successMessage = '';
+
     const { firstName, lastName, email, password, confirmPassword } = this.registerForm.getRawValue();
     if (password !== confirmPassword) {
-      this.presentError(this.translateService.instant('APP.REGISTER.PASSWORDS_DO_NOT_MATCH'));
+      this.errorMessage = this.translateService.instant('APP.REGISTER.PASSWORDS_DO_NOT_MATCH');
       return;
     }
 
@@ -154,25 +162,17 @@ export class RegisterComponent extends BaseComponent {
       .finally(() => this.setLoadingState(false));
     this.registeredEmail = email;
     this.awaitingConfirmation = true;
-    this.presentSuccess(this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED'));
+    this.successMessage = this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED');
   }
 
   async onConfirmCode(): Promise<void> {
     if (this.confirmationForm.invalid || !this.registeredEmail) return;
 
+    this.errorMessage = '';
     this.setLoadingState(true);
     await this.authService
       .confirmEmailCode(this.registeredEmail, this.confirmationForm.getRawValue().code)
       .finally(() => this.setLoadingState(false));
-    this.presentSuccess(this.translateService.instant('APP.REGISTER.EMAIL_CONFIRMED'));
     await this.navigateTo('/login');
-  }
-
-  private presentError(message: string): void {
-    setTimeout(() => this.snackBarService.error(message));
-  }
-
-  private presentSuccess(message: string): void {
-    setTimeout(() => this.snackBarService.success(message));
   }
 }
