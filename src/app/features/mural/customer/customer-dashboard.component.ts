@@ -16,9 +16,10 @@ import BaseComponent from '../../../components/base.component';
 import { MuralTopbarComponent } from '../../../components/mural-topbar/mural-topbar.component';
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ServiceApiService, ServiceDto } from '../../../core/services/service-api.service';
-import { AppointmentApiService, CreateAppointmentPayload } from '../../../core/services/appointment-api.service';
+import { AppointmentApiService, CreateAppointmentPayload, AvailableDate } from '../../../core/services/appointment-api.service';
 import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from '../../../core/services/review-api.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
 
 const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
@@ -152,22 +153,66 @@ const CATEGORIES = [
                   </div>
                   @if (expandedId() === service.id) {
                     <mat-divider class="m-y-3" />
-                    <h4 class="details-title">{{ 'APP.CUSTOMER.SCHEDULE_TITLE' | translate }}</h4>
-                    <div class="days-picker">
-                      @for (day of service.availableDays; track day) {
-                        <button class="day-pick-btn"
-                          [class.day-pick-btn--selected]="selectedDay() === day + service.id"
-                          (click)="selectDay(day + service.id)">{{ day }}</button>
+
+                    <!-- Calendário de agendamento -->
+                    <h4 class="details-title">
+                      <mat-icon class="details-icon">event</mat-icon>
+                      {{ 'APP.CUSTOMER.SCHEDULE_TITLE' | translate }}
+                    </h4>
+
+                    @if (isLoadingDates() === service.id) {
+                      <div class="loading-center"><mat-spinner diameter="28" /></div>
+                    } @else if (availableDatesMap()[service.id]?.length === 0) {
+                      <p class="text-muted">{{ 'APP.CUSTOMER.NO_AVAILABLE_DATES' | translate }}</p>
+                    } @else if (availableDatesMap()[service.id]) {
+                      <div class="calendar-grid">
+                        @for (dateInfo of availableDatesMap()[service.id]; track dateInfo.date) {
+                          <button class="calendar-day-btn"
+                            [class.calendar-day-btn--selected]="getSelectedDate(service.id) === dateInfo.date"
+                            (click)="selectDate(service.id, dateInfo.date)">
+                            <span class="cal-day-name">{{ dateInfo.day }}</span>
+                            <span class="cal-day-date">{{ formatDate(dateInfo.date) }}</span>
+                          </button>
+                        }
+                      </div>
+
+                      @if (getSelectedDate(service.id)) {
+                        <div class="slots-row">
+                          <span class="text-muted" style="font-size:13px">Horário:</span>
+                          @for (slot of getSlotsForDate(service.id, getSelectedDate(service.id)!); track slot) {
+                            <button class="slot-btn"
+                              [class.slot-btn--selected]="getSelectedSlot(service.id) === slot"
+                              (click)="selectSlot(service.id, slot)">{{ slot }}</button>
+                          }
+                          @if (getSlotsForDate(service.id, getSelectedDate(service.id)!).length === 0) {
+                            <span class="text-muted" style="font-size:13px">Qualquer horário</span>
+                          }
+                        </div>
+
+                        <div class="booking-summary">
+                          @if ((service)?.priceInCents) {
+                            <div class="price-display">
+                              <mat-icon>payments</mat-icon>
+                              <span>{{ formatPrice((service)?.priceInCents || 0) }}</span>
+                              <span class="text-muted" style="font-size:12px">(5% taxa de serviço incluída)</span>
+                            </div>
+                          }
+                          <button mat-raised-button color="accent" class="w-full"
+                            [disabled]="isScheduling() === service.id"
+                            (click)="onScheduleAndPay(service)">
+                            @if (isScheduling() === service.id) { <mat-spinner diameter="18" /> }
+                            <mat-icon>{{ (service)?.priceInCents ? 'payment' : 'event_available' }}</mat-icon>
+                            {{ (service)?.priceInCents ? ('APP.CUSTOMER.SCHEDULE_AND_PAY' | translate) : ('APP.CUSTOMER.SCHEDULE_CONFIRM' | translate) }}
+                          </button>
+                        </div>
                       }
-                    </div>
-                    @if (selectedDay()?.endsWith(service.id)) {
-                      <button mat-raised-button color="accent" class="w-full m-t-3"
-                        [disabled]="isScheduling() === service.id" (click)="onSchedule(service)">
-                        @if (isScheduling() === service.id) { <mat-spinner diameter="18" /> }
-                        <mat-icon>event_available</mat-icon>
-                        {{ 'APP.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
+                    } @else {
+                      <button mat-stroked-button (click)="loadAvailableDates(service.id)" style="width:100%">
+                        <mat-icon>calendar_today</mat-icon>
+                        {{ 'APP.CUSTOMER.LOAD_DATES' | translate }}
                       </button>
                     }
+
                     <mat-divider class="m-y-3" />
 
                     <!-- Avaliações anônimas -->
@@ -259,7 +304,99 @@ const CATEGORIES = [
             }
           </section>
         }
+        <!-- Seção: Meus Agendamentos -->
+        @if (myAppointments().length > 0) {
+          <section class="my-appointments-section">
+            <h2 class="section-title">
+              <mat-icon>event_note</mat-icon>
+              {{ 'APP.CUSTOMER.MY_APPOINTMENTS' | translate }}
+            </h2>
+            <div class="appointments-list">
+              @for (appt of myAppointments(); track appt.id) {
+                <mat-card class="appointment-card surface-card">
+                  <mat-card-content>
+                    <div class="appt-header">
+                      <div>
+                        <h4 class="appt-service-name">{{ appt.service?.name }}</h4>
+                        <span class="appt-date">{{ appt.scheduledDate | date:'dd/MM/yyyy' }}
+                          @if (appt.scheduledSlot) { · {{ appt.scheduledSlot }} }
+                        </span>
+                      </div>
+                      <span class="appt-status-badge" [style.background]="getStatusColor(appt.status) + '22'" [style.color]="getStatusColor(appt.status)">
+                        {{ getStatusLabel(appt.status) }}
+                      </span>
+                    </div>
+                    @if (appt.amountInCents) {
+                      <p class="appt-price">{{ formatPrice(appt.amountInCents) }}</p>
+                    }
+                    <div class="appt-actions">
+                      @if (appt.status === 'confirmed' || appt.status === 'in_progress') {
+                        <button mat-raised-button color="primary"
+                          [disabled]="isConfirmingCompletion() === appt.id"
+                          (click)="confirmServiceCompleted(appt.id)">
+                          @if (isConfirmingCompletion() === appt.id) { <mat-spinner diameter="16" /> }
+                          <mat-icon>check_circle</mat-icon>
+                          {{ 'APP.CUSTOMER.CONFIRM_COMPLETED' | translate }}
+                        </button>
+                        <button mat-stroked-button color="warn"
+                          [disabled]="isCancelling() === appt.id"
+                          (click)="cancelAppointment(appt.id)">
+                          @if (isCancelling() === appt.id) { <mat-spinner diameter="16" /> }
+                          <mat-icon>cancel</mat-icon>
+                          {{ 'APP.CUSTOMER.CANCEL_APPOINTMENT' | translate }}
+                        </button>
+                      }
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          </section>
+        }
       </main>
+
+      <!-- Modal de Pagamento Stripe -->
+      @if (showPaymentModal()) {
+        <div class="payment-modal-overlay" (click)="closePaymentModal()">
+          <div class="payment-modal" (click)="$event.stopPropagation()">
+            <div class="payment-modal-header">
+              <h3>
+                <mat-icon>payment</mat-icon>
+                {{ 'APP.CUSTOMER.PAYMENT_TITLE' | translate }}
+              </h3>
+              <button mat-icon-button (click)="closePaymentModal()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <div class="payment-modal-body">
+              <div class="payment-amount">
+                <span class="text-muted">{{ 'APP.CUSTOMER.PAYMENT_AMOUNT' | translate }}</span>
+                <span class="payment-amount-value">{{ formatPrice(paymentAmountInCents()) }}</span>
+              </div>
+              <div class="payment-info-box">
+                <mat-icon style="font-size:16px;width:16px;height:16px;color:var(--mat-sys-primary)">info</mat-icon>
+                <span>{{ 'APP.CUSTOMER.PAYMENT_ESCROW_INFO' | translate }}</span>
+              </div>
+              <!-- Stripe Payment Element será montado aqui -->
+              <div id="stripe-payment-element" class="stripe-element-container"></div>
+              @if (paymentError()) {
+                <p class="payment-error">{{ paymentError() }}</p>
+              }
+              <button mat-raised-button color="primary" class="w-full payment-confirm-btn"
+                [disabled]="isProcessingPayment()"
+                (click)="confirmPayment()">
+                @if (isProcessingPayment()) { <mat-spinner diameter="20" /> }
+                <mat-icon>lock</mat-icon>
+                {{ 'APP.CUSTOMER.PAYMENT_CONFIRM' | translate }}
+              </button>
+              <p class="payment-security-note">
+                <mat-icon style="font-size:14px;width:14px;height:14px">security</mat-icon>
+                {{ 'APP.CUSTOMER.PAYMENT_SECURITY' | translate }}
+              </p>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -439,6 +576,43 @@ const CATEGORIES = [
     @media (max-width: 400px) {
       .hero-stats { flex-direction: column; gap: 8px; }
     }
+    /* ── Calendário ── */
+    .calendar-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .calendar-day-btn { display: flex; flex-direction: column; align-items: center; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--mat-sys-outline-variant); background: transparent; cursor: pointer; font-size: 12px; transition: all 0.15s; min-width: 72px; }
+    .calendar-day-btn:hover { border-color: var(--mat-sys-primary); background: color-mix(in oklab, var(--mat-sys-primary) 8%, transparent); }
+    .calendar-day-btn--selected { border-color: var(--mat-sys-primary); background: color-mix(in oklab, var(--mat-sys-primary) 15%, transparent); color: var(--mat-sys-primary); }
+    .cal-day-name { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cal-day-date { font-size: 12px; margin-top: 2px; }
+    .slots-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .slot-btn { padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--mat-sys-outline-variant); background: transparent; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s; }
+    .slot-btn:hover { border-color: var(--mat-sys-primary); color: var(--mat-sys-primary); }
+    .slot-btn--selected { background: var(--mat-sys-primary); border-color: var(--mat-sys-primary); color: white; }
+    .booking-summary { display: flex; flex-direction: column; gap: 10px; }
+    .price-display { display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 700; color: var(--mat-sys-primary); }
+    /* ── Meus Agendamentos ── */
+    .my-appointments-section { display: flex; flex-direction: column; gap: 12px; }
+    .section-title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; margin: 0; }
+    .appointments-list { display: flex; flex-direction: column; gap: 10px; }
+    .appointment-card { padding: 16px; }
+    .appt-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .appt-service-name { font-size: 15px; font-weight: 700; margin: 0 0 2px; }
+    .appt-date { font-size: 13px; color: var(--mat-sys-on-surface-variant); }
+    .appt-status-badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+    .appt-price { font-size: 14px; font-weight: 600; color: var(--mat-sys-primary); margin: 4px 0 8px; }
+    .appt-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    /* ── Modal de Pagamento ── */
+    .payment-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+    .payment-modal { background: var(--mat-sys-surface); border-radius: 20px; width: 100%; max-width: 480px; box-shadow: 0 24px 64px rgba(0,0,0,0.3); }
+    .payment-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 0; }
+    .payment-modal-header h3 { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; margin: 0; }
+    .payment-modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .payment-amount { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: color-mix(in oklab, var(--mat-sys-primary) 8%, transparent); border-radius: 10px; }
+    .payment-amount-value { font-size: 22px; font-weight: 800; color: var(--mat-sys-primary); }
+    .payment-info-box { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--mat-sys-on-surface-variant); padding: 10px 12px; background: color-mix(in oklab, var(--mat-sys-primary) 5%, transparent); border-radius: 8px; }
+    .stripe-element-container { min-height: 60px; padding: 12px; border: 1.5px solid var(--mat-sys-outline-variant); border-radius: 10px; }
+    .payment-error { color: #ef4444; font-size: 13px; margin: 0; }
+    .payment-confirm-btn { height: 48px; font-size: 15px; font-weight: 700; }
+    .payment-security-note { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; color: var(--mat-sys-on-surface-variant); margin: 0; }
   `],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
@@ -456,7 +630,30 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   isReviewing = signal<string | null>(null);
   isLoadingReviews = signal<string | null>(null);
 
-  // ── Estado de avaliação ──────────────────────────────────────────────────
+  // ── Estado de calendário e agendamento ──────────────────────────────────────────
+  availableDatesMap = signal<Record<string, AvailableDate[]>>({});
+  isLoadingDates = signal<string | null>(null);
+  selectedDate = signal<string | null>(null);
+  selectedSlot = signal<string | null>(null);
+  pendingAppointmentId = signal<string | null>(null);
+
+  // ── Estado de pagamento Stripe ────────────────────────────────────────────────────
+  showPaymentModal = signal(false);
+  isProcessingPayment = signal(false);
+  paymentClientSecret = signal<string | null>(null);
+  paymentAmountInCents = signal<number>(0);
+  paymentAppointmentId = signal<string | null>(null);
+  paymentError = signal<string | null>(null);
+  private stripe: Stripe | null = null;
+  private stripeElements: StripeElements | null = null;
+  private cardElement: any = null;
+
+  // ── Estado de confirmação de conclusão ─────────────────────────────────────────────
+  myAppointments = signal<any[]>([]);
+  isConfirmingCompletion = signal<string | null>(null);
+  isCancelling = signal<string | null>(null);
+
+  // ── Estado de avaliação ────────────────────────────────────────────────────────
   reviewsMap = signal<Record<string, any[]>>({});
   pendingRating = signal<Record<string, number>>({});
   pendingComment = signal<Record<string, string>>({});
@@ -585,24 +782,197 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     window.open(url, '_blank');
   }
 
-  scheduleService(service: ServiceDto, day: string): void {
+  // ── Calendário de disponibilidade ────────────────────────────────────────────────────
+
+  /** Carrega os dias disponíveis do serviço ao expandir o card */
+  loadAvailableDates(serviceId: string): void {
+    if (this.availableDatesMap()[serviceId]) return;
+    this.isLoadingDates.set(serviceId);
+    this.appointmentApi.getAvailableDates(serviceId, 30).subscribe({
+      next: (dates) => {
+        this.availableDatesMap.update((m) => ({ ...m, [serviceId]: dates }));
+        this.isLoadingDates.set(null);
+      },
+      error: () => { this.isLoadingDates.set(null); },
+    });
+  }
+
+  selectDate(serviceId: string, date: string): void {
+    const key = serviceId + '|' + date;
+    this.selectedDate.set(this.selectedDate() === key ? null : key);
+    this.selectedSlot.set(null);
+  }
+
+  selectSlot(serviceId: string, slot: string): void {
+    const key = serviceId + '|' + slot;
+    this.selectedSlot.set(this.selectedSlot() === key ? null : key);
+  }
+
+  getSelectedDate(serviceId: string): string | null {
+    const key = this.selectedDate();
+    if (!key?.startsWith(serviceId + '|')) return null;
+    return key.split('|')[1];
+  }
+
+  getSelectedSlot(serviceId: string): string | null {
+    const key = this.selectedSlot();
+    if (!key?.startsWith(serviceId + '|')) return null;
+    return key.split('|')[1];
+  }
+
+  getSlotsForDate(serviceId: string, date: string): string[] {
+    const dates = this.availableDatesMap()[serviceId] ?? [];
+    return dates.find((d) => d.date === date)?.slots ?? [];
+  }
+
+  formatDate(dateStr: string): string {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
+  }
+
+  formatPrice(cents: number): string {
+    return (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  /** Cria o agendamento e inicia o pagamento */
+  onScheduleAndPay(service: ServiceDto): void {
+    const date = this.getSelectedDate(service.id);
+    const slot = this.getSelectedSlot(service.id);
+    if (!date) return;
+
+    const dates = this.availableDatesMap()[service.id] ?? [];
+    const dayInfo = dates.find((d) => d.date === date);
+    const dayName = dayInfo?.day ?? date;
+
     this.isScheduling.set(service.id);
-    const today = new Date();
     const payload: CreateAppointmentPayload = {
       serviceId: service.id,
-      scheduledDate: today.toISOString().split('T')[0],
-      scheduledDay: day,
-      notes: `Agendamento solicitado pelo mural para ${day}.`,
+      scheduledDate: date,
+      scheduledDay: dayName,
+      scheduledSlot: slot ?? undefined,
     };
+
     this.appointmentApi.create(payload).subscribe({
-      next: () => {
+      next: (appointment) => {
         this.isScheduling.set(null);
-        // Feedback visual — o snackbar global vai capturar se houver erro
+        this.pendingAppointmentId.set(appointment.id);
+        if ((service as any).priceInCents && (service as any).priceInCents > 0) {
+          this.initiatePayment(appointment.id, (service as any).priceInCents);
+        } else {
+          this.selectedDate.set(null);
+          this.selectedSlot.set(null);
+        }
       },
-      error: () => {
-        this.isScheduling.set(null);
+      error: () => { this.isScheduling.set(null); },
+    });
+  }
+
+  // ── Pagamento Stripe ────────────────────────────────────────────────────────────────
+
+  private initiatePayment(appointmentId: string, amountInCents: number): void {
+    this.appointmentApi.initiatePayment(appointmentId).subscribe({
+      next: async (res) => {
+        this.paymentClientSecret.set(res.clientSecret);
+        this.paymentAmountInCents.set(res.amountInCents);
+        this.paymentAppointmentId.set(appointmentId);
+        this.paymentError.set(null);
+        this.showPaymentModal.set(true);
+        setTimeout(() => this.initStripeElements(), 200);
       },
     });
+  }
+
+  private async initStripeElements(): Promise<void> {
+    const publishableKey = (window as any).__STRIPE_PUBLISHABLE_KEY__ || 'pk_test_placeholder';
+    this.stripe = await loadStripe(publishableKey);
+    if (!this.stripe) return;
+    this.stripeElements = this.stripe.elements({ clientSecret: this.paymentClientSecret()! });
+    this.cardElement = this.stripeElements.create('payment');
+    this.cardElement.mount('#stripe-payment-element');
+  }
+
+  async confirmPayment(): Promise<void> {
+    if (!this.stripe || !this.stripeElements) return;
+    this.isProcessingPayment.set(true);
+    this.paymentError.set(null);
+    const { error } = await this.stripe.confirmPayment({
+      elements: this.stripeElements,
+      confirmParams: { return_url: window.location.href },
+      redirect: 'if_required',
+    });
+    if (error) {
+      this.paymentError.set(error.message ?? 'Erro ao processar pagamento.');
+      this.isProcessingPayment.set(false);
+    } else {
+      this.isProcessingPayment.set(false);
+      this.showPaymentModal.set(false);
+      this.selectedDate.set(null);
+      this.selectedSlot.set(null);
+      this.loadMyAppointments();
+    }
+  }
+
+  closePaymentModal(): void {
+    this.showPaymentModal.set(false);
+    if (this.cardElement) { this.cardElement.destroy(); this.cardElement = null; }
+  }
+
+  // ── Meus agendamentos ────────────────────────────────────────────────────────────────
+
+  loadMyAppointments(): void {
+    this.appointmentApi.findMine().subscribe({
+      next: (list) => this.myAppointments.set(list),
+    });
+  }
+
+  confirmServiceCompleted(appointmentId: string): void {
+    this.isConfirmingCompletion.set(appointmentId);
+    this.appointmentApi.confirmCompleted(appointmentId).subscribe({
+      next: (updated) => {
+        this.isConfirmingCompletion.set(null);
+        this.myAppointments.update((list) => list.map((a) => (a.id === updated.id ? updated : a)));
+      },
+      error: () => { this.isConfirmingCompletion.set(null); },
+    });
+  }
+
+  cancelAppointment(appointmentId: string): void {
+    this.isCancelling.set(appointmentId);
+    this.appointmentApi.cancel(appointmentId).subscribe({
+      next: (updated) => {
+        this.isCancelling.set(null);
+        this.myAppointments.update((list) => list.map((a) => (a.id === updated.id ? updated : a)));
+      },
+      error: () => { this.isCancelling.set(null); },
+    });
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      pending_payment: 'Aguardando pagamento',
+      confirmed: 'Confirmado',
+      in_progress: 'Em andamento',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      refunded: 'Reembolsado',
+    };
+    return labels[status] ?? status;
+  }
+
+  getStatusColor(status: string): string {
+    const colors: Record<string, string> = {
+      pending_payment: '#f59e0b',
+      confirmed: '#3b82f6',
+      in_progress: '#8b5cf6',
+      completed: '#10b981',
+      cancelled: '#ef4444',
+      refunded: '#6b7280',
+    };
+    return colors[status] ?? '#6b7280';
+  }
+
+  scheduleService(service: ServiceDto, day: string): void {
+    this.onScheduleAndPay(service);
   }
 
   // ── Avaliação anônima ────────────────────────────────────────────────────
