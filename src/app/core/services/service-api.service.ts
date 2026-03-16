@@ -7,11 +7,9 @@ export interface ServiceDto {
   name: string;
   description: string;
   price: string;
-  priceInCents?: number;
   contact: string;
   category: string;
   availableDays: string[];
-  availableSlots?: string[];
   rating: number;
   totalReviews: number;
   isActive: boolean;
@@ -105,10 +103,5 @@ export class ServiceApiService {
    */
   trackMetric(id: string, metric: TrackMetric): Observable<void> {
     return this.api.patch<void>(`/services/${id}/track/${metric}`, {});
-  }
-
-  /** Atualiza os horários disponíveis de um serviço */
-  updateSlots(id: string, slots: string[]): Observable<ServiceDto> {
-    return this.api.patch<ServiceDto>(`/services/${id}/slots`, { slots });
   }
 }

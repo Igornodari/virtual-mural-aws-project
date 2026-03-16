@@ -17,7 +17,6 @@ import { MuralTopbarComponent } from '../../../components/mural-topbar/mural-top
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ServiceApiService, ServiceDto, CreateServicePayload } from '../../../core/services/service-api.service';
 import { AppointmentApiService } from '../../../core/services/appointment-api.service';
-import { PaymentApiService, ConnectStatusResponse } from '../../../core/services/payment-api.service';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 
 const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
@@ -164,128 +163,6 @@ const CATEGORIES = [
           </section>
         }
 
-        <!-- Seção: Conta de Pagamentos (Stripe Connect) -->
-        <section class="section">
-          <div class="section-header">
-            <h2 class="section-title">
-              <mat-icon style="vertical-align:middle;margin-right:6px;color:var(--mat-sys-primary)">account_balance</mat-icon>
-              {{ 'APP.PROVIDER.PAYMENTS_TITLE' | translate }}
-            </h2>
-          </div>
-          <mat-card class="surface-card stripe-connect-card">
-            <mat-card-content>
-              @if (isLoadingConnectStatus()) {
-                <div class="loading-center"><mat-spinner diameter="32" /></div>
-              } @else if (connectStatus()?.status === 'active') {
-                <div class="connect-active">
-                  <mat-icon class="connect-icon connect-icon--active">check_circle</mat-icon>
-                  <div>
-                    <p class="connect-status-title">{{ 'APP.PROVIDER.PAYMENTS_ACTIVE' | translate }}</p>
-                    <p class="text-muted">{{ 'APP.PROVIDER.PAYMENTS_ACTIVE_DESC' | translate }}</p>
-                  </div>
-                  <button mat-stroked-button color="primary" (click)="openStripeDashboard()">
-                    <mat-icon>open_in_new</mat-icon>
-                    {{ 'APP.PROVIDER.PAYMENTS_DASHBOARD' | translate }}
-                  </button>
-                </div>
-              } @else if (connectStatus()?.status === 'pending') {
-                <div class="connect-pending">
-                  <mat-icon class="connect-icon connect-icon--pending">pending</mat-icon>
-                  <div>
-                    <p class="connect-status-title">{{ 'APP.PROVIDER.PAYMENTS_PENDING' | translate }}</p>
-                    <p class="text-muted">{{ 'APP.PROVIDER.PAYMENTS_PENDING_DESC' | translate }}</p>
-                  </div>
-                  <button mat-raised-button color="primary" (click)="startStripeOnboarding()">
-                    <mat-icon>arrow_forward</mat-icon>
-                    {{ 'APP.PROVIDER.PAYMENTS_CONTINUE' | translate }}
-                  </button>
-                </div>
-              } @else {
-                <div class="connect-not-connected">
-                  <div class="connect-info">
-                    <mat-icon class="connect-icon">payments</mat-icon>
-                    <div>
-                      <p class="connect-status-title">{{ 'APP.PROVIDER.PAYMENTS_NOT_CONNECTED' | translate }}</p>
-                      <p class="text-muted">{{ 'APP.PROVIDER.PAYMENTS_NOT_CONNECTED_DESC' | translate }}</p>
-                    </div>
-                  </div>
-                  <div class="connect-benefits">
-                    <div class="benefit-item">
-                      <mat-icon>lock</mat-icon>
-                      <span>{{ 'APP.PROVIDER.PAYMENTS_BENEFIT_SECURE' | translate }}</span>
-                    </div>
-                    <div class="benefit-item">
-                      <mat-icon>schedule</mat-icon>
-                      <span>{{ 'APP.PROVIDER.PAYMENTS_BENEFIT_FAST' | translate }}</span>
-                    </div>
-                    <div class="benefit-item">
-                      <mat-icon>percent</mat-icon>
-                      <span>{{ 'APP.PROVIDER.PAYMENTS_BENEFIT_FEE' | translate }}</span>
-                    </div>
-                  </div>
-                  <button mat-raised-button color="primary" class="connect-btn"
-                    [disabled]="isStartingOnboarding()"
-                    (click)="startStripeOnboarding()">
-                    @if (isStartingOnboarding()) { <mat-spinner diameter="20" /> }
-                    <mat-icon>account_balance_wallet</mat-icon>
-                    {{ 'APP.PROVIDER.PAYMENTS_CONNECT' | translate }}
-                  </button>
-                </div>
-              }
-            </mat-card-content>
-          </mat-card>
-        </section>
-
-        <!-- Seção: Configurar Horários por Serviço -->
-        @if (services().length > 0) {
-          <section class="section">
-            <div class="section-header">
-              <h2 class="section-title">
-                <mat-icon style="vertical-align:middle;margin-right:6px;color:var(--mat-sys-primary)">schedule</mat-icon>
-                {{ 'APP.PROVIDER.SLOTS_TITLE' | translate }}
-              </h2>
-            </div>
-            <div class="slots-config-list">
-              @for (service of services(); track service.id) {
-                <mat-card class="surface-card slots-card">
-                  <mat-card-content>
-                    <div class="slots-card-header">
-                      <span class="slots-service-name">{{ service.name }}</span>
-                      <span class="text-muted">{{ 'APP.PROVIDER.SLOTS_HINT' | translate }}</span>
-                    </div>
-                    <div class="slots-input-row">
-                      <div class="slots-chips">
-                        @for (slot of getSlotsForService(service.id); track slot) {
-                          <span class="slot-chip">
-                            {{ slot }}
-                            <button class="slot-chip-remove" type="button" (click)="removeSlot(service.id, slot)">×</button>
-                          </span>
-                        }
-                      </div>
-                      <div class="slot-add-row">
-                        <input class="slot-input" type="time"
-                          [value]="newSlotInput()[service.id] || ''"
-                          (change)="setNewSlotInput(service.id, $any($event.target).value)" />
-                        <button mat-stroked-button type="button" (click)="addSlot(service.id)">
-                          <mat-icon>add</mat-icon>
-                          {{ 'APP.PROVIDER.SLOTS_ADD' | translate }}
-                        </button>
-                      </div>
-                    </div>
-                    <button mat-raised-button color="primary" class="slots-save-btn"
-                      [disabled]="isSavingSlots() === service.id"
-                      (click)="saveSlots(service.id)">
-                      @if (isSavingSlots() === service.id) { <mat-spinner diameter="16" /> }
-                      <mat-icon>save</mat-icon>
-                      {{ 'APP.PROVIDER.SLOTS_SAVE' | translate }}
-                    </button>
-                  </mat-card-content>
-                </mat-card>
-              }
-            </div>
-          </section>
-        }
-
         @if (showForm()) {
           <section class="section form-section">
             <div class="section-header">
@@ -422,30 +299,6 @@ const CATEGORIES = [
     @media (max-width: 400px) {
       .stats-row { grid-template-columns: 1fr; }
     }
-    /* ── Stripe Connect ── */
-    .stripe-connect-card { padding: 8px; }
-    .connect-active, .connect-pending { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .connect-not-connected { display: flex; flex-direction: column; gap: 16px; }
-    .connect-info { display: flex; align-items: flex-start; gap: 12px; }
-    .connect-icon { font-size: 40px; width: 40px; height: 40px; }
-    .connect-icon--active { color: #10b981; }
-    .connect-icon--pending { color: #f59e0b; }
-    .connect-status-title { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
-    .connect-benefits { display: flex; gap: 16px; flex-wrap: wrap; }
-    .benefit-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mat-sys-on-surface-variant); }
-    .connect-btn { height: 44px; font-size: 14px; font-weight: 700; }
-    /* ── Slots ── */
-    .slots-config-list { display: flex; flex-direction: column; gap: 12px; }
-    .slots-card { padding: 8px; }
-    .slots-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 4px; }
-    .slots-service-name { font-size: 15px; font-weight: 700; }
-    .slots-input-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-    .slots-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .slot-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: color-mix(in oklab, var(--mat-sys-primary) 12%, transparent); color: var(--mat-sys-primary); font-size: 13px; font-weight: 600; }
-    .slot-chip-remove { background: none; border: none; cursor: pointer; font-size: 16px; line-height: 1; color: var(--mat-sys-primary); padding: 0; }
-    .slot-add-row { display: flex; align-items: center; gap: 8px; }
-    .slot-input { padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--mat-sys-outline-variant); font-size: 14px; background: transparent; color: inherit; }
-    .slots-save-btn { align-self: flex-start; }
   `],
 })
 export class ProviderDashboardComponent extends BaseComponent implements OnInit {
@@ -453,7 +306,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   private readonly onboardingService = inject(OnboardingService);
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
-  private readonly paymentApi = inject(PaymentApiService);
 
   readonly weekdays = WEEKDAYS;
   readonly categories = CATEGORIES;
@@ -466,16 +318,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   isSaving = signal(false);
   averageRating = signal(0);
   totalReviews = signal(0);
-
-  // ── Stripe Connect ────────────────────────────────────────────────────────
-  connectStatus = signal<ConnectStatusResponse | null>(null);
-  isLoadingConnectStatus = signal(false);
-  isStartingOnboarding = signal(false);
-
-  // ── Configuração de horários ──────────────────────────────────────────────
-  slotsMap = signal<Record<string, string[]>>({});
-  newSlotInput = signal<Record<string, string>>({});
-  isSavingSlots = signal<string | null>(null);
 
   serviceForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -492,10 +334,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   constructor() { super({ loadUnit: false }); }
 
-  ngOnInit(): void {
-    this.loadServices();
-    this.loadConnectStatus();
-  }
+  ngOnInit(): void { this.loadServices(); }
 
   private loadServices(): void {
     this.isLoadingServices.set(true);
@@ -564,73 +403,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
         this.services.update((list) => list.filter((s) => s.id !== id));
         this.recalcStats(this.services());
       },
-    });
-  }
-
-  // ── Stripe Connect ────────────────────────────────────────────────────────
-
-  private loadConnectStatus(): void {
-    this.isLoadingConnectStatus.set(true);
-    this.paymentApi.getConnectStatus().subscribe({
-      next: (status) => {
-        this.connectStatus.set(status);
-        this.isLoadingConnectStatus.set(false);
-      },
-      error: () => this.isLoadingConnectStatus.set(false),
-    });
-  }
-
-  startStripeOnboarding(): void {
-    this.isStartingOnboarding.set(true);
-    const returnUrl = window.location.href;
-    const refreshUrl = window.location.href;
-    this.paymentApi.startOnboarding(refreshUrl, returnUrl).subscribe({
-      next: (res) => {
-        this.isStartingOnboarding.set(false);
-        window.location.href = res.onboardingUrl;
-      },
-      error: () => this.isStartingOnboarding.set(false),
-    });
-  }
-
-  openStripeDashboard(): void {
-    this.paymentApi.getDashboardLink().subscribe({
-      next: (res) => window.open(res.dashboardUrl, '_blank'),
-    });
-  }
-
-  // ── Configuração de horários ──────────────────────────────────────────────
-
-  getSlotsForService(serviceId: string): string[] {
-    if (this.slotsMap()[serviceId] !== undefined) return this.slotsMap()[serviceId];
-    const service = this.services().find((s) => s.id === serviceId);
-    return (service as any)?.availableSlots ?? [];
-  }
-
-  setNewSlotInput(serviceId: string, value: string): void {
-    this.newSlotInput.update((m) => ({ ...m, [serviceId]: value }));
-  }
-
-  addSlot(serviceId: string): void {
-    const slot = this.newSlotInput()[serviceId];
-    if (!slot) return;
-    const current = this.getSlotsForService(serviceId);
-    if (current.includes(slot)) return;
-    this.slotsMap.update((m) => ({ ...m, [serviceId]: [...current, slot].sort() }));
-    this.newSlotInput.update((m) => ({ ...m, [serviceId]: '' }));
-  }
-
-  removeSlot(serviceId: string, slot: string): void {
-    const current = this.getSlotsForService(serviceId);
-    this.slotsMap.update((m) => ({ ...m, [serviceId]: current.filter((s) => s !== slot) }));
-  }
-
-  saveSlots(serviceId: string): void {
-    const slots = this.getSlotsForService(serviceId);
-    this.isSavingSlots.set(serviceId);
-    this.serviceApi.updateSlots(serviceId, slots).subscribe({
-      next: () => this.isSavingSlots.set(null),
-      error: () => this.isSavingSlots.set(null),
     });
   }
 
