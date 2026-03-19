@@ -2,6 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
+    standalone: true,
     selector: 'app-loading',
     imports: [MatProgressSpinnerModule],
     template: '<div class="loading"><mat-spinner color="warn" diameter="50"></mat-spinner></div>',

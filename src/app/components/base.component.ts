@@ -48,16 +48,6 @@ export default class BaseComponent implements OnDestroy {
 		}
 	}
 
-	// Compatibilidade temporária com código legado.
-	afterLoadUnit(fun: (unit: Unit | null) => any) {
-		this.afterLoadCondominium((condominium: Condominium | null) => fun(condominium));
-	}
-
-	// Compatibilidade temporária com código legado.
-	loadUnit() {
-		this.loadCondominium();
-	}
-
 	get authService() {
 		return this._authService;
 	}
