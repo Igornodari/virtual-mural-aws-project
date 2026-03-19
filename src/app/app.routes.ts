@@ -27,12 +27,9 @@ export const routes: Routes = [
   },
   // Rota legada de dashboard — redireciona para o fluxo de onboarding
   {
-    path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then(
-        (m) => m.DashboardComponent,
-      ),
+    path: '',
+    loadChildren: () =>
+      import('./features/pages.routing.module').then((m) => m.PAGES_ROUTES),
   },
   // Onboarding: cadastro de condomínio
   {
@@ -71,14 +68,6 @@ export const routes: Routes = [
       ),
   },
   // Área de perfil do usuário
-  {
-    path: 'profile',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/profile/profile.component').then(
-        (m) => m.ProfileComponent,
-      ),
-  },
   // Fallback
   {
     path: '**',

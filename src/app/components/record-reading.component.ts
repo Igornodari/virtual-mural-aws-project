@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material.module';
 
 @Component({
+  standalone: true,
   selector: 'app-record-reading',
   imports: [TranslateModule, MaterialModule, CommonModule],
   template: `
