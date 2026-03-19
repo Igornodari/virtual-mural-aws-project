@@ -285,7 +285,7 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     state: ['', Validators.required],
   });
 
-  constructor() { super({ loadUnit: false }); }
+  constructor() { super(); }
 
   ngOnInit(): void {
     this.loadCurrentData();
@@ -343,7 +343,7 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     if (!cep || cep.length !== 8) return;
     this.isLookingUpCep.set(true);
     this.condominiumApi.lookupCep(cep).subscribe({
-      next: (data: any) => {
+      next: (data) => {
         if (!data.erro) {
           this.addressForm.patchValue({
             street: data.logradouro,
@@ -395,8 +395,10 @@ export class ProfileComponent extends BaseComponent implements OnInit {
       ? this.condominiumApi.update(condominiumId, payload)
       : this.condominiumApi.create(payload);
     req.subscribe({
-      next: (_condo: any) => {
-        this.onboardingService.saveCondominiumAddress(addr);
+      next: (condominium) => {
+        const updatedCondominiumId =
+          'id' in condominium ? condominium.id : this.onboardingService.profile.condominiumId;
+        this.onboardingService.saveLocalCondominiumAddress(addr, updatedCondominiumId);
         this.isSavingAddress.set(false);
       },
       error: () => this.isSavingAddress.set(false),

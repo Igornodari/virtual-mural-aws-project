@@ -141,7 +141,7 @@ export class RegisterComponent extends BaseComponent {
   });
 
   constructor() {
-    super({ loadUnit: false });
+    super();
   }
 
   async onRegister(): Promise<void> {
