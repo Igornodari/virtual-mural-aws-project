@@ -1,11 +1,16 @@
 import { Component, Inject, NgZone, OnDestroy, Optional, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { Condominium, Unit, User } from '../shared/types';
+import { Condominium, User } from '../shared/types';
 import { AuthService } from '../core/services/auth.service';
 import { Location } from '@angular/common';
 import { RequestService } from '../core/services/request.service';
 import { TranslateService } from '@ngx-translate/core';
+
+interface BaseComponentSettings {
+	loadCondominium?: boolean;
+	service?: unknown;
+}
 
 @Component({
 	standalone: true,
@@ -28,7 +33,7 @@ export default class BaseComponent implements OnDestroy {
 	public condominium: Condominium | null = null;
 
 	constructor(
-		@Optional() @Inject('settings') protected settings?: { loadUnit?: boolean; service?: any }
+		@Optional() @Inject('settings') protected settings?: BaseComponentSettings
 	) {
 		this._authService.$user
 			.pipe(takeUntil(this._unsubscribe$))
@@ -43,7 +48,7 @@ export default class BaseComponent implements OnDestroy {
 		});
 	}
 	loadCondominium() {
-		if (this.settings?.loadUnit === undefined || this.settings?.loadUnit === true) {
+		if (this.settings?.loadCondominium === undefined || this.settings?.loadCondominium === true) {
 			this.afterLoadCondominium(() => {});
 		}
 	}
