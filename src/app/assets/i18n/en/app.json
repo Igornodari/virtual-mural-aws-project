@@ -113,20 +113,7 @@
       "HERO_TITLE": "Services for your condominium",
       "HERO_SUBTITLE": "Find services and professionals in your condominium in",
       "STATS_SERVICES": "Available services",
-      "STATS_PROVIDERS": "Providers",
-      "WRITE_REVIEW": "Write a review",
-      "YOUR_RATING": "Your rating:",
-      "REVIEW_COMMENT": "Comment",
-      "REVIEW_COMMENT_HINT": "Tell us about your experience...",
-      "REVIEW_ANONYMOUS_HINT": "Your identity will remain anonymous",
-      "SUBMIT_REVIEW": "Submit review",
-      "REVIEW_SENT": "Review submitted successfully!",
-      "REVIEW_ERROR": "Error submitting review. Please try again.",
-      "RATING_1": "Terrible",
-      "RATING_2": "Poor",
-      "RATING_3": "Average",
-      "RATING_4": "Good",
-      "RATING_5": "Excellent"
+      "STATS_PROVIDERS": "Providers"
     },
     "PROFILE": {
       "TITLE": "My Profile",

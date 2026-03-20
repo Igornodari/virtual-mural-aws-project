@@ -16,17 +16,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError, of } from 'rxjs';
 import BaseComponent from '../../../components/base.component';
-import { CondominiumApiService, ViaCepResponse } from '../../../core/services/condominium-api.service';
 import { OnboardingService } from '../../../core/services/onboarding.service';
-import { ROUTE_PATHS } from '../../../shared/constant/route-paths.constant';
 import { CondominiumAddress } from '../../../shared/types';
-import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 const BRAZIL_STATES = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS',
-  'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC',
-  'SP', 'SE', 'TO',
+  'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS',
+  'MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC',
+  'SP','SE','TO',
 ];
 
 function cepValidator(control: AbstractControl): ValidationErrors | null {
@@ -37,19 +36,36 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-condominium-onboarding',
   standalone: true,
-  imports: [...importBase],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatStepperModule,
+    TranslateModule,
+  ],
   template: `
     <div class="app-auth-page">
       <div class="onboarding-shell">
+
+        <!-- Cabeçalho -->
         <div class="onboarding-header">
           <span class="app-badge">{{ 'APP.TOPBAR.BRAND' | translate }}</span>
           <h1 class="m-t-3 m-b-1">{{ 'APP.ONBOARDING.CONDO_TITLE' | translate }}</h1>
           <p class="text-muted m-0">{{ 'APP.ONBOARDING.CONDO_SUBTITLE' | translate }}</p>
         </div>
 
+        <!-- Formulário -->
         <mat-card class="surface-card--elevated onboarding-card">
           <mat-card-content class="p-0">
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-col gap-4">
+
+              <!-- CEP com busca automática -->
               <div class="cep-row">
                 <mat-form-field appearance="outline" class="cep-field">
                   <mat-label>{{ 'APP.PROFILE.FIELD_CEP' | translate }}</mat-label>
@@ -68,7 +84,6 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
                     <mat-error>{{ 'APP.ONBOARDING.CEP_INVALID' | translate }}</mat-error>
                   }
                 </mat-form-field>
-
                 <button
                   mat-stroked-button
                   type="button"
@@ -85,6 +100,7 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
                 <div class="app-error-box">{{ cepError }}</div>
               }
 
+              <!-- Logradouro -->
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>{{ 'APP.PROFILE.FIELD_STREET' | translate }}</mat-label>
                 <input matInput formControlName="street" placeholder="Ex: Rua das Flores" />
@@ -94,6 +110,7 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
               </mat-form-field>
 
               <div class="two-col">
+                <!-- Número -->
                 <mat-form-field appearance="outline" class="w-full">
                   <mat-label>{{ 'APP.PROFILE.FIELD_NUMBER' | translate }}</mat-label>
                   <input matInput formControlName="number" placeholder="Ex: 123" inputmode="numeric" />
@@ -102,12 +119,14 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
                   }
                 </mat-form-field>
 
+                <!-- Complemento -->
                 <mat-form-field appearance="outline" class="w-full">
                   <mat-label>{{ 'APP.PROFILE.FIELD_COMPLEMENT' | translate }}</mat-label>
                   <input matInput formControlName="complement" placeholder="Apto, Bloco..." />
                 </mat-form-field>
               </div>
 
+              <!-- Bairro -->
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>{{ 'APP.PROFILE.FIELD_NEIGHBORHOOD' | translate }}</mat-label>
                 <input matInput formControlName="neighborhood" placeholder="Ex: Centro" />
@@ -117,14 +136,16 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
               </mat-form-field>
 
               <div class="two-col">
+                <!-- Cidade -->
                 <mat-form-field appearance="outline" class="w-full">
                   <mat-label>{{ 'APP.PROFILE.FIELD_CITY' | translate }}</mat-label>
-                  <input matInput formControlName="city" placeholder="Ex: Sao Paulo" />
+                  <input matInput formControlName="city" placeholder="Ex: São Paulo" />
                   @if (form.controls.city.touched && form.controls.city.invalid) {
                     <mat-error>{{ 'APP.ONBOARDING.CITY_REQUIRED' | translate }}</mat-error>
                   }
                 </mat-form-field>
 
+                <!-- Estado -->
                 <mat-form-field appearance="outline" class="w-full">
                   <mat-label>{{ 'APP.PROFILE.FIELD_STATE' | translate }}</mat-label>
                   <mat-select formControlName="state">
@@ -198,6 +219,8 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
     .btn-spinner {
       display: inline-block;
     }
+
+    /* ── Mobile ── */
     @media (max-width: 600px) {
       .onboarding-card {
         padding: 20px 16px;
@@ -222,11 +245,10 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
 })
 export class CondominiumOnboardingComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly condominiumApi = inject(CondominiumApiService);
+  private readonly http = inject(HttpClient);
   private readonly onboardingService = inject(OnboardingService);
 
   readonly states = BRAZIL_STATES;
-
   loadingCep = false;
   cepError = '';
 
@@ -241,17 +263,15 @@ export class CondominiumOnboardingComponent extends BaseComponent {
   });
 
   constructor() {
-    super();
+    super({ loadUnit: false });
   }
 
   onCepInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/\D/g, '');
-
     if (value.length > 5) {
       value = value.substring(0, 5) + '-' + value.substring(5, 8);
     }
-
     this.form.controls.zipCode.setValue(value, { emitEvent: false });
     input.value = value;
     this.cepError = '';
@@ -259,40 +279,31 @@ export class CondominiumOnboardingComponent extends BaseComponent {
 
   fetchAddress(): void {
     const raw = this.form.controls.zipCode.value.replace(/\D/g, '');
-    if (raw.length !== 8) {
-      return;
-    }
+    if (raw.length !== 8) return;
 
     this.loadingCep = true;
     this.cepError = '';
 
-    this.condominiumApi.lookupCep(raw).subscribe({
-      next: (data: ViaCepResponse) => {
+    this.http
+      .get<any>(`https://viacep.com.br/ws/${raw}/json/`)
+      .pipe(catchError(() => of(null)))
+      .subscribe((data) => {
         this.loadingCep = false;
-
-        if (data.erro) {
-          this.cepError = 'CEP nao encontrado. Preencha o endereco manualmente.';
+        if (!data || data.erro) {
+          this.cepError = 'CEP não encontrado. Preencha o endereço manualmente.';
           return;
         }
-
         this.form.patchValue({
           street: data.logradouro || '',
           neighborhood: data.bairro || '',
           city: data.localidade || '',
           state: data.uf || '',
         });
-      },
-      error: () => {
-        this.loadingCep = false;
-        this.cepError = 'Nao foi possivel consultar o CEP agora. Preencha o endereco manualmente.';
-      },
-    });
+      });
   }
 
   async onSubmit(): Promise<void> {
-    if (this.form.invalid) {
-      return;
-    }
+    if (this.form.invalid) return;
 
     this.setLoadingState(true);
     const raw = this.form.getRawValue();
@@ -307,14 +318,28 @@ export class CondominiumOnboardingComponent extends BaseComponent {
       state: raw.state,
     };
 
-    this.onboardingService.ensureCondominiumRegistration(address).subscribe({
-      next: () => {
-        this.setLoadingState(false);
-        this.navigateTo(ROUTE_PATHS.onboardingRole);
+    this.onboardingService.saveCondominiumAddress(address).subscribe({
+      next: (existing: any) => {
+        const found = Array.isArray(existing) && existing.length > 0;
+        if (!found) {
+          this.onboardingService.createCondominium(address).subscribe({
+            next: () => {
+              this.setLoadingState(false);
+              this.navigateTo('/onboarding/role');
+            },
+            error: () => {
+              this.setLoadingState(false);
+              this.navigateTo('/onboarding/role');
+            },
+          });
+        } else {
+          this.setLoadingState(false);
+          this.navigateTo('/onboarding/role');
+        }
       },
       error: () => {
         this.setLoadingState(false);
-        this.navigateTo(ROUTE_PATHS.onboardingRole);
+        this.navigateTo('/onboarding/role');
       },
     });
   }

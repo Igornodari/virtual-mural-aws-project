@@ -1,16 +1,11 @@
 import { Component, Inject, NgZone, OnDestroy, Optional, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { Condominium, User } from '../shared/types';
+import { Condominium, Unit, User } from '../shared/types';
 import { AuthService } from '../core/services/auth.service';
 import { Location } from '@angular/common';
 import { RequestService } from '../core/services/request.service';
 import { TranslateService } from '@ngx-translate/core';
-
-interface BaseComponentSettings {
-	loadCondominium?: boolean;
-	service?: unknown;
-}
 
 @Component({
 	standalone: true,
@@ -33,7 +28,7 @@ export default class BaseComponent implements OnDestroy {
 	public condominium: Condominium | null = null;
 
 	constructor(
-		@Optional() @Inject('settings') protected settings?: BaseComponentSettings
+		@Optional() @Inject('settings') protected settings?: { loadUnit?: boolean; service?: any }
 	) {
 		this._authService.$user
 			.pipe(takeUntil(this._unsubscribe$))
@@ -48,9 +43,19 @@ export default class BaseComponent implements OnDestroy {
 		});
 	}
 	loadCondominium() {
-		if (this.settings?.loadCondominium === undefined || this.settings?.loadCondominium === true) {
+		if (this.settings?.loadUnit === undefined || this.settings?.loadUnit === true) {
 			this.afterLoadCondominium(() => {});
 		}
+	}
+
+	// Compatibilidade temporária com código legado.
+	afterLoadUnit(fun: (unit: Unit | null) => any) {
+		this.afterLoadCondominium((condominium: Condominium | null) => fun(condominium));
+	}
+
+	// Compatibilidade temporária com código legado.
+	loadUnit() {
+		this.loadCondominium();
 	}
 
 	get authService() {
