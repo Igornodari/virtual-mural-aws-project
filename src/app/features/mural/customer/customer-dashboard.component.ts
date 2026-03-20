@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { finalize, takeUntil } from 'rxjs';
 
 import BaseComponent from 'src/app/components/base.component';
+import { PaymentMethodDialog, PaymentMethod } from 'src/app/components/payment-method-dialog/payment-method-dialog';
+import { PixQrDialog } from 'src/app/components/pix-qr-dialog/pix-qr-dialog';
 import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
 import { AppointmentApiService, AppointmentDto, AppointmentPaymentDto, AppointmentStatus, CreateAppointmentPayload } from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/app/core/services/review-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 const CATEGORIES = [
@@ -60,6 +64,8 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     private readonly serviceApi: ServiceApiService,
     private readonly appointmentApi: AppointmentApiService,
     private readonly reviewApi: ReviewApiService,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: SnackBarService,
   ) {
     super();
   }
@@ -107,7 +113,12 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .pipe(finalize(() => (this.isLoadingAppointments = false)))
       .subscribe({
         next: (appointments) => {
-          this.appointments = appointments.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+          const appointmentsArray = Array.isArray(appointments) ? appointments : [];
+          this.appointments = appointmentsArray.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+        },
+        error: (err) => {
+          console.error('Erro ao carregar appointments:', err);
+          this.appointments = [];
         },
       });
   }
@@ -167,9 +178,14 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   public loadServiceAvailability(serviceId: string): void {
     this.appointmentApi.findByService(serviceId).subscribe({
       next: (appointments) => {
-        this.blockedDaysByService[serviceId] = appointments
+        const appointmentsArray = Array.isArray(appointments) ? appointments : [];
+        this.blockedDaysByService[serviceId] = appointmentsArray
           .filter((appointment) => BLOCKING_STATUSES.includes(appointment.status))
           .map((appointment) => appointment.scheduledDay);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar disponibilidade:', err);
+        this.blockedDaysByService[serviceId] = [];
       },
     });
   }
@@ -229,22 +245,46 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   }
 
   public payAppointment(appointment: AppointmentDto): void {
-    this.isPayingAppointment = appointment.id;
+    const dialogRef = this.dialog.open(PaymentMethodDialog, {
+      data: { appointmentId: appointment.id },
+      width: '400px',
+    });
 
-    this.appointmentApi
-      .createPayment(appointment.id, { method: 'pix' })
-      .pipe(finalize(() => (this.isPayingAppointment = null)))
-      .subscribe({
-        next: (paymentSession: AppointmentPaymentDto) => {
-          this.replaceAppointment(paymentSession.appointment);
+    dialogRef.afterClosed().subscribe((selectedMethod: PaymentMethod) => {
+      if (!selectedMethod) return;
 
-          if (paymentSession.checkoutUrl) {
-            window.open(paymentSession.checkoutUrl, '_blank');
-          }
+      this.isPayingAppointment = appointment.id;
 
-          this.loadServiceAvailability(appointment.serviceId);
-        },
-      });
+      this.appointmentApi
+        .createPayment(appointment.id, { method: selectedMethod })
+        .pipe(finalize(() => (this.isPayingAppointment = null)))
+        .subscribe({
+          next: (paymentSession: AppointmentPaymentDto) => {
+            this.replaceAppointment(paymentSession.appointment);
+
+            if (paymentSession.checkoutUrl) {
+              window.open(paymentSession.checkoutUrl, '_blank');
+            }
+
+            // Para PIX, exibir QR Code
+            if (selectedMethod === 'pix' && (paymentSession.qrCode || paymentSession.qrCodeText)) {
+              this.dialog.open(PixQrDialog, {
+                data: {
+                  qrCode: paymentSession.qrCode,
+                  qrCodeText: paymentSession.qrCodeText,
+                },
+                width: '400px',
+              });
+            }
+
+            this.loadServiceAvailability(appointment.serviceId);
+          },
+          error: (error) => {
+            console.error('Erro no pagamento:', error);
+            this.snackBar.error('Método de pagamento não disponível. Tente cartão de crédito.');
+          },
+        });
+    });
   }
 
   public hoverStar(serviceId: string, star: number): void {

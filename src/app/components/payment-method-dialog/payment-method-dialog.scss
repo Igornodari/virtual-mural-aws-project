@@ -1,0 +1,41 @@
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.payment-method {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+
+  &:hover {
+    border-color: #1976d2;
+  }
+
+  .payment-method-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .payment-method-text {
+      strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+      }
+    }
+  }
+}

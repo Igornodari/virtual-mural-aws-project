@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Pagamento via PIX</h2>
+
+<mat-dialog-content class="pix-content">
+  <p>Escaneie o QR Code abaixo com seu aplicativo de banco para realizar o pagamento:</p>
+
+  @if (qrCodeUrl()) {
+    <div class="qr-code-container">
+      <img [src]="qrCodeUrl()" alt="QR Code PIX" class="qr-code" />
+    </div>
+  } @else {
+    <p>Gerando QR Code...</p>
+  }
+
+  <div class="pix-text">
+    <p><strong>Código PIX:</strong></p>
+    <p class="pix-code">{{ data.qrCodeText }}</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Fechar</button>
+</mat-dialog-actions>
