@@ -11,7 +11,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-	standalone: true,
 	selector: 'app-status',
 	imports: [MatChipsModule, TranslateModule, CommonModule],
 	template: `

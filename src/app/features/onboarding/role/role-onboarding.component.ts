@@ -194,6 +194,7 @@ interface RoleOption {
     .btn-spinner {
       display: inline-block;
     }
+    /* ── Mobile ── */
     @media (max-width: 600px) {
       .role-shell {
         gap: 20px;
@@ -261,7 +262,7 @@ export class RoleOnboardingComponent extends BaseComponent {
   ];
 
   constructor() {
-    super();
+    super({ loadUnit: false });
   }
 
   select(role: UserRole): void {
@@ -270,12 +271,10 @@ export class RoleOnboardingComponent extends BaseComponent {
 
   async onConfirm(): Promise<void> {
     const role = this.selected();
-    if (!role) {
-      return;
-    }
+    if (!role) return;
 
     this.setLoadingState(true);
-    const destination = this.onboardingService.resolveDashboardRoute(role);
+    const destination = role === 'provider' ? '/mural/provider' : '/mural/customer';
 
     this.onboardingService.saveRole(role).subscribe({
       next: () => {
@@ -283,6 +282,7 @@ export class RoleOnboardingComponent extends BaseComponent {
         this.navigateTo(destination);
       },
       error: () => {
+        // Em caso de falha de rede, o estado local já foi salvo pelo serviço
         this.setLoadingState(false);
         this.navigateTo(destination);
       },

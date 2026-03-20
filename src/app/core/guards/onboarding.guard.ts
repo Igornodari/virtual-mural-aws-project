@@ -2,8 +2,11 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { OnboardingService } from '../services/onboarding.service';
-import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 
+/**
+ * Guard que garante que o usuário autenticado passou pelo onboarding completo.
+ * Caso contrário, redireciona para a etapa pendente.
+ */
 export const onboardingGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
   const onboardingService = inject(OnboardingService);
@@ -11,9 +14,16 @@ export const onboardingGuard: CanActivateFn = async () => {
 
   const authenticated = await authService.isAuthenticated();
   if (!authenticated) {
-    return router.parseUrl(ROUTE_PATHS.login);
+    return router.parseUrl('/login');
   }
 
-  const nextRoute = onboardingService.resolveNextRoute();
-  return nextRoute.startsWith('/mural/') ? true : router.parseUrl(nextRoute);
+  if (!onboardingService.hasCondominium) {
+    return router.parseUrl('/onboarding/condominium');
+  }
+
+  if (!onboardingService.hasRole) {
+    return router.parseUrl('/onboarding/role');
+  }
+
+  return true;
 };
