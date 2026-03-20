@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Escolher Método de Pagamento</h2>
+
+<mat-dialog-content>
+  <mat-radio-group [(ngModel)]="selectedMethod" class="payment-methods">
+    @for (method of paymentMethods; track method.value) {
+      <mat-radio-button [value]="method.value" class="payment-method">
+        <div class="payment-method-content">
+          <mat-icon>{{ method.icon }}</mat-icon>
+          <div class="payment-method-text">
+            <strong>{{ method.label }}</strong>
+            <p class="text-muted">{{ method.description }}</p>
+          </div>
+        </div>
+      </mat-radio-button>
+    }
+  </mat-radio-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()" cdkFocusInitial>
+    Confirmar Pagamento
+  </button>
+</mat-dialog-actions>

@@ -181,8 +181,6 @@ export class LoginComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
 
-  errorMessage = '';
-
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
