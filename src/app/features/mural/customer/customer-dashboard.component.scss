@@ -66,6 +66,45 @@
   gap: 16px;
 }
 
+.appointments-panel {
+  padding: 20px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appointments-list {
+  width: 100%;
+}
+
+.appointment-item {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: color-mix(in oklab, var(--mat-sys-primary) 4%, transparent);
+}
+
+.appointment-badge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.appointment-badge--paid {
+  background: color-mix(in oklab, #16a34a 18%, transparent);
+  color: #166534;
+}
+
+.section-title-lg {
+  font-size: 20px;
+  font-weight: 700;
+}
+
 .customer-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
@@ -187,6 +226,12 @@
   border-color: var(--mat-sys-primary);
   background: var(--mat-sys-primary);
   color: #fff;
+}
+
+.filter-chip--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: line-through;
 }
 
 .section-title {

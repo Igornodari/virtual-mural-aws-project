@@ -4,31 +4,26 @@ import { finalize, takeUntil } from 'rxjs';
 
 import BaseComponent from 'src/app/components/base.component';
 import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
-import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { AppointmentApiService, AppointmentDto, AppointmentPaymentDto, AppointmentStatus, CreateAppointmentPayload } from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
+import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/app/core/services/review-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
-import {
-  AppointmentApiService,
-  CreateAppointmentPayload,
-} from 'src/app/core/services/appointment-api.service';
-import {
-  ReviewApiService,
-  AnonymousReviewDto,
-  CreateReviewPayload,
-} from 'src/app/core/services/review-api.service';
+import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 const CATEGORIES = [
   'Todas',
-  'Beleza e Estética',
-  'Manutenção e Reparos',
-  'Alimentação',
+  'Beleza e Estetica',
+  'Manutencao e Reparos',
+  'Alimentacao',
   'Aulas e Tutoria',
   'Pets',
   'Limpeza',
   'Tecnologia',
-  'Saúde e Bem-estar',
+  'Saude e Bem-estar',
   'Outros',
 ];
+
+const BLOCKING_STATUSES: AppointmentStatus[] = ['confirmed', 'awaiting_payment', 'paid', 'completed'];
 
 @Component({
   selector: 'app-customer-dashboard',
@@ -39,7 +34,9 @@ const CATEGORIES = [
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
   public services: ServiceDto[] = [];
   public filteredServices: ServiceDto[] = [];
+  public appointments: AppointmentDto[] = [];
   public reviewsMap: Record<string, AnonymousReviewDto[]> = {};
+  public blockedDaysByService: Record<string, string[]> = {};
   public pendingRating: Record<string, number> = {};
   public pendingComment: Record<string, string> = {};
   public hoverRating: Record<string, number> = {};
@@ -50,17 +47,19 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   public expandedId: string | null = null;
 
   public isLoadingServices = false;
+  public isLoadingAppointments = false;
   public isScheduling: string | null = null;
   public isReviewing: string | null = null;
   public isLoadingReviews: string | null = null;
+  public isPayingAppointment: string | null = null;
 
   public readonly categories = CATEGORIES;
 
   constructor(
-    private onboardingService: OnboardingService,
-    private serviceApi: ServiceApiService,
-    private appointmentApi: AppointmentApiService,
-    private reviewApi: ReviewApiService
+    private readonly onboardingService: OnboardingService,
+    private readonly serviceApi: ServiceApiService,
+    private readonly appointmentApi: AppointmentApiService,
+    private readonly reviewApi: ReviewApiService,
   ) {
     super();
   }
@@ -71,6 +70,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     });
 
     this.loadServices();
+    this.loadMyAppointments();
   }
 
   get totalServices(): number {
@@ -78,11 +78,11 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   }
 
   get condoCity(): string {
-    return this.onboardingService.profile.condominiumAddress?.city || 'Não definido';
+    return this.onboardingService.profile.condominiumAddress?.city || 'Nao definido';
   }
 
   get uniqueProviders(): number {
-    return new Set(this.services.map(service => service.providerId)).size;
+    return new Set(this.services.map((service) => service.providerId)).size;
   }
 
   public loadServices(): void {
@@ -92,9 +92,22 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .findAll()
       .pipe(finalize(() => (this.isLoadingServices = false)))
       .subscribe({
-        next: services => {
+        next: (services) => {
           this.services = services;
           this.applyFilters();
+        },
+      });
+  }
+
+  public loadMyAppointments(): void {
+    this.isLoadingAppointments = true;
+
+    this.appointmentApi
+      .findMine()
+      .pipe(finalize(() => (this.isLoadingAppointments = false)))
+      .subscribe({
+        next: (appointments) => {
+          this.appointments = appointments.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
         },
       });
   }
@@ -102,7 +115,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   public applyFilters(): void {
     const search = (this.searchControl.value || '').toLowerCase().trim();
 
-    this.filteredServices = this.services.filter(service => {
+    this.filteredServices = this.services.filter((service) => {
       const matchesCategory =
         this.selectedCategory === 'Todas' || service.category === this.selectedCategory;
 
@@ -125,14 +138,19 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     const isOpening = this.expandedId !== service.id;
     this.expandedId = isOpening ? service.id : null;
 
-    if (!isOpening) return;
+    if (!isOpening) {
+      return;
+    }
 
     this.serviceApi.trackMetric(service.id, 'clicks').subscribe();
     this.loadReviews(service.id);
+    this.loadServiceAvailability(service.id);
   }
 
   public loadReviews(serviceId: string): void {
-    if (this.reviewsMap[serviceId]) return;
+    if (this.reviewsMap[serviceId]) {
+      return;
+    }
 
     this.isLoadingReviews = serviceId;
 
@@ -140,13 +158,31 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .findByService(serviceId)
       .pipe(finalize(() => (this.isLoadingReviews = null)))
       .subscribe({
-        next: reviews => {
+        next: (reviews) => {
           this.reviewsMap[serviceId] = reviews;
         },
       });
   }
 
+  public loadServiceAvailability(serviceId: string): void {
+    this.appointmentApi.findByService(serviceId).subscribe({
+      next: (appointments) => {
+        this.blockedDaysByService[serviceId] = appointments
+          .filter((appointment) => BLOCKING_STATUSES.includes(appointment.status))
+          .map((appointment) => appointment.scheduledDay);
+      },
+    });
+  }
+
+  public isDayUnavailable(serviceId: string, day: string): boolean {
+    return (this.blockedDaysByService[serviceId] || []).includes(day);
+  }
+
   public selectDay(serviceId: string, day: string): void {
+    if (this.isDayUnavailable(serviceId, day)) {
+      return;
+    }
+
     this.selectedDayByService[serviceId] =
       this.selectedDayByService[serviceId] === day ? null : day;
   }
@@ -160,7 +196,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
     const phone = service.contact.replace(/\D/g, '');
     const message = encodeURIComponent(
-      `Olá! Vi seu serviço "${service.name}" no Mural do Condomínio e gostaria de mais informações.`,
+      `Ola! Vi seu servico "${service.name}" no mural do condominio e gostaria de mais informacoes.`,
     );
 
     window.open(`https://wa.me/55${phone}?text=${message}`, '_blank');
@@ -168,13 +204,15 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   public onSchedule(service: ServiceDto): void {
     const day = this.getSelectedDay(service.id);
-    if (!day) return;
+    if (!day || this.isDayUnavailable(service.id, day)) {
+      return;
+    }
 
     this.isScheduling = service.id;
 
     const payload: CreateAppointmentPayload = {
       serviceId: service.id,
-      scheduledDate: new Date().toISOString().split('T')[0],
+      scheduledDate: this.resolveNextDateForDay(day),
       scheduledDay: day,
       notes: `Agendamento solicitado pelo mural para ${day}.`,
     };
@@ -183,8 +221,28 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .create(payload)
       .pipe(finalize(() => (this.isScheduling = null)))
       .subscribe({
-        next: () => {
+        next: (appointment) => {
           this.selectedDayByService[service.id] = null;
+          this.appointments = [appointment, ...this.appointments];
+        },
+      });
+  }
+
+  public payAppointment(appointment: AppointmentDto): void {
+    this.isPayingAppointment = appointment.id;
+
+    this.appointmentApi
+      .createPayment(appointment.id, { method: 'pix' })
+      .pipe(finalize(() => (this.isPayingAppointment = null)))
+      .subscribe({
+        next: (paymentSession: AppointmentPaymentDto) => {
+          this.replaceAppointment(paymentSession.appointment);
+
+          if (paymentSession.checkoutUrl) {
+            window.open(paymentSession.checkoutUrl, '_blank');
+          }
+
+          this.loadServiceAvailability(appointment.serviceId);
         },
       });
   }
@@ -203,7 +261,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   public getRatingLabel(rating: number): string {
     const labels: Record<number, string> = {
-      1: 'Péssimo',
+      1: 'Pessimo',
       2: 'Ruim',
       3: 'Regular',
       4: 'Bom',
@@ -213,9 +271,28 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     return labels[rating] || '';
   }
 
+  public getAppointmentStatusLabel(status: AppointmentStatus): string {
+    const labels: Record<AppointmentStatus, string> = {
+      pending: 'Solicitado',
+      confirmed: 'Confirmado',
+      awaiting_payment: 'Aguardando pagamento',
+      paid: 'Pago',
+      cancelled: 'Cancelado',
+      completed: 'Concluido',
+    };
+
+    return labels[status];
+  }
+
+  public canPayAppointment(appointment: AppointmentDto): boolean {
+    return appointment.status === 'confirmed' || appointment.status === 'awaiting_payment';
+  }
+
   public submitReview(service: ServiceDto): void {
     const rating = this.pendingRating[service.id];
-    if (!rating) return;
+    if (!rating) {
+      return;
+    }
 
     this.isReviewing = service.id;
 
@@ -229,12 +306,10 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .create(payload)
       .pipe(finalize(() => (this.isReviewing = null)))
       .subscribe({
-        next: newReview => {
+        next: (newReview) => {
           this.pendingRating[service.id] = 0;
           this.pendingComment[service.id] = '';
-
           this.reviewsMap[service.id] = [newReview, ...(this.reviewsMap[service.id] || [])];
-
           this.refreshService(service.id);
         },
       });
@@ -242,13 +317,44 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   public refreshService(serviceId: string): void {
     this.serviceApi.findOne(serviceId).subscribe({
-      next: updatedService => {
-        this.services = this.services.map(service =>
+      next: (updatedService) => {
+        this.services = this.services.map((service) =>
           service.id === updatedService.id ? updatedService : service,
         );
         this.applyFilters();
       },
     });
+  }
+
+  private replaceAppointment(updated: AppointmentDto): void {
+    this.appointments = this.appointments.map((appointment) =>
+      appointment.id === updated.id ? updated : appointment,
+    );
+  }
+
+  private resolveNextDateForDay(day: string): string {
+    const dayMap: Record<string, number> = {
+      Domingo: 0,
+      'Segunda-feira': 1,
+      Segunda: 1,
+      Terca: 2,
+      'Terça-feira': 2,
+      Quarta: 3,
+      'Quarta-feira': 3,
+      Quinta: 4,
+      'Quinta-feira': 4,
+      Sexta: 5,
+      'Sexta-feira': 5,
+      Sabado: 6,
+      Sábado: 6,
+    };
+
+    const targetDay = dayMap[day] ?? new Date().getDay();
+    const currentDate = new Date();
+    const diff = (targetDay - currentDate.getDay() + 7) % 7 || 7;
+
+    currentDate.setDate(currentDate.getDate() + diff);
+    return currentDate.toISOString().split('T')[0];
   }
 
   async onLogout(): Promise<void> {

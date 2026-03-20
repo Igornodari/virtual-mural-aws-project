@@ -30,6 +30,56 @@
       </div>
     </section>
 
+    <section class="appointments-panel surface-card">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-10">
+        <h2 class="section-title-lg m-0">Meus agendamentos</h2>
+        @if (isLoadingAppointments) {
+          <mat-spinner diameter="24" />
+        }
+      </div>
+
+      @if (!isLoadingAppointments && appointments.length === 0) {
+        <p class="text-muted m-0">Voce ainda nao solicitou nenhum agendamento.</p>
+      } @else {
+        <div class="appointments-list d-flex flex-col gap-10">
+          @for (appointment of appointments; track appointment.id) {
+            <div class="appointment-item d-flex justify-content-between align-items-start flex-wrap gap-15">
+              <div class="d-flex flex-col gap-5">
+                <strong>{{ appointment.service?.name || 'Servico' }}</strong>
+                <span class="text-muted">
+                  {{ appointment.scheduledDay }} - {{ appointment.scheduledDate | date:'dd/MM/yyyy' }}
+                </span>
+                <span class="text-muted">
+                  Status:
+                  {{ getAppointmentStatusLabel(appointment.status) }}
+                </span>
+              </div>
+
+              <div class="d-flex align-items-center flex-wrap gap-10">
+                @if (canPayAppointment(appointment)) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="isPayingAppointment === appointment.id"
+                    (click)="payAppointment(appointment)"
+                  >
+                    @if (isPayingAppointment === appointment.id) {
+                      <mat-spinner diameter="18" />
+                    }
+                    Pagar no app
+                  </button>
+                }
+
+                <span class="appointment-badge" [class.appointment-badge--paid]="appointment.status === 'paid' || appointment.status === 'completed'">
+                  {{ getAppointmentStatusLabel(appointment.status) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
     <section class="customer-filters">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>{{ 'APP.CUSTOMER.SEARCH_PLACEHOLDER' | translate }}</mat-label>
@@ -149,9 +199,14 @@
                         type="button"
                         class="filter-chip"
                         [class.filter-chip--active]="getSelectedDay(service.id) === day"
+                        [class.filter-chip--disabled]="isDayUnavailable(service.id, day)"
+                        [disabled]="isDayUnavailable(service.id, day)"
                         (click)="selectDay(service.id, day)"
                       >
                         {{ day }}
+                        @if (isDayUnavailable(service.id, day)) {
+                          <span> - Indisponivel</span>
+                        }
                       </button>
                     }
                   </div>
@@ -211,22 +266,19 @@
                           <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center gap-5">
                               @for (star of [1, 2, 3, 4, 5]; track star) {
-                                <mat-icon
-                                  class="star-icon-sm"
-                                  [class.star--filled]="star <= review.rating"
-                                >
+                                <mat-icon class="star-icon-sm" [class.star--filled]="star <= review.rating">
                                   star
                                 </mat-icon>
                               }
                             </div>
 
-                            <span class="review-date text-muted m-l-auto">
+                            <span class="review-date text-muted m-l-10">
                               {{ review.createdAt | date:'dd/MM/yyyy' }}
                             </span>
                           </div>
 
                           @if (review.comment) {
-                            <p class="review-comment m-t-10 m-b-0">"{{ review.comment }}"</p>
+                            <p class="review-comment m-0 m-t-10">"{{ review.comment }}"</p>
                           }
                         </div>
                       }
