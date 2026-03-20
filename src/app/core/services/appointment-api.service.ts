@@ -2,7 +2,16 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
 
-export type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+export type AppointmentStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'awaiting_payment'
+  | 'paid'
+  | 'cancelled'
+  | 'completed';
+
+export type PaymentMethod = 'pix' | 'credit_card';
+export type PaymentStatus = 'pending' | 'processing' | 'paid' | 'failed';
 
 export interface AppointmentDto {
   id: string;
@@ -12,9 +21,12 @@ export interface AppointmentDto {
   scheduledDay: string;
   notes?: string;
   status: AppointmentStatus;
+  paymentStatus?: PaymentStatus;
+  paymentMethod?: PaymentMethod;
   service?: {
     id: string;
     name: string;
+    price: string;
     contact: string;
     provider?: { displayName: string };
   };
@@ -30,27 +42,43 @@ export interface CreateAppointmentPayload {
   notes?: string;
 }
 
+export interface AppointmentPaymentPayload {
+  method: PaymentMethod;
+}
+
+export interface AppointmentPaymentDto {
+  appointment: AppointmentDto;
+  paymentId: string;
+  paymentStatus: PaymentStatus;
+  checkoutUrl?: string;
+  qrCode?: string;
+  qrCodeText?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AppointmentApiService {
   constructor(private readonly api: MuralApiService) {}
 
-  /** Solicita um agendamento */
   create(payload: CreateAppointmentPayload): Observable<AppointmentDto> {
     return this.api.post<AppointmentDto>('/appointments', payload);
   }
 
-  /** Lista os agendamentos do usuário autenticado */
   findMine(): Observable<AppointmentDto[]> {
     return this.api.get<AppointmentDto[]>('/appointments/mine');
   }
 
-  /** Lista agendamentos de um serviço (para o prestador) */
   findByService(serviceId: string): Observable<AppointmentDto[]> {
     return this.api.get<AppointmentDto[]>(`/appointments/service/${serviceId}`);
   }
 
-  /** Atualiza o status de um agendamento */
   updateStatus(id: string, status: AppointmentStatus): Observable<AppointmentDto> {
     return this.api.patch<AppointmentDto>(`/appointments/${id}/status`, { status });
+  }
+
+  createPayment(
+    id: string,
+    payload: AppointmentPaymentPayload,
+  ): Observable<AppointmentPaymentDto> {
+    return this.api.post<AppointmentPaymentDto>(`/appointments/${id}/payment`, payload);
   }
 }

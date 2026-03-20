@@ -105,6 +105,31 @@
   gap: 20px;
 }
 
+.appointments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.appointment-card {
+  border-radius: 18px !important;
+}
+
+.appointment-status {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.appointment-status--paid {
+  background: color-mix(in oklab, #16a34a 18%, transparent);
+  color: #166534;
+}
+
 .service-card {
   border-radius: 18px !important;
 }

@@ -55,16 +55,97 @@
         </div>
 
         <div class="stat-card surface-card d-flex align-items-center gap-15">
-          <mat-icon class="stat-icon stat-icon--city">location_city</mat-icon>
+          <mat-icon class="stat-icon stat-icon--city">event</mat-icon>
 
           <div class="d-flex flex-col gap-5">
-            <span class="stat-value city-value">{{ condoCity }}</span>
-            <span class="stat-label text-muted">
-              {{ 'APP.PROVIDER.STATS_CITY' | translate }}
-            </span>
+            <span class="stat-value">{{ pendingAppointments() }}</span>
+            <span class="stat-label text-muted">Agendamentos pendentes</span>
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="section d-flex flex-col gap-15">
+      <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
+        <h2 class="section-title m-0">Solicitacoes de agendamento</h2>
+      </div>
+
+      @if (isLoadingAppointments()) {
+        <div class="loading-center d-flex justify-content-center">
+          <mat-spinner diameter="40" />
+        </div>
+      } @else if (appointments().length === 0) {
+        <div class="empty-state surface-card d-flex flex-col align-items-center gap-10">
+          <mat-icon class="empty-icon">event_busy</mat-icon>
+          <p class="m-0">Voce ainda nao recebeu solicitacoes.</p>
+          <span class="text-muted text-center">
+            Quando um morador solicitar um horario, ele aparecera aqui.
+          </span>
+        </div>
+      } @else {
+        <div class="appointments-grid">
+          @for (appointment of appointments(); track appointment.id) {
+            <mat-card class="surface-card appointment-card">
+              <mat-card-content class="d-flex flex-col gap-15">
+                <div class="d-flex justify-content-between align-items-start gap-10">
+                  <div class="d-flex flex-col gap-5">
+                    <strong>{{ appointment.service?.name || 'Servico' }}</strong>
+                    <span class="text-muted">
+                      {{ appointment.customer?.displayName || 'Cliente' }}
+                    </span>
+                    <span class="text-muted">
+                      {{ appointment.scheduledDay }} - {{ appointment.scheduledDate | date:'dd/MM/yyyy' }}
+                    </span>
+                  </div>
+
+                  <span class="appointment-status" [class.appointment-status--paid]="appointment.status === 'paid' || appointment.status === 'completed'">
+                    {{ getAppointmentStatusLabel(appointment.status) }}
+                  </span>
+                </div>
+
+                @if (appointment.notes) {
+                  <p class="text-muted m-0">{{ appointment.notes }}</p>
+                }
+
+                <div class="d-flex align-items-center flex-wrap gap-10">
+                  @if (canConfirm(appointment)) {
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      [disabled]="isUpdatingAppointment() === appointment.id"
+                      (click)="updateAppointmentStatus(appointment, 'confirmed')"
+                    >
+                      Confirmar
+                    </button>
+                  }
+
+                  @if (canCancel(appointment)) {
+                    <button
+                      mat-stroked-button
+                      color="warn"
+                      [disabled]="isUpdatingAppointment() === appointment.id"
+                      (click)="updateAppointmentStatus(appointment, 'cancelled')"
+                    >
+                      Cancelar
+                    </button>
+                  }
+
+                  @if (canComplete(appointment)) {
+                    <button
+                      mat-raised-button
+                      color="accent"
+                      [disabled]="isUpdatingAppointment() === appointment.id"
+                      (click)="updateAppointmentStatus(appointment, 'completed')"
+                    >
+                      Concluir servico
+                    </button>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      }
     </section>
 
     <section class="section d-flex flex-col gap-15">
