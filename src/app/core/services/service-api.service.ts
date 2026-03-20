@@ -51,6 +51,7 @@ export interface CreateServicePayload {
 }
 
 export type UpdateServicePayload = Partial<CreateServicePayload>;
+
 export type TrackMetric = 'clicks' | 'interests' | 'completions' | 'abandonments';
 
 @Injectable({ providedIn: 'root' })
