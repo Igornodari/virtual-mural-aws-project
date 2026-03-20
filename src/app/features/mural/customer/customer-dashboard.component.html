@@ -1,0 +1,366 @@
+<div class="customer-page">
+  <app-mural-topbar
+    role="customer"
+    [userName]="user?.givenName || user?.displayName || ''"
+    (logout)="onLogout()"
+  />
+
+  <div class="app-page-shell customer-main">
+    <section class="customer-hero">
+      <div class="customer-hero__content">
+        <div class="customer-hero__text">
+          <h1 class="customer-title m-0">{{ 'APP.CUSTOMER.HERO_TITLE' | translate }}</h1>
+          <p class="text-muted m-0">
+            {{ 'APP.CUSTOMER.HERO_SUBTITLE' | translate }}
+            <strong>{{ condoCity }}</strong>.
+          </p>
+        </div>
+
+        <div class="customer-stats">
+          <div class="customer-stat">
+            <span class="customer-stat-value">{{ totalServices }}</span>
+            <span class="text-muted">{{ 'APP.CUSTOMER.STATS_SERVICES' | translate }}</span>
+          </div>
+
+          <div class="customer-stat">
+            <span class="customer-stat-value">{{ uniqueProviders }}</span>
+            <span class="text-muted">{{ 'APP.CUSTOMER.STATS_PROVIDERS' | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="customer-filters">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ 'APP.CUSTOMER.SEARCH_PLACEHOLDER' | translate }}</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="searchControl" />
+      </mat-form-field>
+
+      <div class="d-flex flex-wrap gap-10">
+        @for (category of categories; track category) {
+          <button
+            type="button"
+            class="filter-chip"
+            [class.filter-chip--active]="selectedCategory === category"
+            (click)="selectCategory(category)"
+          >
+            {{ category === 'Todas' ? ('APP.CUSTOMER.FILTER_ALL' | translate) : category }}
+          </button>
+        }
+      </div>
+    </section>
+
+    @if (isLoadingServices) {
+      <div class="d-flex justify-content-center m-t-20">
+        <mat-spinner diameter="48" />
+      </div>
+    } @else if (!filteredServices.length) {
+      <div class="d-flex justify-content-center">
+        <mat-card class="empty-state-card">
+          <mat-card-header class="d-flex align-items-center justify-content-center">
+            <mat-icon class="m-l-10 m-r-10" color="warn">search_off</mat-icon>
+            <mat-card-title>{{ 'APP.CUSTOMER.NO_SERVICES' | translate }}</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p class="text-muted m-0 text-center">
+              {{ 'APP.CUSTOMER.NO_SERVICES_HINT' | translate }}
+            </p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    } @else {
+      <section class="customer-grid">
+        @for (service of filteredServices; track service.id) {
+          <mat-card class="service-card" [class.service-card--expanded]="expandedId === service.id">
+            <mat-card-content class="service-card__content">
+              <div class="service-card__header d-flex justify-content-between align-items-start gap-10">
+                <div class="service-card__title-block d-flex flex-col gap-10">
+                  <mat-card-title class="m-0 service-title">{{ service.name }}</mat-card-title>
+                  <span class="service-badge">{{ service.category }}</span>
+                </div>
+
+                <div class="service-rating d-flex align-items-center">
+                  <mat-icon class="star-icon star--filled">star</mat-icon>
+                  <span class="rating-value m-l-5">{{ service.rating | number:'1.1-1' }}</span>
+                  <span class="text-muted m-l-5">({{ service.totalReviews }})</span>
+                </div>
+              </div>
+
+              <p class="service-description text-muted m-0">
+                {{ service.description }}
+              </p>
+
+              <div class="service-meta d-flex flex-col gap-10">
+                <span class="service-price">{{ service.price }}</span>
+
+                <div class="d-flex flex-wrap gap-5">
+                  @for (day of service.availableDays.slice(0, 3); track day) {
+                    <span class="day-badge">{{ day }}</span>
+                  }
+
+                  @if (service.availableDays.length > 3) {
+                    <span class="day-badge day-badge--more">
+                      +{{ service.availableDays.length - 3 }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div class="service-actions d-flex align-items-center gap-10">
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  class="w-full"
+                  type="button"
+                  (click)="contactWhatsApp(service)"
+                >
+                  <mat-icon>whatsapp</mat-icon>
+                  {{ 'APP.CUSTOMER.CONTACT' | translate }}
+                </button>
+
+                <button
+                  mat-raised-button
+                  color="primary"
+                  class="w-full"
+                  type="button"
+                  (click)="toggleExpand(service)"
+                >
+                  <mat-icon>
+                    {{ expandedId === service.id ? 'expand_less' : 'expand_more' }}
+                  </mat-icon>
+                  {{ 'APP.CUSTOMER.SCHEDULE' | translate }}
+                </button>
+              </div>
+
+              @if (expandedId === service.id) {
+                <mat-divider></mat-divider>
+
+                <div class="service-section d-flex flex-col gap-15">
+                  <h4 class="section-title d-flex align-items-center m-0">
+                    <mat-icon class="section-icon m-r-10">event_available</mat-icon>
+                    {{ 'APP.CUSTOMER.SCHEDULE_TITLE' | translate }}
+                  </h4>
+
+                  <div class="d-flex flex-wrap gap-10">
+                    @for (day of service.availableDays; track day) {
+                      <button
+                        type="button"
+                        class="filter-chip"
+                        [class.filter-chip--active]="getSelectedDay(service.id) === day"
+                        [class.filter-chip--disabled]="isDayUnavailable(service.id, day)"
+                        [disabled]="isDayUnavailable(service.id, day)"
+                        (click)="selectDay(service.id, day)"
+                      >
+                        {{ day }}
+                        @if (isDayUnavailable(service.id, day)) {
+                          <span> - Indisponivel</span>
+                        }
+                      </button>
+                    }
+                  </div>
+
+                  @if (getSelectedDay(service.id)) {
+                    <button
+                      mat-raised-button
+                      color="accent"
+                      class="w-full"
+                      [disabled]="isScheduling === service.id"
+                      (click)="onSchedule(service)"
+                    >
+                      @if (isScheduling === service.id) {
+                        <mat-spinner diameter="18" />
+                      }
+                      <mat-icon>event_available</mat-icon>
+                      {{ 'APP.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
+                    </button>
+                  }
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="service-section d-flex flex-col gap-15">
+                  <h4 class="section-title d-flex align-items-center m-0">
+                    <mat-icon class="section-icon m-r-10">star_rate</mat-icon>
+                    {{ 'APP.CUSTOMER.REVIEWS_TITLE' | translate }}
+                  </h4>
+
+                  @if (service.totalReviews > 0) {
+                    <div class="reviews-summary d-flex align-items-center flex-wrap gap-10">
+                      <span class="review-rating-value">{{ service.rating | number:'1.1-1' }}</span>
+
+                      <div class="d-flex align-items-center gap-5">
+                        @for (star of [1, 2, 3, 4, 5]; track star) {
+                          <mat-icon class="star-icon" [class.star--filled]="star <= service.rating">
+                            star
+                          </mat-icon>
+                        }
+                      </div>
+
+                      <span class="text-muted">
+                        {{ service.totalReviews }}
+                        {{ 'APP.CUSTOMER.RATING' | translate }}
+                      </span>
+                    </div>
+                  }
+
+                  @if (isLoadingReviews === service.id) {
+                    <div class="d-flex justify-content-center">
+                      <mat-spinner diameter="28" />
+                    </div>
+                  } @else if (reviewsMap[service.id]?.length) {
+                    <div class="reviews-list d-flex flex-col gap-10">
+                      @for (review of reviewsMap[service.id]; track review.id) {
+                        <div class="review-item p-10 rounded">
+                          <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center gap-5">
+                              @for (star of [1, 2, 3, 4, 5]; track star) {
+                                <mat-icon class="star-icon-sm" [class.star--filled]="star <= review.rating">
+                                  star
+                                </mat-icon>
+                              }
+                            </div>
+
+                            <span class="review-date text-muted m-l-10">
+                              {{ review.createdAt | date:'dd/MM/yyyy' }}
+                            </span>
+                          </div>
+
+                          @if (review.comment) {
+                            <p class="review-comment m-0 m-t-10">"{{ review.comment }}"</p>
+                          }
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <p class="text-muted m-0">{{ 'APP.CUSTOMER.NO_REVIEWS' | translate }}</p>
+                  }
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="service-section d-flex flex-col gap-15">
+                  <h4 class="section-title d-flex align-items-center m-0">
+                    <mat-icon class="section-icon m-r-10">rate_review</mat-icon>
+                    {{ 'APP.CUSTOMER.WRITE_REVIEW' | translate }}
+                  </h4>
+
+                  <div class="review-form d-flex flex-col gap-15">
+                    <div class="review-rating-row d-flex align-items-center flex-wrap gap-10">
+                      <span class="text-muted">{{ 'APP.CUSTOMER.YOUR_RATING' | translate }}</span>
+
+                      <div class="d-flex align-items-center gap-5">
+                        @for (star of [1, 2, 3, 4, 5]; track star) {
+                          <button
+                            class="star-btn"
+                            type="button"
+                            (mouseenter)="hoverStar(service.id, star)"
+                            (mouseleave)="hoverStar(service.id, 0)"
+                            (click)="setRating(service.id, star)"
+                          >
+                            <mat-icon
+                              class="star-icon-lg"
+                              [class.star--filled]="star <= (hoverRating[service.id] || pendingRating[service.id] || 0)"
+                            >
+                              star
+                            </mat-icon>
+                          </button>
+                        }
+                      </div>
+
+                      @if (pendingRating[service.id]) {
+                        <span class="rating-label-text">
+                          {{ getRatingLabel(pendingRating[service.id]) }}
+                        </span>
+                      }
+                    </div>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                      <mat-label>{{ 'APP.CUSTOMER.REVIEW_COMMENT' | translate }}</mat-label>
+                      <textarea
+                        matInput
+                        rows="4"
+                        maxlength="500"
+                        [value]="pendingComment[service.id] || ''"
+                        (input)="setComment(service.id, $any($event.target).value)"
+                        [placeholder]="'APP.CUSTOMER.REVIEW_COMMENT_HINT' | translate"
+                      ></textarea>
+                      <mat-hint>{{ 'APP.CUSTOMER.REVIEW_ANONYMOUS_HINT' | translate }}</mat-hint>
+                    </mat-form-field>
+
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      class="w-full"
+                      type="button"
+                      [disabled]="!pendingRating[service.id] || isReviewing === service.id"
+                      (click)="submitReview(service)"
+                    >
+                      @if (isReviewing === service.id) {
+                        <mat-spinner diameter="18" />
+                      }
+                      <mat-icon>send</mat-icon>
+                      {{ 'APP.CUSTOMER.SUBMIT_REVIEW' | translate }}
+                    </button>
+                  </div>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </section>
+    }
+
+
+    <section class="appointments-panel surface-card">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-10">
+        <h2 class="section-title-lg m-0">Meus agendamentos</h2>
+        @if (isLoadingAppointments) {
+          <mat-spinner diameter="24" />
+        }
+      </div>
+
+      @if (!isLoadingAppointments && appointments.length === 0) {
+        <p class="text-muted m-0">Voce ainda nao solicitou nenhum agendamento.</p>
+      } @else {
+        <div class="appointments-list d-flex flex-col gap-10">
+          @for (appointment of appointments; track appointment.id) {
+            <div class="appointment-item d-flex justify-content-between align-items-start flex-wrap gap-15">
+              <div class="d-flex flex-col gap-5">
+                <strong>{{ appointment.service?.name || 'Servico' }}</strong>
+                <span class="text-muted">
+                  {{ appointment.scheduledDay }} - {{ appointment.scheduledDate | date:'dd/MM/yyyy' }}
+                </span>
+                <span class="text-muted">
+                  Status:
+                  {{ getAppointmentStatusLabel(appointment.status) }}
+                </span>
+              </div>
+
+              <div class="d-flex align-items-center flex-wrap gap-10">
+                @if (canPayAppointment(appointment)) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="isPayingAppointment === appointment.id"
+                    (click)="payAppointment(appointment)"
+                  >
+                    @if (isPayingAppointment === appointment.id) {
+                      <mat-spinner diameter="18" />
+                    }
+                    Pagar no app
+                  </button>
+                }
+
+                <span class="appointment-badge" [class.appointment-badge--paid]="appointment.status === 'paid' || appointment.status === 'completed'">
+                  {{ getAppointmentStatusLabel(appointment.status) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</div>

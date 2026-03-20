@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -319,91 +318,232 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   averageRating = signal(0);
   totalReviews = signal(0);
 
-  serviceForm = this.fb.nonNullable.group({
+  readonly serviceForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
     category: ['', Validators.required],
     description: ['', Validators.required],
     price: ['', Validators.required],
     contact: ['', Validators.required],
-    availableDays: [[] as string[], Validators.required],
+    availableDays: this.fb.nonNullable.control<string[]>([], Validators.required),
   });
 
   get condoCity(): string {
-    return this.onboardingService.profile.condominiumAddress?.city || '—';
+    return this.onboardingService.profile.condominiumAddress?.city || '-';
   }
 
-  constructor() { super({ loadUnit: false }); }
+  constructor() {
+    super();
+  }
 
-  ngOnInit(): void { this.loadServices(); }
+  ngOnInit(): void {
+    this.loadServices();
+  }
 
   private loadServices(): void {
     this.isLoadingServices.set(true);
+
     this.serviceApi.findMine().subscribe({
       next: (list) => {
         this.services.set(list);
         this.recalcStats(list);
         this.isLoadingServices.set(false);
+        this.loadAppointmentsForServices(list);
       },
-      error: () => this.isLoadingServices.set(false),
+      error: () => {
+        this.isLoadingServices.set(false);
+      },
+    });
+  }
+
+  private loadAppointmentsForServices(services: ServiceDto[]): void {
+    if (!services.length) {
+      this.appointments.set([]);
+      this.pendingAppointments.set(0);
+      return;
+    }
+
+    this.isLoadingAppointments.set(true);
+
+    forkJoin(
+      services.map((service) =>
+        this.appointmentApi.findByService(service.id),
+      ),
+    ).subscribe({
+      next: (appointmentsByService) => {
+        const appointments = appointmentsByService
+          .flat()
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+        this.appointments.set(appointments);
+        this.pendingAppointments.set(
+          appointments.filter((appointment) => appointment.status === 'pending').length,
+        );
+        this.isLoadingAppointments.set(false);
+      },
+      error: () => {
+        this.isLoadingAppointments.set(false);
+      },
     });
   }
 
   private recalcStats(list: ServiceDto[]): void {
-    if (!list.length) { this.averageRating.set(0); this.totalReviews.set(0); return; }
-    const total = list.reduce((s, x) => s + x.totalReviews, 0);
-    const avg = list.reduce((s, x) => s + x.rating * x.totalReviews, 0) / (total || 1);
-    this.totalReviews.set(total);
-    this.averageRating.set(Math.round(avg * 10) / 10);
+    if (!list.length) {
+      this.averageRating.set(0);
+      this.totalReviews.set(0);
+      return;
+    }
+
+    const totalReviews = list.reduce((sum, item) => sum + item.totalReviews, 0);
+    const weightedAverage =
+      list.reduce((sum, item) => sum + item.rating * item.totalReviews, 0) / (totalReviews || 1);
+
+    this.totalReviews.set(totalReviews);
+    this.averageRating.set(Math.round(weightedAverage * 10) / 10);
+  }
+
+  getAppointmentStatusLabel(status: AppointmentStatus): string {
+    const labels: Record<AppointmentStatus, string> = {
+      pending: 'Solicitado',
+      confirmed: 'Confirmado',
+      awaiting_payment: 'Aguardando pagamento',
+      paid: 'Pago',
+      cancelled: 'Cancelado',
+      completed: 'Concluido',
+    };
+
+    return labels[status];
+  }
+
+  canConfirm(appointment: AppointmentDto): boolean {
+    return appointment.status === 'pending';
+  }
+
+  canCancel(appointment: AppointmentDto): boolean {
+    return appointment.status === 'pending' || appointment.status === 'confirmed';
+  }
+
+  canComplete(appointment: AppointmentDto): boolean {
+    return appointment.status === 'paid';
+  }
+
+  updateAppointmentStatus(appointment: AppointmentDto, status: AppointmentStatus): void {
+    this.isUpdatingAppointment.set(appointment.id);
+
+    this.appointmentApi.updateStatus(appointment.id, status).subscribe({
+      next: (updatedAppointment) => {
+        this.appointments.update((currentAppointments) =>
+          currentAppointments.map((currentAppointment) =>
+            currentAppointment.id === updatedAppointment.id ? updatedAppointment : currentAppointment,
+          ),
+        );
+        this.pendingAppointments.set(
+          this.appointments().filter((currentAppointment) => currentAppointment.status === 'pending').length,
+        );
+        this.isUpdatingAppointment.set(null);
+      },
+      error: () => {
+        this.isUpdatingAppointment.set(null);
+      },
+    });
   }
 
   openForm(): void {
     this.editingId.set(null);
-    this.serviceForm.reset({ availableDays: [] });
+    this.serviceForm.reset({
+      name: '',
+      category: '',
+      description: '',
+      price: '',
+      contact: '',
+      availableDays: [],
+    });
     this.showForm.set(true);
-    setTimeout(() => document.querySelector('.form-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    this.scrollToForm();
   }
 
   editService(service: ServiceDto): void {
     this.editingId.set(service.id);
-    this.serviceForm.patchValue(service);
+    this.serviceForm.patchValue({
+      name: service.name,
+      category: service.category,
+      description: service.description,
+      price: service.price,
+      contact: service.contact,
+      availableDays: service.availableDays ?? [],
+    });
     this.showForm.set(true);
-    setTimeout(() => document.querySelector('.form-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    this.scrollToForm();
   }
 
   closeForm(): void {
     this.showForm.set(false);
     this.editingId.set(null);
-    this.serviceForm.reset({ availableDays: [] });
+    this.serviceForm.reset({
+      name: '',
+      category: '',
+      description: '',
+      price: '',
+      contact: '',
+      availableDays: [],
+    });
   }
 
   onSaveService(): void {
-    if (this.serviceForm.invalid) return;
-    const raw = this.serviceForm.getRawValue();
-    const editId = this.editingId();
+    if (this.serviceForm.invalid) {
+      this.serviceForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.serviceForm.getRawValue();
+    const currentEditingId = this.editingId();
+
     this.isSaving.set(true);
-    const req = editId
-      ? this.serviceApi.update(editId, raw)
-      : this.serviceApi.create(raw as CreateServicePayload);
-    req.subscribe({
-      next: (saved) => {
-        this.services.update((list) =>
-          editId ? list.map((s) => s.id === editId ? saved : s) : [...list, saved]
+
+    const request$ = currentEditingId
+      ? this.serviceApi.update(currentEditingId, payload)
+      : this.serviceApi.create(payload as CreateServicePayload);
+
+    request$.subscribe({
+      next: (savedService) => {
+        this.services.update((currentList) =>
+          currentEditingId
+            ? currentList.map((item) => (item.id === currentEditingId ? savedService : item))
+            : [...currentList, savedService],
         );
+
         this.recalcStats(this.services());
         this.isSaving.set(false);
         this.closeForm();
+        this.loadAppointmentsForServices(this.services());
       },
-      error: () => this.isSaving.set(false),
+      error: () => {
+        this.isSaving.set(false);
+      },
     });
   }
 
   removeService(id: string): void {
     this.serviceApi.remove(id).subscribe({
       next: () => {
-        this.services.update((list) => list.filter((s) => s.id !== id));
+        this.services.update((currentList) => currentList.filter((item) => item.id !== id));
+
+        if (this.selectedAnalyticsService()?.id === id) {
+          this.selectedAnalyticsService.set(null);
+        }
+
         this.recalcStats(this.services());
+        this.loadAppointmentsForServices(this.services());
       },
     });
+  }
+
+  private scrollToForm(): void {
+    setTimeout(() => {
+      document.querySelector('.form-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 100);
   }
 
   async onLogout(): Promise<void> {

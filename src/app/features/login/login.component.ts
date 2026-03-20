@@ -1,31 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
+import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterLink,
-    MatButtonModule,
-    MatCardModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TranslateModule,
-  ],
+  imports: [...importBase],
   template: `
     <div class="app-auth-page">
       <div class="app-page-shell app-auth-grid">
@@ -34,7 +17,6 @@ import { OnboardingService } from '../../core/services/onboarding.service';
 
           <div class="d-flex flex-col gap-4">
             <h1 class="login-title m-0">{{ 'APP.LOGIN.TITLE' | translate }}</h1>
-
             <p class="login-copy m-0">{{ 'APP.LOGIN.SUBTITLE' | translate }}</p>
           </div>
 
@@ -129,7 +111,6 @@ import { OnboardingService } from '../../core/services/onboarding.service';
                 }}
               </button>
             </form>
-
           </mat-card-content>
 
           <div class="d-flex justify-content-start gap-4 m-t-4">
@@ -188,6 +169,7 @@ import { OnboardingService } from '../../core/services/onboarding.service';
         .login-hero {
           display: none;
         }
+
         .login-panel {
           padding: 16px;
         }
@@ -199,15 +181,13 @@ export class LoginComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
 
-  errorMessage = '';
-
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
 
   constructor() {
-    super({ loadUnit: false });
+    super();
   }
 
   async ngOnInit(): Promise<void> {
@@ -223,7 +203,9 @@ export class LoginComponent extends BaseComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      return;
+    }
 
     this.setLoadingState(true);
     const { email, password } = this.form.getRawValue();
@@ -232,22 +214,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
   }
 
   private async redirectAfterLogin(): Promise<void> {
-    // Sincroniza com o backend para garantir o estado correto de onboarding
-    try {
-      await firstValueFrom(this.onboardingService.syncFromBackend());
-    } catch {
-      // Usa estado local se o backend estiver indisponível
-    }
-    if (!this.onboardingService.hasCondominium) {
-      await this.navigateTo('/onboarding/condominium');
-      return;
-    }
-    if (!this.onboardingService.hasRole) {
-      await this.navigateTo('/onboarding/role');
-      return;
-    }
-    const destination =
-      this.onboardingService.role === 'provider' ? '/mural/provider' : '/mural/customer';
+    const destination = await firstValueFrom(this.onboardingService.syncAndResolveNextRoute());
     await this.navigateTo(destination);
   }
 }

@@ -31,9 +31,11 @@ const CATEGORIES = [
   'Pets',
   'Limpeza',
   'Tecnologia',
-  'Saúde e Bem-estar',
+  'Saude e Bem-estar',
   'Outros',
 ];
+
+const BLOCKING_STATUSES: AppointmentStatus[] = ['confirmed', 'awaiting_payment', 'paid', 'completed'];
 
 @Component({
   selector: 'app-customer-dashboard',
@@ -495,31 +497,63 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   });
 
   get totalServices(): number {
-    return this.allServices().length;
+    return this.services.length;
   }
 
   get condoCity(): string {
-    return this.onboardingService.profile.condominiumAddress?.city || 'Não definido';
+    return this.onboardingService.profile.condominiumAddress?.city || 'Nao definido';
   }
 
-  constructor() {
-    super({ loadUnit: false });
+  get uniqueProviders(): number {
+    return new Set(this.services.map((service) => service.providerId)).size;
   }
 
-  ngOnInit(): void {
-    this.loadServices();
+  public loadServices(): void {
+    this.isLoadingServices = true;
+
+    this.serviceApi
+      .findAll()
+      .pipe(finalize(() => (this.isLoadingServices = false)))
+      .subscribe({
+        next: (services) => {
+          this.services = services;
+          this.applyFilters();
+        },
+      });
   }
 
-  private loadServices(): void {
-    this.isLoadingServices.set(true);
-    this.serviceApi.findAll().subscribe({
-      next: (list) => {
-        this.allServices.set(list);
-        this.isLoadingServices.set(false);
-      },
-      error: () => {
-        this.isLoadingServices.set(false);
-      },
+  public loadMyAppointments(): void {
+    this.isLoadingAppointments = true;
+
+    this.appointmentApi
+      .findMine()
+      .pipe(finalize(() => (this.isLoadingAppointments = false)))
+      .subscribe({
+        next: (appointments) => {
+          const appointmentsArray = Array.isArray(appointments) ? appointments : [];
+          this.appointments = appointmentsArray.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+        },
+        error: (err) => {
+          console.error('Erro ao carregar appointments:', err);
+          this.appointments = [];
+        },
+      });
+  }
+
+  public applyFilters(): void {
+    const search = (this.searchControl.value || '').toLowerCase().trim();
+
+    this.filteredServices = this.services.filter((service) => {
+      const matchesCategory =
+        this.selectedCategory === 'Todas' || service.category === this.selectedCategory;
+
+      const matchesSearch =
+        !search ||
+        service.name.toLowerCase().includes(search) ||
+        service.description.toLowerCase().includes(search) ||
+        service.category.toLowerCase().includes(search);
+
+      return matchesCategory && matchesSearch;
     });
   }
 
@@ -544,65 +578,169 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
-  selectCategory(cat: string): void {
-    this.selectedCategory.set(cat);
+  public toggleExpand(service: ServiceDto): void {
+    const isOpening = this.expandedId !== service.id;
+    this.expandedId = isOpening ? service.id : null;
+
+    if (!isOpening) {
+      return;
+    }
+
+    this.serviceApi.trackMetric(service.id, 'clicks').subscribe();
+    this.loadReviews(service.id);
+    this.loadServiceAvailability(service.id);
   }
 
-  filterByCategory(cat: string): void {
-    this.selectedCategory.set(cat);
+  public loadReviews(serviceId: string): void {
+    if (this.reviewsMap[serviceId]) {
+      return;
+    }
+
+    this.isLoadingReviews = serviceId;
+
+    this.reviewApi
+      .findByService(serviceId)
+      .pipe(finalize(() => (this.isLoadingReviews = null)))
+      .subscribe({
+        next: (reviews) => {
+          this.reviewsMap[serviceId] = reviews;
+        },
+      });
   }
 
-  onContact(service: ServiceDto): void {
-    this.contactWhatsApp(service);
+  public loadServiceAvailability(serviceId: string): void {
+    this.appointmentApi.findByService(serviceId).subscribe({
+      next: (appointments) => {
+        const appointmentsArray = Array.isArray(appointments) ? appointments : [];
+        this.blockedDaysByService[serviceId] = appointmentsArray
+          .filter((appointment) => BLOCKING_STATUSES.includes(appointment.status))
+          .map((appointment) => appointment.scheduledDay);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar disponibilidade:', err);
+        this.blockedDaysByService[serviceId] = [];
+      },
+    });
   }
 
-  /** Seleciona/deseleciona um dia para agendamento (chave = day + serviceId) */
-  selectDay(key: string): void {
-    this.selectedDay.set(this.selectedDay() === key ? null : key);
+  public isDayUnavailable(serviceId: string, day: string): boolean {
+    return (this.blockedDaysByService[serviceId] || []).includes(day);
   }
 
-  /** Confirma o agendamento do serviço com o dia selecionado */
-  onSchedule(service: ServiceDto): void {
-    const key = this.selectedDay();
-    if (!key) return;
-    // A chave é day + serviceId; extrai o dia removendo o serviceId do final
-    const day = key.replace(service.id, '');
-    this.scheduleService(service, day);
-    this.selectedDay.set(null);
+  public selectDay(serviceId: string, day: string): void {
+    if (this.isDayUnavailable(serviceId, day)) {
+      return;
+    }
+
+    this.selectedDayByService[serviceId] =
+      this.selectedDayByService[serviceId] === day ? null : day;
   }
 
-  filterByDay(day: string): void {
-    this.selectedDay.set(this.selectedDay() === day ? null : day);
+  public getSelectedDay(serviceId: string): string | null {
+    return this.selectedDayByService[serviceId] || null;
   }
 
   contactWhatsApp(service: ServiceDto): void {
     this.serviceApi.trackMetric(service.id, 'interests').subscribe();
     const phone = service.contact.replace(/\D/g, '');
     const message = encodeURIComponent(
-      `Olá! Vi seu serviço "${service.name}" no Mural do Condomínio e gostaria de mais informações.`,
+      `Ola! Vi seu servico "${service.name}" no mural do condominio e gostaria de mais informacoes.`,
     );
-    const url = `https://wa.me/55${phone}?text=${message}`;
-    window.open(url, '_blank');
+
+    window.open(`https://wa.me/55${phone}?text=${message}`, '_blank');
   }
 
-  scheduleService(service: ServiceDto, day: string): void {
-    this.isScheduling.set(service.id);
-    const today = new Date();
+  public onSchedule(service: ServiceDto): void {
+    const day = this.getSelectedDay(service.id);
+    if (!day || this.isDayUnavailable(service.id, day)) {
+      return;
+    }
+
+    this.isScheduling = service.id;
+
     const payload: CreateAppointmentPayload = {
       serviceId: service.id,
-      scheduledDate: today.toISOString().split('T')[0],
+      scheduledDate: this.resolveNextDateForDay(day),
       scheduledDay: day,
       notes: `Agendamento solicitado pelo mural para ${day}.`,
     };
-    this.appointmentApi.create(payload).subscribe({
-      next: () => {
-        this.isScheduling.set(null);
-        // Feedback visual — o snackbar global vai capturar se houver erro
-      },
-      error: () => {
-        this.isScheduling.set(null);
-      },
+
+    this.appointmentApi
+      .create(payload)
+      .pipe(finalize(() => (this.isScheduling = null)))
+      .subscribe({
+        next: (appointment) => {
+          this.selectedDayByService[service.id] = null;
+          this.appointments = [appointment, ...this.appointments];
+        },
+      });
+  }
+
+  public payAppointment(appointment: AppointmentDto): void {
+    const dialogRef = this.dialog.open(PaymentMethodDialog, {
+      data: { appointmentId: appointment.id },
+      width: '400px',
     });
+
+    dialogRef.afterClosed().subscribe((selectedMethod: PaymentMethod) => {
+      if (!selectedMethod) return;
+
+      this.isPayingAppointment = appointment.id;
+
+      this.appointmentApi
+        .createPayment(appointment.id, { method: selectedMethod })
+        .pipe(finalize(() => (this.isPayingAppointment = null)))
+        .subscribe({
+          next: (paymentSession: AppointmentPaymentDto) => {
+            this.replaceAppointment(paymentSession.appointment);
+
+            if (paymentSession.checkoutUrl) {
+              window.open(paymentSession.checkoutUrl, '_blank');
+            }
+
+            // Para PIX, exibir QR Code
+            if (selectedMethod === 'pix' && (paymentSession.qrCode || paymentSession.qrCodeText)) {
+              this.dialog.open(PixQrDialog, {
+                data: {
+                  qrCode: paymentSession.qrCode,
+                  qrCodeText: paymentSession.qrCodeText,
+                },
+                width: '400px',
+              });
+            }
+
+            this.loadServiceAvailability(appointment.serviceId);
+          },
+          error: (error) => {
+            console.error('Erro no pagamento:', error);
+            this.snackBar.error('Método de pagamento não disponível. Tente cartão de crédito.');
+          },
+        });
+    });
+  }
+
+  public hoverStar(serviceId: string, star: number): void {
+    this.hoverRating[serviceId] = star;
+  }
+
+  public setRating(serviceId: string, star: number): void {
+    this.pendingRating[serviceId] = star;
+  }
+
+  public setComment(serviceId: string, comment: string): void {
+    this.pendingComment[serviceId] = comment;
+  }
+
+  public getRatingLabel(rating: number): string {
+    const labels: Record<number, string> = {
+      1: 'Pessimo',
+      2: 'Ruim',
+      3: 'Regular',
+      4: 'Bom',
+      5: 'Excelente',
+    };
+
+    return labels[rating] || '';
   }
 
   // ── Avaliação anônima ────────────────────────────────────────────────────
@@ -653,6 +791,37 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       },
       error: () => { this.isReviewing.set(null); },
     });
+  }
+
+  private replaceAppointment(updated: AppointmentDto): void {
+    this.appointments = this.appointments.map((appointment) =>
+      appointment.id === updated.id ? updated : appointment,
+    );
+  }
+
+  private resolveNextDateForDay(day: string): string {
+    const dayMap: Record<string, number> = {
+      Domingo: 0,
+      'Segunda-feira': 1,
+      Segunda: 1,
+      Terca: 2,
+      'Terça-feira': 2,
+      Quarta: 3,
+      'Quarta-feira': 3,
+      Quinta: 4,
+      'Quinta-feira': 4,
+      Sexta: 5,
+      'Sexta-feira': 5,
+      Sabado: 6,
+      Sábado: 6,
+    };
+
+    const targetDay = dayMap[day] ?? new Date().getDay();
+    const currentDate = new Date();
+    const diff = (targetDay - currentDate.getDay() + 7) % 7 || 7;
+
+    currentDate.setDate(currentDate.getDate() + diff);
+    return currentDate.toISOString().split('T')[0];
   }
 
   async onLogout(): Promise<void> {
