@@ -1,14 +1,13 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://SUA_API.execute-api.us-east-1.amazonaws.com/prod',
-  // URL do backend NestJS em produção (ECS/ALB)
-  muralApiUrl: 'https://SUA_API_NESTJS.com/api/v1',
+  apiBaseUrl: 'https://api.virtualmural.com/api/v1',
+  version: '0.0.1',
   aws: {
-    region: 'us-east-1',
-    userPoolId: 'us-east-1_XXXX',
-    userPoolWebClientId: 'YYYY',
-    domain: 'minha-plataforma-auth.auth.us-east-1.amazoncognito.com',
-    redirectSignIn: 'https://SUA_URL_CLOUDFRONT/auth/callback',
-    redirectSignOut: 'https://SUA_URL_CLOUDFRONT/',
+    region: 'sa-east-1',
+    userPoolId: 'sa-east-1_NiMyy2V3k',
+    userPoolWebClientId: '3m3i285a6d5tlje7h3p4t1ueu2',
+    domain: 'sa-east-1nimyy2v3k.auth.sa-east-1.amazoncognito.com',
+    redirectSignIn: 'https://virtualmural.com/auth/callback',
+    redirectSignOut: 'https://virtualmural.com/',
   },
 };
