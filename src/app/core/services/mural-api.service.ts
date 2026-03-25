@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environments';
  */
 @Injectable({ providedIn: 'root' })
 export class MuralApiService {
-  private readonly base = environment.muralApiUrl;
+  private readonly base = environment.apiBaseUrl;
 
   constructor(private readonly http: HttpClient) {}
 

@@ -1,32 +1,24 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import BaseComponent from '../../../components/base.component';
-import { MuralTopbarComponent } from '../../../components/mural-topbar/mural-topbar.component';
-import { OnboardingService } from '../../../core/services/onboarding.service';
-import { ServiceApiService, ServiceDto } from '../../../core/services/service-api.service';
-import { AppointmentApiService, CreateAppointmentPayload } from '../../../core/services/appointment-api.service';
-import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from '../../../core/services/review-api.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { finalize, takeUntil } from 'rxjs';
 
-const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+import BaseComponent from 'src/app/components/base.component';
+import { PaymentMethodDialog, PaymentMethod } from 'src/app/components/payment-method-dialog/payment-method-dialog';
+import { PixQrDialog } from 'src/app/components/pix-qr-dialog/pix-qr-dialog';
+import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
+import { AppointmentApiService, AppointmentDto, AppointmentPaymentDto, AppointmentStatus, CreateAppointmentPayload } from 'src/app/core/services/appointment-api.service';
+import { OnboardingService } from 'src/app/core/services/onboarding.service';
+import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/app/core/services/review-api.service';
+import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import { SnackBarService } from 'src/app/core/services/snack-bar.service';
+import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 const CATEGORIES = [
   'Todas',
-  'Beleza e Estética',
-  'Manutenção e Reparos',
-  'Alimentação',
+  'Beleza e Estetica',
+  'Manutencao e Reparos',
+  'Alimentacao',
   'Aulas e Tutoria',
   'Pets',
   'Limpeza',
@@ -37,462 +29,53 @@ const CATEGORIES = [
 
 @Component({
   selector: 'app-customer-dashboard',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatCardModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-    TranslateModule,
-    MuralTopbarComponent,
-  ],
-  template: `
-    <div class="customer-layout">
-      <app-mural-topbar
-        role="customer"
-        [userName]="user?.givenName || user?.displayName || ''"
-        (logout)="onLogout()"
-      />
-
-      <main class="customer-main">
-        <!-- Hero -->
-        <section class="hero-section">
-          <div>
-            <h1 class="hero-title">{{ 'APP.CUSTOMER.HERO_TITLE' | translate }}</h1>
-            <p class="text-muted">
-              {{ 'APP.CUSTOMER.HERO_SUBTITLE' | translate }}
-              <strong>{{ condoCity }}</strong>.
-            </p>
-          </div>
-          <div class="hero-stats">
-            <div class="hero-stat">
-              <span class="hero-stat-value">{{ totalServices }}</span>
-              <span class="text-muted">{{ 'APP.CUSTOMER.STATS_SERVICES' | translate }}</span>
-            </div>
-            <div class="hero-stat">
-              <span class="hero-stat-value">{{ uniqueProviders() }}</span>
-              <span class="text-muted">{{ 'APP.CUSTOMER.STATS_PROVIDERS' | translate }}</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Filtros -->
-        <section class="filters-section">
-          <mat-form-field appearance="outline" class="search-field">
-            <mat-label>{{ 'APP.CUSTOMER.SEARCH_PLACEHOLDER' | translate }}</mat-label>
-            <mat-icon matPrefix>search</mat-icon>
-            <input matInput [formControl]="searchControl" />
-          </mat-form-field>
-          <div class="category-chips">
-            <button class="cat-chip" [class.cat-chip--active]="selectedCategory() === 'Todas'"
-              (click)="selectCategory('')">
-              {{ 'APP.CUSTOMER.FILTER_ALL' | translate }}
-            </button>
-            @for (cat of categories; track cat) {
-              <button class="cat-chip" [class.cat-chip--active]="selectedCategory() === cat"
-                (click)="selectCategory(cat)" type="button">{{ cat }}</button>
-            }
-          </div>
-        </section>
-
-        <!-- Mural -->
-        @if (isLoadingServices()) {
-          <div class="loading-center"><mat-spinner diameter="48" /></div>
-        } @else if (filteredServices().length === 0) {
-          <div class="empty-state">
-            <mat-icon class="empty-icon">search_off</mat-icon>
-            <p>{{ 'APP.CUSTOMER.NO_SERVICES' | translate }}</p>
-            <span class="text-muted">{{ 'APP.CUSTOMER.NO_SERVICES_HINT' | translate }}</span>
-          </div>
-        } @else {
-          <section class="mural-grid">
-            @for (service of filteredServices(); track service.id) {
-              <mat-card class="mural-card surface-card" [class.mural-card--expanded]="expandedId() === service.id">
-                <mat-card-content>
-                  <div class="card-header">
-                    <div>
-                      <h3 class="card-title">{{ service.name }}</h3>
-                      <span class="category-badge">{{ service.category }}</span>
-                    </div>
-                    <div class="card-rating">
-                      <mat-icon class="star-icon star--filled">star</mat-icon>
-                      <span class="rating-value">{{ service.rating | number:'1.1-1' }}</span>
-                      <span class="text-muted">({{ service.totalReviews }})</span>
-                    </div>
-                  </div>
-                  <p class="card-description text-muted">{{ service.description }}</p>
-                  <div class="card-meta">
-                    <span class="card-price">{{ service.price }}</span>
-                    <div class="card-days">
-                      @for (day of service.availableDays.slice(0,3); track day) {
-                        <span class="day-badge">{{ day }}</span>
-                      }
-                      @if (service.availableDays.length > 3) {
-                        <span class="day-badge day-badge--more">+{{ service.availableDays.length - 3 }}</span>
-                      }
-                    </div>
-                  </div>
-                  <div class="card-actions">
-                    <button mat-stroked-button color="primary" (click)="contactWhatsApp(service)">
-                      <mat-icon>whatsapp</mat-icon>
-                      {{ 'APP.CUSTOMER.CONTACT' | translate }}
-                    </button>
-                    <button mat-raised-button color="primary" (click)="toggleExpand(service)">
-                      <mat-icon>{{ expandedId() === service.id ? 'expand_less' : 'expand_more' }}</mat-icon>
-                      {{ 'APP.CUSTOMER.SCHEDULE' | translate }}
-                    </button>
-                  </div>
-                  @if (expandedId() === service.id) {
-                    <mat-divider class="m-y-3" />
-                    <h4 class="details-title">{{ 'APP.CUSTOMER.SCHEDULE_TITLE' | translate }}</h4>
-                    <div class="days-picker">
-                      @for (day of service.availableDays; track day) {
-                        <button class="day-pick-btn"
-                          [class.day-pick-btn--selected]="selectedDay() === day + service.id"
-                          (click)="selectDay(day + service.id)">{{ day }}</button>
-                      }
-                    </div>
-                    @if (selectedDay()?.endsWith(service.id)) {
-                      <button mat-raised-button color="accent" class="w-full m-t-3"
-                        [disabled]="isScheduling() === service.id" (click)="onSchedule(service)">
-                        @if (isScheduling() === service.id) { <mat-spinner diameter="18" /> }
-                        <mat-icon>event_available</mat-icon>
-                        {{ 'APP.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
-                      </button>
-                    }
-                    <mat-divider class="m-y-3" />
-
-                    <!-- Avaliações anônimas -->
-                    <h4 class="details-title">
-                      <mat-icon class="details-icon">star_rate</mat-icon>
-                      {{ 'APP.CUSTOMER.REVIEWS_TITLE' | translate }}
-                    </h4>
-
-                    @if (service.totalReviews > 0) {
-                      <div class="reviews-summary">
-                        <span class="review-rating-value">{{ service.rating | number:'1.1-1' }}</span>
-                        <div class="review-stars">
-                          @for (star of [1,2,3,4,5]; track star) {
-                            <mat-icon class="star-icon" [class.star--filled]="star <= service.rating">star</mat-icon>
-                          }
-                        </div>
-                        <span class="text-muted">{{ service.totalReviews }} {{ 'APP.CUSTOMER.RATING' | translate }}</span>
-                      </div>
-                    }
-
-                    @if (isLoadingReviews() === service.id) {
-                      <div class="loading-center"><mat-spinner diameter="28" /></div>
-                    } @else if (reviewsMap()[service.id]?.length) {
-                      <div class="reviews-list">
-                        @for (review of reviewsMap()[service.id]; track review.id) {
-                          <div class="review-item">
-                            <div class="review-stars-row">
-                              @for (star of [1,2,3,4,5]; track star) {
-                                <mat-icon class="star-icon-sm" [class.star--filled]="star <= review.rating">star</mat-icon>
-                              }
-                              <span class="review-date text-muted">{{ review.createdAt | date:'dd/MM/yyyy' }}</span>
-                            </div>
-                            @if (review.comment) {
-                              <p class="review-comment">"{{ review.comment }}"</p>
-                            }
-                          </div>
-                        }
-                      </div>
-                    } @else {
-                      <p class="text-muted">{{ 'APP.CUSTOMER.NO_REVIEWS' | translate }}</p>
-                    }
-
-                    <mat-divider class="m-y-3" />
-
-                    <!-- Formulário de avaliação anônima -->
-                    <h4 class="details-title">
-                      <mat-icon class="details-icon">rate_review</mat-icon>
-                      {{ 'APP.CUSTOMER.WRITE_REVIEW' | translate }}
-                    </h4>
-                    <div class="review-form">
-                      <div class="star-selector">
-                        <span class="text-muted">{{ 'APP.CUSTOMER.YOUR_RATING' | translate }}</span>
-                        <div class="star-selector-stars">
-                          @for (star of [1,2,3,4,5]; track star) {
-                            <button class="star-btn" type="button"
-                              (mouseenter)="hoverStar(service.id, star)"
-                              (mouseleave)="hoverStar(service.id, 0)"
-                              (click)="setRating(service.id, star)">
-                              <mat-icon class="star-icon-lg"
-                                [class.star--filled]="star <= (hoverRating()[service.id] || pendingRating()[service.id] || 0)">
-                                star
-                              </mat-icon>
-                            </button>
-                          }
-                        </div>
-                        @if (pendingRating()[service.id]) {
-                          <span class="rating-label-text">{{ getRatingLabel(pendingRating()[service.id]) }}</span>
-                        }
-                      </div>
-                      <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.CUSTOMER.REVIEW_COMMENT' | translate }}</mat-label>
-                        <textarea matInput rows="3" maxlength="500"
-                          [value]="pendingComment()[service.id] || ''"
-                          (input)="setComment(service.id, $any($event.target).value)"
-                          [placeholder]="'APP.CUSTOMER.REVIEW_COMMENT_HINT' | translate"></textarea>
-                        <mat-hint>{{ 'APP.CUSTOMER.REVIEW_ANONYMOUS_HINT' | translate }}</mat-hint>
-                      </mat-form-field>
-                      <button mat-raised-button color="primary" class="w-full" type="button"
-                        [disabled]="!pendingRating()[service.id] || isReviewing() === service.id"
-                        (click)="submitReview(service)">
-                        @if (isReviewing() === service.id) { <mat-spinner diameter="18" /> }
-                        <mat-icon>send</mat-icon>
-                        {{ 'APP.CUSTOMER.SUBMIT_REVIEW' | translate }}
-                      </button>
-                    </div>
-                  }
-                </mat-card-content>
-              </mat-card>
-            }
-          </section>
-        }
-      </main>
-    </div>
-  `,
-  styles: [`
-    .customer-layout {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .customer-main {
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 28px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-    .hero-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 16px;
-    }
-    .hero-title {
-      font-size: 26px;
-      font-weight: 800;
-      margin: 0 0 6px;
-    }
-    .hero-stats {
-      display: flex;
-      gap: 24px;
-      flex-shrink: 0;
-    }
-    .hero-stat {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    .hero-stat-value {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--mat-sys-primary);
-    }
-    .filters-section {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .search-field {
-      width: 100%;
-    }
-    .category-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .cat-chip {
-      padding: 6px 16px;
-      border-radius: 999px;
-      border: 1.5px solid var(--mat-sys-outline-variant);
-      background: transparent;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s;
-      color: var(--mat-sys-on-surface-variant);
-    }
-    .cat-chip:hover {
-      border-color: var(--mat-sys-primary);
-      color: var(--mat-sys-primary);
-    }
-    .cat-chip--active {
-      background: var(--mat-sys-primary);
-      border-color: var(--mat-sys-primary);
-      color: white;
-    }
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      padding: 60px 24px;
-      border: 2px dashed var(--mat-sys-outline-variant);
-      border-radius: 16px;
-      text-align: center;
-    }
-    .empty-icon {
-      font-size: 56px;
-      width: 56px;
-      height: 56px;
-      color: var(--mat-sys-on-surface-variant);
-    }
-    .mural-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 16px;
-      align-items: start;
-    }
-    .mural-card {
-      padding: 20px;
-      transition: box-shadow 0.2s;
-    }
-    .mural-card--expanded {
-      box-shadow: 0 16px 48px rgba(0,0,0,0.18);
-    }
-    .category-badge {
-      font-size: 11px; padding: 2px 8px; border-radius: 999px;
-      background: color-mix(in oklab, var(--mat-sys-primary) 12%, transparent);
-      color: var(--mat-sys-primary); font-weight: 600;
-    }
-    .rating-row {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
-    .star-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-      color: var(--mat-sys-outline-variant);
-    }
-    .star--filled {
-      color: #f59e0b;
-    }
-    .rating-label {
-      font-size: 12px;
-      margin-left: 4px;
-    }
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-    .card-title { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
-    .card-rating { display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; }
-    .card-description { font-size: 14px; margin: 8px 0; line-height: 1.5; }
-    .card-meta { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
-    .card-price { font-weight: 700; color: var(--mat-sys-primary); font-size: 15px; }
-    .card-days { display: flex; gap: 4px; flex-wrap: wrap; }
-    .day-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--mat-sys-surface-variant); color: var(--mat-sys-on-surface-variant); }
-    .day-badge--more { background: var(--mat-sys-primary-container); color: var(--mat-sys-on-primary-container); }
-    .card-actions { display: flex; gap: 8px; margin-top: 12px; }
-    .card-actions button { flex: 1; }
-    .details-title { font-size: 14px; font-weight: 700; margin: 0 0 8px; }
-    .days-picker { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
-    .day-pick-btn { padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--mat-sys-outline-variant); background: transparent; cursor: pointer; font-size: 13px; transition: all 0.15s; color: var(--mat-sys-on-surface); }
-    .day-pick-btn:hover { border-color: var(--mat-sys-primary); color: var(--mat-sys-primary); }
-    .day-pick-btn--selected { background: var(--mat-sys-primary); border-color: var(--mat-sys-primary); color: white; }
-    .reviews-summary { display: flex; align-items: center; gap: 12px; }
-    .review-rating-value { font-size: 32px; font-weight: 800; }
-    .review-stars { display: flex; }
-    .details-title { font-size: 14px; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
-    .details-icon { font-size: 18px; width: 18px; height: 18px; color: var(--mat-sys-primary); }
-    .star-icon-sm { font-size: 14px; width: 14px; height: 14px; color: var(--mat-sys-outline-variant); }
-    .star-icon-lg { font-size: 28px; width: 28px; height: 28px; color: var(--mat-sys-outline-variant); transition: color 0.1s; }
-    .reviews-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
-    .review-item { padding: 10px 12px; border-radius: 10px; background: var(--mat-sys-surface-variant); border-left: 3px solid var(--mat-sys-primary); }
-    .review-stars-row { display: flex; align-items: center; gap: 2px; margin-bottom: 4px; }
-    .review-date { font-size: 11px; margin-left: auto; }
-    .review-comment { font-size: 13px; margin: 4px 0 0; font-style: italic; color: var(--mat-sys-on-surface-variant); }
-    .review-form { display: flex; flex-direction: column; gap: 12px; }
-    .star-selector { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .star-selector-stars { display: flex; gap: 4px; }
-    .star-btn { background: none; border: none; cursor: pointer; padding: 2px; line-height: 0; }
-    .rating-label-text { font-size: 13px; font-weight: 600; color: var(--mat-sys-primary); }
-    @media (max-width: 768px) {
-      .hero-section { flex-direction: column; align-items: flex-start; }
-      .hero-stats { align-self: flex-start; }
-      .customer-main { padding: 16px; gap: 20px; }
-    }
-    @media (max-width: 600px) {
-      .mural-grid { grid-template-columns: 1fr; }
-      .card-actions { flex-direction: column; }
-      .card-actions button { width: 100%; flex: none; }
-      .card-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
-      .hero-stat-value { font-size: 22px; }
-      .category-chips { gap: 6px; }
-      .cat-chip { padding: 5px 12px; font-size: 12px; }
-      .reviews-summary { flex-direction: column; align-items: flex-start; }
-    }
-    @media (max-width: 400px) {
-      .hero-stats { flex-direction: column; gap: 8px; }
-    }
-  `],
+  imports: [...importBase, MuralTopbarComponent],
+  templateUrl: './customer-dashboard.component.html',
+  styleUrls: ['./customer-dashboard.component.scss'],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
-  private readonly onboardingService = inject(OnboardingService);
-  private readonly serviceApi = inject(ServiceApiService);
-  private readonly appointmentApi = inject(AppointmentApiService);
-  private readonly reviewApi = inject(ReviewApiService);
+  public services: ServiceDto[] = [];
+  public filteredServices: ServiceDto[] = [];
+  public appointments: AppointmentDto[] = [];
+  public reviewsMap: Record<string, AnonymousReviewDto[]> = {};
+  public blockedDaysByService: Record<string, string[]> = {};
+  public pendingRating: Record<string, number> = {};
+  public pendingComment: Record<string, string> = {};
+  public hoverRating: Record<string, number> = {};
+  public selectedDayByService: Record<string, string | null> = {};
 
-  allServices = signal<ServiceDto[]>([]);
-  selectedCategory = signal('Todas');
-  expandedId = signal<string | null>(null);
-  selectedDay = signal<string | null>(null);
-  isLoadingServices = signal(false);
-  isScheduling = signal<string | null>(null);
-  isReviewing = signal<string | null>(null);
-  isLoadingReviews = signal<string | null>(null);
+  public searchControl = new FormControl('');
+  public selectedCategory = 'Todas';
+  public expandedId: string | null = null;
 
-  // ── Estado de avaliação ──────────────────────────────────────────────────
-  reviewsMap = signal<Record<string, any[]>>({});
-  pendingRating = signal<Record<string, number>>({});
-  pendingComment = signal<Record<string, string>>({});
-  hoverRating = signal<Record<string, number>>({});
-  searchControl = new FormControl('');
-  private readonly searchValue = toSignal(this.searchControl.valueChanges, { initialValue: '' });
+  public isLoadingServices = false;
+  public isLoadingAppointments = false;
+  public isScheduling: string | null = null;
+  public isReviewing: string | null = null;
+  public isLoadingReviews: string | null = null;
+  public isPayingAppointment: string | null = null;
 
-  readonly categories = [...CATEGORIES];
-  readonly weekdays = WEEKDAYS;
+  public readonly categories = CATEGORIES;
 
-  uniqueProviders = computed(() => {
-    const ids = new Set(this.allServices().map((s) => s.providerId));
-    return ids.size;
-  });
+  constructor(
+    private readonly onboardingService: OnboardingService,
+    private readonly serviceApi: ServiceApiService,
+    private readonly appointmentApi: AppointmentApiService,
+    private readonly reviewApi: ReviewApiService,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: SnackBarService,
+  ) {
+    super();
+  }
 
-  filteredServices = computed(() => {
-    let list = this.allServices();
-    const cat = this.selectedCategory();
-    const day = this.selectedDay();
-    const search = (this.searchValue() ?? '').toLowerCase().trim();
-    if (cat && cat !== 'Todas') {
-      list = list.filter((s) => s.category === cat);
-    }
-    if (day) {
-      list = list.filter((s) => s.availableDays.includes(day));
-    }
-    if (search) {
-      list = list.filter(
-        (s) =>
-          s.name.toLowerCase().includes(search) ||
-          s.description.toLowerCase().includes(search) ||
-          s.category.toLowerCase().includes(search),
-      );
-    }
-    return list;
-  });
+  ngOnInit(): void {
+    this.searchControl.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+      this.applyFilters();
+    });
+
+    this.loadServices();
+    this.loadMyAppointments();
+  }
 
   get totalServices(): number {
     return this.allServices().length;
@@ -523,25 +106,9 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
-  toggleExpand(service: ServiceDto): void {
-    const isOpening = this.expandedId() !== service.id;
-    this.expandedId.set(isOpening ? service.id : null);
-    if (isOpening) {
-      this.serviceApi.trackMetric(service.id, 'clicks').subscribe();
-      this.loadReviews(service.id);
-    }
-  }
-
-  private loadReviews(serviceId: string): void {
-    if (this.reviewsMap()[serviceId]) return;
-    this.isLoadingReviews.set(serviceId);
-    this.reviewApi.findByService(serviceId).subscribe({
-      next: (reviews) => {
-        this.reviewsMap.update((m) => ({ ...m, [serviceId]: reviews }));
-        this.isLoadingReviews.set(null);
-      },
-      error: () => { this.isLoadingReviews.set(null); },
-    });
+  public selectCategory(category: string): void {
+    this.selectedCategory = category;
+    this.applyFilters();
   }
 
   selectCategory(cat: string): void {
@@ -575,8 +142,9 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.selectedDay.set(this.selectedDay() === day ? null : day);
   }
 
-  contactWhatsApp(service: ServiceDto): void {
+  public contactWhatsApp(service: ServiceDto): void {
     this.serviceApi.trackMetric(service.id, 'interests').subscribe();
+
     const phone = service.contact.replace(/\D/g, '');
     const message = encodeURIComponent(
       `Olá! Vi seu serviço "${service.name}" no Mural do Condomínio e gostaria de mais informações.`,
@@ -605,53 +173,58 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
-  // ── Avaliação anônima ────────────────────────────────────────────────────
-  hoverStar(serviceId: string, star: number): void {
-    this.hoverRating.update((m) => ({ ...m, [serviceId]: star }));
-  }
-
-  setRating(serviceId: string, star: number): void {
-    this.pendingRating.update((m) => ({ ...m, [serviceId]: star }));
-  }
-
-  setComment(serviceId: string, text: string): void {
-    this.pendingComment.update((m) => ({ ...m, [serviceId]: text }));
-  }
-
-  getRatingLabel(rating: number): string {
-    const labels: Record<number, string> = {
-      1: 'Péssimo', 2: 'Ruim', 3: 'Regular', 4: 'Bom', 5: 'Excelente',
+  public getAppointmentStatusLabel(status: AppointmentStatus): string {
+    const labels: Record<AppointmentStatus, string> = {
+      pending: 'Solicitado',
+      confirmed: 'Confirmado',
+      awaiting_payment: 'Aguardando pagamento',
+      paid: 'Pago',
+      cancelled: 'Cancelado',
+      completed: 'Concluido',
     };
-    return labels[rating] ?? '';
+
+    return labels[status];
   }
 
-  submitReview(service: ServiceDto): void {
-    const rating = this.pendingRating()[service.id];
-    if (!rating) return;
-    this.isReviewing.set(service.id);
+  public canPayAppointment(appointment: AppointmentDto): boolean {
+    return appointment.status === 'confirmed' || appointment.status === 'awaiting_payment';
+  }
+
+  public submitReview(service: ServiceDto): void {
+    const rating = this.pendingRating[service.id];
+    if (!rating) {
+      return;
+    }
+
+    this.isReviewing = service.id;
+
     const payload: CreateReviewPayload = {
       serviceId: service.id,
       rating,
-      comment: this.pendingComment()[service.id] || undefined,
+      comment: this.pendingComment[service.id] || undefined,
     };
-    this.reviewApi.create(payload).subscribe({
-      next: (newReview) => {
-        this.isReviewing.set(null);
-        this.pendingRating.update((m) => ({ ...m, [service.id]: 0 }));
-        this.pendingComment.update((m) => ({ ...m, [service.id]: '' }));
-        this.reviewsMap.update((m) => ({
-          ...m,
-          [service.id]: [newReview, ...(m[service.id] ?? [])],
-        }));
-        this.serviceApi.findOne(service.id).subscribe({
-          next: (updated) => {
-            this.allServices.update((list) =>
-              list.map((s) => (s.id === updated.id ? updated : s)),
-            );
-          },
-        });
+
+    this.reviewApi
+      .create(payload)
+      .pipe(finalize(() => (this.isReviewing = null)))
+      .subscribe({
+        next: (newReview) => {
+          this.pendingRating[service.id] = 0;
+          this.pendingComment[service.id] = '';
+          this.reviewsMap[service.id] = [newReview, ...(this.reviewsMap[service.id] || [])];
+          this.refreshService(service.id);
+        },
+      });
+  }
+
+  public refreshService(serviceId: string): void {
+    this.serviceApi.findOne(serviceId).subscribe({
+      next: (updatedService) => {
+        this.services = this.services.map((service) =>
+          service.id === updatedService.id ? updatedService : service,
+        );
+        this.applyFilters();
       },
-      error: () => { this.isReviewing.set(null); },
     });
   }
 
