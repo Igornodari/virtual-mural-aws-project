@@ -261,11 +261,18 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .createPayment(appointment.id, { method: selectedMethod })
       .pipe(finalize(() => (this.isPayingAppointment = null)))
       .subscribe({
-        next: (paymentSession: AppointmentPaymentDto) => {
+        next: async (paymentSession: AppointmentPaymentDto) => {
           this.replaceAppointment(paymentSession.appointment);
 
-          if (selectedMethod === 'credit_card' && paymentSession.checkoutUrl) {
-            window.location.href = paymentSession.checkoutUrl;
+          if (selectedMethod === 'credit_card') {
+            if (paymentSession.checkoutSessionId) {
+              const stripe = await loadStripe(environment.stripePublishableKey);
+              if (stripe) {
+                await stripe.redirectToCheckout({ sessionId: paymentSession.checkoutSessionId });
+              }
+            } else if (paymentSession.checkoutUrl) {
+              window.location.href = paymentSession.checkoutUrl;
+            }
             return;
           }
 
