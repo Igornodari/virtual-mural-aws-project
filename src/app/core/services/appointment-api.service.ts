@@ -47,12 +47,13 @@ export interface AppointmentPaymentPayload {
 }
 
 export interface AppointmentPaymentDto {
-  appointment: AppointmentDto;
   paymentId: string;
-  paymentStatus: PaymentStatus;
+  paymentStatus: string;
   checkoutUrl?: string;
+  checkoutSessionId?: string;
   qrCode?: string;
   qrCodeText?: string;
+  appointment: AppointmentDto;
 }
 
 @Injectable({ providedIn: 'root' })
