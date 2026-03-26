@@ -13,8 +13,6 @@ import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/a
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
-import { environment } from 'src/environments/environments';
-import { loadStripe } from '@stripe/stripe-js';
 
 const CATEGORIES = [
   'Todas',
@@ -261,18 +259,10 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .createPayment(appointment.id, { method: selectedMethod })
       .pipe(finalize(() => (this.isPayingAppointment = null)))
       .subscribe({
-        next: async (paymentSession: AppointmentPaymentDto) => {
+        next: (paymentSession: AppointmentPaymentDto) => {
           this.replaceAppointment(paymentSession.appointment);
-
-          if (selectedMethod === 'credit_card') {
-            if (paymentSession.checkoutSessionId) {
-              const stripe = await loadStripe(environment.stripePublishableKey);
-              if (stripe) {
-                await stripe.redirectToCheckout({ sessionId: paymentSession.checkoutSessionId });
-              }
-            } else if (paymentSession.checkoutUrl) {
-              window.location.href = paymentSession.checkoutUrl;
-            }
+          if (selectedMethod === 'credit_card' && paymentSession.checkoutUrl) {
+            window.location.href = paymentSession.checkoutUrl;
             return;
           }
 
