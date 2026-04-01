@@ -1,7 +1,7 @@
 import { UserRole } from '../types';
 
 export const ROUTE_PATHS = {
-  login: '/login',
+  login: '/authentication/login',
   register: '/register',
   authCallback: '/auth/callback',
   dashboard: '/dashboard',

@@ -199,7 +199,26 @@ export class LoginComponent extends BaseComponent implements OnInit {
 
   async onGoogleLogin(): Promise<void> {
     this.setLoadingState(true);
-    await this.authService.loginWithGoogle();
+    const authenticated = await this.authService.isAuthenticated();
+    if (authenticated) {
+      await this.redirectAfterLogin();
+      this.setLoadingState(false);
+      return;
+    }
+
+    try {
+      await this.authService.loginWithGoogle();
+    } catch (error: any) {
+      const name = String(error?.name ?? '');
+      if (name === 'UserAlreadyAuthenticatedException') {
+        await this.redirectAfterLogin();
+        this.setLoadingState(false);
+        return;
+      }
+
+      this.setLoadingState(false);
+      throw error;
+    }
   }
 
   async onSubmit(): Promise<void> {

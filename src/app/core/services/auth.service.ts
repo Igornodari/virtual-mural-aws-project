@@ -19,7 +19,7 @@ import {
 })
 export class AuthService {
   refresh() {
-    throw new Error('Method not implemented.');
+    void this.syncAuthState();
   }
   private readonly emptyUser: User = {
     id: '',
@@ -84,6 +84,11 @@ export class AuthService {
   }
 
   async loginWithGoogle(): Promise<void> {
+    const authenticated = await this.isAuthenticated();
+    if (authenticated) {
+      return;
+    }
+
     await signInWithRedirect({ provider: 'Google' });
   }
 

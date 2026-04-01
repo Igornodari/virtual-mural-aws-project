@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 
 export const authGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
@@ -10,5 +11,5 @@ export const authGuard: CanActivateFn = async () => {
 
   if (authenticated) return true;
 
-  return router.parseUrl('/login');
+  return router.parseUrl(ROUTE_PATHS.login);
 };

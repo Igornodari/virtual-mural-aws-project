@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { FullComponent } from './layouts/full/full.component';
 import { BlankComponent } from './layouts/blank/blank.component';
-import { AuthGuard } from './shared/guard/auth.guard';
+import { ROUTE_PATHS } from './shared/constant/route-paths.constant';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -12,7 +13,7 @@ export const routes: Routes = [
   {
     path: '',
     component: FullComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -30,6 +31,13 @@ export const routes: Routes = [
     path: '',
     component: BlankComponent,
     children: [
+      {
+        path: ROUTE_PATHS.authCallback.slice(1),
+        loadComponent: () =>
+          import('./features/auth-callback.components').then(
+            (m) => m.AuthCallbackComponent
+          ),
+      },
       {
         path: 'authentication',
         loadChildren: () =>
