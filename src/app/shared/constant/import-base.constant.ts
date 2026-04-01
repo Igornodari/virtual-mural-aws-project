@@ -9,6 +9,7 @@ import { LoadingComponent } from '../../components/loading.component';
 import { StatusComponent } from '../../components/status.component';
 import { RecordReadingComponent } from '../../components/record-reading.component';
 import { MaterialModule } from '../../../material.module';
+import { NgScrollbar, NgScrollbarModule } from 'ngx-scrollbar';
 export { MaterialModule } from '../../../material.module';
 export { CommonModule } from '@angular/common';
 export { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -29,6 +30,7 @@ export const importBase = [
   NgxMaskDirective,
   NgxMaskPipe,
   LoadingComponent,
+  NgScrollbarModule,
   MatDatepickerModule,
   MatNativeDateModule,
   RouterModule,

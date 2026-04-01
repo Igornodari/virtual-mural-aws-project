@@ -14,7 +14,6 @@ import { environment } from 'src/environments/environments';
 	templateUrl: './sidebar.component.html',
 	standalone: true,
 	imports: [
-    NgScrollbarModule,
     MaterialModule,
     AppNavItemComponent,
     TranslateModule,

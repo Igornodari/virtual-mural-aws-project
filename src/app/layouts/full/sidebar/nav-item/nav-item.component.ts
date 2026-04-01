@@ -12,10 +12,9 @@ import { NavItem } from './nav-item';
 import { Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { CanPipe } from 'src/app/shared/pipe/can.pipe';
-import { NavService } from 'src/app/services/nav.service';
+import { MaterialModule } from 'src/material.module';
 
 @Component({
     selector: 'app-nav-item',

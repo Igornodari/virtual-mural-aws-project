@@ -47,8 +47,6 @@
 			</div>
 		</div>
 		<ng-scrollbar class="position-relative" style="height: auto">
-			<app-notification-item [notifications]="notifications" [photoUrl]="user.photoUrl"
-				(notificationRead)="handleNotificationRead()"></app-notification-item>
 		</ng-scrollbar>
 		<div class="p-y-12 p-x-32">
 			<button matButton="outlined" color="primary" class="w-100">
@@ -69,7 +67,7 @@
 				<div class="d-flex align-items-center p-b-24 b-b-1 m-t-16">
 					<img [src]="user.photoUrl" class="rounded-circle p-5" width="95" />
 					<div>
-						<h6 class="f-s-14 f-w-600 m-0">{{ user.firstName }}</h6>
+						<h6 class="f-s-14 f-w-600 m-0">{{ user.cognitoUsername }}</h6>
 						<!-- <span class="f-s-14 d-block m-b-4">{{user.position}}</span> -->
 						<span class="d-flex align-items-center">
 							<mat-icon class="material-icons-outlined f-s-21 m-t-8">email</mat-icon>
