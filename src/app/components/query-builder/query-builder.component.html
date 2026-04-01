@@ -1,0 +1,97 @@
+<h6 mat-dialog-title>{{ 'FILTER' | translate }}</h6>
+<mat-dialog-content class="modal-filter">
+	<form [formGroup]="filterForm" class="form-small hidden-validator filter-container">
+		<div formArrayName="rules" class="rule-list">
+			@for (rule of rules.controls; let i = $index; track $index) {
+			<div [formGroupName]="$index" class="rule-row">
+				<mat-form-field appearance="outline" class="field w-80">
+					<mat-label>Campo</mat-label>
+					<mat-select formControlName="field" (selectionChange)="onOperatorsChange(i)">
+						@for ( f of data.fields; track $index) {
+						<mat-option [value]="f.key">
+							{{ f.label | translate }}
+						</mat-option>
+						}
+					</mat-select>
+				</mat-form-field>
+				@if (getFieldType(rule.value.field) != 'select') {
+				<mat-form-field appearance="outline" class="operator">
+					<mat-label>Operador</mat-label>
+					<mat-select formControlName="operator">
+						@for (op of operatorOptions[i]; track op; let idexOp = $index) {
+						<mat-option [value]="op">
+							{{ 'QUERY_FILTER.' + op | translate }}
+						</mat-option>
+						}
+					</mat-select>
+				</mat-form-field>
+				}
+
+				@if (!['notEmpty', 'isEmpty', 'notNull', 'isNull'].includes(rule.value.operator)) {
+				@switch(getFieldType(rule.value.field)) {
+				@case('number'){
+				<!-- Número -->
+				<mat-form-field appearance="outline" class="value">
+					<mat-label>Valor</mat-label>
+					<input matInput formControlName="value" type="number" />
+				</mat-form-field>
+				} @case('date'){
+				<!-- Data -->
+				@if(!['between'].includes(rule.value.operator)){
+				<mat-form-field appearance="outline" class="value">
+					<mat-label>Data</mat-label>
+					<input matInput [matDatepicker]="picker" formControlName="value" />
+					<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+					<mat-datepicker #picker></mat-datepicker>
+				</mat-form-field>
+				}@else{
+				<mat-form-field appearance="outline" class="value">
+					<mat-label>Periodo</mat-label>
+					<mat-date-range-input [rangePicker]="picker">
+						<input matStartDate formControlName="value" placeholder="Inicial" />
+						<input matEndDate formControlName="value2" placeholder="Final" />
+					</mat-date-range-input>
+					<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+					<mat-date-range-picker #picker></mat-date-range-picker>
+				</mat-form-field>
+				} } @case('select'){
+				<!-- Select -->
+				<mat-form-field appearance="outline" class="value">
+					<mat-label>Valor</mat-label>
+					<mat-select formControlName="value" multiple>
+						<mat-option *ngFor="let opt of getOptions(rule.value.field)" [value]="opt.name">
+							{{ opt.label | translate }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+
+				} @default {
+				<mat-form-field appearance="outline" class="value">
+					<mat-label>Valor</mat-label>
+					<input matInput formControlName="value" type="text" />
+				</mat-form-field>
+				}} }
+
+				<button mat-icon-button color="warn" (click)="removeRule(i)">
+					<mat-icon>delete</mat-icon>
+				</button>
+			</div>
+			}
+
+			<div>
+				<button mat-mini-fab color="primary" (click)="addRule()">
+					<mat-icon>add</mat-icon>
+				</button>
+			</div>
+		</div>
+	</form>
+</mat-dialog-content>
+<div class="actions" mat-dialog-actions>
+	<button matButton="outlined" color="warn" (click)="clear()">
+		{{ 'CLEAR' | translate }}
+	</button>
+	<button matButton="filled" color="accent" (click)="submit()">
+		<mat-icon>download_done</mat-icon>
+		{{ 'FILTER' | translate }}
+	</button>
+</div>

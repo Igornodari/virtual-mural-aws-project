@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>{{ 'LOGIN.DIALOG_EXISTING_ACCOUNT.TITLE' | translate }}</h2>
+
+<mat-dialog-content>
+	<p>{{ 'LOGIN.DIALOG_EXISTING_ACCOUNT.LINE1' | translate }}</p>
+	<p>{{ 'LOGIN.DIALOG_EXISTING_ACCOUNT.LINE2' | translate }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+	<button mat-button (click)="dialogRef.close(false)">
+		{{ 'CANCEL' | translate }}
+	</button>
+	<button matButton="filled" color="primary" (click)="dialogRef.close(true)">
+		{{ 'LOGIN.DIALOG_EXISTING_ACCOUNT.CONFIRM' | translate }}
+	</button>
+</mat-dialog-actions>

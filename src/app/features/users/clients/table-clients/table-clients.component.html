@@ -1,0 +1,99 @@
+<div class="row">
+  <div class="col-6 d-flex m-b-20">
+    <div class="display-settings">
+      <div class="display-label">{{ 'DISPLAY' | translate }}</div>
+      <app-display-table [data]="columnsToDisplay" (onChangeValue)="modifyColumns($event)"></app-display-table>
+    </div>
+  </div>
+  <div class="col-6 d-flex flex-row-reverse m-b-20">
+    <button [matBadge]="filteredCount" matBadgeOverlap="true" class="m-x-10 m-t-5" mat-mini-fab color="accent"
+      (click)="openDialogFilter()">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+  </div>
+</div>
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="main-container m-t-2">
+      @if (loading) {
+      <app-loading></app-loading>
+      }
+
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource" class="main-table" matSort matSortActive="createdAt"
+          matSortDisableClear matSortDirection="desc">
+          <ng-container matColumnDef="createdAt">
+            <th mat-sort-header="createdAt" mat-header-cell *matHeaderCellDef>
+              {{ 'CREATED_AT' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.createdAt | date : 'dd/MM/yy' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="fullName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'FULL_NAME' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row['fullName'] | titlecase }}
+
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>{{ 'EMAIL' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.email || 'N/A' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="cpf">
+            <th mat-header-cell *matHeaderCellDef>{{ 'CPF' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.cpf || 'N/A' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="cellphone">
+            <th mat-header-cell *matHeaderCellDef>{{ 'PHONE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.cellphone ? (row.cellphone | mask : '+00 (00) 0000-0000') : 'N/A' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="admin">
+            <th mat-header-cell *matHeaderCellDef>{{ 'PROPERTY' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.admin?.fullName || 'N/A' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef>
+              Score
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="d-flex justify-content-center score-icons">{{
+                row.scoreIcon
+                }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="visibilityIcon">
+            <th mat-header-cell *matHeaderCellDef>{{ 'ACTIONS' | translate }}</th>
+            <td id="visibility-icon" mat-cell *matCellDef="let row">
+              <button mat-icon-button color="primary" [routerLink]="['/users/clients/show', row.id]"
+                aria-label="visibility icon">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        @if (!dataSource.data.length) {
+        <div class="rate-limit-reached">
+          Nenhum resultado encontrado
+        </div>
+        }
+      </div>
+
+      <mat-paginator [length]="resultsLength" [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

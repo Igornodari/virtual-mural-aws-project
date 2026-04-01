@@ -1,0 +1,108 @@
+import { Admin, Unit } from 'src/app/shared/types';
+import { ClientTypeEnum } from './client-enum';
+
+export type Client = {
+	scoreIcon: string;
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+	zohoId: string;
+	accountAgency: string;
+	accountBank: string;
+	accountNumber: string;
+	accountPix: string;
+	stage: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+	cpf: string;
+	cnpj: string;
+	cellphone: string;
+	birthDate: string;
+	gender: string;
+	addressCountry: string;
+	addressStreet: string;
+	addressNumber: string;
+	addressComplement: string;
+	addressNeighborhood: string;
+	addressCity: string;
+	addressState: string;
+	addressZipCode: string;
+	nationality: string;
+	maritalStatus: string;
+	document: string;
+	admin: Admin;
+	financialResponsible?: FinancialResponsible;
+	client?: CreateClientDto;
+	subscription: CreateSubscriptionDto[];
+	unit: Unit;
+	havePet: boolean;
+	fullName: string;
+	roomsCode: string[];
+	type: ClientTypeEnum | string;
+
+	score: number;
+};
+
+export type FinancialResponsible = {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+	typeResponsible: string;
+	fullName: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+	cpf: string;
+	cnpj: string;
+	cellphone: string;
+	birthDate: string;
+	gender: string;
+	addressCountry: string;
+	addressStreet: string;
+	addressNumber: string;
+	addressComplement: string;
+	addressNeighborhood: string;
+	addressCity: string;
+	clients: Client[];
+	addressState: string;
+	addressZipCode: string;
+	nationality: string;
+	maritalStatus: string;
+	document: string;
+	bankAccountAgency: string;
+	bankAccountCodeBank: string;
+	bankAccountNumber: string;
+	bankAccountDocOwner: string;
+	bankAccountNameOwner: string;
+	bankAccountDigitNumber: string;
+	bankAccountPix: string;
+	isForeigner: boolean;
+};
+
+export type CreateClientDto = {
+	fullName: string;
+	cellphone: string;
+	email: string;
+	birthDate: Date;
+	cpf: string;
+	cnpj: string;
+	gender: string;
+	addressNumber: string;
+	addressCity: string;
+	addressState: string;
+	addressZipCode: string;
+	nationality: string;
+	maritalStatus: string;
+};
+
+export type CreateSubscriptionDto = {
+	number: string;
+	status: string;
+	startDate: Date;
+	endDate: Date;
+	amount: number;
+	omieId: number;
+	discountPercentage: number;
+	createdAt: Date;
+};

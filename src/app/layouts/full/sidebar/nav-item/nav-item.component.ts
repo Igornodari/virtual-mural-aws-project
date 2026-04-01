@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { CanPipe } from 'src/app/shared/pipe/can.pipe';
 import { MaterialModule } from 'src/material.module';
+import { NavService } from 'src/app/core/services/nav.service';
 
 @Component({
     selector: 'app-nav-item',

@@ -11,9 +11,6 @@
 	</button>
 
 	<!-- --------------------------------------------------------------- -->
-	<div class="d-lg-flex">
-		<app-select-units></app-select-units>
-	</div>
 
 	@if (!production) {
 	<div class="env-test">TESTE</div>
@@ -46,8 +43,7 @@
 				</span>
 			</div>
 		</div>
-		<ng-scrollbar class="position-relative" style="height: auto">
-		</ng-scrollbar>
+
 		<div class="p-y-12 p-x-32">
 			<button matButton="outlined" color="primary" class="w-100">
 				{{ 'HEADER.NOTIFICATIONS.VIEW_ALL' | translate }}
@@ -58,14 +54,13 @@
 	<!-- profile Dropdown -->
 	<!-- --------------------------------------------------------------- -->
 	<button mat-icon-button [matMenuTriggerFor]="profilemenu" aria-label="Notifications">
-		<img [src]="user.photoUrl" class="rounded-circle object-cover" width="35" />
+		<img [src]="user.avatarUrl" class="rounded-circle object-cover" width="35" />
 	</button>
 	<mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
-		<ng-scrollbar class="position-relative" style="height: auto">
 			<div class="col-12 p-5">
 				<h6 class="f-s-16 f-w-600 m-0">{{ 'HEADER.ACCOUNT.USER_PROFILE' | translate }}</h6>
 				<div class="d-flex align-items-center p-b-24 b-b-1 m-t-16">
-					<img [src]="user.photoUrl" class="rounded-circle p-5" width="95" />
+					<img [src]="user.avatarUrl" class="rounded-circle p-5" width="95" />
 					<div>
 						<h6 class="f-s-14 f-w-600 m-0">{{ user.cognitoUsername }}</h6>
 						<!-- <span class="f-s-14 d-block m-b-4">{{user.position}}</span> -->
@@ -99,7 +94,6 @@
 					'HEADER.ACCOUNT.LOGOUT' | translate
 					}}</a>
 			</div>
-		</ng-scrollbar>
 	</mat-menu>
 </mat-toolbar>
 }

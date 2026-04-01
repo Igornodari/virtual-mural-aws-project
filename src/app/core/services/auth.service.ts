@@ -18,6 +18,9 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
+  refresh() {
+    throw new Error('Method not implemented.');
+  }
   private readonly emptyUser: User = {
     id: '',
     email: '',
@@ -78,11 +81,6 @@ export class AuthService {
 
   setCurrentCondominium(condominium: Condominium | null): void {
     this.condominiumSubject.next(condominium);
-  }
-
-  // Compatibilidade temporária com código legado.
-  setCurrentUnit(unit: Unit | null): void {
-    this.setCurrentCondominium(unit);
   }
 
   async loginWithGoogle(): Promise<void> {
@@ -149,7 +147,7 @@ export class AuthService {
 
       throw new Error(this.mapSignInError(error));
     });
-    
+
     await this.syncAuthState();
     return result;
   }
@@ -167,7 +165,7 @@ export class AuthService {
       this.setCurrentUser(null);
       return false;
     }
-    
+
     const authenticated = !!session.tokens?.idToken;
     this.isAuthenticatedSubject.next(authenticated);
     if (authenticated && !this.userSubject.value) {
@@ -308,7 +306,7 @@ export class AuthService {
       this.setCurrentUser(null);
       return;
     }
-    
+
     const idToken = session.tokens?.idToken;
     if (!idToken) {
       this.setCurrentUser(null);

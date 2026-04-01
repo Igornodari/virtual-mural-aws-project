@@ -24,7 +24,6 @@ import { environment } from 'src/environments/environments';
 import { MaterialModule } from 'src/material.module';
 import { LanguageComponent } from './language.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
-import {  NgScrollbarModule } from 'ngx-scrollbar';
 
 
 @Component({

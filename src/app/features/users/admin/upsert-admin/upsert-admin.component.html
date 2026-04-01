@@ -1,0 +1,153 @@
+<h2 class="f-w-500" mat-dialog-title>
+	<strong>{{ action }}</strong>
+</h2>
+@if (loading) {
+<app-loading></app-loading>
+}
+<mat-dialog-content style="max-width: 600px">
+	<form [formGroup]="formGroup" class="form-small hidden-validator">
+		<div class="row">
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">E-mail</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="email" formControlName="email" />
+					@if (formGroup.get('email')?.hasError('email')) {
+					<mat-error>Formato de e-mail inválido.</mat-error>
+					}
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Nome completo</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="fullName" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">CPF</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="cpf" mask="000.000.000-00" />
+					@if (formGroup.get('cpf')?.hasError('invalidCPF')) {
+					<mat-error>CPF inválido.</mat-error>
+					}
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Data de Nascimento</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="date" formControlName="birthDate" />
+					@if (formGroup.get('birthDate')?.hasError('invalidBirthDate')) {
+					<mat-error>Data de nascimento inválida.</mat-error>
+					}
+				</mat-form-field>
+			</div>
+
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Rua</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressStreet" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-3">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Número</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressNumber" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-3">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Complemento</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressComplement" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Bairro</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressNeighborhood" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">CEP</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressZipCode" mask="00000-000" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Cidade</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressCity" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Estado</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressState" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">País</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="addressCountry" />
+				</mat-form-field>
+			</div>
+
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Departamento</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<mat-select formControlName="department">
+						@for (dp of departmentStyles; track dp) {
+						<mat-option [value]="dp.name">{{ dp.label }}</mat-option>
+						}
+					</mat-select>
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Cargo</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<input matInput type="text" formControlName="position" />
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Permissão</mat-label>
+				<mat-form-field
+					appearance="outline"
+					class="w-100"
+					color="primary"
+					matTooltip="Você não tem permissão para editar permissões"
+					[matTooltipDisabled]="!!(PERMISSIONS.ADMIN.UPSERT | can)"
+				>
+					<mat-select formControlName="roleId" [disabled]="!(PERMISSIONS.ADMIN.UPSERT | can)">
+						@for (role of roles | async; track role) {
+						<mat-option [value]="role.id">
+							{{ role.label }}
+						</mat-option>
+						}
+					</mat-select>
+				</mat-form-field>
+			</div>
+
+			<div class="col-sm-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Unidade</mat-label>
+				<mat-form-field appearance="outline" class="w-100" color="primary">
+					<mat-select formControlName="unitId">
+						@for (unit of units | async; track unit) {
+						<mat-option [value]="unit.id">{{ unit.name }}</mat-option>
+						}
+					</mat-select>
+				</mat-form-field>
+			</div>
+
+			<div class="col-sm-6 align-items-center text-center m-t-6">
+				<mat-label class="mat-subtitle-2 f-w-600 d-block">Ativa</mat-label>
+				<mat-slide-toggle color="primary" formControlName="isActive"></mat-slide-toggle>
+			</div>
+		</div>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+	<button matButton="outlined" color="warn" mat-dialog-close [mat-dialog-close]="true">
+		Fechar
+	</button>
+	<button matButton="filled" color="primary" (click)="onConfirm()" [disabled]="!formGroup.valid">
+		<mat-icon>download_done</mat-icon> Salvar
+	</button>
+</mat-dialog-actions>

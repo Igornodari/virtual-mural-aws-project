@@ -1,0 +1,18 @@
+<div class="blank-layout-container justify-content-center">
+	<div class="row">
+		<div class="col-12 text-center">
+			<img
+				ngSrc="/assets/images/backgrounds/errorimg.svg"
+				priority
+				alt="error-bg"
+				height="360"
+				width="360"
+			/>
+			<h2 class="auth-title f-w-600">{{ 'ERROR.OOPS' | translate }}</h2>
+			<h6 class="f-s-20 f-w-600 m-b-30">{{ 'ERROR.PAGE_NOT_FOUND' | translate }}</h6>
+			<a matButton="filled" color="primary" [routerLink]="['/']">{{
+				'ERROR.BACK_HOME' | translate
+			}}</a>
+		</div>
+	</div>
+</div>

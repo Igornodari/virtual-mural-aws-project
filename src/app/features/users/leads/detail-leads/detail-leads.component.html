@@ -1,0 +1,136 @@
+@if (loading) {
+<app-loading></app-loading>
+} @if (lead$ | async; as lead) {
+<mat-toolbar class="rounded detail-card">
+	<span class="flex-1-auto"></span>
+	<button mat-icon-button (click)="location.back()" color="primary" aria-label="Voltar">
+		<mat-icon>arrow_back</mat-icon>
+	</button>
+</mat-toolbar>
+<!-- Personal Details Card -->
+<mat-card class="detail-card w-80">
+	<mat-card-header>
+		<mat-card-title class="detail-item"
+			><mat-icon>person</mat-icon> {{ 'PERSONAL_DATA' | translate }}</mat-card-title
+		>
+	</mat-card-header>
+	<mat-card-content>
+		<div class="detail-item">
+			<mat-icon>badge</mat-icon>
+			<span class="label">{{ 'NAME' | translate }}:</span>
+			<span class="value">{{ lead.fullName }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>email</mat-icon>
+			<span class="label">{{ 'EMAIL' | translate }}:</span>
+			<span class="value">{{ lead.email }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>phone</mat-icon>
+			<span class="label">{{ 'PHONE' | translate }}:</span>
+			<span class="value">{{ lead.cellphone || 'N/A' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>calendar_today</mat-icon>
+			<span class="label">{{ 'BIRTH_DATE' | translate }}:</span>
+			<span class="value">{{ lead.birthDate | date : 'dd/MM/yyyy' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>sports_score</mat-icon>
+			<span class="label">{{ 'HOME.USERS.LEADS.DETAIL.SCORE' | translate }}:</span>
+			<span class="value">{{ lead.score }}</span>
+		</div>
+	</mat-card-content>
+</mat-card>
+<!-- Unit Details Card -->
+<mat-card class="detail-card w-80">
+	<mat-card-header>
+		<mat-card-title class="detail-item"
+			><mat-icon>business</mat-icon>{{ 'UNIT' | translate }}</mat-card-title
+		>
+	</mat-card-header>
+	<mat-card-content>
+		<div class="detail-item">
+			<mat-icon>location_on</mat-icon>
+			<span class="label">{{ 'NAME' | translate }}:</span>
+			<span class="value">{{ lead.unit?.name }}</span>
+		</div>
+	</mat-card-content>
+</mat-card>
+<mat-card class="detail-card w-80">
+	<mat-card-content class="p-0">
+		<mat-tab-group mat-stretch-tabs="false" animationDuration="0ms">
+			<mat-tab>
+				<ng-template mat-tab-label>
+					<div class="d-flex align-items-center">
+						<mat-icon>device_thermostat</mat-icon>
+					</div>
+					{{ 'HOME.USERS.LEADS.DETAIL.LEAD_SCORE' | translate }}
+				</ng-template>
+				<mat-card-content class="p-y-24 b-t-1"> </mat-card-content>
+			</mat-tab>
+			<mat-tab>
+				<ng-template mat-tab-label>
+					<div class="d-flex align-items-center">
+						<mat-icon> join_inner </mat-icon>
+					</div>
+					{{ 'HOME.USERS.LEADS.DETAIL.MATCH' | translate }}
+				</ng-template>
+				<mat-card-content class="p-y-24 b-t-1">
+					<div class="row">
+						<div class="col-sm-12">
+							<mat-card class="cardWithShadow">
+								<mat-card-content class="p-y-24">
+									<mat-card-title>{{ lead.typology }} </mat-card-title>
+									<mat-card-title class="f-s-14">{{ lead.category }} </mat-card-title>
+									<div class="d-flex align-items-center p-b-30 b-b-1">
+										<mat-card-subtitle class="mat-body-1 f-w-600 f-s-20"
+											>{{ matchingTypology.percentCompatible.toFixed(2) }}%
+											<span [class]="'text-' + matchingTypology.statusStyle.style">{{
+												matchingTypology.statusStyle.label
+											}}</span></mat-card-subtitle
+										>
+										<!-- <button matButton="outlined" color="primary" class="m-l-auto">Trocar</button> -->
+									</div>
+									@if (!matchings.length) {
+									<mat-card-title class="text-error text-center">
+										{{ 'HOME.USERS.LEADS.DETAIL.NO_PARTICIPATION' | translate }}
+									</mat-card-title>
+									} @for (matching of matchings; track matching) {
+									<div class="p-y-10 b-b-1">
+										<div class="d-flex">
+											<div>
+												<h5 class="f-s-16 f-w-600 m-0">
+													<a [routerLink]="['/users/leads/', matching.lead.id]">{{
+														matching.lead.fullName
+													}}</a>
+												</h5>
+												<mat-card-subtitle class="mat-body-1"> </mat-card-subtitle>
+											</div>
+											<mat-chip selected [class]="'m-l-auto bg-' + matching.statusStyle.style">
+												<span [class]="' f-s-14 f-w-600 text-white'"
+													>{{ matching.statusStyle.label }}
+												</span>
+											</mat-chip>
+										</div>
+										<div class="progress bg-error">
+											<div class="progress-bar" [style]="'width:' + matching.percent + '%'">
+												<p class="percent">{{ matching.percent }}%</p>
+											</div>
+										</div>
+									</div>
+									}
+								</mat-card-content>
+							</mat-card>
+						</div>
+					</div>
+				</mat-card-content>
+			</mat-tab>
+		</mat-tab-group>
+	</mat-card-content>
+</mat-card>
+}
+
+<!-- old -->
+
+<app-activity table="lead" [id]="id"></app-activity>

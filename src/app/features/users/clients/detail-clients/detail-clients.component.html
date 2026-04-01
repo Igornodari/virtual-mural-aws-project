@@ -1,0 +1,145 @@
+@if (client$ | async; as data) {
+<div class="center w-80">
+	<mat-toolbar class="rounded">
+		<span class="flex-1-auto"></span>
+		<!--
+      <button mat-icon-button (click)="onEditEmployee(data)" color="primary">
+        <mat-icon>edit</mat-icon>
+      </button> -->
+		<button mat-icon-button (click)="location.back()" color="primary" aria-label="Voltar">
+			<mat-icon>arrow_back</mat-icon>
+		</button>
+	</mat-toolbar>
+</div>
+<app-personal-card class="w-80" [data]="data"></app-personal-card>
+<mat-card class="detail-card w-80">
+	<mat-card-header>
+		<mat-card-title class="detail-item"><mat-icon>home</mat-icon> {{ 'TITLE' | translate }}</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<div class="detail-item">
+			<mat-icon>location_on</mat-icon>
+			<span class="label"> {{ 'STREET' | translate }}:</span>
+			<span class="value">{{ data.addressStreet }}, {{ data.addressNumber }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>location_on</mat-icon>
+			<span class="label"> {{ 'COMPLEMENT' | translate }}:</span>
+			<span class="value"> {{ data.addressComplement || 'N/A' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>location_city</mat-icon>
+			<span class="label"> {{ 'NEIGHBORHOOD' | translate }}:</span>
+			<span class="value"> {{ data.addressNeighborhood || 'N/A' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>place</mat-icon>
+			<span class="label"> {{ 'CITY' | translate }}:</span>
+			<span class="value"> {{ data.addressCity }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>place</mat-icon>
+			<span class="label"> {{ 'STATE' | translate }}:</span>
+			<span class="value"> {{ data.addressState || 'N/A' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>mail</mat-icon>
+			<span class="label"> {{ 'ZIP_CODE' | translate }}:</span>
+			<span class="value"> {{ data.addressZipCode || 'N/A' | mask : '00000-000' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>public</mat-icon>
+			<span class="label"> {{ 'COUNTRY' | translate }}:</span>
+			<span class="value"> {{ data.addressCountry || '-' }}</span>
+		</div>
+	</mat-card-content>
+</mat-card>
+<mat-card class="detail-card w-80">
+	<mat-card-header>
+		<mat-card-title class="detail-item"><mat-icon>account_balance</mat-icon> {{ 'BANK.TITLE' | translate
+			}}</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<div class="detail-item">
+			<mat-icon>account_balance</mat-icon>
+			<span class="label"> {{ 'BANK.BANK' | translate }}:</span>
+			<span class="value"> {{ data.accountBank }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>vpn_key</mat-icon>
+			<span class="label"> {{ 'BANK.AGENCY' | translate }}:</span>
+			<span class="value"> {{ data.accountAgency || 'N/A' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>credit_card</mat-icon>
+			<span class="label"> {{ 'BANK.ACCOUNT_NUMBER' | translate }}:</span>
+			<span class="value">
+				{{ data.accountAgency || 'N/A' }}-{{ data.accountNumber || 'N/A' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>account_box</mat-icon>
+			<span class="label"> {{ 'BANK.OWNER_NAME' | translate }}:</span>
+			<span class="value"> {{ data.fullName }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>badge</mat-icon>
+			<span class="label"> {{ 'BANK.OWNER_DOC' | translate }}:</span>
+			<span class="value"> {{ data.document || 'N/A' | mask : '000.000.000-00' }}</span>
+		</div>
+		<div class="detail-item">
+			<mat-icon>attach_money</mat-icon>
+			<span class="label"> {{ 'BANK.PIX' | translate }}:</span>
+			<span class="value"> {{ data.accountPix }}</span>
+		</div>
+	</mat-card-content>
+</mat-card>
+} @if ((client$ | async)?.subscription?.length) {
+<mat-card class="detail-card w-80">
+	<mat-card-header>
+		<mat-card-title class="detail-item">
+			<mat-icon>work</mat-icon> {{ 'ACCOUNT' | translate }}
+		</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		@for (item of (client$ | async)?.subscription; track item) {
+		<div class="detail-list">
+			<div class="detail-item">
+				<mat-icon>event</mat-icon>
+				<span class="label">{{ 'CREATED_AT' | translate }}:</span>
+				<span class="value">{{ item.createdAt | date : 'dd/MM/yy' }}</span>
+			</div>
+			<div class="detail-item">
+				<mat-icon>calendar_today</mat-icon>
+				<span class="label"> {{ 'START_DATE' | translate }}:</span>
+				<span class="value">{{ item.startDate | date : 'dd/MM/yy' }}</span>
+			</div>
+			<div class="detail-item">
+				<mat-icon>calendar_today</mat-icon>
+				<span class="label"> {{ 'END_DATE' | translate }}:</span>
+				<span class="value">{{ item.endDate | date : 'dd/MM/yy' }}</span>
+			</div>
+			<div class="detail-item">
+				<mat-icon>attach_money</mat-icon>
+				<span class="label"> {{ 'VALUE' | translate }}:</span>
+				<span class="value">{{ item.amount || 'N/A' }}</span>
+			</div>
+			<div class="detail-item">
+				<mat-icon>money_off</mat-icon>
+				<span class="label">{{ 'DISCOUNT_VALUE' | translate }}:</span>
+				<span class="value">{{ item.discountPercentage || 'N/A' }}</span>
+			</div>
+		</div>
+		}
+	</mat-card-content>
+</mat-card>
+} @else {
+<mat-card class="detail-card w-80">
+	<mat-card-header class="m-5">
+		<div class="d-flex justify-content-between align-items-center w-100">
+			<mat-card-title class="detail-item">
+				<mat-icon>info_outline</mat-icon> {{ 'HOME.USERS.CLIENTS.NO_INFO_ACCOUNT' | translate }}
+			</mat-card-title>
+		</div>
+	</mat-card-header>
+</mat-card>
+}

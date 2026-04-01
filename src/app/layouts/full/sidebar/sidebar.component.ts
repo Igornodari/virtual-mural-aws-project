@@ -15,9 +15,10 @@ import { environment } from 'src/environments/environments';
 	standalone: true,
 	imports: [
     MaterialModule,
-    AppNavItemComponent,
     TranslateModule,
-    CanPipe
+    CanPipe,
+    AppNavItemComponent,
+    NgScrollbarModule
 ],
 })
 export class SidebarComponent implements OnInit {

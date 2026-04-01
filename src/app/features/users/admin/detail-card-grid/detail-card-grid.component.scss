@@ -1,0 +1,52 @@
+.profile-card,
+.info-card {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.profile-header {
+  gap: 15px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #3f51b5;
+}
+
+.profile-main-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-position {
+  font-weight: bold;
+  color: #3f51b5;
+}
+
+.info-card mat-card-title{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.5em;
+  color: #3f51b5;
+}
+
+.info-card p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mat-icon {
+  font-size: 1.2em;
+}
+
+.profile-actions {
+  padding-top: 10px;
+}

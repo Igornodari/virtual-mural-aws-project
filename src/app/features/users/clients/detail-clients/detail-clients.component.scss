@@ -1,0 +1,15 @@
+.client-card {
+	margin: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 6px var(--sys-shadow);
+}
+
+mat-expansion-panel {
+	margin-bottom: 15px;
+}
+
+mat-expansion-panel-header {
+	gap: 10px;
+	font-size: 1.25rem;
+	color: var(--sys-primary);
+}

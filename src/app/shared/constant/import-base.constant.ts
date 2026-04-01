@@ -30,7 +30,6 @@ export const importBase = [
   NgxMaskDirective,
   NgxMaskPipe,
   LoadingComponent,
-  NgScrollbarModule,
   MatDatepickerModule,
   MatNativeDateModule,
   RouterModule,

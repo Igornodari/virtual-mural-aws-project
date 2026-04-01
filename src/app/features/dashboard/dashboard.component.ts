@@ -4,11 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
+import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, TranslateModule],
+  imports: [importBase],
   template: `
     <section class="dashboard-wrapper">
       <header class="dashboard-header">

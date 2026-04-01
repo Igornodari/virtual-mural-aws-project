@@ -1,0 +1,96 @@
+@if (loading) {
+<app-loading></app-loading>
+} @if (admin$ | async; as admin) {
+<!-- Return Button -->
+<div class="d-flex justify-content-end">
+	<button matButton="outlined" color="accent" routerLink="/users/admin">Voltar</button>
+</div>
+<mat-card class="profile-card">
+	<mat-card-content>
+		<div class="profile-header d-flex align-items-center">
+			<img
+				mat-card-avatar
+				[src]="admin.user.photoUrl || '/assets/images/profile/user-2.jpg'"
+				alt="{{ admin.fullName }}"
+				class="profile-image"
+			/>
+			<div class="profile-main-info">
+				<mat-card-title>{{ admin.fullName }}</mat-card-title>
+				<mat-card-subtitle class="profile-position">{{ admin.position }}</mat-card-subtitle>
+				<p class="profile-department">{{ getCorrectLabel(admin.department) }}</p>
+			</div>
+		</div>
+	</mat-card-content>
+</mat-card>
+<!-- Personal Details Card -->
+<mat-card class="info-card">
+	<mat-card-header>
+		<mat-card-title><mat-icon>person</mat-icon> Informações Pessoais</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<p><mat-icon>email</mat-icon> <strong>Email:</strong> {{ admin.email }}</p>
+		<p><mat-icon>phone</mat-icon> <strong>Telefone:</strong> {{ admin.cellphone || 'N/A' }}</p>
+		<p><mat-icon>badge</mat-icon> <strong>CPF:</strong> {{ admin.cpf }}</p>
+		<p>
+			<mat-icon>calendar_today</mat-icon> <strong>Data de Nascimento:</strong>
+			{{ admin.birthDate | date : 'dd/MM/yyyy' }}
+		</p>
+		<p>
+			<mat-icon>male</mat-icon> <strong>Gênero:</strong> {{ admin.gender || 'Não especificado' }}
+		</p>
+		<p>
+			<mat-icon>toggle_on</mat-icon> <strong>Ativo:</strong>
+			{{ admin.user.isActive ? 'Sim' : 'Não' }}
+		</p>
+	</mat-card-content>
+</mat-card>
+<!-- Address Card -->
+<mat-card class="info-card">
+	<mat-card-header>
+		<mat-card-title><mat-icon>home</mat-icon> Endereço</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<p>
+			<mat-icon>location_on</mat-icon> <strong>Rua:</strong> {{ admin.addressStreet }},
+			{{ admin.addressNumber }}
+		</p>
+		<p>
+			<mat-icon>location_city</mat-icon> <strong>Bairro:</strong>
+			{{ admin.addressNeighborhood || 'N/A' }}
+		</p>
+		<p><mat-icon>place</mat-icon> <strong>Cidade:</strong> {{ admin.addressCity }}</p>
+		<p><mat-icon>place</mat-icon> <strong>Estado:</strong> {{ admin.addressState || 'N/A' }}</p>
+		<p><mat-icon>mail</mat-icon> <strong>CEP:</strong> {{ admin.addressZipCode }}</p>
+		<p>
+			<mat-icon>public</mat-icon> <strong>Nacionalidade:</strong>
+			{{ admin.nationality || 'Não especificado' }}
+		</p>
+		<p>
+			<mat-icon>public</mat-icon> <strong>País:</strong>
+			{{ admin.addressCountry || 'Não especificado' }}
+		</p>
+	</mat-card-content>
+</mat-card>
+<!-- Unit Details Card -->
+<mat-card class="info-card">
+	<mat-card-header>
+		<mat-card-title><mat-icon>business</mat-icon> Unidade</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<p><mat-icon>location_on</mat-icon> <strong>Nome:</strong> {{ admin.unit?.name }}</p>
+		<p><mat-icon>code</mat-icon> <strong>Código do Hotel:</strong> {{ admin.unit?.hotelCode }}</p>
+		<p>
+			<mat-icon>map</mat-icon> <strong>Endereço:</strong> {{ admin.unit?.addressStreet }},
+			{{ admin.unit?.addressNumber }}
+		</p>
+		<p>
+			<mat-icon>schedule</mat-icon> <strong>Funcionamento:</strong> {{ admin.unit?.opening }} -
+			{{ admin.unit?.closure }}
+		</p>
+		<p>
+			<mat-icon>link</mat-icon>
+			<a [href]="admin.unit?.regulationUrl" target="_blank">Regulamento</a>
+		</p>
+	</mat-card-content>
+</mat-card>
+}

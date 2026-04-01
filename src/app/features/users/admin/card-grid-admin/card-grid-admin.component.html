@@ -1,0 +1,69 @@
+<div class="toolbar d-flex justify-content-end">
+  @if (PERMISSIONS.ADMIN.UPSERT | can) {
+  <button class="m-x-20 m-b-10" mat-mini-fab color="primary" (click)="openDialog()">
+    <mat-icon>add</mat-icon>
+  </button>
+  }
+
+  <button [matBadge]="filteredCount" matBadgeOverlap="true" class="m-x-10" mat-mini-fab color="accent"
+    (click)="openDialogFilter()">
+    <mat-icon>filter_list</mat-icon>
+  </button>
+</div>
+
+@if (loading) {
+<app-loading></app-loading>
+}
+
+@if (admins.length === 0) {
+<div class="d-flex justify-content-center">
+  <mat-card class="no-colaborators-card text-center m-t-20 p-20 rounded">
+    <mat-card-header class="d-flex align-center justify-content-center">
+      <mat-icon class="m-l-10 m-r-10" color="warn">info_outline</mat-icon>
+      <mat-card-title>{{
+        'HOME.USERS.COLLABORATORS.GRID_ADMIN.INFO_NO_RESULTS_MODAL.TITLE' | translate
+        }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="p-t-20">
+      <p class="text-center">
+        {{ 'HOME.USERS.COLLABORATORS.GRID_ADMIN.INFO_NO_RESULTS_MODAL.DESCRIPTION' | translate }}
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>
+}
+
+@if (admins.length > 0) {
+<div class="grid-container d-flex flex-wrap justify-content-space-between">
+  @for (admin of admins; track admin) {
+  <mat-card class="admin-card d-flex align-items-center justify-content-center flex-direction-column">
+    <img mat-card-avatar class="p-3 m-10 photo-style"
+      [src]="admin?.user?.photoUrl || '/assets/images/profile/user-2.jpg'" alt="{{ admin.fullName }}" />
+    <mat-card-title>{{ admin.fullName }}</mat-card-title>
+    <mat-card-subtitle class="m-t-10">{{ admin.position }}</mat-card-subtitle>
+    <mat-card-content>
+      <p>{{ admin.email }}</p>
+      <p class="p-3">{{ getCorrectLabel(admin.department) }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="onViewEmployee(admin)">
+        {{ 'VISUALIZE' | translate }}
+      </button>
+      @if (PERMISSIONS.ADMIN.UPSERT | can) {
+      <button mat-button (click)="onEditEmployee(admin)">
+        {{ 'EDIT' | translate }}
+      </button>
+      }
+    </mat-card-actions>
+  </mat-card>
+  }
+</div>
+}
+
+@if (hasMore) {
+<div class="load-more-container text-center m-t-20">
+  <button mat-raised-button color="primary" (click)="loadMore()" [disabled]="loading">
+    {{ loading ? ('LOADING' | translate) : ('LOADING_MORE' | translate) }}
+  </button>
+</div>
+}
