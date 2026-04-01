@@ -1,4 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { NgClass, isPlatformBrowser } from '@angular/common';
 import {
   Component,
   ViewChild,
@@ -11,19 +12,17 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatSidenav, } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { AppSettings } from 'src/app/app.config';
 import { filter } from 'rxjs/operators';
-import { NavigationEnd, Router } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { AppBreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { User } from 'src/app/shared/types';
 import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { navItems } from './sidebar/menu/sidebar-data';
-import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { CoreService } from 'src/app/core/services/core.service';
 
 
@@ -39,7 +38,9 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
   styleUrls: [],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    ...importBase,
+    MatSidenavModule,
+    NgClass,
+    RouterOutlet,
     SidebarComponent,
     HeaderComponent,
     AppBreadcrumbComponent,

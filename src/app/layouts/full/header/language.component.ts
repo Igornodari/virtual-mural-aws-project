@@ -1,12 +1,13 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { languages } from './header.data';
 
-import { importBase, MaterialModule } from 'src/app/shared/constant/import-base.constant';
-import { CoreService } from 'src/app/services/core.service';
+import { MaterialModule } from 'src/material.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { CoreService } from 'src/app/core/services/core.service';
 
 @Component({
     selector: 'app-language',
-    imports: [MaterialModule, importBase],
+    imports: [MaterialModule, TranslateModule],
     template: `
     <button [matMenuTriggerFor]="flags" mat-icon-button class="m-r-5">
       <img [src]="selectedLanguage.icon" class="rounded-circle object-cover icon-20" />
@@ -25,8 +26,8 @@ import { CoreService } from 'src/app/services/core.service';
     encapsulation: ViewEncapsulation.None
 })
 export class LanguageComponent {
-  public selectedLanguage: any;
-  public languages: any[] = languages;
+  public selectedLanguage = languages[0];
+  public languages = languages;
 
   constructor(private coreService: CoreService) {
     this.initializeLanguage();

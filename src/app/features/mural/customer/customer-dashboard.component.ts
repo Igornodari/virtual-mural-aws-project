@@ -13,6 +13,7 @@ import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/a
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 
 const CATEGORIES = [
   'Todas',
@@ -393,6 +394,6 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   async onLogout(): Promise<void> {
     await this.authService.logout();
-    await this.navigateTo('/login');
+    await this.navigateTo(ROUTE_PATHS.login);
   }
 }

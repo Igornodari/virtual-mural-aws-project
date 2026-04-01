@@ -30,6 +30,9 @@ export const PAGES_ROUTES: Routes = [
   {
     path: ROUTE_PATHS.onboardingCondominium.slice(1),
     canActivate: [authGuard],
+    data: {
+      title: 'Condominio',
+    },
     loadComponent: () =>
       import('./onboarding/condominium/condominium-onboarding.component').then(
         (m) => m.CondominiumOnboardingComponent
@@ -38,6 +41,9 @@ export const PAGES_ROUTES: Routes = [
   {
     path: ROUTE_PATHS.onboardingRole.slice(1),
     canActivate: [authGuard],
+    data: {
+      title: 'Perfil',
+    },
     loadComponent: () =>
       import('./onboarding/role/role-onboarding.component').then(
         (m) => m.RoleOnboardingComponent
@@ -46,6 +52,9 @@ export const PAGES_ROUTES: Routes = [
   {
     path: ROUTE_PATHS.muralProvider.slice(1),
     canActivate: [authGuard, onboardingGuard],
+    data: {
+      title: 'Mural de Servicos',
+    },
     loadComponent: () =>
       import('./mural/provider/provider-dashboard.component').then(
         (m) => m.ProviderDashboardComponent
@@ -54,6 +63,9 @@ export const PAGES_ROUTES: Routes = [
   {
     path: ROUTE_PATHS.muralCustomer.slice(1),
     canActivate: [authGuard, onboardingGuard],
+    data: {
+      title: 'Mural de Servicos',
+    },
     loadComponent: () =>
       import('./mural/customer/customer-dashboard.component').then(
         (m) => m.CustomerDashboardComponent

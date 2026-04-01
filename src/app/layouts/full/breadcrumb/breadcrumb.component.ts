@@ -36,10 +36,12 @@ export class AppBreadcrumbComponent {
 			.pipe(filter(route => route.outlet === 'primary'))
 			.pipe(mergeMap(route => route.data))
 			.subscribe(event => {
-				this.translate.get(event['title']).subscribe((translatedTitle: string) => {
-					this.titleService.setTitle(translatedTitle);
-					console.log(translatedTitle);
-				});
+				const titleKey = event?.['title'];
+				if (titleKey) {
+					this.translate.get(titleKey).subscribe((translatedTitle: string) => {
+						this.titleService.setTitle(translatedTitle);
+					});
+				}
 
 				this.pageInfo = event;
 			});

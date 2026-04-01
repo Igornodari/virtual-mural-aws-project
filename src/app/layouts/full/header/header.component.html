@@ -54,13 +54,13 @@
 	<!-- profile Dropdown -->
 	<!-- --------------------------------------------------------------- -->
 	<button mat-icon-button [matMenuTriggerFor]="profilemenu" aria-label="Notifications">
-		<img [src]="user.avatarUrl" class="rounded-circle object-cover" width="35" />
+		<img [src]="avatarUrl" (error)="onAvatarError($event)" class="rounded-circle object-cover" width="35" />
 	</button>
 	<mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
 			<div class="col-12 p-5">
 				<h6 class="f-s-16 f-w-600 m-0">{{ 'HEADER.ACCOUNT.USER_PROFILE' | translate }}</h6>
 				<div class="d-flex align-items-center p-b-24 b-b-1 m-t-16">
-					<img [src]="user.avatarUrl" class="rounded-circle p-5" width="95" />
+					<img [src]="avatarUrl" (error)="onAvatarError($event)" class="rounded-circle p-5" width="95" />
 					<div>
 						<h6 class="f-s-14 f-w-600 m-0">{{ user.cognitoUsername }}</h6>
 						<!-- <span class="f-s-14 d-block m-b-4">{{user.position}}</span> -->

@@ -9,6 +9,7 @@ import { CreateServicePayload, ServiceApiService, ServiceDto } from 'src/app/cor
 import BaseComponent from 'src/app/components/base.component';
 import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 import { WEEKDAYS, CATEGORIES } from 'src/app/shared/types/provider.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 
@@ -270,6 +271,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   async onLogout(): Promise<void> {
     await this.authService.logout();
-    await this.navigateTo('/login');
+    await this.navigateTo(ROUTE_PATHS.login);
   }
 }

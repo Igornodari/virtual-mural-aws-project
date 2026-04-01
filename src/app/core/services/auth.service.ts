@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AmplifyService } from './amplify.service';
-import { Condominium, Unit, User } from '../../shared/types';
+import { Condominium, User } from '../../shared/types';
 import {
   confirmSignUp,
   fetchAuthSession,
@@ -44,7 +44,6 @@ export class AuthService {
     metadata: {},
   };
 
-  public pendingCred: unknown = null;
   private readonly userSubject = new BehaviorSubject<User | null>(null);
   private readonly condominiumSubject = new BehaviorSubject<Condominium | null>(null);
   private readonly isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
@@ -67,20 +66,12 @@ export class AuthService {
     return this.userSubject.value ?? this.emptyUser;
   }
 
-  isLoggedIn(): boolean {
-    return this.isAuthenticatedSubject.value;
-  }
-
   setCurrentUser(user: User | null): void {
     this.ngZone.run(() => {
       this.userSubject.next(user);
       this.condominiumSubject.next(user?.condominium ?? null);
       this.isAuthenticatedSubject.next(!!user);
     });
-  }
-
-  setCurrentCondominium(condominium: Condominium | null): void {
-    this.condominiumSubject.next(condominium);
   }
 
   async loginWithGoogle(): Promise<void> {
@@ -93,10 +84,6 @@ export class AuthService {
   }
 
   // Alias de compatibilidade para migração do serviço Firebase.
-  loginProviderGoogle(): Promise<void> {
-    return this.loginWithGoogle();
-  }
-
   async registerWithEmail(
     email: string,
     password: string,

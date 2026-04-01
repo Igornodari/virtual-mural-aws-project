@@ -11,7 +11,7 @@ import { UpsertAdminComponent } from '../upsert-admin/upsert-admin.component';
 import { CanPipe } from '../../../../shared/pipe/can.pipe';
 import { PERMISSIONS } from '../../../../shared/constant/permissions.constant';
 import { departmentStyles } from '../admin.const';
-import { FilterService } from 'src/app/services/filter.service';
+import { FilterService } from 'src/app/core/services/filter.service';
 import { QueryBuilderComponent } from 'src/app/components/query-builder/query-builder.component';
 
 @Component({

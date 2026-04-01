@@ -15,6 +15,7 @@ import { MuralTopbarComponent } from '../../components/mural-topbar/mural-topbar
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { AppUserProfileDto, UpdateProfilePayload, UserApiService } from '../../core/services/user-api.service';
 import { CondominiumApiService, CreateCondominiumPayload } from '../../core/services/condominium-api.service';
+import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 
 @Component({
   selector: 'app-profile',
@@ -407,6 +408,6 @@ export class ProfileComponent extends BaseComponent implements OnInit {
 
   async onLogout(): Promise<void> {
     await this.authService.logout();
-    await this.navigateTo('/login');
+    await this.navigateTo(ROUTE_PATHS.login);
   }
 }

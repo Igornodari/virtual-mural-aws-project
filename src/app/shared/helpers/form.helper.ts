@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { RequestService } from 'src/app/services/request.service';
+import { RequestService } from 'src/app/core/services/request.service';
 import { URI_PATH } from '../constant/path.contant';
 import { FormControl, FormGroup } from '@angular/forms';
 import { map } from 'rxjs/operators';

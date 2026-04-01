@@ -1,4 +1,4 @@
-import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   Component,
   ViewEncapsulation,
@@ -11,18 +11,16 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatSidenav } from '@angular/material/sidenav';
-import { CoreService } from 'src/app/services/core.service';
+import { CoreService } from 'src/app/core/services/core.service';
 import { AppSettings } from 'src/app/app.config';
 import { filter } from 'rxjs/operators';
-import { NavigationEnd, Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { User } from 'src/app/shared/types';
 import { TranslateModule } from '@ngx-translate/core';
 import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
+import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -58,19 +56,15 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
 })
 export class CleanComponent implements AfterViewInit, OnDestroy {
 	private readonly platformId = inject(PLATFORM_ID);
-
 	resView = false;
 	readonly contentRef = viewChild.required('content', { read: ElementRef });
 
-	//get options from service
 	options!: AppSettings;
 	private layoutChangesSubscription = Subscription.EMPTY;
 	private isMobileScreen = false;
 	private htmlElement!: HTMLHtmlElement;
 
 	public user: User;
-  authService: any;
-  private _router: any;
 
 	get isOver(): boolean {
 		return this.isMobileScreen;
@@ -95,7 +89,6 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
 		this.layoutChangesSubscription = this.breakpointObserver
 			.observe([MOBILE_VIEW, TABLET_VIEW, MONITOR_VIEW, BELOWMONITOR])
 			.subscribe(state => {
-				// SidenavOpened must be reset true when layout changes
 				this.isMobileScreen = state.breakpoints[MOBILE_VIEW];
 				this.resView = state.breakpoints[BELOWMONITOR];
 
@@ -104,7 +97,7 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
 			});
 
 		// Initialize project theme with options
-		this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(e => {
+		this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
 			if (isPlatformBrowser(this.platformId)) {
 				this.contentRef().nativeElement.scrollTo({ top: 0 });
 			}
@@ -139,11 +132,11 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
 	}
 
     async onLogout(): Promise<void> {
-    await this.authService.logout();
-    await this.navigateTo('/login');
+    await this.auth.logout();
+    await this.navigateTo(ROUTE_PATHS.login);
   }
 	protected async navigateTo(path: string): Promise<void> {
-		await this._router.navigateByUrl(path);
+		await this.router.navigateByUrl(path);
 	}
 	toggleDarkTheme(options: AppSettings) {
 		if (!this.htmlElement) {

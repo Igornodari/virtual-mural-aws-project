@@ -4,12 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
-import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [importBase],
+  imports: [CommonModule, MatButtonModule, MatCardModule, TranslateModule],
   template: `
     <section class="dashboard-wrapper">
       <header class="dashboard-header">
@@ -90,6 +90,6 @@ export class DashboardComponent extends BaseComponent implements OnInit {
 
   async onLogout(): Promise<void> {
     await this.authService.logout();
-    await this.navigateTo('/login');
+    await this.navigateTo(ROUTE_PATHS.login);
   }
 }

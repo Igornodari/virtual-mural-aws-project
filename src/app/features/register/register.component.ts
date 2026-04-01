@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
+import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 
 @Component({
   selector: 'app-register',
@@ -103,7 +104,7 @@ import BaseComponent from '../../components/base.component';
               </form>
             }
 
-            <a routerLink="/login">{{ 'APP.REGISTER.BACK_TO_LOGIN' | translate }}</a>
+            <a [routerLink]="loginRoute">{{ 'APP.REGISTER.BACK_TO_LOGIN' | translate }}</a>
           </mat-card-content>
         </mat-card>
       </div>
@@ -122,6 +123,7 @@ import BaseComponent from '../../components/base.component';
 export class RegisterComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
   private readonly translateService = inject(TranslateService);
+  protected readonly loginRoute = ROUTE_PATHS.login;
 
   awaitingConfirmation = false;
   registeredEmail = '';
@@ -173,6 +175,6 @@ export class RegisterComponent extends BaseComponent {
     await this.authService
       .confirmEmailCode(this.registeredEmail, this.confirmationForm.getRawValue().code)
       .finally(() => this.setLoadingState(false));
-    await this.navigateTo('/login');
+    await this.navigateTo(ROUTE_PATHS.login);
   }
 }

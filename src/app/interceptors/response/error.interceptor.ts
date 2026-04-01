@@ -9,6 +9,7 @@ import {
 import { catchError, Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { SnackBarService } from '../../core/services/snack-bar.service';
+import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 
 type AwsErrorPayload = {
   __type?: string;
@@ -29,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         if (statusCode === 401) {
           this.snackBar.error('Session expired. Please log in again.');
-          this.router.navigate(['/login']).then();
+          this.router.navigateByUrl(ROUTE_PATHS.login).then();
         } else {
           this.snackBar.error(message);
         }

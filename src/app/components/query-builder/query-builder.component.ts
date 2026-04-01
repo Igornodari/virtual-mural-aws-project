@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { Status } from 'src/app/shared/types';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FilterService } from 'src/app/services/filter.service';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { FilterService } from 'src/app/core/services/filter.service';
+import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 
 export type QBFieldItemType = 'text' | 'number' | 'date' | 'boolean' | 'select';
 export type QBFieldType = { key: string; label: string; type: QBFieldItemType; options?: Status[] };

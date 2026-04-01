@@ -5,7 +5,6 @@ import { PAGES_ROUTES } from './pages.routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, provideEnvironmentNgxMask } from 'ngx-mask';
 import { LoadingComponent } from '../components/loading.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { MaterialModule } from 'src/material.module';
 
 @NgModule({
@@ -15,7 +14,6 @@ import { MaterialModule } from 'src/material.module';
 		MaterialModule,
 		FormsModule,
 		RouterModule.forChild(PAGES_ROUTES),
-		DashboardComponent,
 		ReactiveFormsModule,
 		NgxMaskDirective,
 		LoadingComponent,

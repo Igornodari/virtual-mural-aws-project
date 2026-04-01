@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 
 export const Validade = (file: any) => {
 	const _snackBar = inject(SnackBarService);

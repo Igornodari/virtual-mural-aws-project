@@ -10,19 +10,17 @@ import {
   DOCUMENT,
   input
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CoreService } from 'src/app/services/core.service';
+import { CoreService } from 'src/app/core/services/core.service';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { Unit, User } from 'src/app/shared/types';
 import { profiledd } from './header.data';
-import { TranslateModule } from '@ngx-translate/core';
 import { environment } from 'src/environments/environments';
 import { MaterialModule } from 'src/material.module';
 import { LanguageComponent } from './language.component';
-import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @Component({
@@ -31,11 +29,14 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
   templateUrl: './header.component.html',
   encapsulation: ViewEncapsulation.None,
   imports: [
-    ...importBase,
+    MaterialModule,
+    RouterModule,
+    TranslateModule,
     LanguageComponent,
   ],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  private readonly fallbackAvatar = '/assets/images/profile/user-1.jpg';
   production: boolean = environment.production;
 
   @Input() user!: User;
@@ -86,5 +87,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     } else {
       this.document.documentElement.classList.remove('dark');
     }
+  }
+
+  get avatarUrl(): string {
+    return this.user?.avatarUrl?.trim() || this.fallbackAvatar;
+  }
+
+  onAvatarError(event: Event): void {
+    const img = event.target as HTMLImageElement | null;
+    if (!img) return;
+
+    if (img.src.endsWith(this.fallbackAvatar)) {
+      return;
+    }
+
+    img.src = this.fallbackAvatar;
   }
 }

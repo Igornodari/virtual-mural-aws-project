@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { PermissionService } from 'src/app/services/permission.service';
+import { PermissionService } from 'src/app/core/services/permission.service';
 
 @Pipe({
 	standalone: true,
