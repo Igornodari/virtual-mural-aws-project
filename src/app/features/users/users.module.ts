@@ -1,21 +1,20 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { UsersRoutes } from './users.routing';
-import { RouterModule } from '@angular/router';
-import { MaterialModule } from 'src/app/material.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoadingComponent } from '../../components/loading.component';
-import { TableClientsComponent } from './clients/table-clients/table-clients.component';
-import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
-import { TableLeadsComponent } from './leads/table-leads/table-leads.component';
-import { ActivityComponent } from 'src/app/components/historie-activity/activity.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { DisplayTableComponent } from 'src/app/components/display-table.component';
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
+import { TranslateModule } from "@ngx-translate/core";
+import { NgxMaskPipe, NgxMaskDirective, provideNgxMask } from "ngx-mask";
+import { DisplayTableComponent } from "src/app/components/display-table.component";
+import { ActivityComponent } from "src/app/components/historie-activity/activity.component";
+import { LoadingComponent } from "src/app/components/loading.component";
+import { MaterialModule } from "src/material.module";
+import { UsersRoutes } from "./users.routing";
+import { TableClientsComponent } from "./clients/table-clients/table-clients.component";
+
 
 @NgModule({
 	declarations: [
 		TableClientsComponent,
-		TableLeadsComponent,
 	],
 	imports: [
 		RouterModule.forChild(UsersRoutes),

@@ -22,7 +22,7 @@ export default class BaseComponent implements OnDestroy {
 	private _authService = inject(AuthService);
 	private _requestService = inject(RequestService);
 	private _location = inject(Location);
-	private _router = inject(Router);
+	public _router = inject(Router);
 	private _ngZone = inject(NgZone);
 	public _translate = inject(TranslateService, { optional: true });
 

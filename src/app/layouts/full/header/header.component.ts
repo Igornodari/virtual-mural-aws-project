@@ -18,7 +18,6 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { Unit, User } from 'src/app/shared/types';
 import { profiledd } from './header.data';
-import { NotificationItemComponent } from './notification-item/notification-item.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { environment } from 'src/environments/environments';
 import { MaterialModule } from 'src/material.module';

@@ -6,7 +6,9 @@ import {
   ChangeDetectorRef,
   OnDestroy,
   ElementRef,
-  viewChild
+  viewChild,
+  inject,
+  PLATFORM_ID,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
@@ -15,7 +17,7 @@ import { AppSettings } from 'src/app/app.config';
 import { filter } from 'rxjs/operators';
 import { NavigationEnd, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/shared/types';
@@ -29,6 +31,7 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
 
 @Component({
 	selector: 'app-clean',
+	standalone: true,
 	templateUrl: './clean.component.html',
 	styles: `.ambiente-teste {
   position: fixed;
@@ -54,6 +57,7 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
 	],
 })
 export class CleanComponent implements AfterViewInit, OnDestroy {
+	private readonly platformId = inject(PLATFORM_ID);
 
 	resView = false;
 	readonly contentRef = viewChild.required('content', { read: ElementRef });
@@ -84,8 +88,10 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
 		private _cdr: ChangeDetectorRef,
 	) {
 		this.user = this.auth.currentUser;
-		this.htmlElement = document.querySelector('html')!;
 		this.options = this.settings.getOptions();
+		if (isPlatformBrowser(this.platformId)) {
+			this.htmlElement = document.documentElement as HTMLHtmlElement;
+		}
 		this.layoutChangesSubscription = this.breakpointObserver
 			.observe([MOBILE_VIEW, TABLET_VIEW, MONITOR_VIEW, BELOWMONITOR])
 			.subscribe(state => {
@@ -99,7 +105,9 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
 
 		// Initialize project theme with options
 		this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(e => {
-			this.contentRef().nativeElement.scrollTo({ top: 0 });
+			if (isPlatformBrowser(this.platformId)) {
+				this.contentRef().nativeElement.scrollTo({ top: 0 });
+			}
 		});
 	}
 
@@ -138,6 +146,10 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
 		await this._router.navigateByUrl(path);
 	}
 	toggleDarkTheme(options: AppSettings) {
+		if (!this.htmlElement) {
+			return;
+		}
+
 		if (options.theme === 'dark') {
 			this.htmlElement.classList.add('dark-theme');
 			this.htmlElement.classList.remove('light-theme');

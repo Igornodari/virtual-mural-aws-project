@@ -28,12 +28,11 @@ import { Admin, Role, Unit } from 'src/app/shared/types';
 export class UpsertAdminComponent extends BaseComponent implements AfterViewInit {
   public admin: Admin;
   public roles: Observable<Role[]>;
-  public units: Observable<Unit[]>;
   public formGroup: FormGroup;
   public action: string = 'Editar usuário';
   public departmentStyles = departmentStyles;
   public PERMISSIONS = PERMISSIONS;
-  public isGerente: boolean;
+  public isGerente!: boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -45,14 +44,8 @@ export class UpsertAdminComponent extends BaseComponent implements AfterViewInit
     super();
     this.admin = data;
     this.action = this.admin ? 'Editar usuário' : 'Cadastrar usuário';
-    this.isGerente = this.authService.currentUser?.role?.name?.toLowerCase() === 'manager';
-
     this.formGroup = this.createFormGroup();
-    if (this.admin && this.isGerente) {
-      this.formGroup.controls['unitId'].disable();
-    }
     this.roles = this.getRoles();
-    this.units = this.getUnits();
   }
 
   ngAfterViewInit() {
@@ -112,16 +105,6 @@ export class UpsertAdminComponent extends BaseComponent implements AfterViewInit
     );
   }
 
-   getUnits(): Observable<Unit[]> {
-    const unitId = this.unit?.id;
-
-    return this.requestService.list<Unit>(URI_PATH.CORE.UNITS.LIST).pipe(
-      map(res => this.isGerente
-        ? res.data.filter(unit => unit.id === unitId)
-        : res.data
-      )
-    );
-  }
  populateForm(): void {
     this.formGroup.patchValue({
       fullName: this.admin.fullName,
@@ -138,9 +121,6 @@ export class UpsertAdminComponent extends BaseComponent implements AfterViewInit
       addressZipCode: this.admin.addressZipCode,
       department: this.admin.department,
       position: this.admin.position,
-      roleId: this.admin.user.role?.id,
-      unitId: this.admin.unit?.id,
-      isActive: this.admin.user.isActive,
     });
   }
 }

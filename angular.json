@@ -64,6 +64,9 @@
               "outputHashing": "all"
             },
             "development": {
+              "server": false,
+              "ssr": false,
+              "outputMode": "static",
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true

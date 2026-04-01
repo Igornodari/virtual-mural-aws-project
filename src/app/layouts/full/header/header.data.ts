@@ -1,8 +1,8 @@
-import { Timestamp } from '@angular/fire/firestore';
+import { Timestamp } from "rxjs";
 
 export interface Notifications {
 	body: string;
-	createdAt: Timestamp;
+	createdAt: Timestamp<Date>;
 	detailId: number;
 	module: string;
 	platform: string[];

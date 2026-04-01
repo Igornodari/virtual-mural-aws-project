@@ -1,0 +1,41 @@
+
+> aws-frontend@0.0.0 start
+> npm run clean:cache && ng serve --prebundle false
+
+
+> aws-frontend@0.0.0 clean:cache
+> node -e "const fs=require('fs'); fs.rmSync('.angular/cache',{recursive:true,force:true}); console.log('Angular cache cleaned');"
+
+Angular cache cleaned
+[33m>[39m Building...
+[32m√[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                           [2m | [22m [1mRaw size[22m
+[32mchunk-2J2C7D2U.js[39m  [2m | [22m[2m-[22m                               [2m | [22m  [36m2.51 MB[39m[2m | [22m
+[32mchunk-P63V46FW.js[39m  [2m | [22m[2m-[22m                               [2m | [22m  [36m2.27 MB[39m[2m | [22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                            [2m | [22m[36m441.36 kB[39m[2m | [22m
+[32mchunk-DAHGFXHI.js[39m  [2m | [22m[2m-[22m                               [2m | [22m[36m224.28 kB[39m[2m | [22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m                          [2m | [22m[36m114.69 kB[39m[2m | [22m
+[32mchunk-7WUTQBRG.js[39m  [2m | [22m[2m-[22m                               [2m | [22m  [36m3.15 kB[39m[2m | [22m
+[32mchunk-7F7PJ3WB.js[39m  [2m | [22m[2m-[22m                               [2m | [22m  [36m2.09 kB[39m[2m | [22m
+[32mchunk-X2RWHI5U.js[39m  [2m | [22m[2m-[22m                               [2m | [22m  [36m1.49 kB[39m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m                   [2m | [22m  [1m5.56 MB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                           [2m | [22m [1mRaw size[22m
+[32mchunk-XJNMQNQ3.js[39m  [2m | [22m[2mindex[22m                           [2m | [22m  [36m2.82 MB[39m[2m | [22m
+[32mchunk-JSFKBYQR.js[39m  [2m | [22m[2musers-module[22m                    [2m | [22m[36m207.91 kB[39m[2m | [22m
+[32mchunk-V2F7WNES.js[39m  [2m | [22m[2mcustomer-dashboard-component[22m    [2m | [22m[36m169.91 kB[39m[2m | [22m
+[32mchunk-J7V2GZBL.js[39m  [2m | [22m[2mprovider-dashboard-component[22m    [2m | [22m[36m118.36 kB[39m[2m | [22m
+[32mchunk-RJOKJRAB.js[39m  [2m | [22m[2mpages-module[22m                    [2m | [22m [36m80.90 kB[39m[2m | [22m
+[32mchunk-UTHNGGAP.js[39m  [2m | [22m[2mauthentication-module[22m           [2m | [22m [36m39.00 kB[39m[2m | [22m
+[32mchunk-O5XLLY4N.js[39m  [2m | [22m[2mcondominium-onboarding-component[22m[2m | [22m [36m36.15 kB[39m[2m | [22m
+[32mchunk-ZOTPJPWW.js[39m  [2m | [22m[2mrole-onboarding-component[22m       [2m | [22m [36m20.80 kB[39m[2m | [22m
+[32mchunk-DX4XSWZY.js[39m  [2m | [22m[2m-[22m                               [2m | [22m [36m11.64 kB[39m[2m | [22m
+[32mchunk-FMM3ULYR.js[39m  [2m | [22m[2m-[22m                               [2m | [22m  [36m4.90 kB[39m[2m | [22m
+[32mchunk-6WRYRH5O.js[39m  [2m | [22m[2m-[22m                               [2m | [22m  [36m3.72 kB[39m[2m | [22m
+
+Application bundle generation complete. [11.311 seconds] - 2026-04-01T20:33:05.268Z
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4200[22m/[39m

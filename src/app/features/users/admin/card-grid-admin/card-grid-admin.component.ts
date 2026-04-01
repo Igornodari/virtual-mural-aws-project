@@ -34,7 +34,6 @@ export class CardGridAdminComponent extends BaseComponent implements OnInit {
 	filteredCount: number | null = null;
 
 	constructor(
-		private _router: Router,
 		private _dialog: MatDialog,
 		public filterService: FilterService
 	) {
@@ -50,9 +49,7 @@ export class CardGridAdminComponent extends BaseComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.authService.$unit.pipe(takeUntil(this.unsubscribe$)).subscribe(async unit => {
-			this.unit = unit;
 			this.page = 1;
-			this.searchParams['unit.id'] = [['equal', this.unit?.id]];
 			await this.loadEmployees();
 		});
 	}

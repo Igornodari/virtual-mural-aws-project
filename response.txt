@@ -1,0 +1,15 @@
+STATUS=200
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <script type="module" src="/@vite/client"></script>
+
+  <meta charset="utf-8">
+  <title>Mural do Condomínio</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Pré-conexão para reduzir latência das fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin=""/>
+  <link rel="preconnect" href="https://fon

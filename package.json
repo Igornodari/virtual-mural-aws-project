@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "clean:cache": "node -e \"const fs=require('fs'); fs.rmSync('.angular/cache',{recursive:true,force:true}); console.log('Angular cache cleaned');\"",
+    "start": "npm run clean:cache && ng serve --prebundle false",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

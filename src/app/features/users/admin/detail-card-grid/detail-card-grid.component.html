@@ -10,7 +10,7 @@
 		<div class="profile-header d-flex align-items-center">
 			<img
 				mat-card-avatar
-				[src]="admin.user.photoUrl || '/assets/images/profile/user-2.jpg'"
+				[src]="admin.user.avatarUrl || 'assets/default-avatar.png'"
 				alt="{{ admin.fullName }}"
 				class="profile-image"
 			/>
@@ -37,10 +37,6 @@
 		</p>
 		<p>
 			<mat-icon>male</mat-icon> <strong>Gênero:</strong> {{ admin.gender || 'Não especificado' }}
-		</p>
-		<p>
-			<mat-icon>toggle_on</mat-icon> <strong>Ativo:</strong>
-			{{ admin.user.isActive ? 'Sim' : 'Não' }}
 		</p>
 	</mat-card-content>
 </mat-card>

@@ -31,7 +31,7 @@ const BLOCKING_STATUSES: AppointmentStatus[] = ['confirmed', 'awaiting_payment',
 
 @Component({
   selector: 'app-customer-dashboard',
-  imports: [...importBase, MuralTopbarComponent],
+  imports: [...importBase],
   templateUrl: './customer-dashboard.component.html',
   styleUrls: ['./customer-dashboard.component.scss'],
 })

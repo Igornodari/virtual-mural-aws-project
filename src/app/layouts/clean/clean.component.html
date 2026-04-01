@@ -21,7 +21,7 @@
     <!-- ============================================================== -->
     <app-mural-topbar
     role="provider"
-    [userName]="user?.givenName || user?.displayName || ''"
+    [userName]="user.givenName || user.displayName || ''"
     (logout)="onLogout()"
   />
 

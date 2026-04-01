@@ -1,15 +1,15 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AppErrorComponent } from './error/error.component';
-import { LoginComponent } from './login/login.component';
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { Routes, RouterModule } from "@angular/router";
+import { AppErrorComponent } from "./error/error.component";
+import { LoginComponent } from "./login/login.component";
+
 
 export const AuthenticationRoutes: Routes = [
 	{
@@ -26,10 +26,6 @@ export const AuthenticationRoutes: Routes = [
 			{
 				path: 'login/:admin',
 				component: LoginComponent,
-			},
-			{
-				path: 'forgot-password',
-				component: ForgotPasswordComponent,
 			},
 		],
 	},
@@ -48,7 +44,6 @@ export const AuthenticationRoutes: Routes = [
 		ReactiveFormsModule,
 		AppErrorComponent,
 		LoginComponent,
-		ForgotPasswordComponent,
 	],
 })
 export class AuthenticationModule {}

@@ -14,7 +14,7 @@ import { labeGridAdminsMap } from 'src/app/shared/helpers/iconMap.helper';
     imports: [...importBase]
 })
 export class DetailCardGridComponent extends BaseComponent implements OnInit {
-	public admin$: Observable<Admin>;
+	public admin$!: Observable<Admin>;
 	private labelMap = labeGridAdminsMap;
 
 	constructor(private route: ActivatedRoute) {

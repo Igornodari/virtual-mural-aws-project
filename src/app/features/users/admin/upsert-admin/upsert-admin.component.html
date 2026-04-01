@@ -125,21 +125,6 @@
 				</mat-form-field>
 			</div>
 
-			<div class="col-sm-6">
-				<mat-label class="mat-subtitle-2 f-w-600 d-block">Unidade</mat-label>
-				<mat-form-field appearance="outline" class="w-100" color="primary">
-					<mat-select formControlName="unitId">
-						@for (unit of units | async; track unit) {
-						<mat-option [value]="unit.id">{{ unit.name }}</mat-option>
-						}
-					</mat-select>
-				</mat-form-field>
-			</div>
-
-			<div class="col-sm-6 align-items-center text-center m-t-6">
-				<mat-label class="mat-subtitle-2 f-w-600 d-block">Ativa</mat-label>
-				<mat-slide-toggle color="primary" formControlName="isActive"></mat-slide-toggle>
-			</div>
 		</div>
 	</form>
 </mat-dialog-content>

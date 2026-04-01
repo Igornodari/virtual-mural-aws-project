@@ -13,7 +13,7 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
 	standalone: false,
 })
 export class TableClientsComponent extends BaseTableComponent<Client> {
-	public formGroup: FormGroup;
+	public formGroup!: FormGroup;
 	constructor() {
 		super({
 			filterName: 'TableClientsComponent',
