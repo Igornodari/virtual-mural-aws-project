@@ -1,0 +1,31 @@
+.notification-item {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	border-bottom: 1px solid #ddd;
+}
+
+.notification-description {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	max-height: 3em;
+	line-clamp: 2;
+	box-orient: vertical;
+}
+
+.icon-container {
+	height: 100%;
+}
+
+.notification-icon {
+	transition: opacity 0.3s ease;
+	color: #ff9800;
+	font-size: 24px;
+}
+
+.notification-icon.viewed {
+	opacity: 0.3;
+}

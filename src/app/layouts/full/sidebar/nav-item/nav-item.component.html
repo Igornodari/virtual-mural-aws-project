@@ -1,0 +1,55 @@
+@if (!item.can || (item.can && item.can | can)) {
+  @if (!item.navCap && !item.external && !item.twoLines) {
+    <a
+      mat-list-item
+      (click)="onItemSelected(item)"
+		[ngClass]="{
+			'mat-toolbar mat-primary activeMenu': item.route === selectedItem,
+			expanded: expanded,
+			disabled: item.disabled
+		}"
+      class="menu-list-item"
+      >
+      <mat-icon class="material-icons-outlined f-s-21" matListItemIcon>{{ item.iconName }}</mat-icon>
+      <span class="hide-menu">{{ item.displayName | translate }}</span>
+      @if (item.children && item.children.length) {
+        <span class="arrow-icon" fxFlex>
+          <span fxFlex></span>
+          <mat-icon [@indicatorRotate]="expanded ? 'expanded' : 'collapsed'"> expand_more </mat-icon>
+        </span>
+      }
+      @if (item.chip) {
+        <span>
+          <span class="{{ item.chipClass }} p-x-8 p-y-4 item-chip f-w-500 rounded-pill ">{{
+            item.chipContent
+          }}</span>
+        </span>
+      }
+    </a>
+  }
+  <!-- external Link -->
+  @if (!item.navCap && item.external) {
+    <mat-list-item
+      onClick="window.open('//google.com')"
+      class="menu-list-item"
+      target="_blank"
+      >
+      <mat-icon class="f-s-21" matListItemIcon>{{ item.iconName }}</mat-icon>
+      <span class="hide-menu">{{ item.displayName | translate }}</span>
+    </mat-list-item>
+  }
+  <!-- children -->
+  @if (expanded) {
+    <div>
+      @for (child of item.children; track child) {
+        <app-nav-item
+          [item]="child"
+          [selectedItem]="selectedItem"
+          (select)="select.emit($event)"
+          (click)="onSubItemSelected(child)"
+          [depth]="depth + 1"
+        ></app-nav-item>
+      }
+    </div>
+  }
+}

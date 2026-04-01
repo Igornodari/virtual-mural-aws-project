@@ -1,0 +1,107 @@
+@if (user) {
+<mat-toolbar class="topbar">
+	<!-- --------------------------------------------------------------- -->
+	<!-- Desktop Menu -->
+	<!-- <button mat-icon-button (click)="toggleCollapsed.emit()" *ngIf="showToggle" class="d-flex justify-content-center">
+    <mat-icon class="">menu</mat-icon>
+  </button> -->
+	<!-- Mobile Menu -->
+	<button mat-icon-button (click)="toggleMobileNav.emit()" class="d-flex justify-content-center">
+		<mat-icon class="">menu</mat-icon>
+	</button>
+
+	<!-- --------------------------------------------------------------- -->
+	<div class="d-lg-flex">
+		<app-select-units></app-select-units>
+	</div>
+
+	@if (!production) {
+	<div class="env-test">TESTE</div>
+	}
+
+	<span class="flex-1-auto"></span>
+
+	<button (click)="setDark()" mat-icon-button class="d-flex justify-content-center">
+		@if (option.theme == 'dark') {
+		<mat-icon class="material-icons-outlined">light_mode</mat-icon>
+		} @if (option.theme == 'light') {
+		<mat-icon class="material-icons-outlined">dark_mode</mat-icon>
+		}
+	</button>
+	<app-language></app-language>
+	<!-- --------------------------------------------------------------- -->
+	<!-- Notification Dropdown -->
+	<!-- --------------------------------------------------------------- -->
+
+	<button mat-icon-button [matMenuTriggerFor]="notificationmenu" aria-label="Notifications">
+		<mat-icon class="material-icons-outlined" [matBadge]="newNotificationsCount" matBadgeColor="primary"
+			aria-hidden="false">notifications</mat-icon>
+	</button>
+	<mat-menu #notificationmenu="matMenu" class="topbar-dd cardWithShadow">
+		<div class="d-flex align-items-center p-x-32 p-y-16">
+			<h6 class="f-s-16 f-w-600 m-0">{{ 'HEADER.NOTIFICATIONS.TITLE' | translate }}</h6>
+			<div class="m-l-auto">
+				<span class="bg-primary text-white p-x-8 p-y-4 f-w-500 rounded f-s-12">
+					{{ 'HEADER.NOTIFICATIONS.NEW_COUNT' | translate : { count: newNotificationsCount } }}
+				</span>
+			</div>
+		</div>
+		<ng-scrollbar class="position-relative" style="height: auto">
+			<app-notification-item [notifications]="notifications" [photoUrl]="user.photoUrl"
+				(notificationRead)="handleNotificationRead()"></app-notification-item>
+		</ng-scrollbar>
+		<div class="p-y-12 p-x-32">
+			<button matButton="outlined" color="primary" class="w-100">
+				{{ 'HEADER.NOTIFICATIONS.VIEW_ALL' | translate }}
+			</button>
+		</div>
+	</mat-menu>
+	<!-- --------------------------------------------------------------- -->
+	<!-- profile Dropdown -->
+	<!-- --------------------------------------------------------------- -->
+	<button mat-icon-button [matMenuTriggerFor]="profilemenu" aria-label="Notifications">
+		<img [src]="user.photoUrl" class="rounded-circle object-cover" width="35" />
+	</button>
+	<mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
+		<ng-scrollbar class="position-relative" style="height: auto">
+			<div class="col-12 p-5">
+				<h6 class="f-s-16 f-w-600 m-0">{{ 'HEADER.ACCOUNT.USER_PROFILE' | translate }}</h6>
+				<div class="d-flex align-items-center p-b-24 b-b-1 m-t-16">
+					<img [src]="user.photoUrl" class="rounded-circle p-5" width="95" />
+					<div>
+						<h6 class="f-s-14 f-w-600 m-0">{{ user.firstName }}</h6>
+						<!-- <span class="f-s-14 d-block m-b-4">{{user.position}}</span> -->
+						<span class="d-flex align-items-center">
+							<mat-icon class="material-icons-outlined f-s-21 m-t-8">email</mat-icon>
+							{{ user.email }}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="col-12">
+				@for (profile of profiledd; track profile) {
+				<a class="p-y-16 text-decoration-none d-block text-hover-primary" [routerLink]="[profile.link]">
+					<div class="d-flex align-items-center">
+						<button mat-mini-fab class="text-primary bg-light-secondary shadow-none rounded">
+							<img [src]="profile.img" width="20" />
+						</button>
+						<div class="m-l-16">
+							<h5 class="f-s-14 f-w-600 m-0 textprimary mat-subtitle-1 hover-text">
+								{{ 'HEADER.ACCOUNT.PROFILE_TYPES.' + profile.title | translate }}
+							</h5>
+							<span class="mat-body-1">
+								{{ 'HEADER.ACCOUNT.PROFILE_TYPES.' + profile.title | translate }}</span>
+						</div>
+					</div>
+				</a>
+				}
+			</div>
+			<div class="p-y-12 p-x-32">
+				<a (click)="authService.logout()" matButton="outlined" color="primary" class="w-100">{{
+					'HEADER.ACCOUNT.LOGOUT' | translate
+					}}</a>
+			</div>
+		</ng-scrollbar>
+	</mat-menu>
+</mat-toolbar>
+}

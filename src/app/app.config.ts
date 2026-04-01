@@ -97,7 +97,7 @@ export interface AppSettings {
   sidenavCollapsed: boolean;
   boxed: boolean;
   activeTheme: string;
-  language: 'pt' | 'en';
+  language: string;
   cardBorder: boolean;
   navPos: 'side' | 'top';
 }

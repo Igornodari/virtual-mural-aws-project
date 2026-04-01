@@ -1,0 +1,36 @@
+<mat-sidenav-container class="mainWrapper" autosize autoFocus [ngClass]="{
+		'sidebarNav-mini': options.sidenavCollapsed && options.navPos !== 'top',
+		cardBorder: options.cardBorder,
+		orange_theme: options.activeTheme == 'orange_theme',
+
+	}">
+
+
+  <!-- ============================================================== -->
+  <!-- Vertical Sidebar -->
+  <!-- ============================================================== -->
+
+
+
+  <!-- ============================================================== -->
+  <!-- Main Content -->
+  <!-- ============================================================== -->
+
+    <!-- ============================================================== -->
+    <!-- VerticalHeader -->
+    <!-- ============================================================== -->
+    <app-mural-topbar
+    role="provider"
+    [userName]="user?.givenName || user?.displayName || ''"
+    (logout)="onLogout()"
+  />
+
+    <main [ngClass]="{
+				maxWidth: options.boxed
+			}">
+      <!-- ============================================================== -->
+      <!-- Outlet -->
+      <!-- ============================================================== -->
+      <router-outlet></router-outlet>
+    </main>
+</mat-sidenav-container>

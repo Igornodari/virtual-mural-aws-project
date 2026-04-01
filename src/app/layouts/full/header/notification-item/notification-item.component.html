@@ -1,0 +1,32 @@
+@if (notifications.length > 0) {
+  @for (notification of notifications; track notification) {
+    <button
+      mat-menu-item
+      (click)="markAsRead(notification)"
+      >
+      <div class="notification-item align-items-center">
+        <img [src]="photoUrl" class="rounded-circle m-t-5 m-b-5" width="55" />
+        <div class="m-l-16">
+          <h6 class="f-s-14 f-w-600 m-0">{{ notification.title }}</h6>
+          <span class="notification-description">
+            {{ notification.body }}
+          </span>
+        </div>
+        <div class="icon-container d-flex justify-content-center align-items-center p-l-10">
+          <mat-icon
+            class="notification-icon"
+            color="secondary"
+            [ngClass]="{ viewed: notification.isOpened }"
+            >
+            {{ notification.isOpened ? 'radio_button_checked' : 'radio_button_unchecked' }}
+          </mat-icon>
+        </div>
+      </div>
+    </button>
+  }
+} @else {
+  <div class="col-12 text-center">
+    <span class="f-w-400">{{ 'HEADER.NOTIFICATIONS.NO_ALERTS' | translate }}</span>
+  </div>
+}
+

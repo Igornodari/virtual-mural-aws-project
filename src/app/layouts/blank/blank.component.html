@@ -1,0 +1,11 @@
+<!-- ============================================================== -->
+<!-- Only router without any element -->
+<!-- ============================================================== -->
+<mat-sidenav-container
+	[ngClass]="{
+		cardBorder: options.cardBorder,
+		orange_theme: options.activeTheme == 'orange_theme'
+	}"
+>
+	<router-outlet></router-outlet>
+</mat-sidenav-container>

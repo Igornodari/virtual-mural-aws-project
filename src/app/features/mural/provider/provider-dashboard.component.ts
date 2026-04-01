@@ -268,8 +268,5 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     }, 100);
   }
 
-  async onLogout(): Promise<void> {
-    await this.authService.logout();
-    await this.navigateTo('/login');
-  }
+
 }

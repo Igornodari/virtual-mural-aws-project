@@ -1,0 +1,38 @@
+<mat-sidenav-container class="mainWrapper" autosize autoFocus [ngClass]="{
+		'sidebarNav-mini': options.sidenavCollapsed && options.navPos !== 'top',
+		cardBorder: options.cardBorder,
+		orange_theme: options.activeTheme == 'orange_theme',
+
+	}">
+  <!-- ============================================================== -->
+  <!-- Vertical Sidebar -->
+  <!-- ============================================================== -->
+
+  <mat-sidenav #leftsidenav [mode]="isOver ? 'over' : 'side'"
+    [opened]="options.navPos === 'side' && options.sidenavOpened && !isOver"
+    (openedChange)="onSidenavOpenedChange($event)" (closedStart)="onSidenavClosedStart()" class="sidebarNav">
+    <app-sidebar (notify)="sidenav.toggle()"></app-sidebar>
+  </mat-sidenav>
+
+  <!-- ============================================================== -->
+  <!-- Main Content -->
+  <!-- ============================================================== -->
+  <mat-sidenav-content class="contentWrapper" #content infiniteScroll [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="300" [scrollWindow]="false">
+    <!-- ============================================================== -->
+    <!-- VerticalHeader -->
+    <!-- ============================================================== -->
+    <app-header [user]="user" [showToggle]="!isOver" (toggleCollapsed)="toggleCollapsed()"
+      (toggleMobileNav)="sidenav.toggle()"></app-header>
+
+    <main class="pageWrapper" [ngClass]="{
+				maxWidth: options.boxed
+			}">
+      <app-breadcrumb></app-breadcrumb>
+      <!-- ============================================================== -->
+      <!-- Outlet -->
+      <!-- ============================================================== -->
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

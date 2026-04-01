@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <p><strong>Criado em:</strong> {{ data.createdAt.toDate() | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+  <p><strong>Descrição:</strong> {{ data.body }}</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="close()">Fechar</button>
+  <button mat-button color="primary" (click)="navigateToEvent()">ir</button>
+  @if (data.link) {
+    <button mat-button color="accent" (click)="openLink(data.link)">Saiba mais sobre</button>
+  }
+</mat-dialog-actions>
