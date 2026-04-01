@@ -14,7 +14,7 @@ import { ServiceAnalyticsComponent } from './analytics/service-analytics.compone
 
 @Component({
   selector: 'app-provider-dashboard',
-  imports: [...importBase, ServiceAnalyticsComponent, MuralTopbarComponent],
+  imports: [...importBase, ServiceAnalyticsComponent],
   templateUrl: './provider-dashboard.component.html',
   styleUrls: ['./provider-dashboard.component.scss'],
 })
@@ -268,5 +268,8 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     }, 100);
   }
 
-
+  async onLogout(): Promise<void> {
+    await this.authService.logout();
+    await this.navigateTo('/login');
+  }
 }

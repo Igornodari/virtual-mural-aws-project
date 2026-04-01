@@ -2,16 +2,17 @@ import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/cor
 
 import { NgOptimizedImage } from '@angular/common';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { MaterialModule } from 'src/app/material.module';
 import { AppNavItemComponent } from './nav-item/nav-item.component';
 import { navItems } from './menu/sidebar-data';
 import { TranslateModule } from '@ngx-translate/core';
 import { CanPipe } from '../../../shared/pipe/can.pipe';
-import { environment } from 'src/environments/environment';
+import { MaterialModule } from 'src/material.module';
+import { environment } from 'src/environments/environments';
 
 @Component({
 	selector: 'app-sidebar',
 	templateUrl: './sidebar.component.html',
+	standalone: true,
 	imports: [
     NgScrollbarModule,
     MaterialModule,

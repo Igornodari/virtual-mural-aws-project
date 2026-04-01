@@ -1,8 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { MaterialModule } from 'src/app/material.module';
 import { languages } from './header.data';
 
-import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { importBase, MaterialModule } from 'src/app/shared/constant/import-base.constant';
 import { CoreService } from 'src/app/services/core.service';
 
 @Component({

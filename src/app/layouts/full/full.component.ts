@@ -7,6 +7,7 @@ import {
 	ChangeDetectorRef,
 	OnDestroy,
 	ElementRef,
+	Inject,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
@@ -14,20 +15,17 @@ import { CoreService } from 'src/app/services/core.service';
 import { AppSettings } from 'src/app/app.config';
 import { filter } from 'rxjs/operators';
 import { NavigationEnd, Router } from '@angular/router';
-import { NavService } from '../../services/nav.service';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { AppBreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/shared/types';
-import { MessageService } from 'src/app/services/message.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { navItems } from './sidebar/menu/sidebar-data';
-import { ScrollEventService } from 'src/app/services/scroll-service.service';
-import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { MaterialModule } from 'src/material.module';
+
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -47,14 +45,13 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
 		HeaderComponent,
 		AppBreadcrumbComponent,
 		TranslateModule,
-		InfiniteScrollDirective,
 	],
 })
 export class FullComponent implements AfterViewInit, OnDestroy {
 	navItems = navItems;
 
 	@ViewChild('leftsidenav')
-	public sidenav: MatSidenav;
+  public sidenav!: MatSidenav;
 	resView = false;
 	@ViewChild('content', { static: true, read: ElementRef })
 	contentRef!: ElementRef<HTMLElement>;
@@ -68,7 +65,6 @@ export class FullComponent implements AfterViewInit, OnDestroy {
 	private htmlElement!: HTMLHtmlElement;
 
 	public user: User;
-	lastScrollTop: number;
 
 	get isOver(): boolean {
 		return this.isMobileScreen;
@@ -84,13 +80,10 @@ export class FullComponent implements AfterViewInit, OnDestroy {
 		private breakpointObserver: BreakpointObserver,
 		public auth: AuthService,
 		private _cdr: ChangeDetectorRef,
-		private messageService: MessageService,
-		private scrollEventService: ScrollEventService
 	) {
 		this.auth.refresh();
 		this.user = this.auth.currentUser;
-		this.messageService.requestNotificationsPermissions().then();
-		this.messageService.saveMessagingDeviceToken(this.auth.currentUser.id).then();
+
 
 		this.htmlElement = document.querySelector('html')!;
 
@@ -113,30 +106,13 @@ export class FullComponent implements AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this.scrollEventService.setParentContentRef(this.contentRef);
-
-		this.contentRef.nativeElement.addEventListener('scroll', this.onScroll.bind(this));
 
 		this.settings.notify.subscribe(op => {
 			if (op['theme']) {
 				this.toggleDarkTheme(op as AppSettings);
 			}
 		});
-		this.auth.prefillIframeEmail();
 		this._cdr.detectChanges();
-	}
-
-	onScroll(event: Event): void {
-		const target = event.target as HTMLElement;
-		const currentScrollTop = target.scrollTop;
-		const direction = currentScrollTop > this.lastScrollTop ? 'down' : 'up';
-		const isAtBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 1;
-		if (isAtBottom && direction === 'down') {
-			this.scrollEventService.emitScrollEvent();
-		}
-		// Atualiza a direção para eventuais usos futuros
-		this.scrollEventService.emitScrollDirectionEvent(direction);
-		this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
 	}
 
 	ngOnDestroy() {

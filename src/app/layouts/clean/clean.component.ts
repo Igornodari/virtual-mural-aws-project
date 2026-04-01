@@ -66,6 +66,7 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
 
 	public user: User;
   authService: any;
+  private _router: any;
 
 	get isOver(): boolean {
 		return this.isMobileScreen;
@@ -133,10 +134,9 @@ export class CleanComponent implements AfterViewInit, OnDestroy {
     await this.authService.logout();
     await this.navigateTo('/login');
   }
-  navigateTo(arg0: string) {
-    throw new Error('Method not implemented.');
-  }
-
+	protected async navigateTo(path: string): Promise<void> {
+		await this._router.navigateByUrl(path);
+	}
 	toggleDarkTheme(options: AppSettings) {
 		if (options.theme === 'dark') {
 			this.htmlElement.classList.add('dark-theme');
