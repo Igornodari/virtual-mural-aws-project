@@ -62,6 +62,10 @@
       "LOGOUT": "Logout",
       "LANGUAGE": "Language"
     },
+    "MENU": {
+      "DASHBOARD": "Dashboard",
+      "PROFILE": "My Profile"
+    },
     "PROVIDER": {
       "STATS_SERVICES": "Active services",
       "STATS_RATING": "Average rating",

@@ -62,6 +62,10 @@
       "LOGOUT": "Sair",
       "LANGUAGE": "Idioma"
     },
+    "MENU": {
+      "DASHBOARD": "Dashboard",
+      "PROFILE": "Meu Perfil"
+    },
     "PROVIDER": {
       "STATS_SERVICES": "Serviços ativos",
       "STATS_RATING": "Avaliação média",

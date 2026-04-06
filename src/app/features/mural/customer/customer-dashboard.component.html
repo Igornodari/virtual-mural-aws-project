@@ -1,11 +1,4 @@
-<div class="customer-page">
-  <app-mural-topbar
-    role="customer"
-    [userName]="user?.givenName || user?.displayName || ''"
-    (logout)="onLogout()"
-  />
-
-  <div class="app-page-shell customer-main">
+<div class="app-page-shell customer-main">
     <section class="customer-hero">
       <div class="customer-hero__content">
         <div class="customer-hero__text">
@@ -362,5 +355,4 @@
         </div>
       }
     </section>
-  </div>
 </div>
