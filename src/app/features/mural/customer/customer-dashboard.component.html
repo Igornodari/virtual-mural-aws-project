@@ -278,7 +278,7 @@
               </div>
             </div>
 
-            <div class="d-flex align-items-center flex-wrap gap-10">
+                   <div class="d-flex align-items-center gap-10">
               @if (canPayAppointment(appointment)) {
                 <button
                   mat-raised-button
@@ -292,7 +292,16 @@
                   Pagar no app
                 </button>
               }
-            </div>
+              
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="openChat(appointment)"
+                matTooltip="Conversar com o prestador"
+              >
+                <mat-icon>chat</mat-icon>
+              </button>
+            </div>iv>
           </div>
         }
       </div>
