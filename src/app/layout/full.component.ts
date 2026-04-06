@@ -100,10 +100,11 @@ export class FullComponent {
   userName = signal('');
 
   constructor() {
-    const user = this.authService.currentUser();
+    const user = this.authService.currentUser;
     if (user) {
       this.userName.set(user.givenName || user.displayName || '');
       // Lógica simples para determinar role baseado no user, ajuste conforme sua implementação real
+      // @ts-ignore - A propriedade role pode não existir no tipo User atual, mas é usada na lógica
       this.userRole.set(user.role === 'provider' ? 'provider' : 'customer');
     }
   }

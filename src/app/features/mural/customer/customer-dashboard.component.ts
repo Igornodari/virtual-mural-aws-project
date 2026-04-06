@@ -6,7 +6,7 @@ import { finalize, takeUntil } from 'rxjs';
 import BaseComponent from 'src/app/components/base.component';
 import { PaymentMethodDialog, PaymentMethod } from 'src/app/components/payment-method-dialog/payment-method-dialog';
 import { PixQrDialog } from 'src/app/components/pix-qr-dialog/pix-qr-dialog';
-import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
+
 import { AppointmentApiService, AppointmentDto, AppointmentPaymentDto, AppointmentStatus, CreateAppointmentPayload } from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/app/core/services/review-api.service';
@@ -31,7 +31,7 @@ const BLOCKING_STATUSES: AppointmentStatus[] = ['confirmed', 'awaiting_payment',
 
 @Component({
   selector: 'app-customer-dashboard',
-  imports: [...importBase, MuralTopbarComponent],
+  imports: [...importBase],
   templateUrl: './customer-dashboard.component.html',
   styleUrls: ['./customer-dashboard.component.scss'],
 })
@@ -391,8 +391,4 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     return currentDate.toISOString().split('T')[0];
   }
 
-  async onLogout(): Promise<void> {
-    await this.authService.logout();
-    await this.navigateTo('/login');
-  }
 }

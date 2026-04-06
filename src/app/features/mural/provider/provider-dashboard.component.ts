@@ -7,14 +7,13 @@ import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { CreateServicePayload, ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 
 import BaseComponent from 'src/app/components/base.component';
-import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { WEEKDAYS, CATEGORIES } from 'src/app/shared/types/provider.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 
 @Component({
   selector: 'app-provider-dashboard',
-  imports: [...importBase, ServiceAnalyticsComponent, MuralTopbarComponent],
+  imports: [...importBase, ServiceAnalyticsComponent],
   templateUrl: './provider-dashboard.component.html',
   styleUrls: ['./provider-dashboard.component.scss'],
 })
@@ -268,8 +267,4 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     }, 100);
   }
 
-  async onLogout(): Promise<void> {
-    await this.authService.logout();
-    await this.navigateTo('/login');
-  }
 }
