@@ -1,0 +1,24 @@
+<section class="dashboard-wrapper">
+      <header class="dashboard-header">
+        <div>
+          <div class="app-badge">{{ 'APP.DASHBOARD.BADGE' | translate }}</div>
+          <h1 class="m-t-3">{{ 'APP.DASHBOARD.TITLE' | translate }}</h1>
+          <p class="text-muted m-t-2">
+            {{ 'APP.DASHBOARD.SUBTITLE' | translate }}
+          </p>
+        </div>
+        <button mat-stroked-button color="primary" (click)="onLogout()">
+          {{ 'APP.DASHBOARD.SIGN_OUT' | translate }}
+        </button>
+      </header>
+
+      <mat-card class="surface-card--elevated">
+        <mat-card-header>
+          <mat-card-title>{{ 'APP.DASHBOARD.SESSION_TITLE' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'APP.DASHBOARD.SESSION_SUBTITLE' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <pre>{{ userData | json }}</pre>
+        </mat-card-content>
+      </mat-card>
+    </section>

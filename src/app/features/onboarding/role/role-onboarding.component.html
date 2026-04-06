@@ -1,0 +1,54 @@
+<div class="app-auth-page">
+      <div class="role-shell">
+        <div class="role-header">
+          <span class="app-badge">{{ 'APP.TOPBAR.BRAND' | translate }}</span>
+          <h1 class="m-t-3 m-b-1">{{ 'APP.ONBOARDING.ROLE_TITLE' | translate }}</h1>
+          <p class="text-muted m-0">{{ 'APP.ONBOARDING.ROLE_SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="role-grid">
+          @for (option of roleOptions; track option.value) {
+            <button
+              class="role-card"
+              [class.role-card--selected]="selected() === option.value"
+              [style.--role-color]="option.color"
+              (click)="select(option.value)"
+              type="button"
+            >
+              <div class="role-card__icon-wrap">
+                <mat-icon class="role-card__icon">{{ option.icon }}</mat-icon>
+              </div>
+              <div class="role-card__body">
+                <strong class="role-card__title">{{ option.titleKey | translate }}</strong>
+                <p class="role-card__subtitle text-muted">{{ option.subtitleKey | translate }}</p>
+                <ul class="role-card__features">
+                  @for (feat of option.featureKeys; track feat) {
+                    <li>
+                      <mat-icon class="feat-icon">check_circle</mat-icon>
+                      <span>{{ feat | translate }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+              @if (selected() === option.value) {
+                <mat-icon class="role-card__check">check_circle</mat-icon>
+              }
+            </button>
+          }
+        </div>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="confirm-btn"
+          [disabled]="!selected() || loading"
+          (click)="onConfirm()"
+        >
+          @if (loading) {
+            <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
+          } @else {
+            {{ 'APP.ONBOARDING.CONFIRM_ROLE' | translate }}
+          }
+        </button>
+      </div>
+    </div>

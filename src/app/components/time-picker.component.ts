@@ -20,25 +20,7 @@ import {
 			multi: true,
 		},
 	],
-	template: `
-		<form [formGroup]="formGroup">
-			<div class="pick-content ">
-				<select (change)="changeSelect()" formControlName="hour">
-					@for (hour of hours; track hour) {
-					<option [value]="hour">{{ hour }}</option>
-					}
-				</select>
-
-				<div>:</div>
-
-				<select (change)="changeSelect()" formControlName="minute">
-					@for (minute of minutes; track minute) {
-					<option [value]="minute">{{ minute }}</option>
-					}
-				</select>
-			</div>
-		</form>
-	`,
+	templateUrl: './time-picker.component.html',
 	styles: `
 
 	`,

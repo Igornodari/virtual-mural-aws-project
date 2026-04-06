@@ -14,15 +14,7 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 	selector: 'app-status',
 	imports: [MatChipsModule, TranslateModule, CommonModule],
-	template: `
-		@if (status) {
-		<mat-chip selected [ngClass]="['bg-light-' + status.style]">
-			<span [class]="' f-s-14 f-w-600 text-' + status.style">
-				{{ status.label | translate }}
-			</span>
-		</mat-chip>
-		}
-	`,
+	templateUrl: './status.component.html',
 	encapsulation: ViewEncapsulation.None,
 })
 export class StatusComponent implements OnChanges {

@@ -66,68 +66,16 @@
     } @else {
       <section class="customer-grid">
         @for (service of filteredServices; track service.id) {
-          <mat-card class="service-card" [class.service-card--expanded]="expandedId === service.id">
-            <mat-card-content class="service-card__content">
-              <div class="service-card__header d-flex justify-content-between align-items-start gap-10">
-                <div class="service-card__title-block d-flex flex-col gap-10">
-                  <mat-card-title class="m-0 service-title">{{ service.name }}</mat-card-title>
-                  <span class="service-badge">{{ service.category }}</span>
-                </div>
+          <app-service-card
+            [service]="service"
+            [expanded]="expandedId === service.id"
+            (toggleExpand)="toggleExpand(service)"
+            (contact)="contactWhatsApp($event)"
+          />
 
-                <div class="service-rating d-flex align-items-center">
-                  <mat-icon class="star-icon star--filled">star</mat-icon>
-                  <span class="rating-value m-l-5">{{ service.rating | number:'1.1-1' }}</span>
-                  <span class="text-muted m-l-5">({{ service.totalReviews }})</span>
-                </div>
-              </div>
-
-              <p class="service-description text-muted m-0">
-                {{ service.description }}
-              </p>
-
-              <div class="service-meta d-flex flex-col gap-10">
-                <span class="service-price">{{ service.price }}</span>
-
-                <div class="d-flex flex-wrap gap-5">
-                  @for (day of service.availableDays.slice(0, 3); track day) {
-                    <span class="day-badge">{{ day }}</span>
-                  }
-
-                  @if (service.availableDays.length > 3) {
-                    <span class="day-badge day-badge--more">
-                      +{{ service.availableDays.length - 3 }}
-                    </span>
-                  }
-                </div>
-              </div>
-
-              <div class="service-actions d-flex align-items-center gap-10">
-                <button
-                  mat-stroked-button
-                  color="primary"
-                  class="w-full"
-                  type="button"
-                  (click)="contactWhatsApp(service)"
-                >
-                  <mat-icon>whatsapp</mat-icon>
-                  {{ 'APP.CUSTOMER.CONTACT' | translate }}
-                </button>
-
-                <button
-                  mat-raised-button
-                  color="primary"
-                  class="w-full"
-                  type="button"
-                  (click)="toggleExpand(service)"
-                >
-                  <mat-icon>
-                    {{ expandedId === service.id ? 'expand_less' : 'expand_more' }}
-                  </mat-icon>
-                  {{ 'APP.CUSTOMER.SCHEDULE' | translate }}
-                </button>
-              </div>
-
-              @if (expandedId === service.id) {
+          @if (expandedId === service.id) {
+            <mat-card class="expansion-content-card">
+              <mat-card-content>
                 <mat-divider></mat-divider>
 
                 <div class="service-section d-flex flex-col gap-15">
@@ -167,8 +115,7 @@
                       }
                       <mat-icon>event_available</mat-icon>
                       {{ 'APP.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
-                    </button>
-                  }
+                    </button>                  </div>
                 </div>
 
                 <mat-divider></mat-divider>
@@ -177,9 +124,7 @@
                   <h4 class="section-title d-flex align-items-center m-0">
                     <mat-icon class="section-icon m-r-10">star_rate</mat-icon>
                     {{ 'APP.CUSTOMER.REVIEWS_TITLE' | translate }}
-                  </h4>
-
-                  @if (service.totalReviews > 0) {
+                  </h4>                @if (service.totalReviews > 0) {
                     <div class="reviews-summary d-flex align-items-center flex-wrap gap-10">
                       <span class="review-rating-value">{{ service.rating | number:'1.1-1' }}</span>
 
@@ -298,9 +243,10 @@
                     </button>
                   </div>
                 </div>
-              }
-            </mat-card-content>
-          </mat-card>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
         }
       </section>
     }

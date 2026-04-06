@@ -7,14 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'app-report',
     imports: [SafeUrlPipe, ...importBase],
-    template: `<iframe
-		[src]="reportUrl | safeUrl"
-		width="100%"
-		height="800px"
-		frameborder="0"
-		allowfullscreen
-	></iframe>`
-})
+    templateUrl: './reports.component.html',})
 export class ReportComponent extends BaseComponent {
   reportUrl!: string;
 

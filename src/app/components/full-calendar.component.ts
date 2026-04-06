@@ -39,14 +39,7 @@ export type ActionDisplay = {
 @Component({
   selector: 'app-full-calendar',
   imports: [MatProgressSpinnerModule, FullCalendarModule],
-  template: `
-		<full-calendar
-			#calendar
-			[options]="calendarOptions()"
-			[hidden]="!calendarVisible()"
-			[eventSources]="events"
-		></full-calendar>
-	`,
+  templateUrl: './full-calendar.component.html',
   host: { ngSkipHydration: '' },
   encapsulation: ViewEncapsulation.None,
 })

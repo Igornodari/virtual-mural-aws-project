@@ -8,14 +8,7 @@ import { RequestService } from '../../core/services/request.service';
 
 @Component({
   selector: 'app-activity',
-  template: `
-		<div class="col-12 d-flex justify-content-center m-t-20">
-			<button matButton="outlined" color="primary" (click)="openActivityModal()">
-				<mat-icon>history</mat-icon>
-				{{ 'HISTORY_COMPONENT.SEE_HISTORY' | translate }}
-			</button>
-		</div>
-	`,
+  templateUrl: './activity.component.html',
   imports: [...importBase],
 })
 export class ActivityComponent implements OnInit {

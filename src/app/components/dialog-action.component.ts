@@ -18,41 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
 		MatButtonModule,
 		TranslateModule,
 	],
-	template: `
-		<div class="p-x-20">
-			<h2>{{ title | translate }}</h2>
-			<p>{{ subTitle | translate }}</p>
-		</div>
-		<div mat-dialog-content class=" modal-sm ">
-			<div class=" text-center">
-				@if (type == 'info') {
-				<p>{{ description }}</p>
-				} @if (type == 'action') {
-				<mat-label> {{ 'COMMENT' | translate }} </mat-label>
-				<mat-form-field class="w-100 " appearance="outline">
-					<textarea [(ngModel)]="description" matInput> </textarea>
-				</mat-form-field>
-				}
-			</div>
-		</div>
-		<div mat-dialog-actions class="p-y-16 p-x-24" align="end">
-			<button matButton="outlined" color="warn" mat-dialog-close>
-				{{ 'CANCEL' | translate }}
-			</button>
-			@if (type == 'action') {
-			<button
-				matButton="filled"
-				color="primary"
-				(click)="onConfirm()"
-				[mat-dialog-close]="true"
-				[disabled]="!description && descriptionRequerid"
-			>
-				<mat-icon>download_done</mat-icon>
-				{{ 'CONFIRM' | translate }}
-			</button>
-			}
-		</div>
-	`,
+	templateUrl: './dialog-action.component.html',
 	encapsulation: ViewEncapsulation.None,
 })
 export class AppDialogActionComponent {

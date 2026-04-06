@@ -13,6 +13,8 @@ import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/a
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
+import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
 
 const CATEGORIES = [
   'Todas',
@@ -31,7 +33,7 @@ const BLOCKING_STATUSES: AppointmentStatus[] = ['confirmed', 'awaiting_payment',
 
 @Component({
   selector: 'app-customer-dashboard',
-  imports: [...importBase],
+  imports: [...importBase, ServiceCardComponent, StatusBadgeComponent],
   templateUrl: './customer-dashboard.component.html',
   styleUrls: ['./customer-dashboard.component.scss'],
 })
@@ -305,18 +307,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     return labels[rating] || '';
   }
 
-  public getAppointmentStatusLabel(status: AppointmentStatus): string {
-    const labels: Record<AppointmentStatus, string> = {
-      pending: 'Solicitado',
-      confirmed: 'Confirmado',
-      awaiting_payment: 'Aguardando pagamento',
-      paid: 'Pago',
-      cancelled: 'Cancelado',
-      completed: 'Concluido',
-    };
 
-    return labels[status];
-  }
 
   public canPayAppointment(appointment: AppointmentDto): boolean {
     return appointment.status === 'confirmed' || appointment.status === 'awaiting_payment';

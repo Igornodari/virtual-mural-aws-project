@@ -1,0 +1,60 @@
+.onboarding-shell {
+      width: min(520px, 100%);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .onboarding-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .onboarding-card {
+      padding: 32px;
+    }
+    .cep-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .cep-field {
+      flex: 1;
+      min-width: 160px;
+    }
+    .cep-btn {
+      margin-top: 4px;
+      height: 56px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      gap: 4px;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .btn-spinner {
+      display: inline-block;
+    }
+    @media (max-width: 600px) {
+      .onboarding-card {
+        padding: 20px 16px;
+      }
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+      .cep-row {
+        flex-direction: column;
+      }
+      .cep-field {
+        min-width: unset;
+        width: 100%;
+      }
+      .cep-btn {
+        width: 100%;
+        margin-top: 0;
+        height: 48px;
+      }
+    }

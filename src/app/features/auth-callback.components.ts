@@ -9,11 +9,7 @@ import { ROUTE_PATHS } from '../shared/constant/route-paths.constant';
 @Component({
   selector: 'app-auth-callback',
   standalone: true,
-  template: `
-    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;gap:12px;">
-      <span style="font-size:16px;color:var(--mat-sys-on-surface-variant)">Finalizando login...</span>
-    </div>
-  `,
+  templateUrl: './auth-callback.components.html',
 })
 export class AuthCallbackComponent implements OnInit {
   private readonly router = inject(Router);

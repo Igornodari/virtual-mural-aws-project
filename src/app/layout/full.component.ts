@@ -25,73 +25,8 @@ import { ROUTE_PATHS } from '../shared/constant/route-paths.constant';
     TranslateModule,
     MuralTopbarComponent
   ],
-  template: `
-    <div class="full-layout">
-      <app-mural-topbar
-        [role]="userRole()"
-        [userName]="userName()"
-        (logout)="onLogout()"
-      />
-
-      <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav #sidenav mode="side" opened class="sidenav">
-          <mat-nav-list>
-            <a mat-list-item [routerLink]="dashboardLink()" routerLinkActive="active-link">
-              <mat-icon matListItemIcon>dashboard</mat-icon>
-              <span matListItemTitle>{{ 'APP.MENU.DASHBOARD' | translate }}</span>
-            </a>
-            <a mat-list-item [routerLink]="profileLink()" routerLinkActive="active-link">
-              <mat-icon matListItemIcon>person</mat-icon>
-              <span matListItemTitle>{{ 'APP.MENU.PROFILE' | translate }}</span>
-            </a>
-            <!-- Adicione mais itens de menu conforme necessário -->
-          </mat-nav-list>
-        </mat-sidenav>
-
-        <mat-sidenav-content class="content">
-          <main class="main-content">
-            <router-outlet></router-outlet>
-          </main>
-        </mat-sidenav-content>
-      </mat-sidenav-container>
-    </div>
-  `,
-  styles: [`
-    .full-layout {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    .sidenav-container {
-      flex: 1;
-    }
-    .sidenav {
-      width: 250px;
-      border-right: 1px solid var(--mat-sys-outline-variant);
-      background: var(--mat-sys-surface);
-    }
-    .content {
-      background: var(--mat-sys-surface-container);
-    }
-    .main-content {
-      padding: 20px;
-      height: 100%;
-      box-sizing: border-box;
-    }
-    .active-link {
-      background: color-mix(in oklab, var(--mat-sys-primary) 10%, transparent);
-      color: var(--mat-sys-primary);
-    }
-    @media (max-width: 600px) {
-      .sidenav {
-        width: 70px;
-      }
-      span[matListItemTitle] {
-        display: none;
-      }
-    }
-  `]
-})
+  templateUrl: './full.component.html',
+  styleUrls: ['./full.component.scss'],})
 export class FullComponent {
   private authService = inject(AuthService);
   private router = inject(Router);

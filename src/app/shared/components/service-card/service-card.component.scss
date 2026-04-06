@@ -1,0 +1,74 @@
+.service-card {
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &--expanded {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  &__content {
+    padding: 16px;
+  }
+
+  .service-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .service-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .rating-box {
+    .star-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #fbbf24;
+    }
+    .rating-value {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .rating-count {
+      font-size: 0.8rem;
+    }
+  }
+
+  .service-description {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .service-price {
+    font-weight: 700;
+    color: var(--mat-sys-primary);
+    font-size: 1rem;
+  }
+
+  .day-badge {
+    padding: 2px 8px;
+    background: var(--mat-sys-surface-container-highest);
+    border-radius: 12px;
+    font-size: 0.7rem;
+
+    &--more {
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+    }
+  }
+
+  .flex-1 {
+    flex: 1;
+  }
+}

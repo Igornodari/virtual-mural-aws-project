@@ -1,0 +1,47 @@
+.profile-layout { min-height: 100vh; display: flex; flex-direction: column; }
+    .profile-main {
+      max-width: 800px; width: 100%; margin: 0 auto;
+      padding: 32px 24px; display: flex; flex-direction: column; gap: 24px;
+    }
+    .profile-header { display: flex; align-items: center; gap: 20px; }
+    .avatar-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: color-mix(in oklab, var(--mat-sys-primary) 15%, transparent);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .avatar-icon { font-size: 36px; width: 36px; height: 36px; color: var(--mat-sys-primary); }
+    .profile-name { font-size: 22px; font-weight: 800; margin: 0 0 6px; }
+    .role-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
+      background: color-mix(in oklab, #0284c7 15%, transparent); color: #0284c7;
+    }
+    .role-badge--provider {
+      background: color-mix(in oklab, #7c3aed 15%, transparent); color: #7c3aed;
+    }
+    .role-icon { font-size: 16px; width: 16px; height: 16px; }
+    .profile-tabs { width: 100%; }
+    .tab-icon { font-size: 18px; width: 18px; height: 18px; margin-right: 6px; }
+    .tab-content { padding: 24px 0; }
+    .profile-form { display: flex; flex-direction: column; gap: 16px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .cep-row { display: flex; gap: 12px; align-items: flex-start; }
+    .cep-field { flex: 1; }
+    .form-actions { display: flex; justify-content: flex-end; }
+    .security-info { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; }
+    .security-icon { font-size: 32px; width: 32px; height: 32px; color: var(--mat-sys-primary); flex-shrink: 0; }
+    .security-title { font-weight: 700; margin: 0 0 4px; }
+    @media (max-width: 600px) {
+      .two-col { grid-template-columns: 1fr; }
+      .cep-row { flex-direction: column; }
+      .cep-row button { width: 100%; }
+      .profile-main { padding: 16px; gap: 16px; }
+      .profile-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .avatar-circle { width: 56px; height: 56px; }
+      .avatar-icon { font-size: 28px; width: 28px; height: 28px; }
+      .profile-name { font-size: 18px; }
+      .form-actions { flex-direction: column; }
+      .form-actions button { width: 100%; }
+      .tab-content { padding: 16px 0; }
+      .security-info { flex-direction: column; gap: 8px; }
+    }

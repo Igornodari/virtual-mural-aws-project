@@ -16,40 +16,7 @@ import { importBase } from '../../shared/constant/import-base.constant';
     selector: 'app-custom-carousel',
     imports: [...importBase, LightboxModule],
     providers: [Lightbox, LightboxConfig],
-    template: `
-		<div class="carousel-container">
-		  <a
-		    class="carousel-control-prev f-s-24 p-10 m-t-20"
-		    (click)="prevSlide()"
-		    [class.disabled]="fileUrlArray.length === 0"
-		    >&#10094;</a
-		    >
-		    @if (fileUrlArray.length > 0) {
-		      <div class="d-flex" #carousel>
-		        @for (slide of fileUrlArray; track slide; let i = $index) {
-		          <div
-		            class="carousel-item"
-		            [class.active]="i === currentSlide"
-		            (click)="open(i)"
-		            >
-		            <img [attr.data-src]="slide.url" width="300" height="200" alt="voucher image" />
-		            <div class="row text-center d-flex justify-content-center align-items-center">
-		              <span class="f-w-600">{{ slide.name | translate }}</span>
-		            </div>
-		          </div>
-		        }
-		      </div>
-		    } @else {
-		      <p>Não existem imagens</p>
-		    }
-		    <a
-		      class="carousel-control-next f-s-24 p-10 m-t-20"
-		      (click)="nextSlide()"
-		      [class.disabled]="fileUrlArray.length === 0"
-		      >&#10095;</a
-		      >
-		    </div>
-		`,
+    templateUrl: './custom-carousel.component.html',
     styleUrls: ['./custom-carousel.component.scss'],
     encapsulation: ViewEncapsulation.None
 })

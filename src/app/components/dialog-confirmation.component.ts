@@ -20,28 +20,7 @@ import { NewLine } from '../shared/pipe/new-line.pipe';
 		TranslateModule,
 		NewLine,
 	],
-	template: `
-		<h5 mat-dialog-title class="mat-subtitle-1">{{ title | translate }}</h5>
-		<div
-			mat-dialog-content
-			class="mat-subtitle-2 lh-16"
-			[innerHTML]="subTitle | translate | newLine"
-		></div>
-		<div mat-dialog-actions class="p-y-16 p-x-24" align="end">
-			<button matButton="outlined" color="warn" mat-dialog-close>
-				{{ 'CANCEL' | translate }}
-			</button>
-			<button
-				matButton="filled"
-				color="primary"
-				mat-dialog-close
-				cdkFocusInitial
-				(click)="onConfirm()"
-			>
-				{{ 'CONFIRM' | translate }}
-			</button>
-		</div>
-	`,
+	templateUrl: './dialog-confirmation.component.html',
 	encapsulation: ViewEncapsulation.None,
 })
 export class AppDialogConfirmationComponent {

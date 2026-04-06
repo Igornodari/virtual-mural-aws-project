@@ -10,10 +10,17 @@ import BaseComponent from 'src/app/components/base.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { WEEKDAYS, CATEGORIES } from 'src/app/shared/types/provider.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
+import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
+import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-provider-dashboard',
-  imports: [...importBase, ServiceAnalyticsComponent],
+  imports: [
+    ...importBase,
+    ServiceAnalyticsComponent,
+    ServiceCardComponent,
+    StatusBadgeComponent
+  ],
   templateUrl: './provider-dashboard.component.html',
   styleUrls: ['./provider-dashboard.component.scss'],
 })
@@ -122,18 +129,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     this.averageRating.set(Math.round(weightedAverage * 10) / 10);
   }
 
-  getAppointmentStatusLabel(status: AppointmentStatus): string {
-    const labels: Record<AppointmentStatus, string> = {
-      pending: 'Solicitado',
-      confirmed: 'Confirmado',
-      awaiting_payment: 'Aguardando pagamento',
-      paid: 'Pago',
-      cancelled: 'Cancelado',
-      completed: 'Concluido',
-    };
 
-    return labels[status];
-  }
 
   canConfirm(appointment: AppointmentDto): boolean {
     return appointment.status === 'pending';
