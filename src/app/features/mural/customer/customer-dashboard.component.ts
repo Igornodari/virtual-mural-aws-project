@@ -15,6 +15,7 @@ import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
 import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
+import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
 
 const CATEGORIES = [
   'Todas',
@@ -246,43 +247,44 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       });
   }
 
- public payAppointment(appointment: AppointmentDto): void {
-  const dialogRef = this.dialog.open(PaymentMethodDialog, {
-    data: { appointmentId: appointment.id },
-    width: '400px',
-  });
+  public payAppointment(appointment: AppointmentDto): void {
+    const dialogRef = this.dialog.open(PaymentMethodDialog, {
+      data: { appointmentId: appointment.id },
+      width: '400px',
+    });
 
-  dialogRef.afterClosed().subscribe((selectedMethod: PaymentMethod) => {
-    if (!selectedMethod) return;
+    dialogRef.afterClosed().subscribe((selectedMethod: PaymentMethod) => {
+      if (!selectedMethod) return;
 
-    this.isPayingAppointment = appointment.id;
+      this.isPayingAppointment = appointment.id;
 
-    this.appointmentApi
-      .createPayment(appointment.id, { method: selectedMethod })
-      .pipe(finalize(() => (this.isPayingAppointment = null)))
-      .subscribe({
-        next: (paymentSession: AppointmentPaymentDto) => {
-          this.replaceAppointment(paymentSession.appointment);
-          if (selectedMethod === 'credit_card' && paymentSession.checkoutUrl) {
-            window.location.href = paymentSession.checkoutUrl;
-            return;
-          }
+      this.appointmentApi
+        .createPayment(appointment.id, { method: selectedMethod })
+        .pipe(finalize(() => (this.isPayingAppointment = null)))
+        .subscribe({
+          next: (paymentSession: AppointmentPaymentDto) => {
+            this.replaceAppointment(paymentSession.appointment);
+            if (selectedMethod === 'credit_card' && paymentSession.checkoutUrl) {
+              window.location.href = paymentSession.checkoutUrl;
+              return;
+            }
 
-          if (selectedMethod === 'pix' && (paymentSession.qrCode || paymentSession.qrCodeText)) {
-            this.dialog.open(PixQrDialog, {
-              data: {
-                qrCode: paymentSession.qrCode,
-                qrCodeText: paymentSession.qrCodeText,
-              },
-              width: '400px',
-            });
-          }
+            if (selectedMethod === 'pix' && (paymentSession.qrCode || paymentSession.qrCodeText)) {
+              this.dialog.open(PixQrDialog, {
+                data: {
+                  qrCode: paymentSession.qrCode,
+                  qrCodeText: paymentSession.qrCodeText,
+                },
+                width: '400px',
+              });
+            }
 
-          this.loadServiceAvailability(appointment.serviceId);
-        },
-      });
-  });
-}
+            this.loadServiceAvailability(appointment.serviceId);
+          },
+        });
+    });
+  }
+
   public hoverStar(serviceId: string, star: number): void {
     this.hoverRating[serviceId] = star;
   }
@@ -307,10 +309,19 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     return labels[rating] || '';
   }
 
-
-
   public canPayAppointment(appointment: AppointmentDto): boolean {
     return appointment.status === 'confirmed' || appointment.status === 'awaiting_payment';
+  }
+
+  public openChat(appointment: AppointmentDto): void {
+    this.dialog.open(ChatDialogComponent, {
+      data: {
+        appointmentId: appointment.id,
+        recipientName: appointment.service?.provider?.displayName || 'Prestador'
+      },
+      width: '450px',
+      maxWidth: '95vw'
+    });
   }
 
   public submitReview(service: ServiceDto): void {
@@ -381,5 +392,4 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     currentDate.setDate(currentDate.getDate() + diff);
     return currentDate.toISOString().split('T')[0];
   }
-
 }

@@ -1,0 +1,55 @@
+<div class="chat-dialog-container">
+  <div class="chat-header d-flex justify-content-between align-items-center p-15">
+    <div class="d-flex align-items-center gap-10">
+      <mat-icon color="primary">chat</mat-icon>
+      <h3 class="m-0">{{ data.recipientName }}</h3>
+    </div>
+    <button mat-icon-button (click)="dialogRef.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="chat-messages p-15 d-flex flex-col gap-10">
+    @if (isLoading()) {
+      <div class="d-flex justify-content-center p-20">
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+    } @else if (messages().length === 0) {
+      <div class="empty-chat d-flex flex-col align-items-center justify-content-center p-20 text-muted">
+        <mat-icon class="m-b-10">forum</mat-icon>
+        <p class="m-0">Inicie uma conversa sobre o agendamento.</p>
+      </div>
+    } @else {
+      @for (msg of messages(); track msg.id) {
+        <div class="message-wrapper d-flex" [class.message-wrapper--mine]="msg.senderId === currentUserId">
+          <div class="message-bubble p-10 rounded shadow-sm">
+            <p class="message-content m-0">{{ msg.content }}</p>
+            <span class="message-time text-muted">{{ msg.createdAt | date:'HH:mm' }}</span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="chat-footer p-15">
+    <div class="d-flex align-items-center gap-10">
+      <mat-form-field appearance="outline" class="w-full no-subscript">
+        <input 
+          matInput 
+          [(ngModel)]="newMessage" 
+          placeholder="Digite sua mensagem..." 
+          (keyup.enter)="onSendMessage()"
+          [disabled]="isSending()"
+        />
+      </mat-form-field>
+      <button 
+        mat-mini-fab 
+        color="primary" 
+        (click)="onSendMessage()" 
+        [disabled]="!newMessage().trim() || isSending()"
+      >
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

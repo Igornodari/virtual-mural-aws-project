@@ -67,6 +67,8 @@
       "PROFILE": "My Profile"
     },
     "PROVIDER": {
+      "HERO_TITLE": "Manage your services in the condominium",
+      "HERO_SUBTITLE": "Track your services, reviews, and booking requests in",
       "STATS_SERVICES": "Active services",
       "STATS_RATING": "Average rating",
       "STATS_REVIEWS": "Reviews received",
@@ -185,6 +187,8 @@
       "REQUEST_FAILED": "Request failed. Please try again."
     },
     "ONBOARDING": {
+      "CONDO_TITLE": "Your condo, connected in one place",
+      "CONDO_SUBTITLE": "Set up your condominium address to activate a community board where residents can buy, sell, and share whatever they need.",
       "CONDOMINIUM": {
         "CEP": "ZIP code",
         "CEP_PLACEHOLDER": "00000-000",
@@ -194,8 +198,41 @@
         "NEIGHBORHOOD": "Neighborhood",
         "COMPLEMENT": "Complement",
         "CITY": "City",
-        "STATE": "State"
-      }
+        "STATE": "State",
+        "STREET_PLACEHOLDER": "E.g. Flower Street",
+        "NUMBER_PLACEHOLDER": "E.g. 123",
+        "COMPLEMENT_PLACEHOLDER": "Apt, Block...",
+        "NEIGHBORHOOD_PLACEHOLDER": "E.g. Downtown",
+        "CITY_PLACEHOLDER": "E.g. São Paulo"
+      },
+      "ROLE": {
+        "TITLE": "Choose how you want to use the board",
+        "SUBTITLE": "Set your profile to access the best experience inside your condominium. You can buy, hire, sell, or promote services for other residents.",
+        "PROVIDER": {
+          "TITLE": "I want to promote and offer services",
+          "SUBTITLE": "Ideal for residents who want to promote services or sell products within the condominium.",
+          "F1": "Publish your services or products on the board",
+          "F2": "Gain visibility among residents",
+          "F3": "Receive contacts and opportunities more easily",
+          "F4": "Manage your listings in one place"
+        },
+        "CUSTOMER": {
+          "TITLE": "I want to find services and opportunities",
+          "SUBTITLE": "Ideal for residents who want to find services, buy products, and browse condominium listings.",
+          "F1": "Find services offered by residents",
+          "F2": "Discover products and opportunities near you",
+          "F3": "Contact providers easily",
+          "F4": "Keep everything organized in one place"
+        },
+        "CONFIRM": "Continue"
+      },
+      "CEP_INVALID": "Please enter a valid ZIP code.",
+      "STREET_REQUIRED": "Please enter the street.",
+      "NUMBER_REQUIRED": "Please enter the number.",
+      "NEIGHBORHOOD_REQUIRED": "Please enter the neighborhood.",
+      "CITY_REQUIRED": "Please enter the city.",
+      "STATE_REQUIRED": "Please select the state.",
+      "CONTINUE": "Continue"
     },
     "ANALYTICS": {
       "TITLE": "Analytics",

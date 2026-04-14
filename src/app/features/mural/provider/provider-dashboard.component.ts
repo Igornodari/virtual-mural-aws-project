@@ -12,6 +12,8 @@ import { WEEKDAYS, CATEGORIES } from 'src/app/shared/types/provider.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
 import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
 
 @Component({
   selector: 'app-provider-dashboard',
@@ -29,6 +31,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   private readonly onboardingService = inject(OnboardingService);
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
+  private readonly dialog = inject(MatDialog);
 
   readonly weekdays = WEEKDAYS;
   readonly categories = CATEGORIES;
@@ -261,6 +264,17 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
         block: 'start',
       });
     }, 100);
+  }
+
+  openChat(appointment: AppointmentDto): void {
+    this.dialog.open(ChatDialogComponent, {
+      data: {
+        appointmentId: appointment.id,
+        recipientName: appointment.customer?.displayName || 'Cliente'
+      },
+      width: '450px',
+      maxWidth: '95vw'
+    });
   }
 
 }

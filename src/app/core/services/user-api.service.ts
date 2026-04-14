@@ -49,17 +49,14 @@ export interface UpdateProfilePayload {
 export class UserApiService {
   constructor(private readonly api: MuralApiService) {}
 
-  /** Retorna o perfil completo do usuário autenticado */
   getMe(): Observable<AppUserProfileDto> {
     return this.api.get<AppUserProfileDto>('/users/me');
   }
 
-  /** Salva o condomínio e/ou o perfil do usuário durante o onboarding */
   updateOnboarding(payload: UpdateOnboardingPayload): Observable<AppUserProfileDto> {
     return this.api.patch<AppUserProfileDto>('/users/me/onboarding', payload);
   }
 
-  /** Atualiza dados do perfil (nome, telefone, avatar) */
   updateProfile(payload: UpdateProfilePayload): Observable<AppUserProfileDto> {
     return this.api.patch<AppUserProfileDto>('/users/me/profile', payload);
   }
