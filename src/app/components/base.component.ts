@@ -6,6 +6,8 @@ import { AuthService } from '../core/services/auth.service';
 import { Location } from '@angular/common';
 import { RequestService } from '../core/services/request.service';
 import { TranslateService } from '@ngx-translate/core';
+import { UserApiService } from '../core/services/user-api.service';
+import { CondominiumApiService } from '../core/services/condominium-api.service';
 
 interface BaseComponentSettings {
 	loadCondominium?: boolean;
@@ -25,6 +27,8 @@ export default class BaseComponent implements OnDestroy {
 	private _router = inject(Router);
 	private _ngZone = inject(NgZone);
 	public _translate = inject(TranslateService, { optional: true });
+  public readonly userApi = inject(UserApiService);
+  public readonly condominiumApi = inject(CondominiumApiService);
 
 	public queryString = new URLSearchParams();
 	public searchParams: any = {};

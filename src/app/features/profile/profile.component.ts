@@ -11,10 +11,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
-import { MuralTopbarComponent } from '../../components/mural-topbar/mural-topbar.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { AppUserProfileDto, UpdateProfilePayload, UserApiService } from '../../core/services/user-api.service';
-import { CondominiumApiService, CreateCondominiumPayload } from '../../core/services/condominium-api.service';
+import { CreateCondominiumPayload } from '../../core/services/condominium-api.service';
 
 @Component({
   selector: 'app-profile',
@@ -24,7 +23,7 @@ import { CondominiumApiService, CreateCondominiumPayload } from '../../core/serv
     MatButtonModule, MatCardModule, MatDividerModule,
     MatFormFieldModule, MatIconModule, MatInputModule,
     MatProgressSpinnerModule, MatTabsModule,
-    TranslateModule, MuralTopbarComponent,
+    TranslateModule,
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
@@ -32,8 +31,6 @@ import { CondominiumApiService, CreateCondominiumPayload } from '../../core/serv
 export class ProfileComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
-  private readonly userApi = inject(UserApiService);
-  private readonly condominiumApi = inject(CondominiumApiService);
 
   isSavingPersonal = signal(false);
   isSavingAddress = signal(false);
@@ -107,10 +104,7 @@ export class ProfileComponent extends BaseComponent implements OnInit {
             state: condo.addressState ?? this.addressForm.value.state ?? '',
           });
         }
-      },
-      error: () => {
-        // Interceptor global já exibe feedback, aqui só evitamos quebrar a tela.
-      },
+      }
     });
   }
 

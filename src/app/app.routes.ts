@@ -6,7 +6,6 @@ import { FullComponent } from './layout/full.component';
 import { BlankComponent } from './layout/blank.component';
 
 export const routes: Routes = [
-  // Layout para páginas públicas (Login, Register, etc.)
   {
     path: '',
     component: BlankComponent,

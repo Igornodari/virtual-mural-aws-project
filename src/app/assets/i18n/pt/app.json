@@ -67,6 +67,8 @@
       "PROFILE": "Meu Perfil"
     },
     "PROVIDER": {
+      "HERO_TITLE": "Gerencie seus serviços no condomínio",
+      "HERO_SUBTITLE": "Acompanhe seus serviços, avaliações e solicitações de agendamento em",
       "STATS_SERVICES": "Serviços ativos",
       "STATS_RATING": "Avaliação média",
       "STATS_REVIEWS": "Avaliações recebidas",
@@ -185,6 +187,8 @@
       "REQUEST_FAILED": "A requisição falhou. Tente novamente."
     },
     "ONBOARDING": {
+      "CONDO_TITLE": "Seu condomínio, conectado em um só lugar !",
+      "CONDO_SUBTITLE": "Configure o endereço do condomínio para ativar um mural onde moradores podem comprar, vender e divulgar o que precisarem.",
       "CONDOMINIUM": {
         "CEP": "CEP",
         "CEP_PLACEHOLDER": "00000-000",
@@ -194,8 +198,41 @@
         "NEIGHBORHOOD": "Bairro",
         "COMPLEMENT": "Complemento",
         "CITY": "Cidade",
-        "STATE": "Estado"
-      }
+        "STATE": "Estado",
+        "STREET_PLACEHOLDER": "Ex: Rua das Flores",
+        "NUMBER_PLACEHOLDER": "Ex: 123",
+        "COMPLEMENT_PLACEHOLDER": "Apto, Bloco...",
+        "NEIGHBORHOOD_PLACEHOLDER": "Ex: Centro",
+        "CITY_PLACEHOLDER": "Ex: São Paulo"
+      },
+      "ROLE": {
+        "TITLE": "Escolha como você deseja usar o mural",
+        "SUBTITLE": "Defina seu perfil para acessar a experiência ideal dentro do condomínio. Você poderá comprar, contratar, vender ou anunciar serviços para outros moradores.",
+        "PROVIDER": {
+          "TITLE": "Quero anunciar e oferecer serviços",
+          "SUBTITLE": "Ideal para moradores que desejam divulgar serviços ou vender produtos dentro do condomínio.",
+          "F1": "Publique seus serviços ou produtos no mural",
+          "F2": "Ganhe visibilidade entre os moradores",
+          "F3": "Receba contatos e oportunidades com mais facilidade",
+          "F4": "Gerencie seus anúncios em um só lugar"
+        },
+        "CUSTOMER": {
+          "TITLE": "Quero buscar serviços e oportunidades",
+          "SUBTITLE": "Ideal para moradores que desejam encontrar serviços, comprar produtos e acompanhar anúncios do condomínio.",
+          "F1": "Encontre serviços oferecidos por moradores",
+          "F2": "Descubra produtos e oportunidades perto de você",
+          "F3": "Fale com prestadores de forma simples",
+          "F4": "Tenha tudo organizado em um só lugar"
+        },
+        "CONFIRM": "Continuar"
+      },
+      "CEP_INVALID": "Informe um CEP válido.",
+      "STREET_REQUIRED": "Informe a rua.",
+      "NUMBER_REQUIRED": "Informe o número.",
+      "NEIGHBORHOOD_REQUIRED": "Informe o bairro.",
+      "CITY_REQUIRED": "Informe a cidade.",
+      "STATE_REQUIRED": "Selecione o estado.",
+      "CONTINUE": "Continuar"
     },
     "ANALYTICS": {
       "TITLE": "Analytics",

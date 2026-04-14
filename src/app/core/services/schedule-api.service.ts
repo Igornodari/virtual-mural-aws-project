@@ -5,9 +5,9 @@ import { MuralApiService } from './mural-api.service';
 export interface TimeBlockDto {
   id: string;
   providerId: string;
-  date: string; // YYYY-MM-DD
-  startTime: string; // HH:mm
-  endTime: string; // HH:mm
+  date: string;
+  startTime: string;
+  endTime: string;
   reason?: string;
   createdAt: string;
 }
@@ -24,7 +24,10 @@ export class ScheduleApiService {
   constructor(private readonly api: MuralApiService) {}
 
   getBlocks(date?: string): Observable<TimeBlockDto[]> {
-    const params = date ? { date } : {};
+    const params: Record<string, string | boolean> | undefined = date
+      ? { date }
+      : undefined;
+
     return this.api.get<TimeBlockDto[]>('/schedule/blocks', params);
   }
 

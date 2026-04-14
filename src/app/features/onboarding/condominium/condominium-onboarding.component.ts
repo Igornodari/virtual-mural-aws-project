@@ -1,21 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
-  ReactiveFormsModule,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatStepperModule } from '@angular/material/stepper';
-import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../../components/base.component';
 import { CondominiumApiService, ViaCepResponse } from '../../../core/services/condominium-api.service';
 import { OnboardingService } from '../../../core/services/onboarding.service';
@@ -43,7 +32,6 @@ function cepValidator(control: AbstractControl): ValidationErrors | null {
 })
 export class CondominiumOnboardingComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly condominiumApi = inject(CondominiumApiService);
   private readonly onboardingService = inject(OnboardingService);
 
   readonly states = BRAZIL_STATES;
