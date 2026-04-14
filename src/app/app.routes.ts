@@ -2,8 +2,8 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
 import { ROUTE_PATHS } from './shared/constant/route-paths.constant';
-import { FullComponent } from './layout/full.component';
-import { BlankComponent } from './layout/blank.component';
+import { BlankComponent } from './layout/blank/blank.component';
+import { FullComponent } from './layout/full/full.component';
 
 export const routes: Routes = [
   {

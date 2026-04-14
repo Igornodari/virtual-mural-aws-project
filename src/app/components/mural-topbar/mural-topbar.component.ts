@@ -12,11 +12,6 @@ import { LanguageService } from '../../core/services/language.service';
 
 export type TopbarRole = 'provider' | 'customer';
 
-/**
- * Topbar reutilizável para as dashboards do Mural do Condomínio.
- * Contém: logo, badge de perfil, nome do usuário, seletor de idioma,
- * toggle de tema dark/light, link para perfil e botão de logout.
- */
 @Component({
   selector: 'app-mural-topbar',
   standalone: true,
@@ -37,7 +32,6 @@ export class MuralTopbarComponent {
   @Input({ required: true }) role!: TopbarRole;
   @Input() userName = '';
   @Output() logout = new EventEmitter<void>();
-
   readonly themeService = inject(ThemeService);
   readonly languageService = inject(LanguageService);
 }

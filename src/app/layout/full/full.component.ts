@@ -6,9 +6,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { MuralTopbarComponent } from '../components/mural-topbar/mural-topbar.component';
-import { AuthService } from '../core/services/auth.service';
-import { ROUTE_PATHS } from '../shared/constant/route-paths.constant';
+import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
+
 
 @Component({
   selector: 'app-full',

@@ -13,16 +13,10 @@ export class GlobalErrorHandler implements ErrorHandler {
     }
 
     const snackBar = this.injector.get(SnackBarService);
-    
-    // Tratamento para Promise rejections não tratadas (ex: auth)
     const message = error?.rejection?.message || error?.message || 'Ocorreu um erro inesperado.';
-    
+
     this.ngZone.run(() => {
       snackBar.error(message);
     });
-
-    // Evitar console.error explícito em produção para não expor detalhes
-    // Opcional: Enviar para um serviço de telemetria como Sentry
-    // console.error('Erro global capturado:', error);
   }
 }
