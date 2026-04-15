@@ -11,6 +11,7 @@ import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ROUTE_PATHS } from '../../../shared/constant/route-paths.constant';
 import { CondominiumAddress } from '../../../shared/types';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { finalize } from 'rxjs';
 
 const BRAZIL_STATES = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS',
@@ -75,10 +76,10 @@ export class CondominiumOnboardingComponent extends BaseComponent {
     this.loadingCep = true;
     this.cepError = '';
 
-    this.condominiumApi.lookupCep(raw).subscribe({
+    this.condominiumApi.lookupCep(raw).pipe(
+      finalize(() => (this.loadingCep = false)),
+    ).subscribe({
       next: (data: ViaCepResponse) => {
-        this.loadingCep = false;
-
         if (data.erro) {
           this.cepError = 'CEP nao encontrado. Preencha o endereco manualmente.';
           return;
@@ -90,10 +91,6 @@ export class CondominiumOnboardingComponent extends BaseComponent {
           city: data.localidade || '',
           state: data.uf || '',
         });
-      },
-      error: () => {
-        this.loadingCep = false;
-        this.cepError = 'Nao foi possivel consultar o CEP agora. Preencha o endereco manualmente.';
       },
     });
   }
@@ -116,13 +113,13 @@ export class CondominiumOnboardingComponent extends BaseComponent {
       state: raw.state,
     };
 
-    this.onboardingService.ensureCondominiumRegistration(address).subscribe({
+    this.onboardingService.ensureCondominiumRegistration(address).pipe(
+      finalize(() => this.setLoadingState(false)),
+    ).subscribe({
       next: () => {
-        this.setLoadingState(false);
         this.navigateTo(ROUTE_PATHS.onboardingRole);
       },
       error: () => {
-        this.setLoadingState(false);
         this.navigateTo(ROUTE_PATHS.onboardingRole);
       },
     });

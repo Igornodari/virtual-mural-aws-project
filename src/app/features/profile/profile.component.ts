@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 import BaseComponent from '../../components/base.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { AppUserProfileDto, UpdateProfilePayload, UserApiService } from '../../core/services/user-api.service';
@@ -112,7 +113,9 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     const cep = this.addressForm.value.zipCode?.replace(/\D/g, '');
     if (!cep || cep.length !== 8) return;
     this.isLookingUpCep.set(true);
-    this.condominiumApi.lookupCep(cep).subscribe({
+    this.condominiumApi.lookupCep(cep).pipe(
+      finalize(() => this.isLookingUpCep.set(false)),
+    ).subscribe({
       next: (data) => {
         if (!data.erro) {
           this.addressForm.patchValue({
@@ -122,9 +125,7 @@ export class ProfileComponent extends BaseComponent implements OnInit {
             state: data.uf,
           });
         }
-        this.isLookingUpCep.set(false);
       },
-      error: () => this.isLookingUpCep.set(false),
     });
   }
 
@@ -138,12 +139,9 @@ export class ProfileComponent extends BaseComponent implements OnInit {
       phone: formValue.phone,
     };
 
-    this.userApi.updateProfile(payload).subscribe({
-      next: () => {
-        this.isSavingPersonal.set(false);
-      },
-      error: () => this.isSavingPersonal.set(false),
-    });
+    this.userApi.updateProfile(payload).pipe(
+      finalize(() => this.isSavingPersonal.set(false)),
+    ).subscribe();
   }
 
   saveAddress(): void {
@@ -164,14 +162,14 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     const req = condominiumId
       ? this.condominiumApi.update(condominiumId, payload)
       : this.condominiumApi.create(payload);
-    req.subscribe({
+    req.pipe(
+      finalize(() => this.isSavingAddress.set(false)),
+    ).subscribe({
       next: (condominium) => {
         const updatedCondominiumId =
           'id' in condominium ? condominium.id : this.onboardingService.profile.condominiumId;
         this.onboardingService.saveLocalCondominiumAddress(addr, updatedCondominiumId);
-        this.isSavingAddress.set(false);
       },
-      error: () => this.isSavingAddress.set(false),
     });
   }
 

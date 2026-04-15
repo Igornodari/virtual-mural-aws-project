@@ -90,8 +90,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
           this.services = Array.isArray(services) ? services : [];
           this.updateStats();
         },
-        error: (err) => {
-          console.error('Erro ao carregar services:', err);
+        error: () => {
           this.services = [];
           this.totalServices = 0;
           this.uniqueProviders = 0;
@@ -115,8 +114,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
             b.createdAt.localeCompare(a.createdAt),
           );
         },
-        error: (err) => {
-          console.error('Erro ao carregar appointments:', err);
+        error: () => {
           this.appointments = [];
         },
       });

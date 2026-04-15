@@ -239,9 +239,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
             .filter((appointment) => isBlockingAppointmentStatus(appointment.status))
             .map((appointment) => appointment.scheduledDay);
         },
-        error: (err) => {
-          console.error('Erro ao carregar disponibilidade:', err);
-
+        error: () => {
           if (this.activeServiceId === serviceId) {
             this.blockedDays = [];
           }

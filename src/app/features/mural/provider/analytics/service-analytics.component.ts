@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 import {
   ServiceApiService,
   ServiceDto,
@@ -69,27 +70,23 @@ export class ServiceAnalyticsComponent implements OnChanges {
     this.analytics.set(null);
     this.reviews.set([]);
 
-    this.serviceApi.getAnalytics(this.service.id).subscribe({
+    this.serviceApi.getAnalytics(this.service.id).pipe(
+      finalize(() => this.isLoading.set(false)),
+    ).subscribe({
       next: (data) => {
         this.analytics.set(data);
-        this.isLoading.set(false);
         if (isPlatformBrowser(this.platformId)) {
           setTimeout(() => this.renderFunnelChart(data), 100);
         }
       },
-      error: () => {
-        this.isLoading.set(false);
-      },
     });
 
     this.isLoadingReviews.set(true);
-    this.reviewApi.findByService(this.service.id).subscribe({
+    this.reviewApi.findByService(this.service.id).pipe(
+      finalize(() => this.isLoadingReviews.set(false)),
+    ).subscribe({
       next: (list) => {
         this.reviews.set(list);
-        this.isLoadingReviews.set(false);
-      },
-      error: () => {
-        this.isLoadingReviews.set(false);
       },
     });
   }

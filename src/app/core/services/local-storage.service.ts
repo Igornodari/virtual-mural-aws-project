@@ -1,18 +1,16 @@
-import { Injectable } from '@angular/core';
+import { ErrorHandler, Injectable } from '@angular/core';
 import { CryptoService } from './crypto.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class LocalStorageService {
-	constructor(private cryptoService: CryptoService) {}
+	constructor(private cryptoService: CryptoService, private readonly errorHandler: ErrorHandler) {}
 
 	setItem(key: string, value: string): void {
 		this.cryptoService.encrypt(value).subscribe({
 			next: (encryptedValue) => localStorage.setItem(key, encryptedValue),
-			error: (err) => {
-				console.error(`Ocorreu um erro ao encriptar o valor: ${err}`);
-			},
+			error: (err) => this.errorHandler.handleError(err),
 		});
 	}
 

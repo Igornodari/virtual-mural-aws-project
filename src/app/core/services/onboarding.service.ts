@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ErrorHandler, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { CondominiumAddress, OnboardingProfile, UserRole } from '../../shared/types';
 import { getDashboardRouteByRole, ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
@@ -22,6 +22,7 @@ export class OnboardingService {
   constructor(
     private readonly userApi: UserApiService,
     private readonly condominiumApi: CondominiumApiService,
+    private readonly errorHandler: ErrorHandler,
   ) {}
 
   get profile(): OnboardingProfile {
@@ -81,7 +82,7 @@ export class OnboardingService {
         return of(user);
       }),
       catchError((error) => {
-        console.warn('[OnboardingService] Failed to sync onboarding state:', error);
+        this.errorHandler.handleError(error);
         return of({} as AppUserProfileDto);
       }),
     );
@@ -115,7 +116,7 @@ export class OnboardingService {
         }
       }),
       catchError((error) => {
-        console.warn('[OnboardingService] Failed to load condominium by zip code:', error);
+        this.errorHandler.handleError(error);
         this.saveLocalCondominiumAddress(address);
         return of([]);
       }),
@@ -164,7 +165,7 @@ export class OnboardingService {
           .subscribe();
       }),
       catchError((error) => {
-        console.warn('[OnboardingService] Failed to create condominium:', error);
+        this.errorHandler.handleError(error);
         this.saveLocalCondominiumAddress(address);
         return of(null);
       }),
@@ -180,7 +181,7 @@ export class OnboardingService {
 
     return this.userApi.updateOnboarding({ roleInCondominium: role }).pipe(
       catchError((error) => {
-        console.warn('[OnboardingService] Failed to save role:', error);
+        this.errorHandler.handleError(error);
         return of(null);
       }),
     );
