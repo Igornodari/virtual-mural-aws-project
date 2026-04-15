@@ -55,7 +55,7 @@
         <div class="reviews-summary d-flex align-items-center flex-wrap gap-10">
           <span class="review-rating-value">{{ service.rating | number: '1.1-1' }}</span>
 
-          <app-customer-rating-stars [rating]="service.rating" />
+          <app-rating-stars [rating]="service.rating" />
 
           <span class="text-muted">
             {{ service.totalReviews }}
@@ -73,7 +73,7 @@
           @for (review of reviews; track review.id) {
             <div class="review-item p-10 rounded">
               <div class="d-flex align-items-center">
-                <app-customer-rating-stars [rating]="review.rating" size="sm" />
+                <app-rating-stars [rating]="review.rating" size="xs" />
 
                 <span class="review-date text-muted m-l-10">
                   {{ review.createdAt | date: 'dd/MM/yyyy' }}

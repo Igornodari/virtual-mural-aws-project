@@ -1,5 +1,3 @@
-import { AppointmentStatus } from 'src/app/core/services/appointment-api.service';
-
 export const CUSTOMER_ALL_CATEGORY = 'Todas';
 
 export const CUSTOMER_CATEGORIES = [
@@ -14,13 +12,6 @@ export const CUSTOMER_CATEGORIES = [
   'Saude e Bem-estar',
   'Outros',
 ] as const;
-
-export const BLOCKING_APPOINTMENT_STATUSES: readonly AppointmentStatus[] = [
-  'confirmed',
-  'awaiting_payment',
-  'paid',
-  'completed',
-];
 
 export const CUSTOMER_STARS = [1, 2, 3, 4, 5] as const;
 

@@ -1,120 +1,115 @@
 <div class="analytics-wrapper">
-      @if (!service) {
-        <div class="empty-analytics">
-          <mat-icon class="empty-icon">bar_chart</mat-icon>
-          <p>{{ 'APP.ANALYTICS.SELECT_SERVICE' | translate }}</p>
-        </div>
-      } @else if (isLoading()) {
-        <div class="loading-center"><mat-spinner diameter="40" /></div>
-      } @else if (analytics()) {
-        <!-- KPIs -->
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <mat-icon class="kpi-icon kpi-icon--blue">visibility</mat-icon>
-            <span class="kpi-value">{{ analytics()!.clicks }}</span>
-            <span class="kpi-label">{{ 'APP.ANALYTICS.CLICKS' | translate }}</span>
-          </div>
-          <div class="kpi-card">
-            <mat-icon class="kpi-icon kpi-icon--green">chat</mat-icon>
-            <span class="kpi-value">{{ analytics()!.interests }}</span>
-            <span class="kpi-label">{{ 'APP.ANALYTICS.INTERESTS' | translate }}</span>
-          </div>
-          <div class="kpi-card">
-            <mat-icon class="kpi-icon kpi-icon--purple">check_circle</mat-icon>
-            <span class="kpi-value">{{ analytics()!.completions }}</span>
-            <span class="kpi-label">{{ 'APP.ANALYTICS.COMPLETIONS' | translate }}</span>
-          </div>
-          <div class="kpi-card">
-            <mat-icon class="kpi-icon kpi-icon--red">cancel</mat-icon>
-            <span class="kpi-value">{{ analytics()!.abandonments }}</span>
-            <span class="kpi-label">{{ 'APP.ANALYTICS.ABANDONMENTS' | translate }}</span>
-          </div>
-        </div>
+  @if (!service) {
+    <app-empty-state icon="bar_chart" title="APP.ANALYTICS.SELECT_SERVICE" [surface]="false" />
+  } @else if (isLoading()) {
+    <app-loading-state />
+  } @else if (analytics()) {
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon kpi-icon--blue">visibility</mat-icon>
+        <span class="kpi-value">{{ analytics()!.clicks }}</span>
+        <span class="kpi-label">{{ 'APP.ANALYTICS.CLICKS' | translate }}</span>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon kpi-icon--green">chat</mat-icon>
+        <span class="kpi-value">{{ analytics()!.interests }}</span>
+        <span class="kpi-label">{{ 'APP.ANALYTICS.INTERESTS' | translate }}</span>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon kpi-icon--purple">check_circle</mat-icon>
+        <span class="kpi-value">{{ analytics()!.completions }}</span>
+        <span class="kpi-label">{{ 'APP.ANALYTICS.COMPLETIONS' | translate }}</span>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon kpi-icon--red">cancel</mat-icon>
+        <span class="kpi-value">{{ analytics()!.abandonments }}</span>
+        <span class="kpi-label">{{ 'APP.ANALYTICS.ABANDONMENTS' | translate }}</span>
+      </div>
+    </div>
 
-        <!-- Gráficos -->
-        <mat-tab-group animationDuration="200ms">
-          <!-- Aba 1: Funil de engajamento -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <mat-icon>funnel</mat-icon>
-              &nbsp;{{ 'APP.ANALYTICS.TAB_FUNNEL' | translate }}
-            </ng-template>
-            <div class="chart-container">
-              <canvas #funnelCanvas id="funnel-chart-{{ service.id }}"></canvas>
+    <!-- Gráficos -->
+    <mat-tab-group animationDuration="200ms">
+      <!-- Aba 1: Funil de engajamento -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>funnel</mat-icon>
+          &nbsp;{{ 'APP.ANALYTICS.TAB_FUNNEL' | translate }}
+        </ng-template>
+        <div class="chart-container">
+          <canvas #funnelCanvas id="funnel-chart-{{ service.id }}"></canvas>
+        </div>
+      </mat-tab>
+
+      <!-- Aba 2: Avaliações -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>star_rate</mat-icon>
+          &nbsp;{{ 'APP.ANALYTICS.TAB_REVIEWS' | translate }}
+        </ng-template>
+        <div class="reviews-analytics">
+          <!-- Resumo de rating -->
+          <div class="rating-summary">
+            <div class="rating-big">
+              <span class="rating-number">{{ service.rating | number: '1.1-1' }}</span>
+              <app-rating-stars [rating]="service.rating" size="sm" />
+              <span class="rating-total"
+                >{{ service.totalReviews }} {{ 'APP.ANALYTICS.REVIEWS_COUNT' | translate }}</span
+              >
             </div>
-          </mat-tab>
-
-          <!-- Aba 2: Avaliações -->
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <mat-icon>star_rate</mat-icon>
-              &nbsp;{{ 'APP.ANALYTICS.TAB_REVIEWS' | translate }}
-            </ng-template>
-            <div class="reviews-analytics">
-              <!-- Resumo de rating -->
-              <div class="rating-summary">
-                <div class="rating-big">
-                  <span class="rating-number">{{ service.rating | number:'1.1-1' }}</span>
-                  <div class="rating-stars">
-                    @for (star of [1,2,3,4,5]; track star) {
-                      <mat-icon class="star-sm" [class.star--filled]="star <= service.rating">star</mat-icon>
-                    }
+            <!-- Barras de distribuição por estrela -->
+            <div class="rating-bars">
+              @for (star of [5, 4, 3, 2, 1]; track star) {
+                <div class="rating-bar-row">
+                  <span class="bar-label">{{ star }}</span>
+                  <mat-icon class="star-xs star--filled">star</mat-icon>
+                  <div class="bar-track">
+                    <div class="bar-fill" [style.width.%]="getStarPercent(star)"></div>
                   </div>
-                  <span class="rating-total">{{ service.totalReviews }} {{ 'APP.ANALYTICS.REVIEWS_COUNT' | translate }}</span>
+                  <span class="bar-count">{{ getStarCount(star) }}</span>
                 </div>
-                <!-- Barras de distribuição por estrela -->
-                <div class="rating-bars">
-                  @for (star of [5,4,3,2,1]; track star) {
-                    <div class="rating-bar-row">
-                      <span class="bar-label">{{ star }}</span>
-                      <mat-icon class="star-xs star--filled">star</mat-icon>
-                      <div class="bar-track">
-                        <div class="bar-fill" [style.width.%]="getStarPercent(star)"></div>
-                      </div>
-                      <span class="bar-count">{{ getStarCount(star) }}</span>
-                    </div>
-                  }
-                </div>
-              </div>
+              }
+            </div>
+          </div>
 
-              <mat-divider />
+          <mat-divider />
 
-              <!-- Comentários anônimos -->
-              <h4 class="comments-title">
-                <mat-icon>comment</mat-icon>
-                {{ 'APP.ANALYTICS.COMMENTS' | translate }}
-              </h4>
-              @if (isLoadingReviews()) {
-                <div class="loading-center"><mat-spinner diameter="28" /></div>
-              } @else if (reviews().length === 0) {
-                <p class="text-muted">{{ 'APP.ANALYTICS.NO_COMMENTS' | translate }}</p>
-              } @else {
-                <div class="comments-list">
-                  @for (review of reviews(); track review.id) {
-                    <div class="comment-item">
-                      <div class="comment-header">
-                        <div class="comment-stars">
-                          @for (star of [1,2,3,4,5]; track star) {
-                            <mat-icon class="star-xs" [class.star--filled]="star <= review.rating">star</mat-icon>
-                          }
-                        </div>
-                        <span class="comment-date text-muted">{{ review.createdAt | date:'dd/MM/yyyy' }}</span>
-                        <span class="anonymous-badge">
-                          <mat-icon class="anon-icon">person_off</mat-icon>
-                          {{ 'APP.ANALYTICS.ANONYMOUS' | translate }}
-                        </span>
-                      </div>
-                      @if (review.comment) {
-                        <p class="comment-text">"{{ review.comment }}"</p>
-                      } @else {
-                        <p class="text-muted comment-text">{{ 'APP.ANALYTICS.NO_COMMENT_TEXT' | translate }}</p>
-                      }
-                    </div>
+          <!-- Comentários anônimos -->
+          <h4 class="comments-title">
+            <mat-icon>comment</mat-icon>
+            {{ 'APP.ANALYTICS.COMMENTS' | translate }}
+          </h4>
+          @if (isLoadingReviews()) {
+            <app-loading-state [diameter]="28" />
+          } @else if (reviews().length === 0) {
+            <p class="text-muted">{{ 'APP.ANALYTICS.NO_COMMENTS' | translate }}</p>
+          } @else {
+            <div class="comments-list">
+              @for (review of reviews(); track review.id) {
+                <div class="comment-item">
+                  <div class="comment-header">
+                    <app-rating-stars [rating]="review.rating" size="xs" />
+                    <span class="comment-date text-muted">{{
+                      review.createdAt | date: 'dd/MM/yyyy'
+                    }}</span>
+                    <span class="anonymous-badge">
+                      <mat-icon class="anon-icon">person_off</mat-icon>
+                      {{ 'APP.ANALYTICS.ANONYMOUS' | translate }}
+                    </span>
+                  </div>
+                  @if (review.comment) {
+                    <p class="comment-text">"{{ review.comment }}"</p>
+                  } @else {
+                    <p class="text-muted comment-text">
+                      {{ 'APP.ANALYTICS.NO_COMMENT_TEXT' | translate }}
+                    </p>
                   }
                 </div>
               }
             </div>
-          </mat-tab>
-        </mat-tab-group>
-      }
-    </div>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

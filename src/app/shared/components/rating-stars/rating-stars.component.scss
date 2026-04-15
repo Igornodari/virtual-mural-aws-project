@@ -1,0 +1,37 @@
+.rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rating-stars__icon {
+  color: var(--mat-sys-outline-variant);
+}
+
+.rating-stars--xs .rating-stars__icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.rating-stars--sm .rating-stars__icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.rating-stars--md .rating-stars__icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.rating-stars--lg .rating-stars__icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.rating-stars__icon--filled {
+  color: #f59e0b;
+}

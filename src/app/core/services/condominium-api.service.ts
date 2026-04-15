@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
+import { RequestService } from './request.service';
 
 export interface CondominiumDto {
   id: string;
@@ -49,7 +49,7 @@ export interface ViaCepResponse {
 @Injectable({ providedIn: 'root' })
 export class CondominiumApiService {
   private readonly api = inject(MuralApiService);
-  private readonly http = inject(HttpClient);
+  private readonly request = inject(RequestService);
 
   /** Busca condomínios pelo CEP — usado no onboarding para verificar se já existe */
   findByZipCode(zipCode: string): Observable<CondominiumDto[]> {
@@ -71,6 +71,6 @@ export class CondominiumApiService {
 
   /** Consulta o CEP na API pública ViaCEP — sem interceptor de auth */
   lookupCep(cep: string): Observable<ViaCepResponse> {
-    return this.http.get<ViaCepResponse>(`https://viacep.com.br/ws/${cep}/json/`);
+    return this.request.get<ViaCepResponse>(`https://viacep.com.br/ws/${cep}/json/`);
   }
 }

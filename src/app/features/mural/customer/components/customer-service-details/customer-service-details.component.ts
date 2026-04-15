@@ -30,13 +30,10 @@ import {
   ReviewApiService,
 } from 'src/app/core/services/review-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
-import {
-  BLOCKING_APPOINTMENT_STATUSES,
-  CUSTOMER_STARS,
-  WEEKDAY_INDEX_BY_LABEL,
-} from '../../customer.constants';
+import { RatingStarsComponent } from 'src/app/shared/components/rating-stars/rating-stars.component';
+import { isBlockingAppointmentStatus } from 'src/app/shared/utils/appointment-status.util';
+import { CUSTOMER_STARS, WEEKDAY_INDEX_BY_LABEL } from '../../customer.constants';
 import { RatingLabelPipe } from '../../pipes/rating-label.pipe';
-import { CustomerRatingStarsComponent } from '../customer-rating-stars/customer-rating-stars.component';
 
 @Component({
   selector: 'app-customer-service-details',
@@ -52,7 +49,7 @@ import { CustomerRatingStarsComponent } from '../customer-rating-stars/customer-
     MatProgressSpinnerModule,
     TranslateModule,
     RatingLabelPipe,
-    CustomerRatingStarsComponent,
+    RatingStarsComponent,
   ],
   templateUrl: './customer-service-details.component.html',
   styleUrls: ['./customer-service-details.component.scss'],
@@ -239,7 +236,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
 
           const list = Array.isArray(appointments) ? appointments : [];
           this.blockedDays = list
-            .filter((appointment) => BLOCKING_APPOINTMENT_STATUSES.includes(appointment.status))
+            .filter((appointment) => isBlockingAppointmentStatus(appointment.status))
             .map((appointment) => appointment.scheduledDay);
         },
         error: (err) => {

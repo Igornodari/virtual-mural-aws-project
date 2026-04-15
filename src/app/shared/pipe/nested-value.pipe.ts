@@ -1,13 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+import { getNestedValue } from '../utils/object-path.util';
+
 @Pipe({
-	name: 'nestedValue',
-	standalone: true,
+  name: 'nestedValue',
+  standalone: true,
 })
 export class NestedValuePipe implements PipeTransform {
-	transform(obj: any, path: string, defaultValue: any = ''): any {
-		if (!obj || !path) return defaultValue;
-
-		return path.split('.').reduce((acc, part) => acc && acc[part], obj) ?? defaultValue;
-	}
+  transform(obj: unknown, path: string, defaultValue: unknown = ''): unknown {
+    return getNestedValue(obj, path, defaultValue);
+  }
 }

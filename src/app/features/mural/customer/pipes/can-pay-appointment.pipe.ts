@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { AppointmentDto } from 'src/app/core/services/appointment-api.service';
+import { canPayAppointment } from 'src/app/shared/utils/appointment-status.util';
 
 @Pipe({
   name: 'canPayAppointment',
@@ -8,6 +9,6 @@ import { AppointmentDto } from 'src/app/core/services/appointment-api.service';
 })
 export class CanPayAppointmentPipe implements PipeTransform {
   transform(appointment: AppointmentDto | null | undefined): boolean {
-    return appointment?.status === 'confirmed' || appointment?.status === 'awaiting_payment';
+    return canPayAppointment(appointment);
   }
 }

@@ -14,8 +14,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { ServiceApiService, ServiceDto, ServiceAnalyticsDto } from '../../../../core/services/service-api.service';
+import {
+  ServiceApiService,
+  ServiceDto,
+  ServiceAnalyticsDto,
+} from '../../../../core/services/service-api.service';
 import { ReviewApiService, AnonymousReviewDto } from '../../../../core/services/review-api.service';
+import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
+import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
+import { RatingStarsComponent } from 'src/app/shared/components/rating-stars/rating-stars.component';
 
 @Component({
   selector: 'app-service-analytics',
@@ -29,6 +36,9 @@ import { ReviewApiService, AnonymousReviewDto } from '../../../../core/services/
     MatTabsModule,
     MatDividerModule,
     TranslateModule,
+    EmptyStateComponent,
+    LoadingStateComponent,
+    RatingStarsComponent,
   ],
   templateUrl: './service-analytics.component.html',
   styleUrls: ['./service-analytics.component.scss'],
@@ -67,13 +77,20 @@ export class ServiceAnalyticsComponent implements OnChanges {
           setTimeout(() => this.renderFunnelChart(data), 100);
         }
       },
-      error: () => { this.isLoading.set(false); },
+      error: () => {
+        this.isLoading.set(false);
+      },
     });
 
     this.isLoadingReviews.set(true);
     this.reviewApi.findByService(this.service.id).subscribe({
-      next: (list) => { this.reviews.set(list); this.isLoadingReviews.set(false); },
-      error: () => { this.isLoadingReviews.set(false); },
+      next: (list) => {
+        this.reviews.set(list);
+        this.isLoadingReviews.set(false);
+      },
+      error: () => {
+        this.isLoadingReviews.set(false);
+      },
     });
   }
 
@@ -84,7 +101,9 @@ export class ServiceAnalyticsComponent implements OnChanges {
     const el = document.getElementById(canvasId);
     if (!el) return;
 
-    if (this.chart) { this.chart.dispose(); }
+    if (this.chart) {
+      this.chart.dispose();
+    }
     this.chart = echarts.init(el, undefined, { renderer: 'canvas', height: 260 });
 
     const isDark = document.documentElement.classList.contains('dark-theme');
@@ -94,27 +113,35 @@ export class ServiceAnalyticsComponent implements OnChanges {
     this.chart.setOption({
       backgroundColor: bgColor,
       tooltip: { trigger: 'item', formatter: '{b}: {c}' },
-      series: [{
-        type: 'funnel',
-        left: '10%',
-        width: '80%',
-        min: 0,
-        max: Math.max(data.clicks, 1),
-        minSize: '20%',
-        maxSize: '100%',
-        sort: 'descending',
-        gap: 6,
-        label: { show: true, position: 'inside', color: '#fff', fontSize: 13, fontWeight: 'bold' },
-        labelLine: { show: false },
-        itemStyle: { borderWidth: 0, borderRadius: 4 },
-        emphasis: { label: { fontSize: 14 } },
-        data: [
-          { value: data.clicks, name: 'Visualizações', itemStyle: { color: '#3b82f6' } },
-          { value: data.interests, name: 'Interessados', itemStyle: { color: '#22c55e' } },
-          { value: data.completions, name: 'Concluídos', itemStyle: { color: '#a855f7' } },
-          { value: data.abandonments, name: 'Abandonados', itemStyle: { color: '#ef4444' } },
-        ],
-      }],
+      series: [
+        {
+          type: 'funnel',
+          left: '10%',
+          width: '80%',
+          min: 0,
+          max: Math.max(data.clicks, 1),
+          minSize: '20%',
+          maxSize: '100%',
+          sort: 'descending',
+          gap: 6,
+          label: {
+            show: true,
+            position: 'inside',
+            color: '#fff',
+            fontSize: 13,
+            fontWeight: 'bold',
+          },
+          labelLine: { show: false },
+          itemStyle: { borderWidth: 0, borderRadius: 4 },
+          emphasis: { label: { fontSize: 14 } },
+          data: [
+            { value: data.clicks, name: 'Visualizações', itemStyle: { color: '#3b82f6' } },
+            { value: data.interests, name: 'Interessados', itemStyle: { color: '#22c55e' } },
+            { value: data.completions, name: 'Concluídos', itemStyle: { color: '#a855f7' } },
+            { value: data.abandonments, name: 'Abandonados', itemStyle: { color: '#ef4444' } },
+          ],
+        },
+      ],
       legend: {
         bottom: 0,
         textStyle: { color: textColor, fontSize: 12 },

@@ -16,6 +16,8 @@ import {
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
+import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
+import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
 import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { CustomerAppointmentsComponent } from './components/customer-appointments/customer-appointments.component';
@@ -35,6 +37,8 @@ import { CustomerServiceFilterPipe } from './pipes/customer-service-filter.pipe'
     CustomerHeroComponent,
     CustomerServiceDetailsComponent,
     CustomerServiceFilterPipe,
+    EmptyStateComponent,
+    LoadingStateComponent,
   ],
   templateUrl: './customer-dashboard.component.html',
   styleUrls: ['./customer-dashboard.component.scss'],
