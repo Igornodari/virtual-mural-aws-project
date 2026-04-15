@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 import { ChatApiService, ChatMessageDto } from 'src/app/core/services/chat-api.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 
@@ -57,13 +58,13 @@ export class ChatDialogComponent implements OnInit {
 
   loadMessages(): void {
     this.isLoading.set(true);
-    this.chatApi.getMessages(this.data.appointmentId).subscribe({
+    this.chatApi.getMessages(this.data.appointmentId).pipe(
+      finalize(() => this.isLoading.set(false)),
+    ).subscribe({
       next: (msgs) => {
         this.messages.set(msgs);
-        this.isLoading.set(false);
         this.scrollToBottom();
       },
-      error: () => this.isLoading.set(false)
     });
   }
 
@@ -75,14 +76,14 @@ export class ChatDialogComponent implements OnInit {
     this.chatApi.sendMessage({
       appointmentId: this.data.appointmentId,
       content
-    }).subscribe({
+    }).pipe(
+      finalize(() => this.isSending.set(false)),
+    ).subscribe({
       next: (msg) => {
         this.messages.update(prev => [...prev, msg]);
         this.newMessage.set('');
-        this.isSending.set(false);
         this.scrollToBottom();
       },
-      error: () => this.isSending.set(false)
     });
   }
 

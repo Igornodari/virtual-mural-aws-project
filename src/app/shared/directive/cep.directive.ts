@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { URI_PATH } from '../constant/path.contant';
 import { AddressData } from '../types/address-data';
 import { RequestService } from '../../core/services/request.service';
@@ -24,10 +24,7 @@ export class CepValidatorDirective {
         next: (response) => {
           this.addressDataFetched.emit(response);
         },
-        error: (error) => {
-          console.error(error);
-          this.cepInvalid.emit();
-        },
+        error: () => this.cepInvalid.emit(),
       });
     } else {
       this.cepInvalid.emit();
@@ -41,12 +38,7 @@ export class CepValidatorDirective {
   fetchCepData(cep: string): Observable<AddressData> {
     return this.requestService.get<AddressData>(
       `${URI_PATH.BRASIL_API.CEP}${cep}`,
-      { api: 'BRASIL_API' })
-      .pipe(
-        catchError((error) => {
-          this.cepInvalid.emit();
-          return throwError(() => error);
-        }),
-      );
+      { api: 'BRASIL_API' },
+    );
   }
 }

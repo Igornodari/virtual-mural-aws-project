@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 import { FormBuilder, Validators } from '@angular/forms';
 import {
@@ -90,15 +90,13 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   private loadServices(): void {
     this.isLoadingServices.set(true);
 
-    this.serviceApi.findMine().subscribe({
+    this.serviceApi.findMine().pipe(
+      finalize(() => this.isLoadingServices.set(false)),
+    ).subscribe({
       next: (list) => {
         this.services.set(list);
         this.recalcStats(list);
-        this.isLoadingServices.set(false);
         this.loadAppointmentsForServices(list);
-      },
-      error: () => {
-        this.isLoadingServices.set(false);
       },
     });
   }
@@ -112,7 +110,9 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
     this.isLoadingAppointments.set(true);
 
-    forkJoin(services.map((service) => this.appointmentApi.findByService(service.id))).subscribe({
+    forkJoin(services.map((service) => this.appointmentApi.findByService(service.id))).pipe(
+      finalize(() => this.isLoadingAppointments.set(false)),
+    ).subscribe({
       next: (appointmentsByService) => {
         const appointments = appointmentsByService
           .flat()
@@ -122,10 +122,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
         this.pendingAppointments.set(
           appointments.filter((appointment) => appointment.status === 'pending').length,
         );
-        this.isLoadingAppointments.set(false);
-      },
-      error: () => {
-        this.isLoadingAppointments.set(false);
       },
     });
   }
@@ -160,7 +156,9 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   updateAppointmentStatus(appointment: AppointmentDto, status: AppointmentStatus): void {
     this.isUpdatingAppointment.set(appointment.id);
 
-    this.appointmentApi.updateStatus(appointment.id, status).subscribe({
+    this.appointmentApi.updateStatus(appointment.id, status).pipe(
+      finalize(() => this.isUpdatingAppointment.set(null)),
+    ).subscribe({
       next: (updatedAppointment) => {
         this.appointments.update((currentAppointments) =>
           currentAppointments.map((currentAppointment) =>
@@ -174,10 +172,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
             (currentAppointment) => currentAppointment.status === 'pending',
           ).length,
         );
-        this.isUpdatingAppointment.set(null);
-      },
-      error: () => {
-        this.isUpdatingAppointment.set(null);
       },
     });
   }
@@ -238,7 +232,9 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
       ? this.serviceApi.update(currentEditingId, payload)
       : this.serviceApi.create(payload as CreateServicePayload);
 
-    request$.subscribe({
+    request$.pipe(
+      finalize(() => this.isSaving.set(false)),
+    ).subscribe({
       next: (savedService) => {
         this.services.update((currentList) =>
           currentEditingId
@@ -247,12 +243,8 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
         );
 
         this.recalcStats(this.services());
-        this.isSaving.set(false);
         this.closeForm();
         this.loadAppointmentsForServices(this.services());
-      },
-      error: () => {
-        this.isSaving.set(false);
       },
     });
   }

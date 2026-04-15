@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 import BaseComponent from '../../../components/base.component';
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { UserRole } from '../../../shared/types';
@@ -83,13 +84,13 @@ export class RoleOnboardingComponent extends BaseComponent {
     this.setLoadingState(true);
     const destination = this.onboardingService.resolveDashboardRoute(role);
 
-    this.onboardingService.saveRole(role).subscribe({
+    this.onboardingService.saveRole(role).pipe(
+      finalize(() => this.setLoadingState(false)),
+    ).subscribe({
       next: () => {
-        this.setLoadingState(false);
         this.navigateTo(destination);
       },
       error: () => {
-        this.setLoadingState(false);
         this.navigateTo(destination);
       },
     });
