@@ -1,0 +1,20 @@
+<section class="customer-filters">
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>{{ 'APP.CUSTOMER.SEARCH_PLACEHOLDER' | translate }}</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="searchControl" />
+  </mat-form-field>
+
+  <div class="d-flex flex-wrap gap-10">
+    @for (category of categories; track category) {
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="selectedCategory === category"
+        (click)="selectCategory(category)"
+      >
+        {{ isAllCategory(category) ? ('APP.CUSTOMER.FILTER_ALL' | translate) : category }}
+      </button>
+    }
+  </div>
+</section>

@@ -1,97 +1,75 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, takeUntil } from 'rxjs';
 
 import BaseComponent from 'src/app/components/base.component';
-import { PaymentMethodDialog, PaymentMethod } from 'src/app/components/payment-method-dialog/payment-method-dialog';
+import {
+  PaymentMethodDialog,
+  PaymentMethod,
+} from 'src/app/components/payment-method-dialog/payment-method-dialog';
 import { PixQrDialog } from 'src/app/components/pix-qr-dialog/pix-qr-dialog';
-
-import { AppointmentApiService, AppointmentDto, AppointmentPaymentDto, AppointmentStatus, CreateAppointmentPayload } from 'src/app/core/services/appointment-api.service';
+import {
+  AppointmentApiService,
+  AppointmentDto,
+  AppointmentPaymentDto,
+} from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
-import { ReviewApiService, AnonymousReviewDto, CreateReviewPayload } from 'src/app/core/services/review-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
-import { SnackBarService } from 'src/app/core/services/snack-bar.service';
-import { importBase } from 'src/app/shared/constant/import-base.constant';
-import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
-import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
 import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
-
-const CATEGORIES = [
-  'Todas',
-  'Beleza e Estetica',
-  'Manutencao e Reparos',
-  'Alimentacao',
-  'Aulas e Tutoria',
-  'Pets',
-  'Limpeza',
-  'Tecnologia',
-  'Saude e Bem-estar',
-  'Outros',
-];
-
-const BLOCKING_STATUSES: AppointmentStatus[] = ['confirmed', 'awaiting_payment', 'paid', 'completed'];
+import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
+import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { CustomerAppointmentsComponent } from './components/customer-appointments/customer-appointments.component';
+import { CustomerFiltersComponent } from './components/customer-filters/customer-filters.component';
+import { CustomerHeroComponent } from './components/customer-hero/customer-hero.component';
+import { CustomerServiceDetailsComponent } from './components/customer-service-details/customer-service-details.component';
+import { CUSTOMER_ALL_CATEGORY, CUSTOMER_CATEGORIES } from './customer.constants';
+import { CustomerServiceFilterPipe } from './pipes/customer-service-filter.pipe';
 
 @Component({
   selector: 'app-customer-dashboard',
-  imports: [...importBase, ServiceCardComponent, StatusBadgeComponent],
+  imports: [
+    ...importBase,
+    ServiceCardComponent,
+    CustomerAppointmentsComponent,
+    CustomerFiltersComponent,
+    CustomerHeroComponent,
+    CustomerServiceDetailsComponent,
+    CustomerServiceFilterPipe,
+  ],
   templateUrl: './customer-dashboard.component.html',
   styleUrls: ['./customer-dashboard.component.scss'],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
   public services: ServiceDto[] = [];
-  public filteredServices: ServiceDto[] = [];
   public appointments: AppointmentDto[] = [];
-  public reviewsMap: Record<string, AnonymousReviewDto[]> = {};
-  public blockedDaysByService: Record<string, string[]> = {};
-  public pendingRating: Record<string, number> = {};
-  public pendingComment: Record<string, string> = {};
-  public hoverRating: Record<string, number> = {};
-  public selectedDayByService: Record<string, string | null> = {};
 
-  public searchControl = new FormControl('');
-  public selectedCategory = 'Todas';
+  public searchTerm = '';
+  public selectedCategory = CUSTOMER_ALL_CATEGORY;
   public expandedId: string | null = null;
 
   public isLoadingServices = false;
   public isLoadingAppointments = false;
-  public isScheduling: string | null = null;
-  public isReviewing: string | null = null;
-  public isLoadingReviews: string | null = null;
   public isPayingAppointment: string | null = null;
 
-  public readonly categories = CATEGORIES;
+  public totalServices = 0;
+  public uniqueProviders = 0;
+  public condoCity = 'Nao definido';
+
+  public readonly categories = CUSTOMER_CATEGORIES;
 
   constructor(
     private readonly onboardingService: OnboardingService,
     private readonly serviceApi: ServiceApiService,
     private readonly appointmentApi: AppointmentApiService,
-    private readonly reviewApi: ReviewApiService,
     private readonly dialog: MatDialog,
-    private readonly snackBar: SnackBarService,
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.searchControl.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.applyFilters();
-    });
-
+    this.condoCity = this.onboardingService.profile.condominiumAddress?.city || 'Nao definido';
     this.loadServices();
     this.loadMyAppointments();
-  }
-
-  get totalServices(): number {
-    return this.services.length;
-  }
-
-  get condoCity(): string {
-    return this.onboardingService.profile.condominiumAddress?.city || 'Nao definido';
-  }
-
-  get uniqueProviders(): number {
-    return new Set(this.services.map((service) => service.providerId)).size;
   }
 
   public loadServices(): void {
@@ -99,11 +77,20 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
     this.serviceApi
       .findAll()
-      .pipe(finalize(() => (this.isLoadingServices = false)))
+      .pipe(
+        finalize(() => (this.isLoadingServices = false)),
+        takeUntil(this.unsubscribe$),
+      )
       .subscribe({
         next: (services) => {
-          this.services = services;
-          this.applyFilters();
+          this.services = Array.isArray(services) ? services : [];
+          this.updateStats();
+        },
+        error: (err) => {
+          console.error('Erro ao carregar services:', err);
+          this.services = [];
+          this.totalServices = 0;
+          this.uniqueProviders = 0;
         },
       });
   }
@@ -113,11 +100,16 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
     this.appointmentApi
       .findMine()
-      .pipe(finalize(() => (this.isLoadingAppointments = false)))
+      .pipe(
+        finalize(() => (this.isLoadingAppointments = false)),
+        takeUntil(this.unsubscribe$),
+      )
       .subscribe({
         next: (appointments) => {
           const appointmentsArray = Array.isArray(appointments) ? appointments : [];
-          this.appointments = appointmentsArray.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+          this.appointments = appointmentsArray.sort((a, b) =>
+            b.createdAt.localeCompare(a.createdAt),
+          );
         },
         error: (err) => {
           console.error('Erro ao carregar appointments:', err);
@@ -126,92 +118,23 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       });
   }
 
-  public applyFilters(): void {
-    const search = (this.searchControl.value || '').toLowerCase().trim();
-
-    this.filteredServices = this.services.filter((service) => {
-      const matchesCategory =
-        this.selectedCategory === 'Todas' || service.category === this.selectedCategory;
-
-      const matchesSearch =
-        !search ||
-        service.name.toLowerCase().includes(search) ||
-        service.description.toLowerCase().includes(search) ||
-        service.category.toLowerCase().includes(search);
-
-      return matchesCategory && matchesSearch;
-    });
+  public onSearchTermChange(searchTerm: string): void {
+    this.searchTerm = searchTerm;
   }
 
   public selectCategory(category: string): void {
     this.selectedCategory = category;
-    this.applyFilters();
   }
 
   public toggleExpand(service: ServiceDto): void {
-    const isOpening = this.expandedId !== service.id;
-    this.expandedId = isOpening ? service.id : null;
-
-    if (!isOpening) {
-      return;
-    }
-
-    this.serviceApi.trackMetric(service.id, 'clicks').subscribe();
-    this.loadReviews(service.id);
-    this.loadServiceAvailability(service.id);
-  }
-
-  public loadReviews(serviceId: string): void {
-    if (this.reviewsMap[serviceId]) {
-      return;
-    }
-
-    this.isLoadingReviews = serviceId;
-
-    this.reviewApi
-      .findByService(serviceId)
-      .pipe(finalize(() => (this.isLoadingReviews = null)))
-      .subscribe({
-        next: (reviews) => {
-          this.reviewsMap[serviceId] = reviews;
-        },
-      });
-  }
-
-  public loadServiceAvailability(serviceId: string): void {
-    this.appointmentApi.findByService(serviceId).subscribe({
-      next: (appointments) => {
-        const appointmentsArray = Array.isArray(appointments) ? appointments : [];
-        this.blockedDaysByService[serviceId] = appointmentsArray
-          .filter((appointment) => BLOCKING_STATUSES.includes(appointment.status))
-          .map((appointment) => appointment.scheduledDay);
-      },
-      error: (err) => {
-        console.error('Erro ao carregar disponibilidade:', err);
-        this.blockedDaysByService[serviceId] = [];
-      },
-    });
-  }
-
-  public isDayUnavailable(serviceId: string, day: string): boolean {
-    return (this.blockedDaysByService[serviceId] || []).includes(day);
-  }
-
-  public selectDay(serviceId: string, day: string): void {
-    if (this.isDayUnavailable(serviceId, day)) {
-      return;
-    }
-
-    this.selectedDayByService[serviceId] =
-      this.selectedDayByService[serviceId] === day ? null : day;
-  }
-
-  public getSelectedDay(serviceId: string): string | null {
-    return this.selectedDayByService[serviceId] || null;
+    this.expandedId = this.expandedId === service.id ? null : service.id;
   }
 
   public contactWhatsApp(service: ServiceDto): void {
-    this.serviceApi.trackMetric(service.id, 'interests').subscribe();
+    this.serviceApi
+      .trackMetric(service.id, 'interests')
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
 
     const phone = service.contact.replace(/\D/g, '');
     const message = encodeURIComponent(
@@ -221,30 +144,8 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     window.open(`https://wa.me/55${phone}?text=${message}`, '_blank');
   }
 
-  public onSchedule(service: ServiceDto): void {
-    const day = this.getSelectedDay(service.id);
-    if (!day || this.isDayUnavailable(service.id, day)) {
-      return;
-    }
-
-    this.isScheduling = service.id;
-
-    const payload: CreateAppointmentPayload = {
-      serviceId: service.id,
-      scheduledDate: this.resolveNextDateForDay(day),
-      scheduledDay: day,
-      notes: `Agendamento solicitado pelo mural para ${day}.`,
-    };
-
-    this.appointmentApi
-      .create(payload)
-      .pipe(finalize(() => (this.isScheduling = null)))
-      .subscribe({
-        next: (appointment) => {
-          this.selectedDayByService[service.id] = null;
-          this.appointments = [appointment, ...this.appointments];
-        },
-      });
+  public addAppointment(appointment: AppointmentDto): void {
+    this.appointments = [appointment, ...this.appointments];
   }
 
   public payAppointment(appointment: AppointmentDto): void {
@@ -253,143 +154,74 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       width: '400px',
     });
 
-    dialogRef.afterClosed().subscribe((selectedMethod: PaymentMethod) => {
-      if (!selectedMethod) return;
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((selectedMethod: PaymentMethod) => {
+        if (!selectedMethod) {
+          return;
+        }
 
-      this.isPayingAppointment = appointment.id;
+        this.isPayingAppointment = appointment.id;
 
-      this.appointmentApi
-        .createPayment(appointment.id, { method: selectedMethod })
-        .pipe(finalize(() => (this.isPayingAppointment = null)))
-        .subscribe({
-          next: (paymentSession: AppointmentPaymentDto) => {
-            this.replaceAppointment(paymentSession.appointment);
-            if (selectedMethod === 'credit_card' && paymentSession.checkoutUrl) {
-              window.location.href = paymentSession.checkoutUrl;
-              return;
-            }
+        this.appointmentApi
+          .createPayment(appointment.id, { method: selectedMethod })
+          .pipe(
+            finalize(() => (this.isPayingAppointment = null)),
+            takeUntil(this.unsubscribe$),
+          )
+          .subscribe({
+            next: (paymentSession: AppointmentPaymentDto) => {
+              this.replaceAppointment(paymentSession.appointment);
 
-            if (selectedMethod === 'pix' && (paymentSession.qrCode || paymentSession.qrCodeText)) {
-              this.dialog.open(PixQrDialog, {
-                data: {
-                  qrCode: paymentSession.qrCode,
-                  qrCodeText: paymentSession.qrCodeText,
-                },
-                width: '400px',
-              });
-            }
+              if (selectedMethod === 'credit_card' && paymentSession.checkoutUrl) {
+                window.location.href = paymentSession.checkoutUrl;
+                return;
+              }
 
-            this.loadServiceAvailability(appointment.serviceId);
-          },
-        });
-    });
-  }
-
-  public hoverStar(serviceId: string, star: number): void {
-    this.hoverRating[serviceId] = star;
-  }
-
-  public setRating(serviceId: string, star: number): void {
-    this.pendingRating[serviceId] = star;
-  }
-
-  public setComment(serviceId: string, comment: string): void {
-    this.pendingComment[serviceId] = comment;
-  }
-
-  public getRatingLabel(rating: number): string {
-    const labels: Record<number, string> = {
-      1: 'Pessimo',
-      2: 'Ruim',
-      3: 'Regular',
-      4: 'Bom',
-      5: 'Excelente',
-    };
-
-    return labels[rating] || '';
-  }
-
-  public canPayAppointment(appointment: AppointmentDto): boolean {
-    return appointment.status === 'confirmed' || appointment.status === 'awaiting_payment';
+              if (
+                selectedMethod === 'pix' &&
+                (paymentSession.qrCode || paymentSession.qrCodeText)
+              ) {
+                this.dialog.open(PixQrDialog, {
+                  data: {
+                    qrCode: paymentSession.qrCode,
+                    qrCodeText: paymentSession.qrCodeText,
+                  },
+                  width: '400px',
+                });
+              }
+            },
+          });
+      });
   }
 
   public openChat(appointment: AppointmentDto): void {
     this.dialog.open(ChatDialogComponent, {
       data: {
         appointmentId: appointment.id,
-        recipientName: appointment.service?.provider?.displayName || 'Prestador'
+        recipientName: appointment.service?.provider?.displayName || 'Prestador',
       },
       width: '450px',
-      maxWidth: '95vw'
+      maxWidth: '95vw',
     });
   }
 
-  public submitReview(service: ServiceDto): void {
-    const rating = this.pendingRating[service.id];
-    if (!rating) {
-      return;
-    }
-
-    this.isReviewing = service.id;
-
-    const payload: CreateReviewPayload = {
-      serviceId: service.id,
-      rating,
-      comment: this.pendingComment[service.id] || undefined,
-    };
-
-    this.reviewApi
-      .create(payload)
-      .pipe(finalize(() => (this.isReviewing = null)))
-      .subscribe({
-        next: (newReview) => {
-          this.pendingRating[service.id] = 0;
-          this.pendingComment[service.id] = '';
-          this.reviewsMap[service.id] = [newReview, ...(this.reviewsMap[service.id] || [])];
-          this.refreshService(service.id);
-        },
-      });
+  public replaceService(updatedService: ServiceDto): void {
+    this.services = this.services.map((service) =>
+      service.id === updatedService.id ? updatedService : service,
+    );
+    this.updateStats();
   }
 
-  public refreshService(serviceId: string): void {
-    this.serviceApi.findOne(serviceId).subscribe({
-      next: (updatedService) => {
-        this.services = this.services.map((service) =>
-          service.id === updatedService.id ? updatedService : service,
-        );
-        this.applyFilters();
-      },
-    });
+  private updateStats(): void {
+    this.totalServices = this.services.length;
+    this.uniqueProviders = new Set(this.services.map((service) => service.providerId)).size;
   }
 
   private replaceAppointment(updated: AppointmentDto): void {
     this.appointments = this.appointments.map((appointment) =>
       appointment.id === updated.id ? updated : appointment,
     );
-  }
-
-  private resolveNextDateForDay(day: string): string {
-    const dayMap: Record<string, number> = {
-      Domingo: 0,
-      'Segunda-feira': 1,
-      Segunda: 1,
-      Terca: 2,
-      'Terça-feira': 2,
-      Quarta: 3,
-      'Quarta-feira': 3,
-      Quinta: 4,
-      'Quinta-feira': 4,
-      Sexta: 5,
-      'Sexta-feira': 5,
-      Sabado: 6,
-      Sábado: 6,
-    };
-
-    const targetDay = dayMap[day] ?? new Date().getDay();
-    const currentDate = new Date();
-    const diff = (targetDay - currentDate.getDay() + 7) % 7 || 7;
-
-    currentDate.setDate(currentDate.getDate() + diff);
-    return currentDate.toISOString().split('T')[0];
   }
 }

@@ -1,15 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
-
 
 @Component({
   selector: 'app-full',
@@ -24,25 +25,37 @@ import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
     MatIconModule,
     MatButtonModule,
     TranslateModule,
-    MuralTopbarComponent
+    MuralTopbarComponent,
   ],
   templateUrl: './full.component.html',
-  styleUrls: ['./full.component.scss'],})
+  styleUrls: ['./full.component.scss'],
+})
 export class FullComponent {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly onboardingService = inject(OnboardingService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   userRole = signal<'provider' | 'customer'>('customer');
   userName = signal('');
 
   constructor() {
-    const user = this.authService.currentUser;
-    if (user) {
-      this.userName.set(user.givenName || user.displayName || '');
-      // Lógica simples para determinar role baseado no user, ajuste conforme sua implementação real
-      // @ts-ignore - A propriedade role pode não existir no tipo User atual, mas é usada na lógica
-      this.userRole.set(user.role === 'provider' ? 'provider' : 'customer');
-    }
+    this.authService.$user
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        this.userName.set(user?.givenName || user?.displayName || '');
+      });
+
+    this.onboardingService.profile$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((profile) => {
+        this.userRole.set(profile.role ?? 'customer');
+      });
+
+    this.onboardingService
+      .syncFromBackend()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
   }
 
   dashboardLink() {

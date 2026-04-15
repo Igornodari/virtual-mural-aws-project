@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { OnboardingService } from '../services/onboarding.service';
 import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
@@ -14,6 +15,7 @@ export const onboardingGuard: CanActivateFn = async () => {
     return router.parseUrl(ROUTE_PATHS.login);
   }
 
+  await firstValueFrom(onboardingService.syncFromBackend());
   const nextRoute = onboardingService.resolveNextRoute();
   return nextRoute.startsWith('/mural/') ? true : router.parseUrl(nextRoute);
 };

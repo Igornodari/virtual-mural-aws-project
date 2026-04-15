@@ -1,0 +1,5 @@
+<div class="rating-stars" [class.rating-stars--sm]="size === 'sm'">
+  @for (star of stars; track star) {
+    <mat-icon class="rating-star" [class.rating-star--filled]="star <= rating">star</mat-icon>
+  }
+</div>

@@ -1,0 +1,24 @@
+<section class="customer-hero">
+  <div class="customer-hero__content">
+    <div class="customer-hero__text">
+      <h1 class="customer-title m-0">{{ 'APP.CUSTOMER.HERO_TITLE' | translate }}</h1>
+      <p class="text-muted m-0">
+        {{ 'APP.CUSTOMER.HERO_SUBTITLE' | translate }}
+        <strong>{{ condoCity }}</strong
+        >.
+      </p>
+    </div>
+
+    <div class="customer-stats">
+      <div class="customer-stat">
+        <span class="customer-stat-value">{{ totalServices }}</span>
+        <span class="text-muted">{{ 'APP.CUSTOMER.STATS_SERVICES' | translate }}</span>
+      </div>
+
+      <div class="customer-stat">
+        <span class="customer-stat-value">{{ uniqueProviders }}</span>
+        <span class="text-muted">{{ 'APP.CUSTOMER.STATS_PROVIDERS' | translate }}</span>
+      </div>
+    </div>
+  </div>
+</section>
