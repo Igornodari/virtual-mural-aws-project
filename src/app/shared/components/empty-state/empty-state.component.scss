@@ -1,0 +1,25 @@
+.empty-state {
+  width: 100%;
+  padding: 48px 24px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.empty-state__icon {
+  width: 48px;
+  height: 48px;
+  font-size: 48px;
+  opacity: 0.35;
+}
+
+.empty-state__title {
+  font-weight: 600;
+}
+
+.empty-state__message {
+  max-width: 520px;
+}

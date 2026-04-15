@@ -14,26 +14,18 @@
   />
 
   @if (isLoadingServices) {
-    <div class="d-flex justify-content-center m-t-20">
-      <mat-spinner diameter="48" />
-    </div>
+    <app-loading-state [diameter]="48" />
   } @else {
     @let visibleServices = services | customerServiceFilter: searchTerm : selectedCategory;
 
     @if (!visibleServices.length) {
       <div class="d-flex justify-content-center">
-        <mat-card class="empty-state-card">
-          <mat-card-header class="d-flex align-items-center justify-content-center">
-            <mat-icon class="m-l-10 m-r-10" color="warn">search_off</mat-icon>
-            <mat-card-title>{{ 'APP.CUSTOMER.NO_SERVICES' | translate }}</mat-card-title>
-          </mat-card-header>
-
-          <mat-card-content>
-            <p class="text-muted m-0 text-center">
-              {{ 'APP.CUSTOMER.NO_SERVICES_HINT' | translate }}
-            </p>
-          </mat-card-content>
-        </mat-card>
+        <app-empty-state
+          class="empty-state-card"
+          icon="search_off"
+          title="APP.CUSTOMER.NO_SERVICES"
+          message="APP.CUSTOMER.NO_SERVICES_HINT"
+        />
       </div>
     } @else {
       <section class="customer-grid">

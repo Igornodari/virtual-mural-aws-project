@@ -1,38 +1,30 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environments';
+
+import { QueryParams, RequestService } from './request.service';
 
 /**
- * Serviço base para comunicação com o backend NestJS (Virtual Mural API).
- * O interceptor de autenticação injeta automaticamente o JWT do Cognito
- * em todas as requisições feitas por este serviço.
+ * Facade de API do mural.
+ * Mantem os services de dominio desacoplados do HttpClient e reutiliza o RequestService
+ * como cliente HTTP base da aplicacao.
  */
 @Injectable({ providedIn: 'root' })
 export class MuralApiService {
-  private readonly base = environment.apiBaseUrl;
+  constructor(private readonly request: RequestService) {}
 
-  constructor(private readonly http: HttpClient) {}
-
-  get<T>(path: string, params?: Record<string, string | boolean>): Observable<T> {
-    let httpParams = new HttpParams();
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => {
-        httpParams = httpParams.set(k, String(v));
-      });
-    }
-    return this.http.get<T>(`${this.base}${path}`, { params: httpParams });
+  get<T>(path: string, params?: QueryParams): Observable<T> {
+    return this.request.get<T>(path, { params });
   }
 
   post<T>(path: string, body: unknown): Observable<T> {
-    return this.http.post<T>(`${this.base}${path}`, body);
+    return this.request.post<T, unknown>(path, body);
   }
 
   patch<T>(path: string, body: unknown): Observable<T> {
-    return this.http.patch<T>(`${this.base}${path}`, body);
+    return this.request.patchPath<T, unknown>(path, body);
   }
 
   delete<T>(path: string): Observable<T> {
-    return this.http.delete<T>(`${this.base}${path}`);
+    return this.request.deletePath<T>(path);
   }
 }

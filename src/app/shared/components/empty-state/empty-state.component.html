@@ -1,0 +1,17 @@
+<div class="empty-state" [class.surface-card]="surface">
+  <mat-icon class="empty-state__icon">{{ icon }}</mat-icon>
+
+  @if (title) {
+    <p class="empty-state__title m-0">
+      {{ translateText ? (title | translate) : title }}
+    </p>
+  }
+
+  @if (message) {
+    <span class="empty-state__message text-muted text-center">
+      {{ translateText ? (message | translate) : message }}
+    </span>
+  }
+
+  <ng-content />
+</div>

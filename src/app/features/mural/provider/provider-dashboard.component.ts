@@ -2,9 +2,17 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 
 import { FormBuilder, Validators } from '@angular/forms';
-import { AppointmentApiService, AppointmentDto, AppointmentStatus } from 'src/app/core/services/appointment-api.service';
+import {
+  AppointmentApiService,
+  AppointmentDto,
+  AppointmentStatus,
+} from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
-import { CreateServicePayload, ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import {
+  CreateServicePayload,
+  ServiceApiService,
+  ServiceDto,
+} from 'src/app/core/services/service-api.service';
 
 import BaseComponent from 'src/app/components/base.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
@@ -14,6 +22,13 @@ import { ServiceCardComponent } from 'src/app/shared/components/service-card/ser
 import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
+import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
+import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
+import {
+  canCancelAppointment,
+  canCompleteAppointment,
+  canConfirmAppointment,
+} from 'src/app/shared/utils/appointment-status.util';
 
 @Component({
   selector: 'app-provider-dashboard',
@@ -21,7 +36,9 @@ import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-
     ...importBase,
     ServiceAnalyticsComponent,
     ServiceCardComponent,
-    StatusBadgeComponent
+    StatusBadgeComponent,
+    EmptyStateComponent,
+    LoadingStateComponent,
   ],
   templateUrl: './provider-dashboard.component.html',
   styleUrls: ['./provider-dashboard.component.scss'],
@@ -95,11 +112,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
     this.isLoadingAppointments.set(true);
 
-    forkJoin(
-      services.map((service) =>
-        this.appointmentApi.findByService(service.id),
-      ),
-    ).subscribe({
+    forkJoin(services.map((service) => this.appointmentApi.findByService(service.id))).subscribe({
       next: (appointmentsByService) => {
         const appointments = appointmentsByService
           .flat()
@@ -132,18 +145,16 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     this.averageRating.set(Math.round(weightedAverage * 10) / 10);
   }
 
-
-
   canConfirm(appointment: AppointmentDto): boolean {
-    return appointment.status === 'pending';
+    return canConfirmAppointment(appointment);
   }
 
   canCancel(appointment: AppointmentDto): boolean {
-    return appointment.status === 'pending' || appointment.status === 'confirmed';
+    return canCancelAppointment(appointment);
   }
 
   canComplete(appointment: AppointmentDto): boolean {
-    return appointment.status === 'paid';
+    return canCompleteAppointment(appointment);
   }
 
   updateAppointmentStatus(appointment: AppointmentDto, status: AppointmentStatus): void {
@@ -153,11 +164,15 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
       next: (updatedAppointment) => {
         this.appointments.update((currentAppointments) =>
           currentAppointments.map((currentAppointment) =>
-            currentAppointment.id === updatedAppointment.id ? updatedAppointment : currentAppointment,
+            currentAppointment.id === updatedAppointment.id
+              ? updatedAppointment
+              : currentAppointment,
           ),
         );
         this.pendingAppointments.set(
-          this.appointments().filter((currentAppointment) => currentAppointment.status === 'pending').length,
+          this.appointments().filter(
+            (currentAppointment) => currentAppointment.status === 'pending',
+          ).length,
         );
         this.isUpdatingAppointment.set(null);
       },
@@ -270,11 +285,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     this.dialog.open(ChatDialogComponent, {
       data: {
         appointmentId: appointment.id,
-        recipientName: appointment.customer?.displayName || 'Cliente'
+        recipientName: appointment.customer?.displayName || 'Cliente',
       },
       width: '450px',
-      maxWidth: '95vw'
+      maxWidth: '95vw',
     });
   }
-
 }
