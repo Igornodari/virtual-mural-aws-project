@@ -1,0 +1,23 @@
+.appointments-panel {
+  padding: 20px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appointments-list {
+  width: 100%;
+}
+
+.appointment-item {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: color-mix(in oklab, var(--mat-sys-primary) 4%, transparent);
+}
+
+.section-title-lg {
+  font-size: 20px;
+  font-weight: 700;
+}
