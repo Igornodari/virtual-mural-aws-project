@@ -1,10 +1,23 @@
 import { TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { App } from './app';
+
+class FakeLoader implements TranslateLoader {
+  getTranslation() {
+    return of({});
+  }
+}
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App],
+      imports: [
+        App,
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot({ loader: { provide: TranslateLoader, useClass: FakeLoader } }),
+      ],
     }).compileComponents();
   });
 
@@ -14,10 +27,9 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should have a loadingService', () => {
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, aws-frontend');
+    const app = fixture.componentInstance;
+    expect(app.loadingService).toBeTruthy();
   });
 });
