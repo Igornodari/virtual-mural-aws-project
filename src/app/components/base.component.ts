@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, shareReplay, take } from 'rxjs';
 import { AuthService } from '../core/services/auth.service';
 import { CondominiumApiService } from '../core/services/condominium-api.service';
-import { RequestService } from '../core/services/request.service';
 import { UserApiService } from '../core/services/user-api.service';
 import { User, Condominium } from '../shared/types';
 import { Router } from '@angular/router';
@@ -24,9 +23,7 @@ export default abstract class BaseComponent {
   });
 
   protected readonly destroyRef = inject(DestroyRef);
-
   private readonly _authService = inject(AuthService);
-  private readonly _requestService = inject(RequestService);
   private readonly _router = inject(Router);
   private readonly _ngZone = inject(NgZone);
 
@@ -97,10 +94,6 @@ export default abstract class BaseComponent {
 
   get authService() {
     return this._authService;
-  }
-
-  get requestService() {
-    return this._requestService;
   }
 
   protected async navigateTo(path: string): Promise<void> {

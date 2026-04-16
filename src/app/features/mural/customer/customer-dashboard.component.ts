@@ -13,7 +13,6 @@ import {
   AppointmentDto,
   AppointmentPaymentDto,
 } from 'src/app/core/services/appointment-api.service';
-import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 import { AppUserProfileDto } from 'src/app/core/services/user-api.service';
 import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
@@ -43,7 +42,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./customer-dashboard.component.scss'],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
-  private readonly onboardingService = inject(OnboardingService);
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly dialog = inject(MatDialog);
@@ -92,7 +90,6 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
       .subscribe(({ profile, services, appointments }) => {
         this.condoCity =
           profile?.condominium?.name ||
-          this.onboardingService.profile?.condominiumAddress?.city ||
           'Nao definido';
 
         this.services = Array.isArray(services) ? services : [];
