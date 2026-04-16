@@ -1,0 +1,47 @@
+name: PR Validation — Frontend
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Check branch name follows git flow
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|release|chore)/.+ ]]; then
+            echo "❌ Branch '$BRANCH' não segue git flow."
+            echo "Esperado: feature/*, bugfix/*, hotfix/*, release/*, chore/*"
+            exit 1
+          fi
+          echo "✅ Branch '$BRANCH' válida."
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (zero warnings)
+        run: npm run lint -- --max-warnings=0
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests (Vitest)
+        run: npm run test -- --run
+
+      - name: Build check
+        run: npm run build -- --configuration=production
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
