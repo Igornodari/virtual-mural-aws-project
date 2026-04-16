@@ -8,8 +8,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 export class NewLine implements PipeTransform {
   private sanitizer = inject(DomSanitizer);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

@@ -42,8 +42,6 @@ export class RequestService {
     BRASIL_API,
   };
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

@@ -12,8 +12,6 @@ import { QueryParams, RequestService } from './request.service';
 export class MuralApiService {
   private readonly request = inject(RequestService);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

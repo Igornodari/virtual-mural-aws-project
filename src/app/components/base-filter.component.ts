@@ -18,9 +18,6 @@ export default class BaseFilterComponent<T> extends BaseComponent implements Aft
   protected _formBuilder: FormBuilder;
   protected _cdr: ChangeDetectorRef;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     super();
     this.filterService = inject(FilterService);

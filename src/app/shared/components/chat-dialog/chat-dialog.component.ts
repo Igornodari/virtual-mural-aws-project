@@ -48,8 +48,6 @@ export class ChatDialogComponent implements OnInit {
 
   currentUserId = '';
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.currentUserId = this.authService.currentUser?.id || '';

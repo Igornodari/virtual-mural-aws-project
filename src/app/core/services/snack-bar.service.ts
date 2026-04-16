@@ -7,8 +7,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class SnackBarService {
   private readonly snackBar = inject(MatSnackBar);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

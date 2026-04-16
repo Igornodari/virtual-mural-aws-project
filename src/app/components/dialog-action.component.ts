@@ -31,9 +31,6 @@ export class AppDialogActionComponent {
   public type = 'action';
   public descriptionRequerid = true;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     this.type = this.data?.type ?? this.type;
     this.title = this.data?.title ?? this.title;

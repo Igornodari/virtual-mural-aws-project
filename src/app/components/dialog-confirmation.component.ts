@@ -30,8 +30,6 @@ export class AppDialogConfirmationComponent {
   public title = 'DIALOG_COMPONENT.PROCEED.TITLE';
   public subTitle = 'DIALOG_COMPONENT.PROCEED.SUBTITLE';
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   constructor() {
     this.title = this.data?.title ?? this.title;
 

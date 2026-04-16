@@ -19,8 +19,6 @@ export interface SendMessagePayload {
 export class ChatApiService {
   private readonly api = inject(MuralApiService);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 
