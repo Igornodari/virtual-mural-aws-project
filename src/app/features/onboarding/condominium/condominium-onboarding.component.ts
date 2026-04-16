@@ -9,6 +9,7 @@ import BaseComponent from '../../../components/base.component';
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ROUTE_PATHS } from '../../../shared/constant/route-paths.constant';
 import { CondominiumAddress } from '../../../shared/types';
+import { ViaCepResponse } from '../../../core/services/condominium-api.service';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { finalize } from 'rxjs';
 

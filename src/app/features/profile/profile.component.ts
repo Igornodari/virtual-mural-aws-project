@@ -14,6 +14,7 @@ import { finalize } from 'rxjs';
 import BaseComponent from '../../components/base.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { CreateCondominiumPayload } from '../../core/services/condominium-api.service';
+import { AppUserProfileDto, UpdateProfilePayload } from '../../core/services/user-api.service';
 
 @Component({
   selector: 'app-profile',
