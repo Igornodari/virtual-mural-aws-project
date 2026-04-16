@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -29,26 +29,29 @@ export interface ChatDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    TranslateModule
+    TranslateModule,
   ],
   templateUrl: './chat-dialog.component.html',
-  styleUrls: ['./chat-dialog.component.scss']
+  styleUrls: ['./chat-dialog.component.scss'],
 })
 export class ChatDialogComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<ChatDialogComponent>>(MatDialogRef);
+  data = inject<ChatDialogData>(MAT_DIALOG_DATA);
+
   private readonly chatApi = inject(ChatApiService);
   private readonly authService = inject(AuthService);
-  
+
   readonly messages = signal<ChatMessageDto[]>([]);
   readonly isLoading = signal(false);
   readonly isSending = signal(false);
   readonly newMessage = signal('');
-  
+
   currentUserId = '';
 
-  constructor(
-    public dialogRef: MatDialogRef<ChatDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ChatDialogData
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.currentUserId = this.authService.currentUser?.id || '';
   }
 
@@ -58,14 +61,15 @@ export class ChatDialogComponent implements OnInit {
 
   loadMessages(): void {
     this.isLoading.set(true);
-    this.chatApi.getMessages(this.data.appointmentId).pipe(
-      finalize(() => this.isLoading.set(false)),
-    ).subscribe({
-      next: (msgs) => {
-        this.messages.set(msgs);
-        this.scrollToBottom();
-      },
-    });
+    this.chatApi
+      .getMessages(this.data.appointmentId)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (msgs) => {
+          this.messages.set(msgs);
+          this.scrollToBottom();
+        },
+      });
   }
 
   onSendMessage(): void {
@@ -73,18 +77,19 @@ export class ChatDialogComponent implements OnInit {
     if (!content || this.isSending()) return;
 
     this.isSending.set(true);
-    this.chatApi.sendMessage({
-      appointmentId: this.data.appointmentId,
-      content
-    }).pipe(
-      finalize(() => this.isSending.set(false)),
-    ).subscribe({
-      next: (msg) => {
-        this.messages.update(prev => [...prev, msg]);
-        this.newMessage.set('');
-        this.scrollToBottom();
-      },
-    });
+    this.chatApi
+      .sendMessage({
+        appointmentId: this.data.appointmentId,
+        content,
+      })
+      .pipe(finalize(() => this.isSending.set(false)))
+      .subscribe({
+        next: (msg) => {
+          this.messages.update((prev) => [...prev, msg]);
+          this.newMessage.set('');
+          this.scrollToBottom();
+        },
+      });
   }
 
   private scrollToBottom(): void {

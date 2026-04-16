@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-export type Filter = {
+export interface Filter {
 	formValue?: any;
 	search?: any;
 	name: string;
@@ -9,13 +9,13 @@ export type Filter = {
 	pageSize?: number;
 	totalPage?: number;
 	sort?: string;
-};
+}
 
 @Injectable({
 	providedIn: 'root',
 })
 export class FilterService {
-	public data: Array<Filter> = [];
+	public data: Filter[] = [];
 
 	constructor() {}
 

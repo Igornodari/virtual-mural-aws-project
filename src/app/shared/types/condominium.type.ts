@@ -1,6 +1,6 @@
 import { Status } from './index';
 
-export type Condominium = {
+export interface Condominium {
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -22,4 +22,4 @@ export type Condominium = {
   addressState?: string;
   latitude?: number;
   longitude?: number;
-};
+}

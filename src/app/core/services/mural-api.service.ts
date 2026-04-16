@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { QueryParams, RequestService } from './request.service';
@@ -10,7 +10,12 @@ import { QueryParams, RequestService } from './request.service';
  */
 @Injectable({ providedIn: 'root' })
 export class MuralApiService {
-  constructor(private readonly request: RequestService) {}
+  private readonly request = inject(RequestService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   get<T>(path: string, params?: QueryParams): Observable<T> {
     return this.request.get<T>(path, { params });

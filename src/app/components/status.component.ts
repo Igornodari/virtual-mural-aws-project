@@ -1,9 +1,10 @@
 import {
-	Component,
-	Input,
-	ViewEncapsulation,
-	OnChanges,
-	SimpleChanges,
+  Component,
+  Input,
+  ViewEncapsulation,
+  OnChanges,
+  SimpleChanges,
+  inject,
 } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { Status } from '../shared/types';
@@ -11,24 +12,29 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-	standalone: true,
-	selector: 'app-status',
-	imports: [MatChipsModule, TranslateModule, CommonModule],
-	templateUrl: './status.component.html',
-	encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  selector: 'app-status',
+  imports: [MatChipsModule, TranslateModule, CommonModule],
+  templateUrl: './status.component.html',
+  encapsulation: ViewEncapsulation.None,
 })
 export class StatusComponent implements OnChanges {
-	@Input()
+  private translate = inject(TranslateService);
+
+  @Input()
   status!: Status;
-	@Input() translationKey?: string;
+  @Input() translationKey?: string;
 
-	constructor(private translate: TranslateService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-	ngOnChanges(changes: SimpleChanges) {
-		if ((changes['status'] || changes['translationKey']) && this.translationKey) {
-			this.translate.get(this.translationKey).subscribe((translatedLabel: string) => {
-				this.status.label = translatedLabel.toUpperCase();
-			});
-		}
-	}
+  constructor() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if ((changes['status'] || changes['translationKey']) && this.translationKey) {
+      this.translate.get(this.translationKey).subscribe((translatedLabel: string) => {
+        this.status.label = translatedLabel.toUpperCase();
+      });
+    }
+  }
 }

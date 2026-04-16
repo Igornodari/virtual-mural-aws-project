@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
 
@@ -38,7 +38,7 @@ export interface ServiceAnalyticsDto {
   rating: number;
   totalReviews: number;
   ratingDistribution: Record<number, number>;
-  recentComments: Array<{ rating: number; comment: string; createdAt: string }>;
+  recentComments: { rating: number; comment: string; createdAt: string }[];
 }
 
 export interface CreateServicePayload {
@@ -56,7 +56,12 @@ export type TrackMetric = 'clicks' | 'interests' | 'completions' | 'abandonments
 
 @Injectable({ providedIn: 'root' })
 export class ServiceApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly api = inject(MuralApiService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   /** Lista todos os serviços do condomínio do usuário autenticado */
   findAll(): Observable<ServiceDto[]> {

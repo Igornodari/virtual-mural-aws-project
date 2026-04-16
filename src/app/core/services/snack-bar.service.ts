@@ -1,25 +1,30 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
-	providedIn: 'root',
+  providedIn: 'root',
 })
 export class SnackBarService {
-	constructor(private readonly snackBar: MatSnackBar) {}
+  private readonly snackBar = inject(MatSnackBar);
 
-	error(message: string): void {
-		this.open(message, 'snackbar-error', 4000);
-	}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-	warning(message: string): void {
-		this.open(message, 'snackbar-warning', 3500);
-	}
+  constructor() {}
 
-	success(message: string): void {
-		this.open(message, 'snackbar-success', 3000);
-	}
+  error(message: string): void {
+    this.open(message, 'snackbar-error', 4000);
+  }
 
-	private open(message: string, panelClass: string, duration: number): void {
-		this.snackBar.open(message, 'Fechar', { duration, panelClass: [panelClass] });
-	}
+  warning(message: string): void {
+    this.open(message, 'snackbar-warning', 3500);
+  }
+
+  success(message: string): void {
+    this.open(message, 'snackbar-success', 3000);
+  }
+
+  private open(message: string, panelClass: string, duration: number): void {
+    this.snackBar.open(message, 'Fechar', { duration, panelClass: [panelClass] });
+  }
 }

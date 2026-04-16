@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
+import { Directive, EventEmitter, HostListener, Output, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { URI_PATH } from '../constant/path.contant';
 import { AddressData } from '../types/address-data';
@@ -9,11 +9,15 @@ import { RequestService } from '../../core/services/request.service';
   standalone: true,
 })
 export class CepValidatorDirective {
+  private requestService = inject(RequestService);
+
   @Output() addressDataFetched = new EventEmitter<AddressData>();
   @Output() cepInvalid = new EventEmitter<void>();
 
-  constructor(private requestService: RequestService) {
-  }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   @HostListener('input', ['$event'])
   onInput(event: Event) {
@@ -36,9 +40,8 @@ export class CepValidatorDirective {
   }
 
   fetchCepData(cep: string): Observable<AddressData> {
-    return this.requestService.get<AddressData>(
-      `${URI_PATH.BRASIL_API.CEP}${cep}`,
-      { api: 'BRASIL_API' },
-    );
+    return this.requestService.get<AddressData>(`${URI_PATH.BRASIL_API.CEP}${cep}`, {
+      api: 'BRASIL_API',
+    });
   }
 }

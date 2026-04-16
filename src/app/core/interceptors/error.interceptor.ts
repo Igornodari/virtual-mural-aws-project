@@ -4,15 +4,15 @@ import { catchError, tap, throwError } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { SnackBarService } from '../services/snack-bar.service';
 
-type AwsErrorPayload = {
+interface AwsErrorPayload {
   __type?: string;
   message?: string | string[];
   warning?: string | string[];
   success?: string;
   successMessage?: string;
   warnings?: string[];
-  errors?: Array<{ message?: string }>;
-};
+  errors?: { message?: string }[];
+}
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const errorHandler = inject(ErrorHandler);

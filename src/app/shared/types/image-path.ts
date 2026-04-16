@@ -1,4 +1,4 @@
-export type ImagePath = {
+export interface ImagePath {
 	name: string;
 	path: string;
 }

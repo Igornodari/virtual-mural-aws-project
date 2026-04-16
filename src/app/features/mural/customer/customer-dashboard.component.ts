@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, takeUntil } from 'rxjs';
 
@@ -44,6 +44,11 @@ import { CustomerServiceFilterPipe } from './pipes/customer-service-filter.pipe'
   styleUrls: ['./customer-dashboard.component.scss'],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
+  private readonly onboardingService = inject(OnboardingService);
+  private readonly serviceApi = inject(ServiceApiService);
+  private readonly appointmentApi = inject(AppointmentApiService);
+  private readonly dialog = inject(MatDialog);
+
   public services: ServiceDto[] = [];
   public appointments: AppointmentDto[] = [];
 
@@ -61,12 +66,10 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   public readonly categories = CUSTOMER_CATEGORIES;
 
-  constructor(
-    private readonly onboardingService: OnboardingService,
-    private readonly serviceApi: ServiceApiService,
-    private readonly appointmentApi: AppointmentApiService,
-    private readonly dialog: MatDialog,
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     super();
   }
 

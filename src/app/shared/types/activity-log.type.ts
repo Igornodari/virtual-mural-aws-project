@@ -1,6 +1,6 @@
 import { Admin } from './admin.type';
 
-export type ActivityLog = {
+export interface ActivityLog {
 	id: string;
 	createdAt: Date;
 	action: string;
@@ -14,4 +14,4 @@ export type ActivityLog = {
 		firstName: string;
 		photoUrl: string;
 	};
-};
+}

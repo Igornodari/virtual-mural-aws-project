@@ -1,19 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AuthService } from './auth.service';
 
 @Injectable({
-	providedIn: 'root',
+  providedIn: 'root',
 })
 export class PermissionService {
-	constructor(private _auth: AuthService) {}
+  private _auth = inject(AuthService);
 
-	can(permission: string): boolean {
-		const user = this._auth.currentUser;
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-		if (user.groups.some(group => group.toLowerCase().includes('admin'))) {
-			return true;
-		}
+  constructor() {}
 
-		return user.permissions.includes(permission);
-	}
+  can(permission: string): boolean {
+    const user = this._auth.currentUser;
+
+    if (user.groups.some((group) => group.toLowerCase().includes('admin'))) {
+      return true;
+    }
+
+    return user.permissions.includes(permission);
+  }
 }

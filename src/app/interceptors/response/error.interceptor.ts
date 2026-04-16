@@ -1,4 +1,4 @@
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -11,7 +11,13 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private readonly router: Router, private readonly errorHandler: ErrorHandler) {}
+  private readonly router = inject(Router);
+  private readonly errorHandler = inject(ErrorHandler);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
@@ -23,7 +29,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
 
         return throwError(() => reqError);
-      })
+      }),
     );
   }
 

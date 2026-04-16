@@ -1,4 +1,4 @@
-import { Component, Inject, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -28,6 +28,9 @@ export type PaymentMethod = 'pix' | 'credit_card';
   styleUrl: './payment-method-dialog.scss',
 })
 export class PaymentMethodDialog {
+  data = inject<PaymentMethodData>(MAT_DIALOG_DATA);
+  dialogRef = inject<MatDialogRef<PaymentMethodDialog>>(MatDialogRef);
+
   selectedMethod = signal<PaymentMethod>('pix');
 
   paymentMethods = [
@@ -45,10 +48,10 @@ export class PaymentMethodDialog {
     },
   ];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: PaymentMethodData,
-    public dialogRef: MatDialogRef<PaymentMethodDialog>
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   onConfirm() {
     if (!this.selectedMethod()) {

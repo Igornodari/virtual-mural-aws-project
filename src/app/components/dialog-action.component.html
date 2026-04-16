@@ -4,9 +4,9 @@
 		</div>
 		<div mat-dialog-content class=" modal-sm ">
 			<div class=" text-center">
-				@if (type == 'info') {
+				@if (type === 'info') {
 				<p>{{ description }}</p>
-				} @if (type == 'action') {
+				} @if (type === 'action') {
 				<mat-label> {{ 'COMMENT' | translate }} </mat-label>
 				<mat-form-field class="w-100 " appearance="outline">
 					<textarea [(ngModel)]="description" matInput> </textarea>
@@ -18,7 +18,7 @@
 			<button matButton="outlined" color="warn" mat-dialog-close>
 				{{ 'CANCEL' | translate }}
 			</button>
-			@if (type == 'action') {
+			@if (type === 'action') {
 			<button
 				matButton="filled"
 				color="primary"

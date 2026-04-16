@@ -13,8 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import BaseComponent from '../../components/base.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
-import { AppUserProfileDto, UpdateProfilePayload, UserApiService } from '../../core/services/user-api.service';
 import { CreateCondominiumPayload } from '../../core/services/condominium-api.service';
+import { AppUserProfileDto, UpdateProfilePayload } from '../../core/services/user-api.service';
 
 @Component({
   selector: 'app-profile',

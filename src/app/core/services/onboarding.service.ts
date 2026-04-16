@@ -1,8 +1,12 @@
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { CondominiumAddress, OnboardingProfile, UserRole } from '../../shared/types';
 import { getDashboardRouteByRole, ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
-import { CondominiumApiService, CondominiumDto, CreateCondominiumPayload } from './condominium-api.service';
+import {
+  CondominiumApiService,
+  CondominiumDto,
+  CreateCondominiumPayload,
+} from './condominium-api.service';
 import { AppUserProfileDto, UserApiService } from './user-api.service';
 
 const STORAGE_KEY = 'APP_ONBOARDING';
@@ -15,15 +19,18 @@ const EMPTY_ONBOARDING_PROFILE: OnboardingProfile = {
 
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
+  private readonly userApi = inject(UserApiService);
+  private readonly condominiumApi = inject(CondominiumApiService);
+  private readonly errorHandler = inject(ErrorHandler);
+
   private readonly profileSubject = new BehaviorSubject<OnboardingProfile>(this.loadFromStorage());
 
   readonly profile$ = this.profileSubject.asObservable();
 
-  constructor(
-    private readonly userApi: UserApiService,
-    private readonly condominiumApi: CondominiumApiService,
-    private readonly errorHandler: ErrorHandler,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   get profile(): OnboardingProfile {
     return this.profileSubject.value;

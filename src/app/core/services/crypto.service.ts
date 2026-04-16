@@ -19,7 +19,7 @@ export class CryptoService {
     const newKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     try {
       window.localStorage.setItem('APP_SEC_KEY', newKey);
-    } catch (e) {
+    } catch (_e) {
       // Ignora erro se localStorage não estiver disponível
     }
     return newKey;
@@ -37,7 +37,7 @@ export class CryptoService {
     try {
       const bytes = CryptoJS.AES.decrypt(value, this.secretKey);
       return bytes.toString(CryptoJS.enc.Utf8);
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

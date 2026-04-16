@@ -1,4 +1,4 @@
-export type Status = { label: string; style?: string; name: string };
+export interface Status { label: string; style?: string; name: string }
 
 export * from './acl.type';
 export * from './admin.type';

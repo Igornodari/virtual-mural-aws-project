@@ -1,17 +1,17 @@
-export type Role = {
+export interface Role {
 	id: string;
 	createdAt: string;
 	updatedAt: string;
 	name: string;
 	label: string;
-	permissions: Array<Permission>;
-};
+	permissions: Permission[];
+}
 
-export type Permission = {
+export interface Permission {
 	active: boolean;
 	id: string;
 	createdAt: string;
 	updatedAt: string;
 	name: string;
 	label: string;
-};
+}
