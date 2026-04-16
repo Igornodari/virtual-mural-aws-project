@@ -19,9 +19,6 @@ env:
   CLOUDFRONT_DIST_ID_DEV: ${{ secrets.CLOUDFRONT_DIST_ID_DEV }}
 
 jobs:
-  # ─────────────────────────────────────────
-  # JOB 1 — Lint + Testes + Build (toda branch/PR)
-  # ─────────────────────────────────────────
   lint-test-build:
     name: Lint, Test & Build
     runs-on: ubuntu-latest
@@ -30,20 +27,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Lint
-        run: npm run lint -- --max-warnings=0
+        run: npm run lint
 
-      - name: Unit tests (Vitest)
-        run: npm run test -- --run --reporter=verbose
+      - name: Unit tests
+        run: npm run test:ci
 
       - name: Build (production)
         run: npm run build -- --configuration=production
@@ -57,9 +54,6 @@ jobs:
           path: dist/
           retention-days: 7
 
-  # ─────────────────────────────────────────
-  # JOB 2 — Deploy S3 develop (branch develop)
-  # ─────────────────────────────────────────
   deploy-dev:
     name: Deploy to S3 (dev)
     runs-on: ubuntu-latest
@@ -96,9 +90,6 @@ jobs:
             --distribution-id ${{ env.CLOUDFRONT_DIST_ID_DEV }} \
             --paths "/*"
 
-  # ─────────────────────────────────────────
-  # JOB 3 — Deploy S3 produção (apenas main)
-  # ─────────────────────────────────────────
   deploy-prod:
     name: Deploy to S3 (production)
     runs-on: ubuntu-latest
@@ -120,15 +111,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Sync to S3 (prod) — assets com cache longo
+      - name: Sync to S3 (prod)
         run: |
           aws s3 sync dist/aws-frontend/browser/ s3://${{ env.S3_BUCKET_PROD }}/ \
             --delete \
             --cache-control "public, max-age=31536000, immutable" \
             --exclude "index.html"
-
-      - name: Upload index.html sem cache (prod)
-        run: |
           aws s3 cp dist/aws-frontend/browser/index.html s3://${{ env.S3_BUCKET_PROD }}/index.html \
             --cache-control "no-cache, no-store, must-revalidate"
 
