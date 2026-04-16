@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MuralApiService } from './mural-api.service';
+import { RequestService } from './request.service';
 
 export type AppointmentStatus =
   | 'pending'
@@ -58,28 +58,34 @@ export interface AppointmentPaymentDto {
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentApiService {
-  private readonly api = inject(MuralApiService);
-
-
-  constructor() {}
+  private readonly request = inject(RequestService);
 
   create(payload: CreateAppointmentPayload): Observable<AppointmentDto> {
-    return this.api.post<AppointmentDto>('/appointments', payload);
+    return this.request.post<AppointmentDto, CreateAppointmentPayload>(
+      '/appointments',
+      payload,
+    );
   }
 
   findMine(): Observable<AppointmentDto[]> {
-    return this.api.get<AppointmentDto[]>('/appointments/mine');
+    return this.request.get<AppointmentDto[]>('/appointments/mine');
   }
 
   findByService(serviceId: string): Observable<AppointmentDto[]> {
-    return this.api.get<AppointmentDto[]>(`/appointments/service/${serviceId}`);
+    return this.request.get<AppointmentDto[]>(`/appointments/service/${serviceId}`);
   }
 
   updateStatus(id: string, status: AppointmentStatus): Observable<AppointmentDto> {
-    return this.api.patch<AppointmentDto>(`/appointments/${id}/status`, { status });
+    return this.request.patchPath<AppointmentDto, { status: AppointmentStatus }>(
+      `/appointments/${id}/status`,
+      { status },
+    );
   }
 
   createPayment(id: string, payload: AppointmentPaymentPayload): Observable<AppointmentPaymentDto> {
-    return this.api.post<AppointmentPaymentDto>(`/appointments/${id}/payment`, payload);
+    return this.request.post<AppointmentPaymentDto, AppointmentPaymentPayload>(
+      `/appointments/${id}/payment`,
+      payload,
+    );
   }
 }

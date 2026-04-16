@@ -1,22 +1,20 @@
 <div class="app-page-shell customer-main">
-  <app-customer-hero
-    [condoCity]="condoCity"
-    [totalServices]="totalServices"
-    [uniqueProviders]="uniqueProviders"
-  />
-
-  <app-customer-filters
-    [categories]="categories"
-    [selectedCategory]="selectedCategory"
-    [searchTerm]="searchTerm"
-    (searchTermChange)="onSearchTermChange($event)"
-    (categoryChange)="selectCategory($event)"
-  />
-
-  @if (isLoadingServices) {
+  @if (isLoadingDashboard) {
     <app-loading-state [diameter]="48" />
   } @else {
-    @let visibleServices = services | customerServiceFilter: searchTerm : selectedCategory;
+    <app-customer-hero
+      [condoCity]="condoCity"
+      [totalServices]="totalServices"
+      [uniqueProviders]="uniqueProviders"
+    />
+
+    <app-customer-filters
+      [categories]="categories"
+      [selectedCategory]="selectedCategory"
+      [searchTerm]="searchTerm"
+      (searchTermChange)="onSearchTermChange($event)"
+      (categoryChange)="selectCategory($event)"
+    />
 
     @if (!visibleServices.length) {
       <div class="d-flex justify-content-center">
@@ -47,13 +45,13 @@
         }
       </section>
     }
-  }
 
-  <app-customer-appointments
-    [appointments]="appointments"
-    [isLoading]="isLoadingAppointments"
-    [payingAppointmentId]="isPayingAppointment"
-    (pay)="payAppointment($event)"
-    (chat)="openChat($event)"
-  />
+    <app-customer-appointments
+      [appointments]="appointments"
+      [isLoading]="false"
+      [payingAppointmentId]="isPayingAppointment"
+      (pay)="payAppointment($event)"
+      (chat)="openChat($event)"
+    />
+  }
 </div>

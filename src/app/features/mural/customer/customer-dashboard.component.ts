@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize, takeUntil } from 'rxjs';
+import { catchError, finalize, forkJoin, of, takeUntil } from 'rxjs';
 
 import BaseComponent from 'src/app/components/base.component';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import { AppUserProfileDto } from 'src/app/core/services/user-api.service';
 import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
@@ -25,7 +26,6 @@ import { CustomerFiltersComponent } from './components/customer-filters/customer
 import { CustomerHeroComponent } from './components/customer-hero/customer-hero.component';
 import { CustomerServiceDetailsComponent } from './components/customer-service-details/customer-service-details.component';
 import { CUSTOMER_ALL_CATEGORY, CUSTOMER_CATEGORIES } from './customer.constants';
-import { CustomerServiceFilterPipe } from './pipes/customer-service-filter.pipe';
 
 @Component({
   selector: 'app-customer-dashboard',
@@ -36,7 +36,6 @@ import { CustomerServiceFilterPipe } from './pipes/customer-service-filter.pipe'
     CustomerFiltersComponent,
     CustomerHeroComponent,
     CustomerServiceDetailsComponent,
-    CustomerServiceFilterPipe,
     EmptyStateComponent,
     LoadingStateComponent,
   ],
@@ -50,14 +49,14 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   private readonly dialog = inject(MatDialog);
 
   public services: ServiceDto[] = [];
+  public visibleServices: ServiceDto[] = [];
   public appointments: AppointmentDto[] = [];
 
   public searchTerm = '';
   public selectedCategory = CUSTOMER_ALL_CATEGORY;
   public expandedId: string | null = null;
 
-  public isLoadingServices = false;
-  public isLoadingAppointments = false;
+  public isLoadingDashboard = true;
   public isPayingAppointment: string | null = null;
 
   public totalServices = 0;
@@ -65,66 +64,85 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   public condoCity = 'Nao definido';
 
   public readonly categories = CUSTOMER_CATEGORIES;
+
   constructor() {
     super();
   }
 
   ngOnInit(): void {
-    this.condoCity = this.onboardingService.profile.condominiumAddress?.city || 'Nao definido';
-    this.loadServices();
-    this.loadMyAppointments();
+    this.loadDashboard();
   }
 
-  public loadServices(): void {
-    this.isLoadingServices = true;
+  private loadDashboard(): void {
+    this.isLoadingDashboard = true;
 
-    this.serviceApi
-      .findAll()
+    forkJoin({
+      profile: this.userApi.getMe().pipe(
+        catchError(() => of(null as AppUserProfileDto | null)),
+      ),
+      services: this.serviceApi.findAll().pipe(
+        catchError(() => of([] as ServiceDto[])),
+      ),
+      appointments: this.appointmentApi.findMine().pipe(
+        catchError(() => of([] as AppointmentDto[])),
+      ),
+    })
       .pipe(
-        finalize(() => (this.isLoadingServices = false)),
+        finalize(() => {
+          this.isLoadingDashboard = false;
+        }),
         takeUntil(this.unsubscribe$),
       )
-      .subscribe({
-        next: (services) => {
-          this.services = Array.isArray(services) ? services : [];
-          this.updateStats();
-        },
-        error: () => {
-          this.services = [];
-          this.totalServices = 0;
-          this.uniqueProviders = 0;
-        },
+      .subscribe(({ profile, services, appointments }) => {
+        this.condoCity =
+          profile?.condominium?.name ||
+          this.onboardingService.profile?.condominiumAddress?.city ||
+          'Nao definido';
+
+        this.services = Array.isArray(services) ? services : [];
+        this.appointments = this.sortAppointments(appointments);
+        this.syncServiceView();
       });
   }
 
-  public loadMyAppointments(): void {
-    this.isLoadingAppointments = true;
+  private syncServiceView(): void {
+    const search = this.normalize(this.searchTerm);
+    const category = this.selectedCategory || CUSTOMER_ALL_CATEGORY;
 
-    this.appointmentApi
-      .findMine()
-      .pipe(
-        finalize(() => (this.isLoadingAppointments = false)),
-        takeUntil(this.unsubscribe$),
-      )
-      .subscribe({
-        next: (appointments) => {
-          const appointmentsArray = Array.isArray(appointments) ? appointments : [];
-          this.appointments = appointmentsArray.sort((a, b) =>
-            b.createdAt.localeCompare(a.createdAt),
-          );
-        },
-        error: () => {
-          this.appointments = [];
-        },
-      });
+    this.totalServices = this.services.length;
+    this.uniqueProviders = new Set(this.services.map((service) => service.providerId)).size;
+
+    this.visibleServices = this.services.filter((service) => {
+      const matchesCategory =
+        category === CUSTOMER_ALL_CATEGORY || service.category === category;
+
+      const matchesSearch =
+        !search ||
+        this.normalize(service.name).includes(search) ||
+        this.normalize(service.description).includes(search) ||
+        this.normalize(service.category).includes(search);
+
+      return matchesCategory && matchesSearch;
+    });
+  }
+
+  private normalize(value: string | null | undefined): string {
+    return (value ?? '').toLocaleLowerCase().trim();
+  }
+
+  private sortAppointments(appointments: AppointmentDto[] | null | undefined): AppointmentDto[] {
+    const list = Array.isArray(appointments) ? appointments : [];
+    return [...list].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
   public onSearchTermChange(searchTerm: string): void {
     this.searchTerm = searchTerm;
+    this.syncServiceView();
   }
 
   public selectCategory(category: string): void {
     this.selectedCategory = category;
+    this.syncServiceView();
   }
 
   public toggleExpand(service: ServiceDto): void {
@@ -168,7 +186,9 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
         this.appointmentApi
           .createPayment(appointment.id, { method: selectedMethod })
           .pipe(
-            finalize(() => (this.isPayingAppointment = null)),
+            finalize(() => {
+              this.isPayingAppointment = null;
+            }),
             takeUntil(this.unsubscribe$),
           )
           .subscribe({
@@ -212,12 +232,8 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.services = this.services.map((service) =>
       service.id === updatedService.id ? updatedService : service,
     );
-    this.updateStats();
-  }
 
-  private updateStats(): void {
-    this.totalServices = this.services.length;
-    this.uniqueProviders = new Set(this.services.map((service) => service.providerId)).size;
+    this.syncServiceView();
   }
 
   private replaceAppointment(updated: AppointmentDto): void {
