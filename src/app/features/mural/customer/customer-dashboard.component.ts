@@ -77,9 +77,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     forkJoin({
       profile: this.userApi.getMe().pipe(catchError(() => of(null as AppUserProfileDto | null))),
       services: this.serviceApi.findAll().pipe(catchError(() => of([] as ServiceDto[]))),
-      appointments: this.appointmentApi
-        .findMine()
-        .pipe(catchError(() => of([] as AppointmentDto[]))),
+      appointments: this.appointmentApi.findMine().pipe(catchError(() => of([] as AppointmentDto[]))),
     })
       .pipe(
         finalize(() => {
