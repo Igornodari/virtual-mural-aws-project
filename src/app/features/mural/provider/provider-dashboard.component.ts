@@ -1,21 +1,46 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 import { FormBuilder, Validators } from '@angular/forms';
-import { AppointmentApiService, AppointmentDto, AppointmentStatus } from 'src/app/core/services/appointment-api.service';
+import {
+  AppointmentApiService,
+  AppointmentDto,
+  AppointmentStatus,
+} from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
-import { CreateServicePayload, ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import {
+  CreateServicePayload,
+  ServiceApiService,
+  ServiceDto,
+} from 'src/app/core/services/service-api.service';
 
 import BaseComponent from 'src/app/components/base.component';
-import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { WEEKDAYS, CATEGORIES } from 'src/app/shared/types/provider.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
+import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
+import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
+import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
+import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
+import {
+  canCancelAppointment,
+  canCompleteAppointment,
+  canConfirmAppointment,
+} from 'src/app/shared/utils/appointment-status.util';
 
 @Component({
   selector: 'app-provider-dashboard',
-  imports: [...importBase, ServiceAnalyticsComponent, MuralTopbarComponent],
+  imports: [
+    ...importBase,
+    ServiceAnalyticsComponent,
+    ServiceCardComponent,
+    StatusBadgeComponent,
+    EmptyStateComponent,
+    LoadingStateComponent,
+  ],
   templateUrl: './provider-dashboard.component.html',
   styleUrls: ['./provider-dashboard.component.scss'],
 })
@@ -24,6 +49,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   private readonly onboardingService = inject(OnboardingService);
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
+  private readonly dialog = inject(MatDialog);
 
   readonly weekdays = WEEKDAYS;
   readonly categories = CATEGORIES;
@@ -60,22 +86,92 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   private loadServices(): void {
     this.isLoadingServices.set(true);
-    this.serviceApi.findMine().subscribe({
+
+    this.serviceApi.findMine().pipe(
+      finalize(() => this.isLoadingServices.set(false)),
+    ).subscribe({
       next: (list) => {
         this.services.set(list);
         this.recalcStats(list);
-        this.isLoadingServices.set(false);
+        this.loadAppointmentsForServices(list);
+      },
+    });
+  }
+
+  private loadAppointmentsForServices(services: ServiceDto[]): void {
+    if (!services.length) {
+      this.appointments.set([]);
+      this.pendingAppointments.set(0);
+      return;
+    }
+
+    this.isLoadingAppointments.set(true);
+
+    forkJoin(services.map((service) => this.appointmentApi.findByService(service.id))).pipe(
+      finalize(() => this.isLoadingAppointments.set(false)),
+    ).subscribe({
+      next: (appointmentsByService) => {
+        const appointments = appointmentsByService
+          .flat()
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+        this.appointments.set(appointments);
+        this.pendingAppointments.set(
+          appointments.filter((appointment) => appointment.status === 'pending').length,
+        );
       },
       error: () => this.isLoadingServices.set(false),
     });
   }
 
   private recalcStats(list: ServiceDto[]): void {
-    if (!list.length) { this.averageRating.set(0); this.totalReviews.set(0); return; }
-    const total = list.reduce((s, x) => s + x.totalReviews, 0);
-    const avg = list.reduce((s, x) => s + x.rating * x.totalReviews, 0) / (total || 1);
-    this.totalReviews.set(total);
-    this.averageRating.set(Math.round(avg * 10) / 10);
+    if (!list.length) {
+      this.averageRating.set(0);
+      this.totalReviews.set(0);
+      return;
+    }
+
+    const totalReviews = list.reduce((sum, item) => sum + item.totalReviews, 0);
+    const weightedAverage =
+      list.reduce((sum, item) => sum + item.rating * item.totalReviews, 0) / (totalReviews || 1);
+
+    this.totalReviews.set(totalReviews);
+    this.averageRating.set(Math.round(weightedAverage * 10) / 10);
+  }
+
+  canConfirm(appointment: AppointmentDto): boolean {
+    return canConfirmAppointment(appointment);
+  }
+
+  canCancel(appointment: AppointmentDto): boolean {
+    return canCancelAppointment(appointment);
+  }
+
+  canComplete(appointment: AppointmentDto): boolean {
+    return canCompleteAppointment(appointment);
+  }
+
+  updateAppointmentStatus(appointment: AppointmentDto, status: AppointmentStatus): void {
+    this.isUpdatingAppointment.set(appointment.id);
+
+    this.appointmentApi.updateStatus(appointment.id, status).pipe(
+      finalize(() => this.isUpdatingAppointment.set(null)),
+    ).subscribe({
+      next: (updatedAppointment) => {
+        this.appointments.update((currentAppointments) =>
+          currentAppointments.map((currentAppointment) =>
+            currentAppointment.id === updatedAppointment.id
+              ? updatedAppointment
+              : currentAppointment,
+          ),
+        );
+        this.pendingAppointments.set(
+          this.appointments().filter(
+            (currentAppointment) => currentAppointment.status === 'pending',
+          ).length,
+        );
+      },
+    });
   }
 
   openForm(): void {
@@ -103,19 +199,24 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     const raw = this.serviceForm.getRawValue();
     const editId = this.editingId();
     this.isSaving.set(true);
-    const req = editId
-      ? this.serviceApi.update(editId, raw)
-      : this.serviceApi.create(raw as CreateServicePayload);
-    req.subscribe({
-      next: (saved) => {
-        this.services.update((list) =>
-          editId ? list.map((s) => s.id === editId ? saved : s) : [...list, saved]
+
+    const request$ = currentEditingId
+      ? this.serviceApi.update(currentEditingId, payload)
+      : this.serviceApi.create(payload as CreateServicePayload);
+
+    request$.pipe(
+      finalize(() => this.isSaving.set(false)),
+    ).subscribe({
+      next: (savedService) => {
+        this.services.update((currentList) =>
+          currentEditingId
+            ? currentList.map((item) => (item.id === currentEditingId ? savedService : item))
+            : [...currentList, savedService],
         );
         this.recalcStats(this.services());
-        this.isSaving.set(false);
         this.closeForm();
+        this.loadAppointmentsForServices(this.services());
       },
-      error: () => this.isSaving.set(false),
     });
   }
 
@@ -128,8 +229,23 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
-  async onLogout(): Promise<void> {
-    await this.authService.logout();
-    await this.navigateTo('/login');
+  private scrollToForm(): void {
+    setTimeout(() => {
+      document.querySelector('.form-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 100);
+  }
+
+  openChat(appointment: AppointmentDto): void {
+    this.dialog.open(ChatDialogComponent, {
+      data: {
+        appointmentId: appointment.id,
+        recipientName: appointment.customer?.displayName || 'Cliente',
+      },
+      width: '450px',
+      maxWidth: '95vw',
+    });
   }
 }

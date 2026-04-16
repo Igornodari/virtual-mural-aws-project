@@ -1,14 +1,17 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { PermissionService } from 'src/app/services/permission.service';
+import { Pipe, PipeTransform, inject } from '@angular/core';
+import { PermissionService } from 'src/app/core/services/permission.service';
 
 @Pipe({
-	standalone: true,
-	name: 'can',
+  standalone: true,
+  name: 'can',
 })
 export class CanPipe implements PipeTransform {
-	constructor(private _permissionService: PermissionService) {}
+  private _permissionService = inject(PermissionService);
 
-	transform(permission: string): unknown {
-		return this._permissionService.can(permission);
-	}
+
+  constructor() {}
+
+  transform(permission: string): boolean {
+    return this._permissionService.can(permission);
+  }
 }

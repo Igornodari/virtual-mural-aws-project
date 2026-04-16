@@ -1,0 +1,84 @@
+<header class="mural-topbar">
+  <!-- Brand / Logo -->
+  <div class="topbar-brand">
+    <mat-icon class="brand-icon">campaign</mat-icon>
+    <span class="brand-name">{{ 'APP.TOPBAR.BRAND' | translate }}</span>
+    <span class="badge" [class]="'badge--' + role">
+      {{ (role === 'provider' ? 'APP.TOPBAR.ROLE_PROVIDER' : 'APP.TOPBAR.ROLE_CUSTOMER') | translate }}
+    </span>
+  </div>
+
+  <!-- Ações -->
+  <div class="topbar-actions">
+    <!-- Toggle de tema -->
+    <button
+      mat-icon-button
+      (click)="themeService.toggle()"
+      [matTooltip]="(themeService.isDark ? 'APP.TOPBAR.THEME_LIGHT' : 'APP.TOPBAR.THEME_DARK') | translate"
+    >
+      <mat-icon>{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+    <!-- Seletor de idioma — visível apenas em desktop -->
+    <button mat-button [matMenuTriggerFor]="langMenu" class="lang-btn desktop-only">
+      <mat-icon>language</mat-icon>
+      {{ languageService.currentLabel }}
+    </button>
+
+    <mat-menu #langMenu="matMenu">
+      <button mat-menu-item
+        (click)="languageService.setLanguage('pt')"
+        [class.active-lang]="languageService.language() === 'pt'">
+        <mat-icon>check</mat-icon>
+        Português
+      </button>
+      <button mat-menu-item
+        (click)="languageService.setLanguage('en')"
+        [class.active-lang]="languageService.language() === 'en'">
+        <mat-icon>check</mat-icon>
+        English
+      </button>
+    </mat-menu>
+
+    <!-- Menu do usuário -->
+    <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
+      <mat-icon>account_circle</mat-icon>
+      <span class="user-name text-muted">{{ userName }}</span>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>manage_accounts</mat-icon>
+        {{ 'APP.TOPBAR.MY_PROFILE' | translate }}
+      </button>
+
+      <!-- Idioma dentro do menu — visível apenas em mobile -->
+      <button mat-menu-item [matMenuTriggerFor]="langMenuMobile" class="mobile-only">
+        <mat-icon>language</mat-icon>
+        {{ 'APP.TOPBAR.LANGUAGE' | translate }}: {{ languageService.currentLabel }}
+      </button>
+
+      <mat-menu #langMenuMobile="matMenu">
+        <button mat-menu-item
+          (click)="languageService.setLanguage('pt')"
+          [class.active-lang]="languageService.language() === 'pt'">
+          <mat-icon>check</mat-icon>
+          Português
+        </button>
+        <button mat-menu-item
+          (click)="languageService.setLanguage('en')"
+          [class.active-lang]="languageService.language() === 'en'">
+          <mat-icon>check</mat-icon>
+          English
+        </button>
+      </mat-menu>
+
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout.emit()">
+        <mat-icon>logout</mat-icon>
+        {{ 'APP.TOPBAR.LOGOUT' | translate }}
+      </button>
+    </mat-menu>
+  </div>
+</header>

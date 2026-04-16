@@ -1,121 +1,251 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
+
 import { environment } from '../../../environments/environments';
 import { BRASIL_API } from '../../shared/constant/path.contant';
-import { ListResponse, ActivityLog } from '../../shared/types';
+import { ActivityLog, ListResponse } from '../../shared/types';
 
-type OptionsRequest = { api?: 'CORE' | 'BRASIL_API'; search?: any; params?: any; relations?: any };
+export type ApiTarget = 'CORE' | 'BRASIL_API';
+export type QueryValue =
+  | string
+  | number
+  | boolean
+  | readonly (string | number | boolean)[]
+  | null
+  | undefined;
+export type QueryParams = Record<string, QueryValue>;
+
+export interface RequestOptions {
+  api?: ApiTarget;
+  search?: Record<string, unknown>;
+  params?: QueryParams;
+  relations?: Record<string, unknown>;
+}
+
+export interface BodyRequestOptions extends RequestOptions {
+  type?: 'multipart/form-data';
+}
+
+interface HttpRequestOptions<TBody = unknown> extends BodyRequestOptions {
+  body?: TBody;
+}
 
 @Injectable({
-	providedIn: 'root',
+  providedIn: 'root',
 })
 export class RequestService {
-	private API = environment.apiBaseUrl;
-	private apis = { CORE: environment.apiBaseUrl, BRASIL_API: BRASIL_API };
+  private readonly http = inject(HttpClient);
 
-	constructor(private http: HttpClient) {}
+  private readonly apiRoots: Record<ApiTarget, string> = {
+    CORE: environment.apiBaseUrl,
+    BRASIL_API,
+  };
 
-	get<T>(
-		path: string,
-		options: OptionsRequest = {
-			api: 'CORE',
-			search: {},
-			params: {},
-			relations: {},
-		}
-	) {
-		const search = Object.keys(options.search ?? {}).length
-			? { search: JSON.stringify(options.search) }
-			: null;
 
-		const relations = Object.keys(options?.relations ?? {}).length
-			? { relations: JSON.stringify(options?.relations) }
-			: null;
+  constructor() {}
 
-		return this.http.get<T>(this.apis[options.api ?? 'CORE'] + path, {
-			params: { ...search, ...options?.params, ...relations },
-		});
-	}
+  request<TResponse, TBody = unknown>(
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    path: string,
+    options: HttpRequestOptions<TBody> = {},
+  ): Observable<TResponse> {
+    const body = this.resolveBody(options.body, options.type);
 
-	list<T>(path: string, options?: { search?: any; params?: any; relations?: any }) {
-		const search = Object.keys(options?.search ?? {}).length
-			? { search: JSON.stringify(options?.search) }
-			: null;
-		const relations = Object.keys(options?.relations ?? {}).length
-			? { relations: JSON.stringify(options?.relations) }
-			: null;
-		return this.http.get<ListResponse<T>>(`${this.API}${path}`, {
-			params: { ...search, ...relations, ...options?.params },
-		});
-	}
+    return this.http.request<TResponse>(method, this.buildUrl(path, options.api), {
+      body,
+      params: this.buildParams(options),
+    });
+  }
 
-	show<T>(path: string, id: string, options?: { params?: any }) {
-		return this.http.get<T>(`${this.API}${path}/${id}`, {
-			params: { ...options?.params },
-		});
-	}
+  get<TResponse>(path: string, options: RequestOptions = {}): Observable<TResponse> {
+    return this.request<TResponse>('GET', path, options);
+  }
 
-	update<T>(
-		path: string,
-		id: string,
-		payload: Partial<T>,
-		options?: { type: 'multipart/form-data' }
-	) {
-		let data: FormData | Partial<T> = payload;
-		if (options?.type == 'multipart/form-data') {
-			data = this.multipartFormData(payload);
-		}
-		return this.http.put<any>(`${this.API}${path}/${id}`, data);
-	}
+  list<T>(path: string, options: RequestOptions = {}): Observable<ListResponse<T>> {
+    return this.get<ListResponse<T>>(path, options);
+  }
 
-	patch<T>(path: string, id: string, payload: Partial<T>, options?: { params?: any }) {
-		return this.http.patch<T>(`${this.API}${path}/${id}`, payload, {
-			params: { ...options?.params },
-		});
-	}
+  show<TResponse>(
+    path: string,
+    id: string | number,
+    options: RequestOptions = {},
+  ): Observable<TResponse> {
+    return this.get<TResponse>(this.joinPath(path, id), options);
+  }
 
-	post<T>(path: string, payload: T, options?: { type: 'multipart/form-data' }) {
-		let data: FormData | T = payload;
-		if (options?.type == 'multipart/form-data') {
-			data = this.multipartFormData(payload);
-		}
+  post<TResponse = unknown, TPayload = unknown>(
+    path: string,
+    payload: TPayload,
+    options: BodyRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.request<TResponse, TPayload>('POST', path, { ...options, body: payload });
+  }
 
-		return this.http.post<any>(`${this.API}${path}`, data);
-	}
+  put<TResponse = unknown, TPayload = unknown>(
+    path: string,
+    payload: TPayload,
+    options: BodyRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.request<TResponse, TPayload>('PUT', path, { ...options, body: payload });
+  }
 
-	delete(path: string, id: string, body?: any) {
-		return this.http.delete<any>(`${this.API}${path}/${id}`, body);
-	}
+  update<TResponse = unknown, TPayload = Partial<TResponse>>(
+    path: string,
+    id: string | number,
+    payload: TPayload,
+    options: BodyRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.put<TResponse, TPayload>(this.joinPath(path, id), payload, options);
+  }
 
-	download(path: string) {
-		return this.http.get(`${this.API}${path}`, { responseType: 'blob' });
-	}
+  patchPath<TResponse = unknown, TPayload = unknown>(
+    path: string,
+    payload: TPayload,
+    options: BodyRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.request<TResponse, TPayload>('PATCH', path, { ...options, body: payload });
+  }
 
-	getActivities(path: string, id: any, option = { visibility: ['public', 'internal'] }) {
-		return this.http
-			.get<ListResponse<ActivityLog>>(`${this.apis['CORE']}core/activity-log`, {
-				params: {
-					search: JSON.stringify({
-						tableId: id,
-						table: path,
-						visibility: ['in', option.visibility],
-					}),
-				},
-			})
-			.pipe(map(data => data.data));
-	}
+  patch<TResponse = unknown, TPayload = Partial<TResponse>>(
+    path: string,
+    id: string | number,
+    payload: TPayload,
+    options: BodyRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.patchPath<TResponse, TPayload>(this.joinPath(path, id), payload, options);
+  }
 
-	private multipartFormData(data: any): FormData {
-		const payload = new FormData();
-		for (const key in data) {
-			if (typeof data[key] == 'boolean') {
-				data[key] = data[key] == true ? 1 : 0;
-			}
-			if (data[key]) {
-				payload.append(key, data[key]);
-			}
-		}
-		return payload;
-	}
+  deletePath<TResponse = unknown>(
+    path: string,
+    options: HttpRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.request<TResponse>('DELETE', path, options);
+  }
+
+  delete<TResponse = unknown>(
+    path: string,
+    id: string | number,
+    body?: unknown,
+  ): Observable<TResponse> {
+    return this.deletePath<TResponse>(this.joinPath(path, id), { body });
+  }
+
+  download(path: string, options: RequestOptions = {}): Observable<Blob> {
+    return this.http.get(this.buildUrl(path, options.api), {
+      params: this.buildParams(options),
+      responseType: 'blob',
+    });
+  }
+
+  getActivities(
+    path: string,
+    id: string | number,
+    option = { visibility: ['public', 'internal'] },
+  ): Observable<ActivityLog[]> {
+    return this.list<ActivityLog>('core/activity-log', {
+      search: {
+        tableId: id,
+        table: path,
+        visibility: ['in', option.visibility],
+      },
+    }).pipe(map((data) => data.data));
+  }
+
+  private buildUrl(path: string, api: ApiTarget = 'CORE'): string {
+    if (/^https?:\/\//i.test(path)) {
+      return path;
+    }
+
+    const base = this.apiRoots[api].replace(/\/$/, '');
+    const normalizedPath = path.replace(/^\//, '');
+
+    return `${base}/${normalizedPath}`;
+  }
+
+  private joinPath(path: string, id: string | number): string {
+    return `${path.replace(/\/$/, '')}/${id}`;
+  }
+
+  private buildParams(options: RequestOptions): HttpParams {
+    let params = new HttpParams();
+    const requestParams: QueryParams = {
+      ...this.serializeJsonParam('search', options.search),
+      ...this.serializeJsonParam('relations', options.relations),
+      ...options.params,
+    };
+
+    Object.entries(requestParams).forEach(([key, value]) => {
+      params = this.appendParam(params, key, value);
+    });
+
+    return params;
+  }
+
+  private appendParam(params: HttpParams, key: string, value: QueryValue): HttpParams {
+    if (value === null || value === undefined) {
+      return params;
+    }
+
+    if (Array.isArray(value)) {
+      return value.reduce((nextParams, item) => nextParams.append(key, String(item)), params);
+    }
+
+    return params.set(key, String(value));
+  }
+
+  private serializeJsonParam(
+    key: 'search' | 'relations',
+    value: Record<string, unknown> | undefined,
+  ): QueryParams {
+    return value && Object.keys(value).length ? { [key]: JSON.stringify(value) } : {};
+  }
+
+  private resolveBody<TBody>(
+    body: TBody | undefined,
+    type: BodyRequestOptions['type'],
+  ): TBody | FormData | undefined {
+    if (type !== 'multipart/form-data' || body === undefined) {
+      return body;
+    }
+
+    return this.multipartFormData(body);
+  }
+
+  private multipartFormData(data: unknown): FormData {
+    const payload = new FormData();
+
+    if (!data || typeof data !== 'object') {
+      return payload;
+    }
+
+    Object.entries(data as Record<string, unknown>).forEach(([key, value]) => {
+      if (value === null || value === undefined || value === '') {
+        return;
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => this.appendFormDataValue(payload, key, item));
+        return;
+      }
+
+      this.appendFormDataValue(payload, key, value);
+    });
+
+    return payload;
+  }
+
+  private appendFormDataValue(payload: FormData, key: string, value: unknown): void {
+    if (value instanceof Blob) {
+      payload.append(key, value);
+      return;
+    }
+
+    if (typeof value === 'boolean') {
+      payload.append(key, value ? '1' : '0');
+      return;
+    }
+
+    payload.append(key, String(value));
+  }
 }

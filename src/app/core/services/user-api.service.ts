@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MuralApiService } from './mural-api.service';
+import { RequestService } from './request.service';
 
 export type UserRole = 'provider' | 'customer';
 
@@ -47,20 +47,23 @@ export interface UpdateProfilePayload {
 
 @Injectable({ providedIn: 'root' })
 export class UserApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly request = inject(RequestService);
 
-  /** Retorna o perfil completo do usuário autenticado */
   getMe(): Observable<AppUserProfileDto> {
-    return this.api.get<AppUserProfileDto>('/users/me');
+    return this.request.get<AppUserProfileDto>('/users/me');
   }
 
-  /** Salva o condomínio e/ou o perfil do usuário durante o onboarding */
   updateOnboarding(payload: UpdateOnboardingPayload): Observable<AppUserProfileDto> {
-    return this.api.patch<AppUserProfileDto>('/users/me/onboarding', payload);
+    return this.request.patchPath<AppUserProfileDto, UpdateOnboardingPayload>(
+      '/users/me/onboarding',
+      payload,
+    );
   }
 
-  /** Atualiza dados do perfil (nome, telefone, avatar) */
   updateProfile(payload: UpdateProfilePayload): Observable<AppUserProfileDto> {
-    return this.api.patch<AppUserProfileDto>('/users/me/profile', payload);
+    return this.request.patchPath<AppUserProfileDto, UpdateProfilePayload>(
+      '/users/me/profile',
+      payload,
+    );
   }
 }

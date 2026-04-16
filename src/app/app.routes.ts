@@ -1,85 +1,98 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
+import { ROUTE_PATHS } from './shared/constant/route-paths.constant';
+import { BlankComponent } from './layout/blank/blank.component';
+import { FullComponent } from './layout/full/full.component';
 
 export const routes: Routes = [
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'login',
+    component: BlankComponent,
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: ROUTE_PATHS.login.slice(1),
+      },
+      {
+        path: ROUTE_PATHS.login.slice(1),
+        loadComponent: () =>
+          import('./features/login/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: ROUTE_PATHS.register.slice(1),
+        loadComponent: () =>
+          import('./features/register/register.component').then((m) => m.RegisterComponent),
+      },
+      {
+        path: ROUTE_PATHS.authCallback.slice(1),
+        loadComponent: () =>
+          import('../app/features/auth-callback.components').then(
+            (m) => m.AuthCallbackComponent,
+          ),
+      },
+    ]
   },
+
+  // Layout para páginas autenticadas (Dashboards, Perfil, etc.)
   {
-    path: 'login',
-    loadComponent: () =>
-      import('./features/login/login.component').then((m) => m.LoginComponent),
-  },
-  {
-    path: 'register',
-    loadComponent: () =>
-      import('./features/register/register.component').then((m) => m.RegisterComponent),
-  },
-  {
-    path: 'auth/callback',
-    loadComponent: () =>
-      import('../app/features/auth-callback.components').then(
-        (m) => m.AuthCallbackComponent,
-      ),
-  },
-  // Rota legada de dashboard — redireciona para o fluxo de onboarding
-  {
-    path: 'dashboard',
+    path: '',
+    component: FullComponent,
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then(
-        (m) => m.DashboardComponent,
-      ),
+    children: [
+      {
+        path: ROUTE_PATHS.muralProvider.slice(1),
+        canActivate: [onboardingGuard],
+        loadComponent: () =>
+          import('./features/mural/provider/provider-dashboard.component').then(
+            (m) => m.ProviderDashboardComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.muralCustomer.slice(1),
+        canActivate: [onboardingGuard],
+        loadComponent: () =>
+          import('./features/mural/customer/customer-dashboard.component').then(
+            (m) => m.CustomerDashboardComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.profile.slice(1),
+        loadComponent: () =>
+          import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: ROUTE_PATHS.dashboard.slice(1),
+        loadComponent: () =>
+          import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      },
+    ]
   },
-  // Onboarding: cadastro de condomínio
+
+  // Layout para Onboarding (sem Sidebar, apenas Blank)
   {
-    path: 'onboarding/condominium',
+    path: '',
+    component: BlankComponent,
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/onboarding/condominium/condominium-onboarding.component').then(
-        (m) => m.CondominiumOnboardingComponent,
-      ),
+    children: [
+      {
+        path: ROUTE_PATHS.onboardingCondominium.slice(1),
+        loadComponent: () =>
+          import('./features/onboarding/condominium/condominium-onboarding.component').then(
+            (m) => m.CondominiumOnboardingComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.onboardingRole.slice(1),
+        loadComponent: () =>
+          import('./features/onboarding/role/role-onboarding.component').then(
+            (m) => m.RoleOnboardingComponent,
+          ),
+      },
+    ]
   },
-  // Onboarding: escolha de perfil (prestador ou morador)
-  {
-    path: 'onboarding/role',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/onboarding/role/role-onboarding.component').then(
-        (m) => m.RoleOnboardingComponent,
-      ),
-  },
-  // Mural do prestador de serviço
-  {
-    path: 'mural/provider',
-    canActivate: [authGuard, onboardingGuard],
-    loadComponent: () =>
-      import('./features/mural/provider/provider-dashboard.component').then(
-        (m) => m.ProviderDashboardComponent,
-      ),
-  },
-  // Mural do morador consumidor
-  {
-    path: 'mural/customer',
-    canActivate: [authGuard, onboardingGuard],
-    loadComponent: () =>
-      import('./features/mural/customer/customer-dashboard.component').then(
-        (m) => m.CustomerDashboardComponent,
-      ),
-  },
-  // Área de perfil do usuário
-  {
-    path: 'profile',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/profile/profile.component').then(
-        (m) => m.ProfileComponent,
-      ),
-  },
-  // Fallback
+
   {
     path: '**',
     redirectTo: 'login',

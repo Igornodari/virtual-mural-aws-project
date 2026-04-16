@@ -6,16 +6,7 @@ import { MaterialModule } from '../../material.module';
 @Component({
   selector: 'app-record-reading',
   imports: [TranslateModule, MaterialModule, CommonModule],
-  template: `
-		<div class="detail-item">
-			@if(icon){
-			<mat-icon>{{ icon }}</mat-icon>
-			}
-
-			<span class="label">{{ label || title | translate }}:</span>
-			<ng-content class="value"></ng-content>
-		</div>
-	`,
+  templateUrl: './record-reading.component.html',
   encapsulation: ViewEncapsulation.None,
 })
 export class RecordReadingComponent {

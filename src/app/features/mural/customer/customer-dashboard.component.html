@@ -1,0 +1,57 @@
+<div class="app-page-shell customer-main">
+  @if (isLoadingDashboard) {
+    <app-loading-state [diameter]="48" />
+  } @else {
+    <app-customer-hero
+      [condoCity]="condoCity"
+      [totalServices]="totalServices"
+      [uniqueProviders]="uniqueProviders"
+    />
+
+    <app-customer-filters
+      [categories]="categories"
+      [selectedCategory]="selectedCategory"
+      [searchTerm]="searchTerm"
+      (searchTermChange)="onSearchTermChange($event)"
+      (categoryChange)="selectCategory($event)"
+    />
+
+    @if (!visibleServices.length) {
+      <div class="d-flex justify-content-center">
+        <app-empty-state
+          class="empty-state-card"
+          icon="search_off"
+          title="APP.CUSTOMER.NO_SERVICES"
+          message="APP.CUSTOMER.NO_SERVICES_HINT"
+        />
+      </div>
+    } @else {
+      <section class="customer-grid">
+        @for (service of visibleServices; track service.id) {
+          <app-service-card
+            [service]="service"
+            [expanded]="expandedId === service.id"
+            (toggleExpand)="toggleExpand(service)"
+            (contact)="contactWhatsApp($event)"
+          />
+
+          @if (expandedId === service.id) {
+            <app-customer-service-details
+              [service]="service"
+              (appointmentCreated)="addAppointment($event)"
+              (serviceUpdated)="replaceService($event)"
+            />
+          }
+        }
+      </section>
+    }
+
+    <app-customer-appointments
+      [appointments]="appointments"
+      [isLoading]="false"
+      [payingAppointmentId]="isPayingAppointment"
+      (pay)="payAppointment($event)"
+      (chat)="openChat($event)"
+    />
+  }
+</div>

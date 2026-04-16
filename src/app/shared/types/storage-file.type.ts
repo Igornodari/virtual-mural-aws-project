@@ -1,4 +1,4 @@
-export type StorageFile  = {
+export interface StorageFile {
 
         id: string;
         extension: string;

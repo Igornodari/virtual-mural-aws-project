@@ -1,100 +1,118 @@
-import { Component, Inject, NgZone, OnDestroy, Optional, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
-import { Condominium, Unit, User } from '../shared/types';
-import { AuthService } from '../core/services/auth.service';
-import { Location } from '@angular/common';
-import { RequestService } from '../core/services/request.service';
+import { Component, DestroyRef, NgZone, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
+import { filter, shareReplay, take } from 'rxjs';
+import { AuthService } from '../core/services/auth.service';
+import { CondominiumApiService } from '../core/services/condominium-api.service';
+import { UserApiService } from '../core/services/user-api.service';
+import { User, Condominium } from '../shared/types';
+import { Router } from '@angular/router';
+interface BaseComponentSettings {
+  loadCondominium?: boolean;
+  service?: unknown;
+}
 
 @Component({
-	standalone: true,
-	selector: 'app-base',
-	template: '',
+  standalone: true,
+  selector: 'app-base',
+  template: '',
 })
-export default class BaseComponent implements OnDestroy {
-	private _unsubscribe$ = new Subject<void>();
-	private _authService = inject(AuthService);
-	private _requestService = inject(RequestService);
-	private _location = inject(Location);
-	private _router = inject(Router);
-	private _ngZone = inject(NgZone);
-	public _translate = inject(TranslateService, { optional: true });
+export default abstract class BaseComponent {
+  protected readonly settings = inject<BaseComponentSettings>('settings' as any, {
+    optional: true,
+  });
 
-	public queryString = new URLSearchParams();
-	public searchParams: any = {};
-	public loading = false;
-	public user: User | null = null;
-	public condominium: Condominium | null = null;
+  protected readonly destroyRef = inject(DestroyRef);
+  private readonly _authService = inject(AuthService);
+  private readonly _router = inject(Router);
+  private readonly _ngZone = inject(NgZone);
 
-	constructor(
-		@Optional() @Inject('settings') protected settings?: { loadUnit?: boolean; service?: any }
-	) {
-		this._authService.$user
-			.pipe(takeUntil(this._unsubscribe$))
-			.subscribe((user: User | null) => (this.user = user));
-		this.loadCondominium();
-	}
+  public readonly _translate = inject(TranslateService, { optional: true });
+  public readonly userApi = inject(UserApiService);
+  public readonly condominiumApi = inject(CondominiumApiService);
 
-	afterLoadCondominium(fun: (condominium: Condominium | null) => any) {
-		this._authService.$condominium.pipe(takeUntil(this._unsubscribe$)).subscribe((condominium: Condominium | null) => {
-			this.condominium = condominium;
-			fun(condominium);
-		});
-	}
-	loadCondominium() {
-		if (this.settings?.loadUnit === undefined || this.settings?.loadUnit === true) {
-			this.afterLoadCondominium(() => {});
-		}
-	}
+  protected readonly user$ = this._authService.$user.pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-	// Compatibilidade temporária com código legado.
-	afterLoadUnit(fun: (unit: Unit | null) => any) {
-		this.afterLoadCondominium((condominium: Condominium | null) => fun(condominium));
-	}
+  protected readonly condominium$ = this._authService.$condominium.pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-	// Compatibilidade temporária com código legado.
-	loadUnit() {
-		this.loadCondominium();
-	}
+  public readonly queryString = new URLSearchParams();
+  public searchParams: Record<string, unknown> = {};
+  public loading = false;
+  public user: User | null = null;
+  public condominium: Condominium | null = null;
 
-	get authService() {
-		return this._authService;
-	}
+  constructor() {
+    this.bindUser();
+    this.bindCondominium();
 
-	get requestService() {
-		return this._requestService;
-	}
+    this.destroyRef.onDestroy(() => {
+      if (this.settings?.service) {
+        this.settings.service = undefined;
+      }
+    });
+  }
 
-	get location() {
-		return this._location;
-	}
+  private bindUser(): void {
+    this.user$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        this.user = user;
+      });
+  }
 
-	protected async navigateTo(path: string): Promise<void> {
-		await this._router.navigateByUrl(path);
-	}
+  private bindCondominium(): void {
+    if (this.settings?.loadCondominium === false) {
+      return;
+    }
 
-	protected setLoadingState(value: boolean): void {
-		this._ngZone.run(() => {
-			this.loading = value;
-		});
-	}
+    this.condominium$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((condominium) => {
+        this.condominium = condominium;
+      });
+  }
 
-	protected updateViewState(update: () => void): void {
-		setTimeout(() => {
-			this._ngZone.run(update);
-		});
-	}
+  protected afterLoadCondominium(fun: (condominium: Condominium) => void): void {
+    this.condominium$
+      .pipe(
+        filter((condominium): condominium is Condominium => !!condominium),
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(fun);
+  }
 
-	get unsubscribe$() {
-		return this._unsubscribe$;
-	}
+  protected onCondominiumChange(fun: (condominium: Condominium | null) => void): void {
+    this.condominium$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(fun);
+  }
 
-	ngOnDestroy() {
-		if (this.settings?.service) {
-			this.settings.service = undefined;
-		}
-		this._unsubscribe$.next();
-		this._unsubscribe$.complete();
-	}
+  get authService() {
+    return this._authService;
+  }
+
+  protected async navigateTo(path: string): Promise<void> {
+    await this._router.navigateByUrl(path);
+  }
+
+  protected setLoadingState(value: boolean): void {
+    this._ngZone.run(() => {
+      this.loading = value;
+    });
+  }
+
+  protected updateViewState(update: () => void): void {
+    this._ngZone.run(update);
+  }
+
+  protected scheduleViewState(update: () => void): void {
+    queueMicrotask(() => {
+      this._ngZone.run(update);
+    });
+  }
 }

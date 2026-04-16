@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MuralApiService } from './mural-api.service';
+import { RequestService } from './request.service';
 
 export interface ServiceDto {
   id: string;
@@ -38,7 +38,7 @@ export interface ServiceAnalyticsDto {
   rating: number;
   totalReviews: number;
   ratingDistribution: Record<number, number>;
-  recentComments: Array<{ rating: number; comment: string; createdAt: string }>;
+  recentComments: { rating: number; comment: string; createdAt: string }[];
 }
 
 export interface CreateServicePayload {
@@ -51,58 +51,53 @@ export interface CreateServicePayload {
 }
 
 export type UpdateServicePayload = Partial<CreateServicePayload>;
-
 export type TrackMetric = 'clicks' | 'interests' | 'completions' | 'abandonments';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly request = inject(RequestService);
 
-  /** Lista todos os serviços do condomínio do usuário autenticado */
   findAll(): Observable<ServiceDto[]> {
-    return this.api.get<ServiceDto[]>('/services');
+    return this.request.get<ServiceDto[]>('/services');
   }
 
-  /** Lista apenas os serviços do prestador autenticado */
   findMine(): Observable<ServiceDto[]> {
-    return this.api.get<ServiceDto[]>('/services', { mine: true });
+    return this.request.get<ServiceDto[]>('/services', {
+      params: { mine: true },
+    });
   }
 
-  /** Retorna detalhes de um serviço */
   findOne(id: string): Observable<ServiceDto> {
-    return this.api.get<ServiceDto>(`/services/${id}`);
+    return this.request.get<ServiceDto>(`/services/${id}`);
   }
 
-  /** Retorna analytics de todos os serviços do prestador autenticado */
   getProviderAnalytics(): Observable<ServiceAnalyticsDto[]> {
-    return this.api.get<ServiceAnalyticsDto[]>('/services/analytics/me');
+    return this.request.get<ServiceAnalyticsDto[]>('/services/analytics/me');
   }
 
-  /** Retorna analytics de um serviço específico */
   getAnalytics(id: string): Observable<ServiceAnalyticsDto> {
-    return this.api.get<ServiceAnalyticsDto>(`/services/${id}/analytics`);
+    return this.request.get<ServiceAnalyticsDto>(`/services/${id}/analytics`);
   }
 
-  /** Cria um novo serviço (apenas prestadores) */
   create(payload: CreateServicePayload): Observable<ServiceDto> {
-    return this.api.post<ServiceDto>('/services', payload);
+    return this.request.post<ServiceDto, CreateServicePayload>('/services', payload);
   }
 
-  /** Atualiza um serviço existente */
   update(id: string, payload: UpdateServicePayload): Observable<ServiceDto> {
-    return this.api.patch<ServiceDto>(`/services/${id}`, payload);
+    return this.request.patchPath<ServiceDto, UpdateServicePayload>(
+      `/services/${id}`,
+      payload,
+    );
   }
 
-  /** Remove um serviço (soft delete) */
   remove(id: string): Observable<void> {
-    return this.api.delete<void>(`/services/${id}`);
+    return this.request.deletePath<void>(`/services/${id}`);
   }
 
-  /**
-   * Registra um evento de engajamento no backend.
-   * Chamado pelo frontend quando o usuário interage com um card.
-   */
   trackMetric(id: string, metric: TrackMetric): Observable<void> {
-    return this.api.patch<void>(`/services/${id}/track/${metric}`, {});
+    return this.request.patchPath<void, Record<string, never>>(
+      `/services/${id}/track/${metric}`,
+      {},
+    );
   }
 }

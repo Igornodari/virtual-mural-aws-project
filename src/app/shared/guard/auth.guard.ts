@@ -1,11 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
 import { LOCAL_STORAGE } from '../constant/local-storage.constant';
 import { LocalStorageService } from '../../core/services/local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
-  constructor(private ls: LocalStorageService, private router: Router) {}
+  private ls = inject(LocalStorageService);
+  private router = inject(Router);
+
+
+  constructor() {}
 
   canActivate(): boolean | UrlTree {
     const token = this.ls.getItem(LOCAL_STORAGE.TOKEN);

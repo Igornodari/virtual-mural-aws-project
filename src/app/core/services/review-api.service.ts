@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MuralApiService } from './mural-api.service';
+import { RequestService } from './request.service';
 
 /** Avaliação anônima retornada pelo backend — sem dados do autor */
 export interface AnonymousReviewDto {
@@ -18,7 +18,10 @@ export interface CreateReviewPayload {
 
 @Injectable({ providedIn: 'root' })
 export class ReviewApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly api = inject(RequestService);
+
+
+  constructor() {}
 
   /** Envia uma avaliação para um serviço */
   create(payload: CreateReviewPayload): Observable<AnonymousReviewDto> {

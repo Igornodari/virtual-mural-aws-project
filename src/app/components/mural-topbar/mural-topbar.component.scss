@@ -1,0 +1,85 @@
+.mural-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-icon {
+  color: #0284c7;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.badge--provider {
+  background: color-mix(in oklab, #7c3aed 18%, transparent);
+  color: #7c3aed;
+}
+
+.badge--customer {
+  background: color-mix(in oklab, #0284c7 18%, transparent);
+  color: #0284c7;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.lang-btn {
+  font-size: 13px;
+  font-weight: 600;
+  gap: 2px;
+}
+
+.user-btn {
+  gap: 4px;
+  font-size: 14px;
+}
+
+.user-name {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.active-lang {
+  color: var(--mat-sys-primary);
+  font-weight: 600;
+}
+
+/* Controle de visibilidade por breakpoint */
+.desktop-only { display: flex; }
+.mobile-only { display: none !important; }
+
+@media (max-width: 600px) {
+  .mural-topbar { padding: 0 12px; height: 56px; }
+  .brand-name { display: none; }
+  .user-name { display: none; }
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+}

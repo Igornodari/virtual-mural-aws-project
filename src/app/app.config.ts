@@ -40,7 +40,7 @@ const initializeLanguage = (translate: TranslateService) => () => {
     if (typeof window !== 'undefined' && window.localStorage) {
       storedLang = window.localStorage.getItem('LANGUAGE');
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignorar erro se localStorage não estiver disponível
   }
 
@@ -55,7 +55,7 @@ const initializeLanguage = (translate: TranslateService) => () => {
     if (typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.setItem('LANGUAGE', selected);
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignorar erro se localStorage não estiver disponível
   }
 

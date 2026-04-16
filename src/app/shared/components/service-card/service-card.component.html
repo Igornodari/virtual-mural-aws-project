@@ -1,0 +1,111 @@
+<mat-card class="service-card surface-card" [class.service-card--expanded]="expanded">
+  <mat-card-content class="service-card__content d-flex flex-col gap-15">
+    <!-- Header: Título e Rating -->
+    <div class="service-card__header d-flex justify-content-between align-items-start gap-10">
+      <div class="service-card__title-block d-flex flex-col gap-10">
+        <h3 class="service-title m-0">{{ service.name }}</h3>
+        <span class="service-badge">{{ service.category }}</span>
+      </div>
+
+      <div class="rating-box d-flex align-items-center">
+        <mat-icon class="star-icon star--filled">star</mat-icon>
+        <span class="rating-value m-l-5">
+          {{ service.rating | number:'1.1-1' }}
+        </span>
+        <span class="rating-count text-muted m-l-5">
+          ({{ service.totalReviews }})
+        </span>
+      </div>
+    </div>
+
+    <!-- Descrição -->
+    <p class="service-description text-muted m-0">
+      {{ service.description }}
+    </p>
+
+    <!-- Meta: Preço e Contato -->
+    <div class="service-meta d-flex justify-content-between align-items-start flex-wrap gap-10">
+      <span class="service-price">{{ service.price }}</span>
+      <span class="service-contact text-muted">{{ service.contact }}</span>
+    </div>
+
+    <!-- Dias Disponíveis -->
+    <div class="chips-row d-flex flex-wrap gap-5">
+      @if (isProvider) {
+        @for (day of service.availableDays; track day) {
+          <mat-chip>{{ day }}</mat-chip>
+        }
+      } @else {
+        @for (day of service.availableDays.slice(0, 3); track day) {
+          <span class="day-badge">{{ day }}</span>
+        }
+        @if (service.availableDays.length > 3) {
+          <span class="day-badge day-badge--more">
+            +{{ service.availableDays.length - 3 }}
+          </span>
+        }
+      }
+    </div>
+
+    <!-- Footer: Ações específicas por perfil -->
+    <div class="service-card__footer d-flex justify-content-between align-items-center flex-wrap gap-10">
+      @if (isProvider) {
+        <button
+          mat-button
+          type="button"
+          class="analytics-trigger"
+          (click)="viewAnalytics.emit(service)"
+        >
+          <mat-icon>bar_chart</mat-icon>
+          {{ 'APP.ANALYTICS.VIEW_ANALYTICS' | translate }}
+        </button>
+
+        <div class="service-actions d-flex align-items-center gap-5">
+          <button
+            mat-icon-button
+            color="primary"
+            type="button"
+            (click)="edit.emit(service)"
+            [matTooltip]="'APP.PROVIDER.EDIT' | translate"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            (click)="remove.emit(service.id)"
+            [matTooltip]="'APP.PROVIDER.REMOVE' | translate"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      } @else {
+        <button
+          mat-stroked-button
+          color="primary"
+          class="flex-1"
+          type="button"
+          (click)="contact.emit(service)"
+        >
+          <mat-icon>whatsapp</mat-icon>
+          {{ 'APP.CUSTOMER.CONTACT' | translate }}
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="flex-1"
+          type="button"
+          (click)="toggleExpand.emit()"
+        >
+          <mat-icon>
+            {{ expanded ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+          {{ 'APP.CUSTOMER.SCHEDULE' | translate }}
+        </button>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

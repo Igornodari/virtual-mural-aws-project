@@ -1,31 +1,33 @@
-import { Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { CryptoService } from './crypto.service';
 
 @Injectable({
-	providedIn: 'root',
+  providedIn: 'root',
 })
 export class LocalStorageService {
-	constructor(private cryptoService: CryptoService) {}
+  private cryptoService = inject(CryptoService);
+  private readonly errorHandler = inject(ErrorHandler);
 
-	setItem(key: string, value: string): void {
-		this.cryptoService.encrypt(value).subscribe({
-			next: (encryptedValue) => localStorage.setItem(key, encryptedValue),
-			error: (err) => {
-				console.error(`Ocorreu um erro ao encriptar o valor: ${err}`);
-			},
-		});
-	}
 
-	getItem(key: string): string | null {
-		const encryptedValue = localStorage.getItem(key);
-		if (encryptedValue) {
-			return this.cryptoService.decrypt(encryptedValue);
-		} else {
-			return null;
-		}
-	}
+  constructor() {}
 
-	removeItem(key: string): void {
-		localStorage.removeItem(key);
-	}
+  setItem(key: string, value: string): void {
+    this.cryptoService.encrypt(value).subscribe({
+      next: (encryptedValue) => localStorage.setItem(key, encryptedValue),
+      error: (err) => this.errorHandler.handleError(err),
+    });
+  }
+
+  getItem(key: string): string | null {
+    const encryptedValue = localStorage.getItem(key);
+    if (encryptedValue) {
+      return this.cryptoService.decrypt(encryptedValue);
+    } else {
+      return null;
+    }
+  }
+
+  removeItem(key: string): void {
+    localStorage.removeItem(key);
+  }
 }

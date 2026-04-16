@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
-import { RequestService } from 'src/app/services/request.service';
+import { RequestService } from 'src/app/core/services/request.service';
 import { URI_PATH } from '../constant/path.contant';
 import { FormControl, FormGroup } from '@angular/forms';
 import { map } from 'rxjs/operators';
 
-type Address = {
+interface Address {
   addressNeighborhood: FormControl<string>;
   addressComplement: FormControl<string>;
   addressStreet: FormControl<string>;
@@ -13,17 +13,17 @@ type Address = {
   addressState: FormControl<string>;
 }
 
-type Coordinates = {
+interface Coordinates {
   longitude: string;
   latitude: string;
 }
 
-type Location = {
+interface Location {
   type: string;
   coordinates: Coordinates;
 }
 
-type CepResponse = {
+interface CepResponse {
   cep: string;
   state: string;
   city: string;
@@ -38,9 +38,7 @@ export const fillFormWithCep = () => {
   return (cep: string, formGroup: FormGroup<Partial<Address>>) => {
     _requestService
       .get(`${URI_PATH.BRASIL_API.CEP}${cep}`, { api: 'BRASIL_API' })
-      .pipe(
-        map(response => response as CepResponse),
-      )
+      .pipe(map((response) => response as CepResponse))
       .subscribe({
         next: (response: CepResponse) => {
           if (response.neighborhood) {

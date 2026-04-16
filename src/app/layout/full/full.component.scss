@@ -1,0 +1,33 @@
+.full-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .sidenav-container {
+      flex: 1;
+    }
+    .sidenav {
+      width: 250px;
+      border-right: 1px solid var(--mat-sys-outline-variant);
+      background: var(--mat-sys-surface);
+    }
+    .content {
+      background: var(--mat-sys-surface-container);
+    }
+    .main-content {
+      padding: 20px;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    .active-link {
+      background: color-mix(in oklab, var(--mat-sys-primary) 10%, transparent);
+      color: var(--mat-sys-primary);
+    }
+    @media (max-width: 600px) {
+      .sidenav {
+        width: 70px;
+      }
+      span[matListItemTitle] {
+        display: none;
+      }
+    }

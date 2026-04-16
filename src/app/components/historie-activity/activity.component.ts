@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivityLog } from '../../shared/types';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,17 +8,13 @@ import { RequestService } from '../../core/services/request.service';
 
 @Component({
   selector: 'app-activity',
-  template: `
-		<div class="col-12 d-flex justify-content-center m-t-20">
-			<button matButton="outlined" color="primary" (click)="openActivityModal()">
-				<mat-icon>history</mat-icon>
-				{{ 'HISTORY_COMPONENT.SEE_HISTORY' | translate }}
-			</button>
-		</div>
-	`,
+  templateUrl: './activity.component.html',
   imports: [...importBase],
 })
 export class ActivityComponent implements OnInit {
+  private requestService = inject(RequestService);
+  private dialog = inject(MatDialog);
+
   @Input()
   table!: string;
   @Input()
@@ -27,7 +23,8 @@ export class ActivityComponent implements OnInit {
   $event!: EventEmitter<boolean>;
   activityLogs$!: Observable<ActivityLog[]>;
 
-  constructor(private requestService: RequestService, private dialog: MatDialog) { }
+
+  constructor() {}
 
   ngOnInit(): void {
     if (this.$event) {
@@ -37,7 +34,7 @@ export class ActivityComponent implements OnInit {
 
   openActivityModal(): void {
     this.fetchActivities();
-    this.activityLogs$.subscribe(logs => {
+    this.activityLogs$.subscribe((logs) => {
       this.dialog.open(ActivityModalComponent, {
         width: '800px',
         data: { activityLogs: logs },

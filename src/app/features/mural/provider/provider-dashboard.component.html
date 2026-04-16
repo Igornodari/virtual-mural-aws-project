@@ -1,0 +1,333 @@
+<div class="provider-main app-page-shell">
+  <section class="provider-hero d-flex flex-col gap-20">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-15">
+      <div class="d-flex flex-col gap-10 provider-hero__text">
+        <h1 class="provider-title m-0">
+          {{ 'APP.PROVIDER.HERO_TITLE' | translate }}
+        </h1>
+
+        <p class="text-muted m-0">
+          {{ 'APP.PROVIDER.HERO_SUBTITLE' | translate }}
+          <strong>{{ condoCity }}</strong
+          >.
+        </p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card surface-card d-flex align-items-center gap-15">
+        <mat-icon class="stat-icon stat-icon--services">storefront</mat-icon>
+
+        <div class="d-flex flex-col gap-5">
+          <span class="stat-value">{{ services().length }}</span>
+          <span class="stat-label text-muted">
+            {{ 'APP.PROVIDER.STATS_SERVICES' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="stat-card surface-card d-flex align-items-center gap-15">
+        <mat-icon class="stat-icon stat-icon--rating">star</mat-icon>
+
+        <div class="d-flex flex-col gap-5">
+          <span class="stat-value">{{ averageRating() | number: '1.1-1' }}</span>
+          <span class="stat-label text-muted">
+            {{ 'APP.PROVIDER.STATS_RATING' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="stat-card surface-card d-flex align-items-center gap-15">
+        <mat-icon class="stat-icon stat-icon--reviews">reviews</mat-icon>
+
+        <div class="d-flex flex-col gap-5">
+          <span class="stat-value">{{ totalReviews() }}</span>
+          <span class="stat-label text-muted">
+            {{ 'APP.PROVIDER.STATS_REVIEWS' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="stat-card surface-card d-flex align-items-center gap-15">
+        <mat-icon class="stat-icon stat-icon--city">event</mat-icon>
+
+        <div class="d-flex flex-col gap-5">
+          <span class="stat-value">{{ pendingAppointments() }}</span>
+          <span class="stat-label text-muted">Agendamentos pendentes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section d-flex flex-col gap-15">
+    <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
+      <h2 class="section-title m-0">Solicitacoes de agendamento</h2>
+    </div>
+
+    @if (isLoadingAppointments()) {
+      <app-loading-state />
+    } @else if (appointments().length === 0) {
+      <app-empty-state
+        icon="event_busy"
+        title="Voce ainda nao recebeu solicitacoes."
+        message="Quando um morador solicitar um horario, ele aparecera aqui."
+        [translateText]="false"
+      />
+    } @else {
+      <div class="appointments-grid">
+        @for (appointment of appointments(); track appointment.id) {
+          <mat-card class="surface-card appointment-card">
+            <mat-card-content class="d-flex flex-col gap-15">
+              <div class="d-flex justify-content-between align-items-start gap-10">
+                <div class="d-flex flex-col gap-5">
+                  <strong>{{ appointment.service?.name || 'Servico' }}</strong>
+                  <span class="text-muted">
+                    {{ appointment.customer?.displayName || 'Cliente' }}
+                  </span>
+                  <span class="text-muted">
+                    {{ appointment.scheduledDay }} -
+                    {{ appointment.scheduledDate | date: 'dd/MM/yyyy' }}
+                  </span>
+                </div>
+
+                <app-status-badge [status]="appointment.status" />
+              </div>
+
+              @if (appointment.notes) {
+                <p class="text-muted m-0">{{ appointment.notes }}</p>
+              }
+
+              <div class="d-flex align-items-center flex-wrap gap-10">
+                @if (canConfirm(appointment)) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="isUpdatingAppointment() === appointment.id"
+                    (click)="updateAppointmentStatus(appointment, 'confirmed')"
+                  >
+                    Confirmar
+                  </button>
+                }
+
+                @if (canCancel(appointment)) {
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    [disabled]="isUpdatingAppointment() === appointment.id"
+                    (click)="updateAppointmentStatus(appointment, 'cancelled')"
+                  >
+                    Cancelar
+                  </button>
+                }
+
+                @if (canComplete(appointment)) {
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    [disabled]="isUpdatingAppointment() === appointment.id"
+                    (click)="updateAppointmentStatus(appointment, 'completed')"
+                  >
+                    Concluir servico
+                  </button>
+                }
+
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="openChat(appointment)"
+                  matTooltip="Conversar com o cliente"
+                >
+                  <mat-icon>chat</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="section d-flex flex-col gap-15">
+    <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
+      <h2 class="section-title m-0">
+        {{ 'APP.PROVIDER.MY_SERVICES_TITLE' | translate }}
+      </h2>
+
+      <button mat-raised-button color="primary" type="button" (click)="openForm()">
+        <mat-icon>add</mat-icon>
+        {{ 'APP.PROVIDER.ADD_SERVICE' | translate }}
+      </button>
+    </div>
+
+    @if (isLoadingServices()) {
+      <app-loading-state />
+    } @else if (services().length === 0) {
+      <app-empty-state
+        icon="storefront"
+        title="APP.PROVIDER.NO_SERVICES"
+        message="APP.PROVIDER.NO_SERVICES_HINT"
+      />
+    } @else {
+      <div class="services-grid">
+        @for (service of services(); track service.id) {
+          <app-service-card
+            [service]="service"
+            [isProvider]="true"
+            (edit)="editService($event)"
+            (remove)="removeService($event)"
+            (viewAnalytics)="selectedAnalyticsService.set($event)"
+          />
+        }
+      </div>
+    }
+  </section>
+
+  @if (selectedAnalyticsService()) {
+    <section class="section analytics-section d-flex flex-col gap-15">
+      <div
+        class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10"
+      >
+        <h2 class="section-title m-0 d-flex align-items-center">
+          <mat-icon class="section-icon m-r-10">bar_chart</mat-icon>
+          {{ 'APP.ANALYTICS.TITLE' | translate }}: {{ selectedAnalyticsService()!.name }}
+        </h2>
+
+        <button mat-icon-button type="button" (click)="selectedAnalyticsService.set(null)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <mat-card class="surface-card--elevated">
+        <mat-card-content>
+          <app-service-analytics [service]="selectedAnalyticsService()" />
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+
+  @if (showForm()) {
+    <section class="section form-section d-flex flex-col gap-15">
+      <div
+        class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10"
+      >
+        <h2 class="section-title m-0">
+          {{ (editingId() ? 'APP.PROVIDER.FORM_EDIT' : 'APP.PROVIDER.FORM_NEW') | translate }}
+        </h2>
+
+        <button mat-icon-button type="button" (click)="closeForm()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <mat-card class="surface-card--elevated">
+        <mat-card-content>
+          <form
+            [formGroup]="serviceForm"
+            (ngSubmit)="onSaveService()"
+            class="service-form d-flex flex-col gap-15"
+          >
+            <div class="form-grid-2">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ 'APP.PROVIDER.FORM_NAME' | translate }}</mat-label>
+                <input
+                  matInput
+                  formControlName="name"
+                  [placeholder]="'APP.PROVIDER.FORM_NAME_PLACEHOLDER' | translate"
+                />
+                @if (serviceForm.controls.name.touched && serviceForm.controls.name.invalid) {
+                  <mat-error>{{ 'APP.PROVIDER.FORM_NAME_REQUIRED' | translate }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ 'APP.PROVIDER.FORM_CATEGORY' | translate }}</mat-label>
+                <mat-select formControlName="category">
+                  @for (cat of categories; track cat) {
+                    <mat-option [value]="cat">{{ cat }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>{{ 'APP.PROVIDER.FORM_DESCRIPTION' | translate }}</mat-label>
+              <textarea
+                matInput
+                rows="3"
+                formControlName="description"
+                [placeholder]="'APP.PROVIDER.FORM_DESCRIPTION_PLACEHOLDER' | translate"
+              ></textarea>
+              @if (
+                serviceForm.controls.description.touched && serviceForm.controls.description.invalid
+              ) {
+                <mat-error>{{ 'APP.PROVIDER.FORM_DESCRIPTION_REQUIRED' | translate }}</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="form-grid-2">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ 'APP.PROVIDER.FORM_PRICE' | translate }}</mat-label>
+                <input
+                  matInput
+                  formControlName="price"
+                  [placeholder]="'APP.PROVIDER.FORM_PRICE_PLACEHOLDER' | translate"
+                />
+                @if (serviceForm.controls.price.touched && serviceForm.controls.price.invalid) {
+                  <mat-error>{{ 'APP.PROVIDER.FORM_PRICE_REQUIRED' | translate }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ 'APP.PROVIDER.FORM_CONTACT' | translate }}</mat-label>
+                <input
+                  matInput
+                  formControlName="contact"
+                  [placeholder]="'APP.PROVIDER.FORM_CONTACT_PLACEHOLDER' | translate"
+                />
+                @if (serviceForm.controls.contact.touched && serviceForm.controls.contact.invalid) {
+                  <mat-error>{{ 'APP.PROVIDER.FORM_CONTACT_REQUIRED' | translate }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>{{ 'APP.PROVIDER.FORM_DAYS' | translate }}</mat-label>
+              <mat-select formControlName="availableDays" multiple>
+                @for (day of weekdays; track day) {
+                  <mat-option [value]="day">{{ day }}</mat-option>
+                }
+              </mat-select>
+              @if (
+                serviceForm.controls.availableDays.touched &&
+                serviceForm.controls.availableDays.invalid
+              ) {
+                <mat-error>{{ 'APP.PROVIDER.FORM_DAYS_REQUIRED' | translate }}</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="form-actions d-flex justify-content-end flex-wrap gap-10">
+              <button mat-stroked-button type="button" (click)="closeForm()">
+                {{ 'APP.PROVIDER.FORM_CANCEL' | translate }}
+              </button>
+
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="serviceForm.invalid || isSaving()"
+              >
+                @if (isSaving()) {
+                  <mat-spinner diameter="18" />
+                }
+
+                {{
+                  (editingId() ? 'APP.PROVIDER.FORM_SAVE' : 'APP.PROVIDER.FORM_PUBLISH') | translate
+                }}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+</div>

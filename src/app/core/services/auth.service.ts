@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AmplifyService } from './amplify.service';
 import { Condominium, Unit, User } from '../../shared/types';
@@ -18,6 +18,9 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly amplifyService = inject(AmplifyService);
+  private readonly ngZone = inject(NgZone);
+
   private readonly emptyUser: User = {
     id: '',
     email: '',
@@ -52,10 +55,8 @@ export class AuthService {
   readonly $unit = this.$condominium;
   readonly $isLogggedIn = this.isAuthenticatedSubject.asObservable();
 
-  constructor(
-    private readonly amplifyService: AmplifyService,
-    private readonly ngZone: NgZone,
-  ) {
+
+  constructor() {
     this.amplifyService.ensureConfigured();
     void this.syncAuthState();
   }
@@ -94,12 +95,7 @@ export class AuthService {
     return this.loginWithGoogle();
   }
 
-  async registerWithEmail(
-    email: string,
-    password: string,
-    firstName: string,
-    lastName?: string
-  ) {
+  async registerWithEmail(email: string, password: string, firstName: string, lastName?: string) {
     const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
     return signUp({
       username: email,
@@ -149,7 +145,7 @@ export class AuthService {
 
       throw new Error(this.mapSignInError(error));
     });
-    
+
     await this.syncAuthState();
     return result;
   }
@@ -167,7 +163,7 @@ export class AuthService {
       this.setCurrentUser(null);
       return false;
     }
-    
+
     const authenticated = !!session.tokens?.idToken;
     this.isAuthenticatedSubject.next(authenticated);
     if (authenticated && !this.userSubject.value) {
@@ -261,7 +257,9 @@ export class AuthService {
       }
     }
     const normalizedUserAttributes = Object.fromEntries(
-      Object.entries(userAttributes).filter(([, value]) => typeof value === 'string' && value.length > 0),
+      Object.entries(userAttributes).filter(
+        ([, value]) => typeof value === 'string' && value.length > 0,
+      ),
     ) as Record<string, string>;
 
     let cognitoCurrentUser: Awaited<ReturnType<typeof getCurrentUser>> | null = null;
@@ -279,7 +277,11 @@ export class AuthService {
       cognitoCurrentUser,
     );
     this.setCurrentUser(mappedUser);
-    const googleProfileDraft = this.extractGoogleProfileDraft(idTokenClaims, accessTokenClaims, mappedUser);
+    const googleProfileDraft = this.extractGoogleProfileDraft(
+      idTokenClaims,
+      accessTokenClaims,
+      mappedUser,
+    );
 
     return {
       isAuthenticated: true,
@@ -308,7 +310,7 @@ export class AuthService {
       this.setCurrentUser(null);
       return;
     }
-    
+
     const idToken = session.tokens?.idToken;
     if (!idToken) {
       this.setCurrentUser(null);
@@ -332,7 +334,7 @@ export class AuthService {
       idTokenClaims['cognito:username'] ?? accessTokenClaims['username'],
     );
     const identities = Array.isArray(idTokenClaims['identities'])
-      ? (idTokenClaims['identities'] as Array<Record<string, unknown>>)
+      ? (idTokenClaims['identities'] as Record<string, unknown>[])
       : [];
     const identity = identities[0] ?? {};
     const isGoogle = cognitoUsername.startsWith('google_') || identities.length > 0;
@@ -363,7 +365,9 @@ export class AuthService {
     cognitoCurrentUser: Awaited<ReturnType<typeof getCurrentUser>> | null,
   ): User {
     const givenName = this.claimToString(idTokenClaims['given_name'] ?? attributes['given_name']);
-    const familyName = this.claimToString(idTokenClaims['family_name'] ?? attributes['family_name']);
+    const familyName = this.claimToString(
+      idTokenClaims['family_name'] ?? attributes['family_name'],
+    );
     const displayName =
       this.claimToString(idTokenClaims['name'] ?? attributes['name']) ||
       [givenName, familyName].filter(Boolean).join(' ');
@@ -372,10 +376,12 @@ export class AuthService {
       this.claimToString(cognitoCurrentUser?.signInDetails?.loginId);
     const id = this.claimToString(idTokenClaims['sub'] ?? cognitoCurrentUser?.userId);
     const cognitoUsername = this.claimToString(
-      idTokenClaims['cognito:username'] ?? accessTokenClaims['username'] ?? cognitoCurrentUser?.username,
+      idTokenClaims['cognito:username'] ??
+        accessTokenClaims['username'] ??
+        cognitoCurrentUser?.username,
     );
     const identities = Array.isArray(idTokenClaims['identities'])
-      ? (idTokenClaims['identities'] as Array<Record<string, unknown>>)
+      ? (idTokenClaims['identities'] as Record<string, unknown>[])
       : [];
     const identity = identities[0] ?? {};
     const isGoogleUser = cognitoUsername.startsWith('google_') || identities.length > 0;
@@ -384,7 +390,8 @@ export class AuthService {
       ...this.emptyUser,
       id,
       email,
-      emailVerified: String(idTokenClaims['email_verified'] ?? attributes['email_verified'] ?? '') === 'true',
+      emailVerified:
+        String(idTokenClaims['email_verified'] ?? attributes['email_verified'] ?? '') === 'true',
       displayName,
       givenName,
       familyName,

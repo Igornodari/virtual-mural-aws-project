@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -12,7 +12,10 @@ import { AuthService } from '../../core/services/auth.service';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
-  constructor(private readonly authService: AuthService) {}
+  private readonly authService = inject(AuthService);
+
+
+  constructor() {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return from(this.authService.getIdToken()).pipe(
@@ -32,7 +35,7 @@ export class RequestInterceptor implements HttpInterceptor {
         });
 
         return next.handle(secureReq);
-      })
+      }),
     );
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,24 +10,27 @@ import BaseComponent from '../../base.component';
 import { NewLine } from 'src/app/shared/pipe/new-line.pipe';
 
 @Component({
-    selector: 'app-activity-modal',
-    imports: [
-		CommonModule,
-		MatButtonModule,
-		MatCardModule,
-		MatDialogModule,
-		MatIconModule,
-		NewLine,
-		TranslateModule,
-	],
-    templateUrl: './activity-modal.component.html',
-    styleUrl: './activity-modal.component.scss'
+  selector: 'app-activity-modal',
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDialogModule,
+    MatIconModule,
+    NewLine,
+    TranslateModule,
+  ],
+  templateUrl: './activity-modal.component.html',
+  styleUrl: './activity-modal.component.scss',
 })
 export class ActivityModalComponent extends BaseComponent {
-	constructor(
-		public dialogRef: MatDialogRef<ActivityModalComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: { activityLogs: ActivityLog[] }
-	) {
-		super();
-	}
+  dialogRef = inject<MatDialogRef<ActivityModalComponent>>(MatDialogRef);
+  data = inject<{
+    activityLogs: ActivityLog[];
+  }>(MAT_DIALOG_DATA);
+
+
+  constructor() {
+    super();
+  }
 }

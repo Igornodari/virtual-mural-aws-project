@@ -4,19 +4,7 @@ import { importBase } from '../../shared/constant/import-base.constant';
 @Component({
     selector: 'app-generic-tab',
     imports: [...importBase],
-    template: `
-		<mat-tab-group (selectedIndexChange)="onTabChange($event)">
-		  @for (tab of tabs; track tab) {
-		    <mat-tab [label]="tab.label | translate"></mat-tab>
-		  }
-		</mat-tab-group>
-		@if (activeTabContent) {
-		  <div>
-		    <ng-container *ngTemplateOutlet="activeTabContent"></ng-container>
-		  </div>
-		}
-		`
-})
+    templateUrl: './generic-tab.component.html',})
 export class GenericTabComponent implements OnInit {
 	@Input() tabs: { label: string; content: any }[] = [];
 	@Output() selectedIndexChange = new EventEmitter<number>();

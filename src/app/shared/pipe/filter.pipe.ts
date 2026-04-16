@@ -1,21 +1,33 @@
-
-
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'appFilter' })
+import { getNestedValue } from '../utils/object-path.util';
+
+@Pipe({
+  name: 'appFilter',
+  standalone: true,
+})
 export class FilterPipe implements PipeTransform {
-  
-  transform(items: any[], searchText: string): any[] {
-    if (!items) {
+  transform<T>(
+    items: readonly T[] | null | undefined,
+    searchText: string | null | undefined,
+    fields: string | readonly string[] = 'displayName',
+  ): T[] {
+    if (!items?.length) {
       return [];
     }
-    if (!searchText) {
-      return items;
-    }
-    searchText = searchText.toLocaleLowerCase();
 
-    return items.filter((it) => {
-      return it.displayName.toLocaleLowerCase().includes(searchText);
+    const search = searchText?.toLocaleLowerCase().trim();
+    if (!search) {
+      return [...items];
+    }
+
+    const searchableFields = Array.isArray(fields) ? fields : [fields];
+
+    return items.filter((item) => {
+      return searchableFields.some((field) => {
+        const value = getNestedValue(item, field, '');
+        return String(value).toLocaleLowerCase().includes(search);
+      });
     });
   }
 }

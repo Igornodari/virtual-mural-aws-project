@@ -1,0 +1,169 @@
+<div class="profile-layout">
+      <main class="profile-main">
+        <div class="profile-header">
+          <div class="avatar-circle">
+            <mat-icon class="avatar-icon">person</mat-icon>
+          </div>
+          <div>
+            <h1 class="profile-name">{{ user?.givenName || user?.displayName }}</h1>
+            <span class="role-badge" [class.role-badge--provider]="currentRole === 'provider'">
+              <mat-icon class="role-icon">{{ currentRole === 'provider' ? 'storefront' : 'home' }}</mat-icon>
+              {{ (currentRole === 'provider' ? 'APP.PROFILE.ROLE_PROVIDER' : 'APP.PROFILE.ROLE_CUSTOMER') | translate }}
+            </span>
+          </div>
+        </div>
+
+        <mat-tab-group animationDuration="200ms" class="profile-tabs">
+
+          <!-- Aba: Dados Pessoais -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">person</mat-icon>
+              {{ 'APP.PROFILE.TAB_PERSONAL' | translate }}
+            </ng-template>
+            <div class="tab-content">
+              <mat-card class="surface-card">
+                <mat-card-content>
+                  <form [formGroup]="personalForm" (ngSubmit)="savePersonal()" class="profile-form">
+                    <div class="two-col">
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.PROFILE.GIVEN_NAME' | translate }}</mat-label>
+                        <input matInput formControlName="givenName" />
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.PROFILE.FAMILY_NAME' | translate }}</mat-label>
+                        <input matInput formControlName="familyName" />
+                      </mat-form-field>
+                    </div>
+                    <mat-form-field appearance="outline" class="w-full">
+                      <mat-label>{{ 'APP.PROFILE.EMAIL' | translate }}</mat-label>
+                      <input matInput formControlName="email" type="email" readonly />
+                      <mat-icon matSuffix>email</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="w-full">
+                      <mat-label>{{ 'APP.PROFILE.PHONE' | translate }}</mat-label>
+                      <input matInput formControlName="phone" type="tel"
+                        [placeholder]="'APP.PROFILE.PHONE_PLACEHOLDER' | translate" />
+                      <mat-icon matSuffix>phone</mat-icon>
+                    </mat-form-field>
+                    <div class="form-actions">
+                      <button mat-raised-button color="primary" type="submit"
+                        [disabled]="personalForm.invalid || isSavingPersonal()">
+                        @if (isSavingPersonal()) { <mat-spinner diameter="18" /> }
+                        <mat-icon>save</mat-icon>
+                        {{ 'APP.PROFILE.SAVE' | translate }}
+                      </button>
+                    </div>
+                  </form>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-tab>
+
+          <!-- Aba: Endereço e Condomínio -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">location_city</mat-icon>
+              {{ 'APP.PROFILE.TAB_ADDRESS' | translate }}
+            </ng-template>
+            <div class="tab-content">
+              <mat-card class="surface-card">
+                <mat-card-content>
+                  <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="profile-form">
+                    <mat-form-field appearance="outline" class="w-full">
+                      <mat-label>{{ 'APP.PROFILE.CONDO_NAME' | translate }}</mat-label>
+                      <input matInput formControlName="name"
+                        [placeholder]="'APP.PROFILE.CONDO_NAME_PLACEHOLDER' | translate" />
+                      <mat-icon matSuffix>apartment</mat-icon>
+                    </mat-form-field>
+                    <div class="cep-row">
+                      <mat-form-field appearance="outline" class="cep-field">
+                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.CEP' | translate }}</mat-label>
+                        <input matInput formControlName="zipCode" maxlength="9"
+                          [placeholder]="'APP.ONBOARDING.CONDOMINIUM.CEP_PLACEHOLDER' | translate"
+                          (blur)="lookupCep()" />
+                        <mat-icon matSuffix>pin_drop</mat-icon>
+                        @if (isLookingUpCep()) { <mat-spinner matSuffix diameter="18" /> }
+                      </mat-form-field>
+                      <button mat-stroked-button type="button" (click)="lookupCep()"
+                        [disabled]="isLookingUpCep()">
+                        <mat-icon>search</mat-icon>
+                        {{ 'APP.ONBOARDING.CONDOMINIUM.CEP_SEARCH' | translate }}
+                      </button>
+                    </div>
+                    <div class="two-col">
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.STREET' | translate }}</mat-label>
+                        <input matInput formControlName="street" />
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.NUMBER' | translate }}</mat-label>
+                        <input matInput formControlName="number" />
+                      </mat-form-field>
+                    </div>
+                    <div class="two-col">
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.NEIGHBORHOOD' | translate }}</mat-label>
+                        <input matInput formControlName="neighborhood" />
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.COMPLEMENT' | translate }}</mat-label>
+                        <input matInput formControlName="complement" />
+                      </mat-form-field>
+                    </div>
+                    <div class="two-col">
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.CITY' | translate }}</mat-label>
+                        <input matInput formControlName="city" />
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.STATE' | translate }}</mat-label>
+                        <input matInput formControlName="state" maxlength="2" />
+                      </mat-form-field>
+                    </div>
+                    <div class="form-actions">
+                      <button mat-raised-button color="primary" type="submit"
+                        [disabled]="addressForm.invalid || isSavingAddress()">
+                        @if (isSavingAddress()) { <mat-spinner diameter="18" /> }
+                        <mat-icon>save</mat-icon>
+                        {{ 'APP.PROFILE.SAVE' | translate }}
+                      </button>
+                    </div>
+                  </form>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-tab>
+
+          <!-- Aba: Segurança -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="tab-icon">security</mat-icon>
+              {{ 'APP.PROFILE.TAB_SECURITY' | translate }}
+            </ng-template>
+            <div class="tab-content">
+              <mat-card class="surface-card">
+                <mat-card-content>
+                  <div class="security-info">
+                    <mat-icon class="security-icon">verified_user</mat-icon>
+                    <div>
+                      <p class="security-title">{{ 'APP.PROFILE.SECURITY_COGNITO_TITLE' | translate }}</p>
+                      <p class="text-muted">{{ 'APP.PROFILE.SECURITY_COGNITO_DESC' | translate }}</p>
+                    </div>
+                  </div>
+                  <mat-divider class="m-y-3" />
+                  <div class="security-info">
+                    <mat-icon class="security-icon">lock</mat-icon>
+                    <div>
+                      <p class="security-title">{{ 'APP.PROFILE.SECURITY_PASSWORD_TITLE' | translate }}</p>
+                      <p class="text-muted">{{ 'APP.PROFILE.SECURITY_PASSWORD_DESC' | translate }}</p>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-tab>
+
+        </mat-tab-group>
+      </main>
+    </div>

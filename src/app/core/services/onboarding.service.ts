@@ -1,8 +1,13 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap, catchError, of, switchMap } from 'rxjs';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
+import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { CondominiumAddress, OnboardingProfile, UserRole } from '../../shared/types';
-import { UserApiService, AppUserProfileDto } from './user-api.service';
-import { CondominiumApiService, CondominiumDto, CreateCondominiumPayload } from './condominium-api.service';
+import { getDashboardRouteByRole, ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
+import {
+  CondominiumApiService,
+  CondominiumDto,
+  CreateCondominiumPayload,
+} from './condominium-api.service';
+import { AppUserProfileDto, UserApiService } from './user-api.service';
 
 const STORAGE_KEY = 'APP_ONBOARDING';
 
@@ -16,15 +21,16 @@ const STORAGE_KEY = 'APP_ONBOARDING';
  */
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
-  private readonly profileSubject = new BehaviorSubject<OnboardingProfile>(
-    this.loadFromStorage(),
-  );
+  private readonly userApi = inject(UserApiService);
+  private readonly condominiumApi = inject(CondominiumApiService);
+  private readonly errorHandler = inject(ErrorHandler);
+
+  private readonly profileSubject = new BehaviorSubject<OnboardingProfile>(this.loadFromStorage());
+
   readonly profile$ = this.profileSubject.asObservable();
 
-  constructor(
-    private readonly userApi: UserApiService,
-    private readonly condominiumApi: CondominiumApiService,
-  ) {}
+
+  constructor() {}
 
   // ── Getters ──────────────────────────────────────────────────────────────
 
@@ -110,8 +116,8 @@ export class OnboardingService {
         this.persist(profile);
         return of(user);
       }),
-      catchError((err) => {
-        console.warn('[OnboardingService] Falha ao sincronizar com o backend:', err);
+      catchError((error) => {
+        this.errorHandler.handleError(error);
         return of({} as AppUserProfileDto);
       }),
     );
@@ -144,14 +150,9 @@ export class OnboardingService {
             .subscribe();
         }
       }),
-      catchError((err) => {
-        console.warn('[OnboardingService] Erro ao buscar condomínio:', err);
-        const updated: OnboardingProfile = {
-          ...this.profile,
-          condominiumAddress: address,
-          onboardingCompleted: !!(address && this.profile.role),
-        };
-        this.persist(updated);
+      catchError((error) => {
+        this.errorHandler.handleError(error);
+        this.saveLocalCondominiumAddress(address);
         return of([]);
       }),
     );
@@ -187,14 +188,9 @@ export class OnboardingService {
           .pipe(catchError(() => of(null)))
           .subscribe();
       }),
-      catchError((err) => {
-        console.warn('[OnboardingService] Erro ao criar condomínio:', err);
-        const updated: OnboardingProfile = {
-          ...this.profile,
-          condominiumAddress: address,
-          onboardingCompleted: !!(address && this.profile.role),
-        };
-        this.persist(updated);
+      catchError((error) => {
+        this.errorHandler.handleError(error);
+        this.saveLocalCondominiumAddress(address);
         return of(null);
       }),
     );
@@ -208,6 +204,54 @@ export class OnboardingService {
       ...this.profile,
       role,
       onboardingCompleted: !!(this.profile.condominiumAddress && role),
+    });
+
+    return this.userApi.updateOnboarding({ roleInCondominium: role }).pipe(
+      catchError((error) => {
+        this.errorHandler.handleError(error);
+        return of(null);
+      }),
+    );
+  }
+
+  saveLocalCondominiumAddress(
+    address: CondominiumAddress,
+    condominiumId = this.profile.condominiumId,
+  ): void {
+    this.persist({
+      ...this.profile,
+      condominiumId,
+      condominiumAddress: address,
+      onboardingCompleted: !!(address && this.profile.role),
+    });
+  }
+
+  clear(): void {
+    this.persist(EMPTY_ONBOARDING_PROFILE);
+  }
+
+  private mapBackendProfile(
+    user: AppUserProfileDto,
+    condominium?: CondominiumDto,
+  ): OnboardingProfile {
+    return {
+      condominiumId: user.condominiumId,
+      condominiumAddress: condominium
+        ? {
+            name: condominium.name,
+            zipCode: condominium.addressZipCode,
+            street: condominium.addressStreet,
+            number: condominium.addressNumber,
+            complement: condominium.addressComplement,
+            neighborhood: condominium.addressNeighborhood,
+            city: condominium.addressCity,
+            state: condominium.addressState,
+          }
+        : user.condominiumId
+          ? this.profile.condominiumAddress
+          : null,
+      role: user.roleInCondominium as UserRole | null,
+      onboardingCompleted: user.onboardingCompleted,
     };
     this.persist(updated);
 

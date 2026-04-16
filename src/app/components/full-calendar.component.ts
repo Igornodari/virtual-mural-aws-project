@@ -24,7 +24,7 @@ import {
   EventInput,
 } from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
-export type ActionDisplay = {
+export interface ActionDisplay {
   action: string;
   view: {
     get calendar(): CalendarApi;
@@ -34,19 +34,12 @@ export type ActionDisplay = {
     get currentStart(): Date;
     get currentEnd(): Date;
   };
-};
+}
 
 @Component({
   selector: 'app-full-calendar',
   imports: [MatProgressSpinnerModule, FullCalendarModule],
-  template: `
-		<full-calendar
-			#calendar
-			[options]="calendarOptions()"
-			[hidden]="!calendarVisible()"
-			[eventSources]="events"
-		></full-calendar>
-	`,
+  templateUrl: './full-calendar.component.html',
   host: { ngSkipHydration: '' },
   encapsulation: ViewEncapsulation.None,
 })
