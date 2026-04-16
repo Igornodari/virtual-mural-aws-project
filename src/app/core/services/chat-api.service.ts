@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MuralApiService } from './mural-api.service';
+import { RequestService } from './request.service';
 
 export interface ChatMessageDto {
   id: string;
@@ -17,7 +17,7 @@ export interface SendMessagePayload {
 
 @Injectable({ providedIn: 'root' })
 export class ChatApiService {
-  private readonly api = inject(MuralApiService);
+  private readonly api = inject(RequestService);
 
 
   constructor() {}
