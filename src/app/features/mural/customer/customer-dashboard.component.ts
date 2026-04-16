@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, finalize, forkJoin, of, takeUntil } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import BaseComponent from 'src/app/components/base.component';
 import {
@@ -26,7 +26,7 @@ import { CustomerFiltersComponent } from './components/customer-filters/customer
 import { CustomerHeroComponent } from './components/customer-hero/customer-hero.component';
 import { CustomerServiceDetailsComponent } from './components/customer-service-details/customer-service-details.component';
 import { CUSTOMER_ALL_CATEGORY, CUSTOMER_CATEGORIES } from './customer.constants';
-
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-customer-dashboard',
   imports: [
@@ -77,21 +77,17 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.isLoadingDashboard = true;
 
     forkJoin({
-      profile: this.userApi.getMe().pipe(
-        catchError(() => of(null as AppUserProfileDto | null)),
-      ),
-      services: this.serviceApi.findAll().pipe(
-        catchError(() => of([] as ServiceDto[])),
-      ),
-      appointments: this.appointmentApi.findMine().pipe(
-        catchError(() => of([] as AppointmentDto[])),
-      ),
+      profile: this.userApi.getMe().pipe(catchError(() => of(null as AppUserProfileDto | null))),
+      services: this.serviceApi.findAll().pipe(catchError(() => of([] as ServiceDto[]))),
+      appointments: this.appointmentApi
+        .findMine()
+        .pipe(catchError(() => of([] as AppointmentDto[]))),
     })
       .pipe(
         finalize(() => {
           this.isLoadingDashboard = false;
         }),
-        takeUntil(this.unsubscribe$),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ profile, services, appointments }) => {
         this.condoCity =
@@ -113,8 +109,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.uniqueProviders = new Set(this.services.map((service) => service.providerId)).size;
 
     this.visibleServices = this.services.filter((service) => {
-      const matchesCategory =
-        category === CUSTOMER_ALL_CATEGORY || service.category === category;
+      const matchesCategory = category === CUSTOMER_ALL_CATEGORY || service.category === category;
 
       const matchesSearch =
         !search ||
@@ -152,7 +147,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   public contactWhatsApp(service: ServiceDto): void {
     this.serviceApi
       .trackMetric(service.id, 'interests')
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
 
     const phone = service.contact.replace(/\D/g, '');
@@ -175,7 +170,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
     dialogRef
       .afterClosed()
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((selectedMethod: PaymentMethod) => {
         if (!selectedMethod) {
           return;
@@ -189,7 +184,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
             finalize(() => {
               this.isPayingAppointment = null;
             }),
-            takeUntil(this.unsubscribe$),
+            takeUntilDestroyed(this.destroyRef),
           )
           .subscribe({
             next: (paymentSession: AppointmentPaymentDto) => {
