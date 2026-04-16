@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MuralApiService } from './mural-api.service';
+import { RequestService } from './request.service';
 
 export interface TimeBlockDto {
   id: string;
@@ -21,22 +21,22 @@ export interface CreateTimeBlockPayload {
 
 @Injectable({ providedIn: 'root' })
 export class ScheduleApiService {
-  private readonly api = inject(MuralApiService);
-
-
-  constructor() {}
+  private readonly request = inject(RequestService);
 
   getBlocks(date?: string): Observable<TimeBlockDto[]> {
-    const params: Record<string, string | boolean> | undefined = date ? { date } : undefined;
-
-    return this.api.get<TimeBlockDto[]>('/schedule/blocks', params);
+    return this.request.get<TimeBlockDto[]>('/schedule/blocks', {
+      params: date ? { date } : {},
+    });
   }
 
   createBlock(payload: CreateTimeBlockPayload): Observable<TimeBlockDto> {
-    return this.api.post<TimeBlockDto>('/schedule/blocks', payload);
+    return this.request.post<TimeBlockDto, CreateTimeBlockPayload>(
+      '/schedule/blocks',
+      payload,
+    );
   }
 
   removeBlock(id: string): Observable<void> {
-    return this.api.delete<void>(`/schedule/blocks/${id}`);
+    return this.request.deletePath<void>(`/schedule/blocks/${id}`);
   }
 }
