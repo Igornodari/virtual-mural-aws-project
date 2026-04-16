@@ -1,4 +1,4 @@
-import { Component, ErrorHandler, Inject, OnInit, signal } from '@angular/core';
+import { Component, ErrorHandler, OnInit, signal, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,23 +12,21 @@ export interface PixQrData {
 
 @Component({
   selector: 'app-pix-qr-dialog',
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule,
-    TranslateModule,
-  ],
+  imports: [MatDialogModule, MatButtonModule, MatIconModule, TranslateModule],
   templateUrl: './pix-qr-dialog.html',
   styleUrl: './pix-qr-dialog.scss',
 })
 export class PixQrDialog implements OnInit {
+  data = inject<PixQrData>(MAT_DIALOG_DATA);
+  dialogRef = inject<MatDialogRef<PixQrDialog>>(MatDialogRef);
+  private readonly errorHandler = inject(ErrorHandler);
+
   qrCodeUrl = signal<string>('');
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: PixQrData,
-    public dialogRef: MatDialogRef<PixQrDialog>,
-    private readonly errorHandler: ErrorHandler,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   async ngOnInit() {
     if (this.data.qrCode) {

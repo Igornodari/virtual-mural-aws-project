@@ -3,7 +3,7 @@ import { Condominium } from './condominium.type';
 import { Unit } from './unit.type';
 import { User } from './user.type';
 
-export type Admin = {
+export interface Admin {
 	id: string;
 	createdAt: string;
 	updatedAt: string;
@@ -36,4 +36,4 @@ export type Admin = {
 	department: string;
 	position: string;
 	departmentStyle: Status;
-};
+}

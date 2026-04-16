@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
 
@@ -58,7 +58,12 @@ export interface AppointmentPaymentDto {
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly api = inject(MuralApiService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   create(payload: CreateAppointmentPayload): Observable<AppointmentDto> {
     return this.api.post<AppointmentDto>('/appointments', payload);
@@ -76,10 +81,7 @@ export class AppointmentApiService {
     return this.api.patch<AppointmentDto>(`/appointments/${id}/status`, { status });
   }
 
-  createPayment(
-    id: string,
-    payload: AppointmentPaymentPayload,
-  ): Observable<AppointmentPaymentDto> {
+  createPayment(id: string, payload: AppointmentPaymentPayload): Observable<AppointmentPaymentDto> {
     return this.api.post<AppointmentPaymentDto>(`/appointments/${id}/payment`, payload);
   }
 }

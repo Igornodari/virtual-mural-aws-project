@@ -1,4 +1,4 @@
-export type CompanyData = {
+export interface CompanyData {
   cnpj: string;
   identificador_matriz_filial: number;
   descricao_matriz_filial: string;
@@ -37,14 +37,14 @@ export type CompanyData = {
   data_situacao_especial: string | null;
   cnaes_secundarios: Cnae[];
   qsa: Socio[];
-};
+}
 
-type Cnae = {
+interface Cnae {
   codigo: number;
   descricao: string;
-};
+}
 
-type Socio = {
+interface Socio {
   identificador_de_socio: number;
   nome_socio: string;
   cnpj_cpf_do_socio: string;
@@ -54,4 +54,4 @@ type Socio = {
   cpf_representante_legal: string | null;
   nome_representante_legal: string | null;
   codigo_qualificacao_representante_legal: number | null;
-};
+}

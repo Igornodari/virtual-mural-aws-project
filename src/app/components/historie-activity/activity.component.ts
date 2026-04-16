@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivityLog } from '../../shared/types';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +12,9 @@ import { RequestService } from '../../core/services/request.service';
   imports: [...importBase],
 })
 export class ActivityComponent implements OnInit {
+  private requestService = inject(RequestService);
+  private dialog = inject(MatDialog);
+
   @Input()
   table!: string;
   @Input()
@@ -20,7 +23,10 @@ export class ActivityComponent implements OnInit {
   $event!: EventEmitter<boolean>;
   activityLogs$!: Observable<ActivityLog[]>;
 
-  constructor(private requestService: RequestService, private dialog: MatDialog) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     if (this.$event) {
@@ -30,7 +36,7 @@ export class ActivityComponent implements OnInit {
 
   openActivityModal(): void {
     this.fetchActivities();
-    this.activityLogs$.subscribe(logs => {
+    this.activityLogs$.subscribe((logs) => {
       this.dialog.open(ActivityModalComponent, {
         width: '800px',
         data: { activityLogs: logs },

@@ -116,8 +116,8 @@ export class DateTime {
 
 	static getLastDayOfMonth(date?: string | Date) {
 		date = date ? new Date(date) : new Date();
-		let year = date.getUTCFullYear();
-		let month = date.getUTCMonth() + 1; // Adiciona 1 porque os meses são zero-based
+		const year = date.getUTCFullYear();
+		const month = date.getUTCMonth() + 1; // Adiciona 1 porque os meses são zero-based
 		return new Date(Date.UTC(year, month, 0));
 	}
 

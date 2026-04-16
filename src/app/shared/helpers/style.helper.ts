@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 // Mantemos a assinatura original para compatibilidade
 export const styleFromData = (
-	styleData: Array<Status>,
+	styleData: Status[],
 	status: string,
 	translate?: TranslateService
 ): Status => {
@@ -12,7 +12,7 @@ export const styleFromData = (
 		found = styleData.find(data => {
 			try {
 				return translate.instant(data.label) === status;
-			} catch (e) {
+			} catch (_e) {
 				return false;
 			}
 		});

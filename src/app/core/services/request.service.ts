@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../environments/environments';
@@ -35,12 +35,17 @@ interface HttpRequestOptions<TBody = unknown> extends BodyRequestOptions {
   providedIn: 'root',
 })
 export class RequestService {
+  private readonly http = inject(HttpClient);
+
   private readonly apiRoots: Record<ApiTarget, string> = {
     CORE: environment.apiBaseUrl,
     BRASIL_API,
   };
 
-  constructor(private readonly http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   request<TResponse, TBody = unknown>(
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',

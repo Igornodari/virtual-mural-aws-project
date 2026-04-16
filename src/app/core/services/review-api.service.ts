@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
 
@@ -18,7 +18,12 @@ export interface CreateReviewPayload {
 
 @Injectable({ providedIn: 'root' })
 export class ReviewApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly api = inject(MuralApiService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   /** Envia uma avaliação para um serviço */
   create(payload: CreateReviewPayload): Observable<AnonymousReviewDto> {

@@ -4,26 +4,26 @@ import { URI_PATH } from '../constant/path.contant';
 import { FormControl, FormGroup } from '@angular/forms';
 import { map } from 'rxjs/operators';
 
-type Address = {
+interface Address {
   addressNeighborhood: FormControl<string>;
   addressComplement: FormControl<string>;
   addressStreet: FormControl<string>;
   addressZipCode: FormControl<string>;
   addressCity: FormControl<string>;
   addressState: FormControl<string>;
-};
+}
 
-type Coordinates = {
+interface Coordinates {
   longitude: string;
   latitude: string;
-};
+}
 
-type Location = {
+interface Location {
   type: string;
   coordinates: Coordinates;
-};
+}
 
-type CepResponse = {
+interface CepResponse {
   cep: string;
   state: string;
   city: string;
@@ -31,7 +31,7 @@ type CepResponse = {
   street: string;
   service: string;
   location: Location;
-};
+}
 
 export const fillFormWithCep = () => {
   const _requestService = inject(RequestService);

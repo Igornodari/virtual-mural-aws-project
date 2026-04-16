@@ -1,24 +1,30 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, Injectable, Injector, NgZone } from '@angular/core';
+import { ErrorHandler, Injectable, Injector, NgZone, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SnackBarService } from '../core/services/snack-bar.service';
 
-type AwsErrorPayload = {
+interface AwsErrorPayload {
   __type?: string;
   message?: string | string[];
   warning?: string | string[];
   warnings?: string[];
   statusCode?: number;
-  errors?: Array<{ message?: string }>;
-};
+  errors?: { message?: string }[];
+}
 
 const HANDLED_BY_GLOBAL_ERROR_HANDLER = Symbol('HANDLED_BY_GLOBAL_ERROR_HANDLER');
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
+  private injector = inject(Injector);
+  private ngZone = inject(NgZone);
+
   private readonly handledErrors = new WeakSet<object>();
 
-  constructor(private injector: Injector, private ngZone: NgZone) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   handleError(error: unknown): void {
     const normalizedError = this.unwrapError(error);

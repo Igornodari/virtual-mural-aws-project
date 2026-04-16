@@ -2,7 +2,6 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
-import preferArrow from 'eslint-plugin-prefer-arrow';
 
 export default tseslint.config(
   {
@@ -12,9 +11,6 @@ export default tseslint.config(
       ...tseslint.configs.recommended,
       ...angular.configs.tsRecommended,
     ],
-    plugins: {
-      'prefer-arrow': preferArrow,   
-    },
     processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/directive-selector': [
@@ -25,24 +21,24 @@ export default tseslint.config(
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' },
       ],
+
       '@angular-eslint/prefer-inject': 'warn',
       '@angular-eslint/prefer-standalone': 'warn',
       '@angular-eslint/use-lifecycle-interface': 'warn',
       '@angular-eslint/no-output-on-prefix': 'warn',
+
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-inferrable-types': 'warn',
       '@typescript-eslint/consistent-type-definitions': 'warn',
       '@typescript-eslint/consistent-indexed-object-style': 'warn',
       '@typescript-eslint/array-type': 'warn',
       '@typescript-eslint/no-empty-function': 'warn',
+
       '@typescript-eslint/no-unused-vars': [
         'error',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-        },
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
+
       'prefer-const': 'error',
       'prefer-arrow/prefer-arrow-functions': 'off',
     },

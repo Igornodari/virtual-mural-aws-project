@@ -1,4 +1,4 @@
-export type ListResponse<T> = {
+export interface ListResponse<T> {
 	data: T[];
 	paginate: {
 		total: number;
@@ -8,11 +8,11 @@ export type ListResponse<T> = {
 		};
 		where: [];
 	};
-};
+}
 
-export type BanksResponse = {
+export interface BanksResponse {
 	ispb: string;
 	name: string;
 	code: number;
 	fullName: string;
-};
+}

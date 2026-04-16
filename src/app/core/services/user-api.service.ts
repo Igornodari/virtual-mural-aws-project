@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MuralApiService } from './mural-api.service';
 
@@ -47,7 +47,12 @@ export interface UpdateProfilePayload {
 
 @Injectable({ providedIn: 'root' })
 export class UserApiService {
-  constructor(private readonly api: MuralApiService) {}
+  private readonly api = inject(MuralApiService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getMe(): Observable<AppUserProfileDto> {
     return this.api.get<AppUserProfileDto>('/users/me');
