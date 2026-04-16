@@ -14,8 +14,6 @@ export class CepValidatorDirective {
   @Output() addressDataFetched = new EventEmitter<AddressData>();
   @Output() cepInvalid = new EventEmitter<void>();
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

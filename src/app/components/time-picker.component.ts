@@ -97,9 +97,6 @@ export class TimePickerComponent implements ControlValueAccessor {
     return this.minutes.filter((m) => m >= this.minMinute);
   }
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     this.formGroup = this._formBuilder.nonNullable.group({
       hour: [null, Validators.required],

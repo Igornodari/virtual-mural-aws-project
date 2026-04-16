@@ -14,8 +14,6 @@ export class ReportComponent extends BaseComponent implements OnInit {
 
   reportUrl!: string;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     super();

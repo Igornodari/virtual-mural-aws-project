@@ -23,8 +23,6 @@ export class PixQrDialog implements OnInit {
 
   qrCodeUrl = signal<string>('');
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

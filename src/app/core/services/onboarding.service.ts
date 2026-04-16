@@ -27,8 +27,6 @@ export class OnboardingService {
 
   readonly profile$ = this.profileSubject.asObservable();
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

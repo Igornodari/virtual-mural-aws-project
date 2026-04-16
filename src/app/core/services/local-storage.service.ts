@@ -8,8 +8,6 @@ export class LocalStorageService {
   private cryptoService = inject(CryptoService);
   private readonly errorHandler = inject(ErrorHandler);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

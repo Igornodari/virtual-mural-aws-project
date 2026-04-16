@@ -25,9 +25,6 @@ export class StatusComponent implements OnChanges {
   status!: Status;
   @Input() translationKey?: string;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {

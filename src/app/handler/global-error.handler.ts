@@ -21,8 +21,6 @@ export class GlobalErrorHandler implements ErrorHandler {
 
   private readonly handledErrors = new WeakSet<object>();
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

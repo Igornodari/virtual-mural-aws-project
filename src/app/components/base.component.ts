@@ -38,9 +38,6 @@ export default class BaseComponent implements OnDestroy {
   public user: User | null = null;
   public condominium: Condominium | null = null;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     this._authService.$user
       .pipe(takeUntil(this._unsubscribe$))

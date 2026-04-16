@@ -7,8 +7,6 @@ import { AuthService } from './auth.service';
 export class PermissionService {
   private _auth = inject(AuthService);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

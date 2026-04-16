@@ -14,8 +14,6 @@ export class ErrorInterceptor implements HttpInterceptor {
   private readonly router = inject(Router);
   private readonly errorHandler = inject(ErrorHandler);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

@@ -14,8 +14,6 @@ import { AuthService } from '../../core/services/auth.service';
 export class RequestInterceptor implements HttpInterceptor {
   private readonly authService = inject(AuthService);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

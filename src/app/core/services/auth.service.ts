@@ -55,8 +55,6 @@ export class AuthService {
   readonly $unit = this.$condominium;
   readonly $isLogggedIn = this.isAuthenticatedSubject.asObservable();
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.amplifyService.ensureConfigured();

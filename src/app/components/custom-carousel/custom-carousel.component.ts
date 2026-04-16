@@ -33,9 +33,6 @@ export class CustomCarouselComponent extends BaseComponent implements OnInit, Af
   currentSlide = 0;
   albums: { src: string; caption: string; thumb: string }[] = [];
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     super();
     this.lightboxConfig.fadeDuration = 0.2;

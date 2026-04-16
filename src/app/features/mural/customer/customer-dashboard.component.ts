@@ -65,10 +65,6 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   public condoCity = 'Nao definido';
 
   public readonly categories = CUSTOMER_CATEGORIES;
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
     super();
   }

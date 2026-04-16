@@ -9,8 +9,6 @@ import { Observable, of } from 'rxjs';
 export class TranslateResolver implements Resolve<Observable<string>> {
   private translate = inject(TranslateService);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 

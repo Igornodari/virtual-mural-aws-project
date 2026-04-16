@@ -23,8 +23,6 @@ export class ActivityComponent implements OnInit {
   $event!: EventEmitter<boolean>;
   activityLogs$!: Observable<ActivityLog[]>;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {}
 
