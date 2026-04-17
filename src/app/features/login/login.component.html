@@ -42,6 +42,10 @@
           </mat-card-header>
 
           <mat-card-content class="p-0 d-flex flex-col gap-5">
+            @if (errorMessage) {
+              <div class="app-error-box" role="alert">{{ errorMessage }}</div>
+            }
+
             <button
               mat-stroked-button
               type="button"
@@ -68,6 +72,7 @@
                   type="email"
                   formControlName="email"
                   [placeholder]="'APP.LOGIN.EMAIL_PLACEHOLDER' | translate"
+                  autocomplete="email"
                 />
                 @if (form.controls.email.touched && form.controls.email.invalid) {
                   <mat-error>{{ 'APP.LOGIN.EMAIL_INVALID' | translate }}</mat-error>
@@ -78,21 +83,37 @@
                 <mat-label>{{ 'APP.LOGIN.PASSWORD_LABEL' | translate }}</mat-label>
                 <input
                   matInput
-                  type="password"
+                  [type]="showPassword ? 'text' : 'password'"
                   formControlName="password"
                   [placeholder]="'APP.LOGIN.PASSWORD_PLACEHOLDER' | translate"
+                  autocomplete="current-password"
                 />
+                <button
+                  matSuffix
+                  mat-icon-button
+                  type="button"
+                  [attr.aria-label]="(showPassword ? 'APP.LOGIN.HIDE_PASSWORD' : 'APP.LOGIN.SHOW_PASSWORD') | translate"
+                  (click)="togglePasswordVisibility()"
+                >
+                  <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
                 @if (form.controls.password.touched && form.controls.password.invalid) {
                   <mat-error>{{ 'APP.LOGIN.PASSWORD_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
+
+              <div class="d-flex justify-content-end">
+                <a routerLink="/forgot-password" class="text-muted" style="font-size: 0.875rem;">
+                  {{ 'APP.LOGIN.FORGOT_PASSWORD' | translate }}
+                </a>
+              </div>
 
               <button
                 mat-raised-button
                 color="primary"
                 type="submit"
                 class="w-full"
-                [disabled]="form.invalid || loading"
+                [disabled]="loading"
               >
                 {{
                   (loading ? 'APP.LOGIN.SIGNING_IN' : 'APP.LOGIN.SIGN_IN_WITH_EMAIL') | translate

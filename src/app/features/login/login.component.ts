@@ -73,6 +73,9 @@ export class LoginComponent extends BaseComponent implements OnInit {
     password: ['', [Validators.required]],
   });
 
+  errorMessage = '';
+  showPassword = false;
+
   constructor() {
     super();
   }
@@ -85,19 +88,38 @@ export class LoginComponent extends BaseComponent implements OnInit {
   }
 
   async onGoogleLogin(): Promise<void> {
+    this.errorMessage = '';
     this.setLoadingState(true);
-    await this.authService.loginWithGoogle();
+    try {
+      await this.authService.loginWithGoogle();
+    } catch {
+      this.setLoadingState(false);
+    }
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
 
+    this.errorMessage = '';
     this.setLoadingState(true);
-    const { email, password } = this.form.getRawValue();
-    await this.authService.loginWithEmail(email, password).finally(() => this.setLoadingState(false));
-    await this.redirectAfterLogin();
+
+    try {
+      const { email, password } = this.form.getRawValue();
+      await this.authService.loginWithEmail(email, password);
+      await this.redirectAfterLogin();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Não foi possível entrar. Tente novamente.';
+      this.updateViewState(() => { this.errorMessage = message; });
+    } finally {
+      this.setLoadingState(false);
+    }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   private async redirectAfterLogin(): Promise<void> {

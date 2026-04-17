@@ -3,6 +3,7 @@ import { UserRole } from '../types';
 export const ROUTE_PATHS = {
   login: '/login',
   register: '/register',
+  forgotPassword: '/forgot-password',
   authCallback: '/auth/callback',
   dashboard: '/dashboard',
   profile: '/profile',
