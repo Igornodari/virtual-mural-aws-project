@@ -57,6 +57,24 @@
       "SHOW_PASSWORD": "Show password",
       "HIDE_PASSWORD": "Hide password"
     },
+    "CONFIRM_EMAIL": {
+      "TITLE": "Confirm your email",
+      "SUBTITLE": "We sent a verification code to your email.",
+      "SENT_TO": "Code sent to:",
+      "CODE_LABEL": "Verification code",
+      "CODE_PLACEHOLDER": "000000",
+      "CODE_REQUIRED": "Please enter the verification code.",
+      "CODE_LENGTH": "The code must be 6 digits.",
+      "CONFIRM_BUTTON": "Confirm email",
+      "CONFIRMING": "Confirming...",
+      "SUCCESS": "Email confirmed! You can now sign in.",
+      "NO_CODE": "Didn't receive the code?",
+      "RESEND": "Resend",
+      "RESEND_SUCCESS": "New code sent! Check your email.",
+      "RESEND_WAIT": "Resend in {{seconds}}s",
+      "BACK_TO_LOGIN": "Back to login",
+      "NOT_CONFIRMED_WARNING": "Please confirm your email before signing in. Check the code sent to your inbox."
+    },
     "FORGOT_PASSWORD": {
       "TITLE": "Forgot your password?",
       "SUBTITLE": "Enter your email and we will send you a code to reset your password.",
@@ -65,6 +83,7 @@
       "EMAIL_INVALID": "Please enter a valid email.",
       "SEND_CODE": "Send code",
       "SENDING": "Sending...",
+      "CODE_SENT": "Code sent! Check your email.",
       "BACK_TO_LOGIN": "Back to login",
       "RESET_TITLE": "Reset your password",
       "RESET_SUBTITLE": "Enter the code sent to {{email}} and choose a new password.",

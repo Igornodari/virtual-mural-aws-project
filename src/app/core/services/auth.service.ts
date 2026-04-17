@@ -8,6 +8,7 @@ import {
   fetchAuthSession,
   fetchUserAttributes,
   getCurrentUser,
+  resendSignUpCode,
   resetPassword,
   signIn,
   signInWithRedirect,
@@ -117,6 +118,10 @@ export class AuthService {
       username: email,
       confirmationCode: code,
     });
+  }
+
+  async resendConfirmationCode(email: string) {
+    return resendSignUpCode({ username: email.trim().toLowerCase() });
   }
 
   async loginWithEmail(email: string, password: string) {

@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
+import { SnackBarService } from '../../core/services/snack-bar.service';
 
 /** Valida força de senha compatível com a política padrão do AWS Cognito */
 const passwordStrengthValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
@@ -58,11 +59,8 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
 export class RegisterComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
   private readonly translateService = inject(TranslateService);
+  private readonly snackBar = inject(SnackBarService);
 
-  awaitingConfirmation = false;
-  registeredEmail = '';
-  errorMessage = '';
-  successMessage = '';
   showPassword = false;
   showConfirmPassword = false;
 
@@ -76,10 +74,6 @@ export class RegisterComponent extends BaseComponent {
     },
     { validators: passwordMatchValidator },
   );
-
-  confirmationForm = this.fb.nonNullable.group({
-    code: ['', [Validators.required]],
-  });
 
   constructor() {
     super();
@@ -95,41 +89,16 @@ export class RegisterComponent extends BaseComponent {
       return;
     }
 
-    this.errorMessage = '';
-    this.successMessage = '';
     this.setLoadingState(true);
 
     try {
       const { firstName, lastName, email, password } = this.registerForm.getRawValue();
       await this.authService.registerWithEmail(email, password, firstName, lastName);
-      this.registeredEmail = email;
-      this.updateViewState(() => {
-        this.awaitingConfirmation = true;
-        this.successMessage = this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED');
-      });
+      this.snackBar.success(this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED'));
+      // Redireciona para página dedicada de confirmação de email
+      await this.navigateTo(`/confirm-email?email=${encodeURIComponent(email)}`);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : this.translateService.instant('APP.REGISTER.UNKNOWN_ERROR');
-      this.updateViewState(() => { this.errorMessage = message; });
-    } finally {
-      this.setLoadingState(false);
-    }
-  }
-
-  async onConfirmCode(): Promise<void> {
-    if (this.confirmationForm.invalid || !this.registeredEmail) return;
-
-    this.errorMessage = '';
-    this.setLoadingState(true);
-
-    try {
-      await this.authService.confirmEmailCode(this.registeredEmail, this.confirmationForm.getRawValue().code);
-      this.updateViewState(() => {
-        this.successMessage = this.translateService.instant('APP.REGISTER.EMAIL_CONFIRMED');
-      });
-      await this.navigateTo('/login');
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : this.translateService.instant('APP.REGISTER.UNKNOWN_ERROR');
-      this.updateViewState(() => { this.errorMessage = message; });
+      throw err;
     } finally {
       this.setLoadingState(false);
     }

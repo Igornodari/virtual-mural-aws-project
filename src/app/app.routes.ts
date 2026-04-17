@@ -33,6 +33,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: ROUTE_PATHS.confirmEmail.slice(1),
+        loadComponent: () =>
+          import('./features/confirm-email/confirm-email.component').then(
+            (m) => m.ConfirmEmailComponent,
+          ),
+      },
+      {
         path: ROUTE_PATHS.authCallback.slice(1),
         loadComponent: () =>
           import('../app/features/auth-callback.components').then(

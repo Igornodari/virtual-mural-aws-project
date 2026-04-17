@@ -57,6 +57,24 @@
       "SHOW_PASSWORD": "Mostrar senha",
       "HIDE_PASSWORD": "Ocultar senha"
     },
+    "CONFIRM_EMAIL": {
+      "TITLE": "Confirme seu email",
+      "SUBTITLE": "Enviamos um código de verificação para o seu email.",
+      "SENT_TO": "Código enviado para:",
+      "CODE_LABEL": "Código de verificação",
+      "CODE_PLACEHOLDER": "000000",
+      "CODE_REQUIRED": "Informe o código de verificação.",
+      "CODE_LENGTH": "O código deve ter 6 dígitos.",
+      "CONFIRM_BUTTON": "Confirmar email",
+      "CONFIRMING": "Confirmando...",
+      "SUCCESS": "Email confirmado com sucesso! Agora você pode entrar.",
+      "NO_CODE": "Não recebeu o código?",
+      "RESEND": "Reenviar",
+      "RESEND_SUCCESS": "Novo código enviado! Verifique seu email.",
+      "RESEND_WAIT": "Reenviar em {{seconds}}s",
+      "BACK_TO_LOGIN": "Voltar para login",
+      "NOT_CONFIRMED_WARNING": "Confirme seu email antes de entrar. Verifique o código enviado para sua caixa de entrada."
+    },
     "FORGOT_PASSWORD": {
       "TITLE": "Esqueceu sua senha?",
       "SUBTITLE": "Informe seu email e enviaremos um código para redefinir sua senha.",
@@ -65,6 +83,7 @@
       "EMAIL_INVALID": "Informe um email válido.",
       "SEND_CODE": "Enviar código",
       "SENDING": "Enviando...",
+      "CODE_SENT": "Código enviado! Verifique seu email.",
       "BACK_TO_LOGIN": "Voltar para login",
       "RESET_TITLE": "Redefinir senha",
       "RESET_SUBTITLE": "Digite o código enviado para {{email}} e escolha uma nova senha.",

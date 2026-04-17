@@ -4,6 +4,7 @@ export const ROUTE_PATHS = {
   login: '/login',
   register: '/register',
   forgotPassword: '/forgot-password',
+  confirmEmail: '/confirm-email',
   authCallback: '/auth/callback',
   dashboard: '/dashboard',
   profile: '/profile',

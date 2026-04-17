@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
+import { SnackBarService } from '../../core/services/snack-bar.service';
 
 /** Valida força de senha compatível com AWS Cognito */
 const passwordStrengthValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
@@ -59,10 +60,10 @@ type ForgotStep = 'email' | 'reset' | 'done';
 export class ForgotPasswordComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
   private readonly translateService = inject(TranslateService);
+  private readonly snackBar = inject(SnackBarService);
 
   step: ForgotStep = 'email';
   pendingEmail = '';
-  errorMessage = '';
   showNewPassword = false;
   showConfirmPassword = false;
 
@@ -93,17 +94,16 @@ export class ForgotPasswordComponent extends BaseComponent {
       return;
     }
 
-    this.errorMessage = '';
     this.setLoadingState(true);
 
     try {
       const { email } = this.emailForm.getRawValue();
       await this.authService.forgotPassword(email);
       this.pendingEmail = email;
+      this.snackBar.success(this.translateService.instant('APP.FORGOT_PASSWORD.CODE_SENT'));
       this.updateViewState(() => { this.step = 'reset'; });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : this.translateService.instant('APP.FORGOT_PASSWORD.UNKNOWN_ERROR');
-      this.updateViewState(() => { this.errorMessage = message; });
+      throw err;
     } finally {
       this.setLoadingState(false);
     }
@@ -115,7 +115,6 @@ export class ForgotPasswordComponent extends BaseComponent {
       return;
     }
 
-    this.errorMessage = '';
     this.setLoadingState(true);
 
     try {
@@ -123,8 +122,7 @@ export class ForgotPasswordComponent extends BaseComponent {
       await this.authService.confirmForgotPassword(this.pendingEmail, code, newPassword);
       this.updateViewState(() => { this.step = 'done'; });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : this.translateService.instant('APP.FORGOT_PASSWORD.UNKNOWN_ERROR');
-      this.updateViewState(() => { this.errorMessage = message; });
+      throw err;
     } finally {
       this.setLoadingState(false);
     }
