@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { AmplifyService } from './amplify.service';
 import { Condominium, Unit, User } from '../../shared/types';
 import {
+  confirmResetPassword,
   confirmSignUp,
   fetchAuthSession,
   fetchUserAttributes,
@@ -183,7 +184,15 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    return resetPassword({ username: email });
+    return resetPassword({ username: email.trim().toLowerCase() });
+  }
+
+  async confirmForgotPassword(email: string, code: string, newPassword: string) {
+    return confirmResetPassword({
+      username: email.trim().toLowerCase(),
+      confirmationCode: code,
+      newPassword,
+    });
   }
 
   async getUser(): Promise<User | null> {

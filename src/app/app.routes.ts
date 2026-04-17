@@ -26,6 +26,13 @@ export const routes: Routes = [
           import('./features/register/register.component').then((m) => m.RegisterComponent),
       },
       {
+        path: ROUTE_PATHS.forgotPassword.slice(1),
+        loadComponent: () =>
+          import('./features/forgot-password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent,
+          ),
+      },
+      {
         path: ROUTE_PATHS.authCallback.slice(1),
         loadComponent: () =>
           import('../app/features/auth-callback.components').then(
