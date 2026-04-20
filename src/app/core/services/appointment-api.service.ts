@@ -19,6 +19,7 @@ export interface AppointmentDto {
   customerId: string;
   scheduledDate: string;
   scheduledDay: string;
+  scheduledTime?: string | null;
   notes?: string;
   status: AppointmentStatus;
   paymentStatus?: PaymentStatus;
@@ -39,6 +40,7 @@ export interface CreateAppointmentPayload {
   serviceId: string;
   scheduledDate: string;
   scheduledDay: string;
+  scheduledTime?: string;
   notes?: string;
 }
 

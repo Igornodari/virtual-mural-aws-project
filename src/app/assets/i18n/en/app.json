@@ -153,7 +153,8 @@
       "FORM_CONTACT_PLACEHOLDER": "(11) 99999-9999",
       "FORM_CONTACT_REQUIRED": "Please enter a contact.",
       "FORM_DAYS": "Available days",
-      "FORM_DAYS_REQUIRED": "Select at least one day.",
+      "FORM_DAYS_REQUIRED": "Configure at least one availability day.",
+      "FORM_AVAILABILITY": "Weekly availability",
       "FORM_CANCEL": "Cancel",
       "FORM_SAVE": "Save changes",
       "FORM_PUBLISH": "Publish on board"
@@ -306,6 +307,29 @@
       "NO_COMMENTS": "No comments yet",
       "ANONYMOUS": "Anonymous",
       "NO_COMMENT_TEXT": "Rating without comment"
+    },
+    "KANBAN": {
+      "SECTION_TITLE": "Appointments",
+      "VIEW_KANBAN": "View as Kanban",
+      "VIEW_LIST": "View as list",
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "AWAITING_PAYMENT": "Awaiting Payment",
+      "PAID": "Paid",
+      "COMPLETED": "Completed",
+      "CONFIRM": "Confirm",
+      "CANCEL": "Cancel",
+      "COMPLETE": "Complete",
+      "CHAT": "Chat with customer",
+      "EMPTY_COLUMN": "No appointments",
+      "EMPTY_TITLE": "No requests yet",
+      "EMPTY_MESSAGE": "When a resident requests an appointment, it will appear here.",
+      "UNKNOWN_SERVICE": "Service",
+      "UNKNOWN_CUSTOMER": "Customer"
+    },
+    "SCHEDULE": {
+      "SELECT_TIME": "Choose a time slot for",
+      "NO_SLOTS": "No time slots available for this day."
     }
   }
 }

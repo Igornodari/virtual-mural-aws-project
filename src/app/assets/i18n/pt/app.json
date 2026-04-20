@@ -153,7 +153,8 @@
       "FORM_CONTACT_PLACEHOLDER": "(11) 99999-9999",
       "FORM_CONTACT_REQUIRED": "Informe o contato.",
       "FORM_DAYS": "Dias disponíveis",
-      "FORM_DAYS_REQUIRED": "Selecione ao menos um dia.",
+      "FORM_DAYS_REQUIRED": "Configure ao menos um dia de disponibilidade.",
+      "FORM_AVAILABILITY": "Disponibilidade semanal",
       "FORM_CANCEL": "Cancelar",
       "FORM_SAVE": "Salvar alterações",
       "FORM_PUBLISH": "Publicar no mural"
@@ -306,6 +307,29 @@
       "NO_COMMENTS": "Nenhum comentário ainda",
       "ANONYMOUS": "Anônimo",
       "NO_COMMENT_TEXT": "Avaliação sem comentário"
+    },
+    "KANBAN": {
+      "SECTION_TITLE": "Agendamentos",
+      "VIEW_KANBAN": "Visualizar como Kanban",
+      "VIEW_LIST": "Visualizar como lista",
+      "PENDING": "Pendente",
+      "CONFIRMED": "Confirmado",
+      "AWAITING_PAYMENT": "Aguard. Pagamento",
+      "PAID": "Pago",
+      "COMPLETED": "Concluído",
+      "CONFIRM": "Confirmar",
+      "CANCEL": "Cancelar",
+      "COMPLETE": "Concluir",
+      "CHAT": "Conversar com o cliente",
+      "EMPTY_COLUMN": "Nenhum agendamento",
+      "EMPTY_TITLE": "Nenhuma solicitação ainda",
+      "EMPTY_MESSAGE": "Quando um morador solicitar um horário, ele aparecerá aqui.",
+      "UNKNOWN_SERVICE": "Serviço",
+      "UNKNOWN_CUSTOMER": "Cliente"
+    },
+    "SCHEDULE": {
+      "SELECT_TIME": "Escolha um horário para",
+      "NO_SLOTS": "Nenhum horário disponível neste dia."
     }
   }
 }

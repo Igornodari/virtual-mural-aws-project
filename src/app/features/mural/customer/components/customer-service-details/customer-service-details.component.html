@@ -8,25 +8,22 @@
         {{ 'APP.CUSTOMER.SCHEDULE_TITLE' | translate }}
       </h4>
 
-      <div class="d-flex flex-wrap gap-10">
-        @for (day of service.availableDays; track day) {
-          <button
-            type="button"
-            class="filter-chip"
-            [class.filter-chip--active]="selectedDay === day"
-            [class.filter-chip--disabled]="isDayUnavailable(day)"
-            [disabled]="isDayUnavailable(day)"
-            (click)="selectDay(day)"
-          >
-            {{ day }}
-            @if (isDayUnavailable(day)) {
-              <span> - Indisponivel</span>
-            }
-          </button>
-        }
-      </div>
+      <app-appointment-calendar-picker
+        [availabilitySlots]="availabilitySlots"
+        [blockedDates]="blockedDates"
+        (selectionChange)="onCalendarSelectionChange($event)"
+      />
 
-      @if (selectedDay) {
+      @if (calendarSelection) {
+        <div class="schedule-summary surface-card d-flex align-items-center gap-10 p-10 rounded">
+          <mat-icon color="primary">event_available</mat-icon>
+          <span>
+            <strong>{{ calendarSelection.date | date:'dd/MM/yyyy' }}</strong>
+            · {{ calendarSelection.day }}
+            · {{ calendarSelection.time }}
+          </span>
+        </div>
+
         <button
           mat-raised-button
           color="accent"

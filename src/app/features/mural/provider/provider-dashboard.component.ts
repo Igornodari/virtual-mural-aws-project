@@ -9,14 +9,14 @@ import {
 } from 'src/app/core/services/appointment-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import {
-  CreateServicePayload,
   ServiceApiService,
   ServiceDto,
 } from 'src/app/core/services/service-api.service';
 
 import BaseComponent from 'src/app/components/base.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
-import { WEEKDAYS, CATEGORIES } from 'src/app/shared/types/provider.types';
+import { CATEGORIES } from 'src/app/shared/types/provider.types';
+import { AvailabilitySlot } from 'src/app/shared/types/availability.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
 import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
@@ -24,6 +24,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
+import { WeeklyAvailabilityPickerComponent } from 'src/app/shared/components/weekly-availability-picker/weekly-availability-picker.component';
+import { AppointmentKanbanComponent } from './components/appointment-kanban/appointment-kanban.component';
 import {
   canCancelAppointment,
   canCompleteAppointment,
@@ -39,6 +41,8 @@ import {
     StatusBadgeComponent,
     EmptyStateComponent,
     LoadingStateComponent,
+    WeeklyAvailabilityPickerComponent,
+    AppointmentKanbanComponent,
   ],
   templateUrl: './provider-dashboard.component.html',
   styleUrls: ['./provider-dashboard.component.scss'],
@@ -50,8 +54,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly dialog = inject(MatDialog);
 
-  readonly weekdays = WEEKDAYS;
   readonly categories = CATEGORIES;
+
+  /** Controla qual view está ativa no painel: lista de agendamentos ou kanban */
+  readonly appointmentsView = signal<'list' | 'kanban'>('kanban');
 
   readonly services = signal<ServiceDto[]>([]);
   readonly appointments = signal<AppointmentDto[]>([]);
@@ -74,6 +80,8 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     contact: ['', Validators.required],
     availableDays: this.fb.nonNullable.control<string[]>([], Validators.required),
   });
+
+  availabilitySlots: AvailabilitySlot[] = [];
 
   get condoCity(): string {
     return this.onboardingService.profile.condominiumAddress?.city || '-';
@@ -178,6 +186,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   openForm(): void {
     this.editingId.set(null);
+    this.availabilitySlots = [];
     this.serviceForm.reset({
       name: '',
       category: '',
@@ -192,6 +201,16 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   editService(service: ServiceDto): void {
     this.editingId.set(service.id);
+
+    // Restaura availability slots ou converte de availableDays (retrocompat)
+    this.availabilitySlots = service.availabilitySlots?.length
+      ? service.availabilitySlots
+      : (service.availableDays ?? []).map((day) => ({
+          day,
+          startTime: '09:00',
+          endTime: '18:00',
+        }));
+
     this.serviceForm.patchValue({
       name: service.name,
       category: service.category,
@@ -207,6 +226,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   closeForm(): void {
     this.showForm.set(false);
     this.editingId.set(null);
+    this.availabilitySlots = [];
     this.serviceForm.reset({
       name: '',
       category: '',
@@ -217,20 +237,30 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
+  onAvailabilitySlotsChange(slots: AvailabilitySlot[]): void {
+    this.availabilitySlots = slots;
+    // Sincroniza availableDays no form para manter validação
+    this.serviceForm.controls.availableDays.setValue(slots.map((s) => s.day));
+  }
+
   onSaveService(): void {
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
       return;
     }
 
-    const payload = this.serviceForm.getRawValue();
+    const rawValue = this.serviceForm.getRawValue();
+    const payload = {
+      ...rawValue,
+      availabilitySlots: this.availabilitySlots.length ? this.availabilitySlots : undefined,
+    };
     const currentEditingId = this.editingId();
 
     this.isSaving.set(true);
 
     const request$ = currentEditingId
       ? this.serviceApi.update(currentEditingId, payload)
-      : this.serviceApi.create(payload as CreateServicePayload);
+      : this.serviceApi.create(payload);
 
     request$.pipe(
       finalize(() => this.isSaving.set(false)),

@@ -59,9 +59,33 @@
     </div>
   </section>
 
+  <!-- ── Agendamentos ──────────────────────────────────────────────────────── -->
   <section class="section d-flex flex-col gap-15">
     <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
-      <h2 class="section-title m-0">Solicitacoes de agendamento</h2>
+      <h2 class="section-title m-0 d-flex align-items-center gap-8">
+        <mat-icon>calendar_month</mat-icon>
+        {{ 'APP.KANBAN.SECTION_TITLE' | translate }}
+      </h2>
+
+      <!-- Toggle lista / kanban -->
+      <div class="view-toggle d-flex gap-5">
+        <button
+          mat-icon-button
+          [color]="appointmentsView() === 'kanban' ? 'primary' : undefined"
+          (click)="appointmentsView.set('kanban')"
+          [matTooltip]="'APP.KANBAN.VIEW_KANBAN' | translate"
+        >
+          <mat-icon>view_kanban</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [color]="appointmentsView() === 'list' ? 'primary' : undefined"
+          (click)="appointmentsView.set('list')"
+          [matTooltip]="'APP.KANBAN.VIEW_LIST' | translate"
+        >
+          <mat-icon>list</mat-icon>
+        </button>
+      </div>
     </div>
 
     @if (isLoadingAppointments()) {
@@ -69,27 +93,36 @@
     } @else if (appointments().length === 0) {
       <app-empty-state
         icon="event_busy"
-        title="Voce ainda nao recebeu solicitacoes."
-        message="Quando um morador solicitar um horario, ele aparecera aqui."
-        [translateText]="false"
+        title="APP.KANBAN.EMPTY_TITLE"
+        message="APP.KANBAN.EMPTY_MESSAGE"
+      />
+    } @else if (appointmentsView() === 'kanban') {
+      <!-- Kanban board -->
+      <app-appointment-kanban
+        [appointments]="appointments()"
+        [updatingId]="isUpdatingAppointment"
+        (statusChange)="updateAppointmentStatus($event.appointment, $event.status)"
       />
     } @else {
+      <!-- Lista compacta (view original) -->
       <div class="appointments-grid">
         @for (appointment of appointments(); track appointment.id) {
           <mat-card class="surface-card appointment-card">
             <mat-card-content class="d-flex flex-col gap-15">
               <div class="d-flex justify-content-between align-items-start gap-10">
                 <div class="d-flex flex-col gap-5">
-                  <strong>{{ appointment.service?.name || 'Servico' }}</strong>
+                  <strong>{{ appointment.service?.name || 'Serviço' }}</strong>
                   <span class="text-muted">
                     {{ appointment.customer?.displayName || 'Cliente' }}
                   </span>
                   <span class="text-muted">
-                    {{ appointment.scheduledDay }} -
+                    {{ appointment.scheduledDay }} —
                     {{ appointment.scheduledDate | date: 'dd/MM/yyyy' }}
+                    @if (appointment.scheduledTime) {
+                      · {{ appointment.scheduledTime }}
+                    }
                   </span>
                 </div>
-
                 <app-status-badge [status]="appointment.status" />
               </div>
 
@@ -105,10 +138,9 @@
                     [disabled]="isUpdatingAppointment() === appointment.id"
                     (click)="updateAppointmentStatus(appointment, 'confirmed')"
                   >
-                    Confirmar
+                    {{ 'APP.KANBAN.CONFIRM' | translate }}
                   </button>
                 }
-
                 @if (canCancel(appointment)) {
                   <button
                     mat-stroked-button
@@ -116,10 +148,9 @@
                     [disabled]="isUpdatingAppointment() === appointment.id"
                     (click)="updateAppointmentStatus(appointment, 'cancelled')"
                   >
-                    Cancelar
+                    {{ 'APP.KANBAN.CANCEL' | translate }}
                   </button>
                 }
-
                 @if (canComplete(appointment)) {
                   <button
                     mat-raised-button
@@ -127,15 +158,14 @@
                     [disabled]="isUpdatingAppointment() === appointment.id"
                     (click)="updateAppointmentStatus(appointment, 'completed')"
                   >
-                    Concluir servico
+                    {{ 'APP.KANBAN.COMPLETE' | translate }}
                   </button>
                 }
-
                 <button
                   mat-icon-button
                   color="primary"
                   (click)="openChat(appointment)"
-                  matTooltip="Conversar com o cliente"
+                  [matTooltip]="'APP.KANBAN.CHAT' | translate"
                 >
                   <mat-icon>chat</mat-icon>
                 </button>
@@ -290,20 +320,25 @@
               </mat-form-field>
             </div>
 
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>{{ 'APP.PROVIDER.FORM_DAYS' | translate }}</mat-label>
-              <mat-select formControlName="availableDays" multiple>
-                @for (day of weekdays; track day) {
-                  <mat-option [value]="day">{{ day }}</mat-option>
-                }
-              </mat-select>
+            <!-- Disponibilidade por dia e horário -->
+            <div class="form-field-wrapper d-flex flex-col gap-8">
+              <p class="form-field-label d-flex align-items-center gap-5 m-0">
+                <mat-icon style="font-size:18px;width:18px;height:18px;">event_available</mat-icon>
+                {{ 'APP.PROVIDER.FORM_AVAILABILITY' | translate }}
+              </p>
+
+              <app-weekly-availability-picker
+                [value]="availabilitySlots"
+                (valueChange)="onAvailabilitySlotsChange($event)"
+              />
+
               @if (
                 serviceForm.controls.availableDays.touched &&
                 serviceForm.controls.availableDays.invalid
               ) {
-                <mat-error>{{ 'APP.PROVIDER.FORM_DAYS_REQUIRED' | translate }}</mat-error>
+                <span class="form-error">{{ 'APP.PROVIDER.FORM_DAYS_REQUIRED' | translate }}</span>
               }
-            </mat-form-field>
+            </div>
 
             <div class="form-actions d-flex justify-content-end flex-wrap gap-10">
               <button mat-stroked-button type="button" (click)="closeForm()">
