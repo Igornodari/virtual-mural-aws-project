@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import BaseComponent from '../../components/base.component';
 import { SnackBarService } from '../../core/services/snack-bar.service';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-confirm-email',
@@ -24,6 +25,7 @@ import { SnackBarService } from '../../core/services/snack-bar.service';
     MatIconModule,
     MatInputModule,
     TranslateModule,
+    MatDividerModule
   ],
   templateUrl: './confirm-email.component.html',
   styles: [
@@ -86,28 +88,17 @@ export class ConfirmEmailComponent extends BaseComponent implements OnInit {
     }
 
     this.setLoadingState(true);
-
-    try {
       await this.authService.confirmEmailCode(this.email, this.form.getRawValue().code);
       this.snackBar.success(this.translateService.instant('APP.CONFIRM_EMAIL.SUCCESS'));
       await this.navigateTo('/login');
-    } catch (err) {
-      throw err;
-    } finally {
       this.setLoadingState(false);
-    }
   }
 
   async onResend(): Promise<void> {
     if (this.resendCooldown > 0) return;
-
-    try {
       await this.authService.resendConfirmationCode(this.email);
       this.snackBar.success(this.translateService.instant('APP.CONFIRM_EMAIL.RESEND_SUCCESS'));
       this.startCooldown(60);
-    } catch (err) {
-      throw err;
-    }
   }
 
   private startCooldown(seconds: number): void {
