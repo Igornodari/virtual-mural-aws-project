@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -8,13 +8,20 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import BaseComponent from '../../components/base.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { CreateCondominiumPayload } from '../../core/services/condominium-api.service';
 import { AppUserProfileDto, UpdateProfilePayload } from '../../core/services/user-api.service';
+
+const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+  const newPwd = group.get('newPassword')?.value;
+  const confirm = group.get('confirmPassword')?.value;
+  return newPwd && confirm && newPwd !== confirm ? { passwordMismatch: true } : null;
+};
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +30,7 @@ import { AppUserProfileDto, UpdateProfilePayload } from '../../core/services/use
     CommonModule, ReactiveFormsModule,
     MatButtonModule, MatCardModule, MatDividerModule,
     MatFormFieldModule, MatIconModule, MatInputModule,
-    MatProgressSpinnerModule, MatTabsModule,
+    MatProgressSpinnerModule, MatSnackBarModule, MatTabsModule,
     TranslateModule,
   ],
   templateUrl: './profile.component.html',
@@ -32,10 +39,22 @@ import { AppUserProfileDto, UpdateProfilePayload } from '../../core/services/use
 export class ProfileComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translate = inject(TranslateService);
 
   isSavingPersonal = signal(false);
   isSavingAddress = signal(false);
   isLookingUpCep = signal(false);
+  isSavingPassword = signal(false);
+  passwordError = signal<string | null>(null);
+  passwordSuccess = signal(false);
+  showCurrentPassword = signal(false);
+  showNewPassword = signal(false);
+  showConfirmPassword = signal(false);
+
+  get isGoogleUser(): boolean {
+    return this.user?.authProvider === 'google';
+  }
 
   get currentRole(): 'provider' | 'customer' {
     return this.onboardingService.profile.role ?? 'customer';
@@ -58,6 +77,15 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     city: ['', Validators.required],
     state: ['', Validators.required],
   });
+
+  passwordForm = this.fb.group(
+    {
+      currentPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    { validators: passwordMatchValidator },
+  );
 
   constructor() { super(); }
 
@@ -171,6 +199,40 @@ export class ProfileComponent extends BaseComponent implements OnInit {
         this.onboardingService.saveLocalCondominiumAddress(addr, updatedCondominiumId);
       },
     });
+  }
+
+  async savePassword(): Promise<void> {
+    if (this.passwordForm.invalid) return;
+    this.isSavingPassword.set(true);
+    this.passwordError.set(null);
+    this.passwordSuccess.set(false);
+
+    const { currentPassword, newPassword } = this.passwordForm.getRawValue() as {
+      currentPassword: string;
+      newPassword: string;
+      confirmPassword: string;
+    };
+
+    try {
+      await this.authService.changePassword(currentPassword, newPassword);
+      this.passwordSuccess.set(true);
+      this.passwordForm.reset();
+      const msg = this.translate.instant('APP.PROFILE.PASSWORD_CHANGED_SUCCESS');
+      this.snackBar.open(msg, '✕', { duration: 4000, panelClass: 'snack-success' });
+    } catch (err: unknown) {
+      const e = err as { name?: string; message?: string };
+      if (e?.name === 'NotAuthorizedException') {
+        this.passwordError.set(this.translate.instant('APP.PROFILE.PASSWORD_WRONG_CURRENT'));
+      } else if (e?.name === 'InvalidPasswordException' || e?.name === 'InvalidParameterException') {
+        this.passwordError.set(this.translate.instant('APP.PROFILE.PASSWORD_INVALID'));
+      } else if (e?.name === 'LimitExceededException') {
+        this.passwordError.set(this.translate.instant('APP.PROFILE.PASSWORD_LIMIT_EXCEEDED'));
+      } else {
+        this.passwordError.set(e?.message ?? this.translate.instant('APP.FEEDBACK.UNEXPECTED_ERROR'));
+      }
+    } finally {
+      this.isSavingPassword.set(false);
+    }
   }
 
   async onLogout(): Promise<void> {

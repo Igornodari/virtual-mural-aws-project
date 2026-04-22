@@ -46,6 +46,20 @@ export const routes: Routes = [
             (m) => m.AuthCallbackComponent,
           ),
       },
+      {
+        path: ROUTE_PATHS.paymentSuccess.slice(1),
+        loadComponent: () =>
+          import('./features/payment/payment-success.component').then(
+            (m) => m.PaymentSuccessComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.paymentCancel.slice(1),
+        loadComponent: () =>
+          import('./features/payment/payment-cancel.component').then(
+            (m) => m.PaymentCancelComponent,
+          ),
+      },
     ]
   },
 

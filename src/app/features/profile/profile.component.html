@@ -142,6 +142,8 @@
               {{ 'APP.PROFILE.TAB_SECURITY' | translate }}
             </ng-template>
             <div class="tab-content">
+
+              <!-- Info de autenticação -->
               <mat-card class="surface-card">
                 <mat-card-content>
                   <div class="security-info">
@@ -151,16 +153,113 @@
                       <p class="text-muted">{{ 'APP.PROFILE.SECURITY_COGNITO_DESC' | translate }}</p>
                     </div>
                   </div>
-                  <mat-divider class="m-y-3" />
-                  <div class="security-info">
-                    <mat-icon class="security-icon">lock</mat-icon>
-                    <div>
-                      <p class="security-title">{{ 'APP.PROFILE.SECURITY_PASSWORD_TITLE' | translate }}</p>
-                      <p class="text-muted">{{ 'APP.PROFILE.SECURITY_PASSWORD_DESC' | translate }}</p>
-                    </div>
-                  </div>
                 </mat-card-content>
               </mat-card>
+
+              <!-- Formulário de alteração de senha (apenas para usuários email/senha) -->
+              @if (!isGoogleUser) {
+                <mat-card class="surface-card" style="margin-top: 16px;">
+                  <mat-card-content>
+                    <div class="security-info" style="margin-bottom: 20px;">
+                      <mat-icon class="security-icon">lock_reset</mat-icon>
+                      <div>
+                        <p class="security-title">{{ 'APP.PROFILE.SECURITY_PASSWORD_TITLE' | translate }}</p>
+                        <p class="text-muted">{{ 'APP.PROFILE.SECURITY_PASSWORD_CHANGE_DESC' | translate }}</p>
+                      </div>
+                    </div>
+
+                    <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" class="profile-form">
+
+                      <!-- Senha atual -->
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.PROFILE.CURRENT_PASSWORD' | translate }}</mat-label>
+                        <input matInput formControlName="currentPassword"
+                          [type]="showCurrentPassword() ? 'text' : 'password'" />
+                        <button mat-icon-button matSuffix type="button"
+                          (click)="showCurrentPassword.set(!showCurrentPassword())">
+                          <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (passwordForm.get('currentPassword')?.hasError('required') && passwordForm.get('currentPassword')?.touched) {
+                          <mat-error>{{ 'APP.PROFILE.CURRENT_PASSWORD_REQUIRED' | translate }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <!-- Nova senha -->
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.PROFILE.NEW_PASSWORD' | translate }}</mat-label>
+                        <input matInput formControlName="newPassword"
+                          [type]="showNewPassword() ? 'text' : 'password'" />
+                        <button mat-icon-button matSuffix type="button"
+                          (click)="showNewPassword.set(!showNewPassword())">
+                          <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (passwordForm.get('newPassword')?.hasError('required') && passwordForm.get('newPassword')?.touched) {
+                          <mat-error>{{ 'APP.PROFILE.NEW_PASSWORD_REQUIRED' | translate }}</mat-error>
+                        }
+                        @if (passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched) {
+                          <mat-error>{{ 'APP.PROFILE.PASSWORD_MIN_LENGTH' | translate }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <!-- Confirmar nova senha -->
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'APP.PROFILE.CONFIRM_NEW_PASSWORD' | translate }}</mat-label>
+                        <input matInput formControlName="confirmPassword"
+                          [type]="showConfirmPassword() ? 'text' : 'password'" />
+                        <button mat-icon-button matSuffix type="button"
+                          (click)="showConfirmPassword.set(!showConfirmPassword())">
+                          <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched) {
+                          <mat-error>{{ 'APP.PROFILE.PASSWORDS_MISMATCH' | translate }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <!-- Mensagem de erro -->
+                      @if (passwordError()) {
+                        <div class="security-error">
+                          <mat-icon>error_outline</mat-icon>
+                          <span>{{ passwordError() }}</span>
+                        </div>
+                      }
+
+                      <!-- Mensagem de sucesso -->
+                      @if (passwordSuccess()) {
+                        <div class="security-success">
+                          <mat-icon>check_circle</mat-icon>
+                          <span>{{ 'APP.PROFILE.PASSWORD_CHANGED_SUCCESS' | translate }}</span>
+                        </div>
+                      }
+
+                      <div class="form-actions">
+                        <button mat-raised-button color="primary" type="submit"
+                          [disabled]="passwordForm.invalid || isSavingPassword()">
+                          @if (isSavingPassword()) { <mat-spinner diameter="18" /> }
+                          <mat-icon>lock_reset</mat-icon>
+                          {{ 'APP.PROFILE.CHANGE_PASSWORD_BUTTON' | translate }}
+                        </button>
+                      </div>
+
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              }
+
+              <!-- Mensagem para usuários Google -->
+              @if (isGoogleUser) {
+                <mat-card class="surface-card" style="margin-top: 16px;">
+                  <mat-card-content>
+                    <div class="security-info">
+                      <mat-icon class="security-icon" style="color: #4285F4;">person</mat-icon>
+                      <div>
+                        <p class="security-title">{{ 'APP.PROFILE.GOOGLE_ACCOUNT_TITLE' | translate }}</p>
+                        <p class="text-muted">{{ 'APP.PROFILE.GOOGLE_ACCOUNT_DESC' | translate }}</p>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
+
             </div>
           </mat-tab>
 

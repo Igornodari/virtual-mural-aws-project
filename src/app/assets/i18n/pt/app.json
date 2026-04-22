@@ -233,7 +233,22 @@
       "SECURITY_COGNITO_TITLE": "Autenticação gerenciada pela AWS",
       "SECURITY_COGNITO_DESC": "Sua conta é autenticada via AWS Cognito. Suas credenciais são gerenciadas com segurança.",
       "SECURITY_PASSWORD_TITLE": "Alterar senha",
-      "SECURITY_PASSWORD_DESC": "Para alterar sua senha, acesse o portal da AWS Cognito ou use a opção 'Esqueci minha senha' na tela de login."
+      "SECURITY_PASSWORD_DESC": "Para alterar sua senha, acesse o portal da AWS Cognito ou use a opção 'Esqueci minha senha' na tela de login.",
+      "SECURITY_PASSWORD_CHANGE_DESC": "Digite sua senha atual e escolha uma nova senha.",
+      "CURRENT_PASSWORD": "Senha atual",
+      "CURRENT_PASSWORD_REQUIRED": "Informe sua senha atual.",
+      "NEW_PASSWORD": "Nova senha",
+      "NEW_PASSWORD_REQUIRED": "Informe a nova senha.",
+      "PASSWORD_MIN_LENGTH": "A senha deve ter no mínimo 8 caracteres.",
+      "CONFIRM_NEW_PASSWORD": "Confirmar nova senha",
+      "PASSWORDS_MISMATCH": "As senhas não conferem.",
+      "CHANGE_PASSWORD_BUTTON": "Alterar senha",
+      "PASSWORD_CHANGED_SUCCESS": "Senha alterada com sucesso!",
+      "PASSWORD_WRONG_CURRENT": "Senha atual incorreta. Verifique e tente novamente.",
+      "PASSWORD_INVALID": "Senha inválida. Use maiúscula, minúscula, número e caractere especial.",
+      "PASSWORD_LIMIT_EXCEEDED": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+      "GOOGLE_ACCOUNT_TITLE": "Conta Google",
+      "GOOGLE_ACCOUNT_DESC": "Você entrou com o Google. Para alterar sua senha, acesse as configurações da sua conta Google."
     },
     "FEEDBACK": {
       "SUCCESS_DEFAULT": "Operação realizada com sucesso.",
@@ -317,6 +332,7 @@
       "AWAITING_PAYMENT": "Aguard. Pagamento",
       "PAID": "Pago",
       "COMPLETED": "Concluído",
+      "CANCELLED": "Cancelado",
       "CONFIRM": "Confirmar",
       "CANCEL": "Cancelar",
       "COMPLETE": "Concluir",
@@ -325,11 +341,34 @@
       "EMPTY_TITLE": "Nenhuma solicitação ainda",
       "EMPTY_MESSAGE": "Quando um morador solicitar um horário, ele aparecerá aqui.",
       "UNKNOWN_SERVICE": "Serviço",
-      "UNKNOWN_CUSTOMER": "Cliente"
+      "UNKNOWN_CUSTOMER": "Cliente",
+      "READONLY_TOOLTIP": "Coluna gerenciada pelo sistema"
     },
     "SCHEDULE": {
       "SELECT_TIME": "Escolha um horário para",
       "NO_SLOTS": "Nenhum horário disponível neste dia."
-    }
-  }
-}
+    },
+    "STRIPE_CONNECT": {
+      "SECTION_TITLE": "Recebimentos",
+      "STATUS_ACTIVE": "Conta de pagamentos ativa",
+      "STATUS_ACTIVE_DESC": "Você está recebendo pagamentos. A plataforma retém 5% por transação.",
+      "STATUS_PENDING": "Cadastro incompleto",
+      "STATUS_PENDING_DESC": "Conclua o cadastro para receber pagamentos dos seus clientes.",
+      "STATUS_RESTRICTED": "Conta com restrição",
+      "STATUS_RESTRICTED_DESC": "Sua conta está com restrições. Acesse o painel para resolver.",
+      "STATUS_NOT_CONNECTED": "Receba pagamentos pelo app",
+      "STATUS_NOT_CONNECTED_DESC": "Conecte sua conta para receber pagamentos dos agendamentos diretamente.",
+      "CONNECT_ACCOUNT": "Conectar conta",
+      "CONTINUE_ONBOARDING": "Continuar cadastro",
+      "OPEN_DASHBOARD": "Ver painel de pagamentos",
+      "RETURN_SUCCESS": "Cadastro enviado! Aguardando confirmação do Stripe. O status será atualizado em breve.",
+      "RETURN_REFRESH": "Link expirado. Clique em 'Continuar cadastro' para gerar um novo link."
+    },
+    "PAYMENT": {
+      "SUCCESS_TITLE": "Pagamento confirmado!",
+      "SUCCESS_MESSAGE": "Seu agendamento foi pago com sucesso. O prestador será notificado.",
+      "SESSION_ID": "ID da sessão",
+      "VERIFYING": "Confirmando pagamento...",
+      "VERIFY_ERROR": "Não foi possível confirmar automaticamente. Verifique seus agendamentos.",
+      "CANCEL_TITLE": "Pagamento cancelado",
+      "CANCEL_MESSAGE": "O pagamento foi cancelado. Você pode tentar novamente ou entrar em contato com o prestador.

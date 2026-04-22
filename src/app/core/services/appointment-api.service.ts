@@ -90,4 +90,12 @@ export class AppointmentApiService {
       payload,
     );
   }
+
+  /** Verifica uma Checkout Session Stripe e atualiza o agendamento se pago */
+  verifyPaymentSession(checkoutSessionId: string): Observable<AppointmentDto> {
+    return this.request.post<AppointmentDto, { checkoutSessionId: string }>(
+      '/appointments/verify-payment',
+      { checkoutSessionId },
+    );
+  }
 }

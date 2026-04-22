@@ -233,7 +233,22 @@
       "SECURITY_COGNITO_TITLE": "Authentication managed by AWS",
       "SECURITY_COGNITO_DESC": "Your account is authenticated via AWS Cognito. Your credentials are managed securely.",
       "SECURITY_PASSWORD_TITLE": "Change password",
-      "SECURITY_PASSWORD_DESC": "To change your password, access the AWS Cognito portal or use the 'Forgot password' option on the login screen."
+      "SECURITY_PASSWORD_DESC": "To change your password, access the AWS Cognito portal or use the 'Forgot password' option on the login screen.",
+      "SECURITY_PASSWORD_CHANGE_DESC": "Enter your current password and choose a new one.",
+      "CURRENT_PASSWORD": "Current password",
+      "CURRENT_PASSWORD_REQUIRED": "Please enter your current password.",
+      "NEW_PASSWORD": "New password",
+      "NEW_PASSWORD_REQUIRED": "Please enter a new password.",
+      "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long.",
+      "CONFIRM_NEW_PASSWORD": "Confirm new password",
+      "PASSWORDS_MISMATCH": "Passwords do not match.",
+      "CHANGE_PASSWORD_BUTTON": "Change password",
+      "PASSWORD_CHANGED_SUCCESS": "Password changed successfully!",
+      "PASSWORD_WRONG_CURRENT": "Current password is incorrect. Please check and try again.",
+      "PASSWORD_INVALID": "Invalid password. Use uppercase, lowercase, number and special character.",
+      "PASSWORD_LIMIT_EXCEEDED": "Too many attempts. Please wait a few minutes and try again.",
+      "GOOGLE_ACCOUNT_TITLE": "Google Account",
+      "GOOGLE_ACCOUNT_DESC": "You signed in with Google. To change your password, visit your Google account settings."
     },
     "FEEDBACK": {
       "SUCCESS_DEFAULT": "Operation completed successfully.",
@@ -317,6 +332,7 @@
       "AWAITING_PAYMENT": "Awaiting Payment",
       "PAID": "Paid",
       "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
       "CONFIRM": "Confirm",
       "CANCEL": "Cancel",
       "COMPLETE": "Complete",
@@ -325,11 +341,34 @@
       "EMPTY_TITLE": "No requests yet",
       "EMPTY_MESSAGE": "When a resident requests an appointment, it will appear here.",
       "UNKNOWN_SERVICE": "Service",
-      "UNKNOWN_CUSTOMER": "Customer"
+      "UNKNOWN_CUSTOMER": "Customer",
+      "READONLY_TOOLTIP": "Column managed by the system"
     },
     "SCHEDULE": {
       "SELECT_TIME": "Choose a time slot for",
       "NO_SLOTS": "No time slots available for this day."
-    }
-  }
-}
+    },
+    "STRIPE_CONNECT": {
+      "SECTION_TITLE": "Payments",
+      "STATUS_ACTIVE": "Payments account active",
+      "STATUS_ACTIVE_DESC": "You are receiving payments. The platform retains 5% per transaction.",
+      "STATUS_PENDING": "Incomplete registration",
+      "STATUS_PENDING_DESC": "Complete your registration to receive payments from your clients.",
+      "STATUS_RESTRICTED": "Account restricted",
+      "STATUS_RESTRICTED_DESC": "Your account has restrictions. Access the dashboard to resolve them.",
+      "STATUS_NOT_CONNECTED": "Receive payments in-app",
+      "STATUS_NOT_CONNECTED_DESC": "Connect your account to receive appointment payments directly.",
+      "CONNECT_ACCOUNT": "Connect account",
+      "CONTINUE_ONBOARDING": "Continue registration",
+      "OPEN_DASHBOARD": "Open payments dashboard",
+      "RETURN_SUCCESS": "Registration submitted! Waiting for Stripe confirmation. Status will update shortly.",
+      "RETURN_REFRESH": "Link expired. Click 'Continue registration' to generate a new link."
+    },
+    "PAYMENT": {
+      "SUCCESS_TITLE": "Payment confirmed!",
+      "SUCCESS_MESSAGE": "Your appointment has been paid successfully. The provider will be notified.",
+      "SESSION_ID": "Session ID",
+      "VERIFYING": "Confirming payment...",
+      "VERIFY_ERROR": "Could not confirm automatically. Please check your appointments.",
+      "CANCEL_TITLE": "Payment cancelled",
+      "CANCEL_MESSAGE": "The payment was cancelled. You can try again or contact the provider.",

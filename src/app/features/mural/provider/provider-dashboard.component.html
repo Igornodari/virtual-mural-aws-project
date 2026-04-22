@@ -59,6 +59,107 @@
     </div>
   </section>
 
+  <!-- ── Stripe Connect ───────────────────────────────────────────────────── -->
+  <section class="section d-flex flex-col gap-15">
+    <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
+      <h2 class="section-title m-0 d-flex align-items-center gap-8">
+        <mat-icon>payments</mat-icon>
+        {{ 'APP.STRIPE_CONNECT.SECTION_TITLE' | translate }}
+      </h2>
+    </div>
+
+    @if (stripeConnectSuccessMessage()) {
+      <div class="stripe-return-banner d-flex align-items-center gap-10">
+        <mat-icon>info</mat-icon>
+        <span>{{ stripeConnectSuccessMessage()! | translate }}</span>
+      </div>
+    }
+
+    @if (isLoadingStripe()) {
+      <app-loading-state />
+    } @else {
+      <mat-card class="surface-card">
+        <mat-card-content class="d-flex align-items-center justify-content-between flex-wrap gap-15">
+          <div class="d-flex align-items-center gap-15">
+            <!-- Status icon -->
+            @if (stripeStatus()?.status === 'active') {
+              <div class="stripe-status-icon stripe-status-icon--active">
+                <mat-icon>verified</mat-icon>
+              </div>
+            } @else if (stripeStatus()?.status === 'restricted') {
+              <div class="stripe-status-icon stripe-status-icon--restricted">
+                <mat-icon>warning</mat-icon>
+              </div>
+            } @else {
+              <div class="stripe-status-icon stripe-status-icon--pending">
+                <mat-icon>account_balance_wallet</mat-icon>
+              </div>
+            }
+
+            <div class="d-flex flex-col gap-4">
+              <strong>
+                @if (stripeStatus()?.status === 'active') {
+                  {{ 'APP.STRIPE_CONNECT.STATUS_ACTIVE' | translate }}
+                } @else if (stripeStatus()?.status === 'restricted') {
+                  {{ 'APP.STRIPE_CONNECT.STATUS_RESTRICTED' | translate }}
+                } @else if (stripeStatus()?.status === 'pending') {
+                  {{ 'APP.STRIPE_CONNECT.STATUS_PENDING' | translate }}
+                } @else {
+                  {{ 'APP.STRIPE_CONNECT.STATUS_NOT_CONNECTED' | translate }}
+                }
+              </strong>
+              <span class="text-muted" style="font-size:0.85rem;">
+                @if (stripeStatus()?.status === 'active') {
+                  {{ 'APP.STRIPE_CONNECT.STATUS_ACTIVE_DESC' | translate }}
+                } @else if (stripeStatus()?.status === 'restricted') {
+                  {{ 'APP.STRIPE_CONNECT.STATUS_RESTRICTED_DESC' | translate }}
+                } @else {
+                  {{ 'APP.STRIPE_CONNECT.STATUS_NOT_CONNECTED_DESC' | translate }}
+                }
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex gap-10 flex-wrap">
+            @if (stripeStatus()?.status === 'active') {
+              <button
+                mat-stroked-button
+                color="primary"
+                [disabled]="isConnectingStripe()"
+                (click)="openStripeDashboard()"
+              >
+                @if (isConnectingStripe()) {
+                  <mat-spinner diameter="16" />
+                } @else {
+                  <mat-icon>open_in_new</mat-icon>
+                }
+                {{ 'APP.STRIPE_CONNECT.OPEN_DASHBOARD' | translate }}
+              </button>
+            } @else {
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="isConnectingStripe()"
+                (click)="connectStripe()"
+              >
+                @if (isConnectingStripe()) {
+                  <mat-spinner diameter="16" />
+                } @else {
+                  <mat-icon>add_card</mat-icon>
+                }
+                @if (stripeStatus()?.status === 'pending') {
+                  {{ 'APP.STRIPE_CONNECT.CONTINUE_ONBOARDING' | translate }}
+                } @else {
+                  {{ 'APP.STRIPE_CONNECT.CONNECT_ACCOUNT' | translate }}
+                }
+              </button>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </section>
+
   <!-- ── Agendamentos ──────────────────────────────────────────────────────── -->
   <section class="section d-flex flex-col gap-15">
     <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
