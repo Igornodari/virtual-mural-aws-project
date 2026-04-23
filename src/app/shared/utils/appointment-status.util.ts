@@ -20,7 +20,12 @@ export function canConfirmAppointment(appointment: AppointmentDto | null | undef
 }
 
 export function canCancelAppointment(appointment: AppointmentDto | null | undefined): boolean {
-  return appointment?.status === 'pending' || appointment?.status === 'confirmed';
+  // awaiting_payment incluído: provider pode cancelar se cliente nunca efetuar o pagamento
+  return (
+    appointment?.status === 'pending' ||
+    appointment?.status === 'confirmed' ||
+    appointment?.status === 'awaiting_payment'
+  );
 }
 
 export function canCompleteAppointment(appointment: AppointmentDto | null | undefined): boolean {

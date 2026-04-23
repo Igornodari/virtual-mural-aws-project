@@ -40,7 +40,6 @@ export interface CreateAppointmentPayload {
   serviceId: string;
   scheduledDate: string;
   scheduledDay: string;
-  scheduledTime?: string;
   notes?: string;
 }
 

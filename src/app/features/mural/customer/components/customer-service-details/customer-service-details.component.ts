@@ -120,7 +120,6 @@ export class CustomerServiceDetailsComponent implements OnChanges {
       serviceId,
       scheduledDate: selection.date,
       scheduledDay: selection.day,
-      scheduledTime: selection.time,
       notes: `Agendamento solicitado pelo mural para ${selection.day} às ${selection.time}.`,
     };
 

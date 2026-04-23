@@ -42,14 +42,14 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
     labelKey: 'COMMON.STATUS.AWAITING_PAYMENT',
     icon: 'payment',
     color: '#8b5cf6',
-    dropTargets: ['confirmed'],
+    dropTargets: [], // definido automaticamente pelo fluxo de pagamento do cliente
   },
   {
     status: 'paid',
     labelKey: 'COMMON.STATUS.PAID',
     icon: 'paid',
     color: '#10b981',
-    dropTargets: ['awaiting_payment'],
+    dropTargets: [], // definido pelo webhook do Stripe
   },
   {
     status: 'completed',
