@@ -3,15 +3,18 @@ import { BehaviorSubject } from 'rxjs';
 import { AmplifyService } from './amplify.service';
 import { Condominium, Unit, User } from '../../shared/types';
 import {
+  confirmResetPassword,
   confirmSignUp,
   fetchAuthSession,
   fetchUserAttributes,
   getCurrentUser,
+  resendSignUpCode,
   resetPassword,
   signIn,
   signInWithRedirect,
   signOut,
   signUp,
+  updatePassword,
 } from 'aws-amplify/auth';
 
 @Injectable({
@@ -118,6 +121,10 @@ export class AuthService {
     });
   }
 
+  async resendConfirmationCode(email: string) {
+    return resendSignUpCode({ username: email.trim().toLowerCase() });
+  }
+
   async loginWithEmail(email: string, password: string) {
     const username = email.trim().toLowerCase();
 
@@ -183,7 +190,19 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    return resetPassword({ username: email });
+    return resetPassword({ username: email.trim().toLowerCase() });
+  }
+
+  async confirmForgotPassword(email: string, code: string, newPassword: string) {
+    return confirmResetPassword({
+      username: email.trim().toLowerCase(),
+      confirmationCode: code,
+      newPassword,
+    });
+  }
+
+  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    await updatePassword({ oldPassword, newPassword });
   }
 
   async getUser(): Promise<User | null> {

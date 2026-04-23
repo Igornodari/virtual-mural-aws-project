@@ -19,6 +19,7 @@ export interface AppointmentDto {
   customerId: string;
   scheduledDate: string;
   scheduledDay: string;
+  scheduledTime?: string | null;
   notes?: string;
   status: AppointmentStatus;
   paymentStatus?: PaymentStatus;
@@ -86,6 +87,14 @@ export class AppointmentApiService {
     return this.request.post<AppointmentPaymentDto, AppointmentPaymentPayload>(
       `/appointments/${id}/payment`,
       payload,
+    );
+  }
+
+  /** Verifica uma Checkout Session Stripe e atualiza o agendamento se pago */
+  verifyPaymentSession(checkoutSessionId: string): Observable<AppointmentDto> {
+    return this.request.post<AppointmentDto, { checkoutSessionId: string }>(
+      '/appointments/verify-payment',
+      { checkoutSessionId },
     );
   }
 }

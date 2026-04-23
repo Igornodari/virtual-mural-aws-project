@@ -10,6 +10,7 @@ export interface ServiceDto {
   contact: string;
   category: string;
   availableDays: string[];
+  availabilitySlots?: { day: string; startTime: string; endTime: string }[] | null;
   rating: number;
   totalReviews: number;
   isActive: boolean;
@@ -48,6 +49,7 @@ export interface CreateServicePayload {
   contact: string;
   category: string;
   availableDays: string[];
+  availabilitySlots?: { day: string; startTime: string; endTime: string }[];
 }
 
 export type UpdateServicePayload = Partial<CreateServicePayload>;

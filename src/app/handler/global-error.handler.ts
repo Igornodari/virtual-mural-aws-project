@@ -98,11 +98,11 @@ export class GlobalErrorHandler implements ErrorHandler {
       const message = this.getMessage(error);
       return message
         ? this.translateMessage(translate, message)
-        : this.t(translate, 'APP.FEEDBACK.UNEXPECTED_ERROR');
+        : this.t(translate, 'COMMON.FEEDBACK.UNEXPECTED_ERROR');
     }
 
     if (error.status === 0) {
-      return this.t(translate, 'APP.FEEDBACK.NETWORK_ERROR');
+      return this.t(translate, 'COMMON.FEEDBACK.NETWORK_ERROR');
     }
 
     const payload = this.asErrorPayload(error.error);
@@ -118,20 +118,20 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (type === 'InvalidPasswordException') {
       return (
         (payloadMessage ? this.translateMessage(translate, payloadMessage) : null) ??
-        this.t(translate, 'APP.FEEDBACK.INVALID_PASSWORD')
+        this.t(translate, 'COMMON.FEEDBACK.INVALID_PASSWORD')
       );
     }
 
     if (type === 'NotAuthorizedException') {
       return payloadMessage
         ? this.translateMessage(translate, payloadMessage)
-        : this.t(translate, 'APP.FEEDBACK.NOT_AUTHORIZED');
+        : this.t(translate, 'COMMON.FEEDBACK.NOT_AUTHORIZED');
     }
 
     if (type === 'UserNotFoundException') {
       return payloadMessage
         ? this.translateMessage(translate, payloadMessage)
-        : this.t(translate, 'APP.FEEDBACK.USER_NOT_FOUND');
+        : this.t(translate, 'COMMON.FEEDBACK.USER_NOT_FOUND');
     }
 
     if (payloadMessage) {
@@ -150,7 +150,7 @@ export class GlobalErrorHandler implements ErrorHandler {
       return this.translateMessage(translate, error.message);
     }
 
-    return this.t(translate, 'APP.FEEDBACK.REQUEST_FAILED');
+    return this.t(translate, 'COMMON.FEEDBACK.REQUEST_FAILED');
   }
 
   private resolveSeverity(error: unknown): 'warning' | 'error' {

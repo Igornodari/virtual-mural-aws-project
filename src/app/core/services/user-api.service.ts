@@ -20,6 +20,8 @@ export interface AppUserProfileDto {
   roleCompleted: boolean;
   createdAt: string;
   updatedAt: string;
+  stripeAccountId?: string | null;
+  stripeAccountStatus?: 'pending' | 'active' | 'restricted' | null;
   condominium?: {
     id: string;
     name?: string;

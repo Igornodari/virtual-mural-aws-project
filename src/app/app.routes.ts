@@ -26,10 +26,38 @@ export const routes: Routes = [
           import('./features/register/register.component').then((m) => m.RegisterComponent),
       },
       {
+        path: ROUTE_PATHS.forgotPassword.slice(1),
+        loadComponent: () =>
+          import('./features/forgot-password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.confirmEmail.slice(1),
+        loadComponent: () =>
+          import('./features/confirm-email/confirm-email.component').then(
+            (m) => m.ConfirmEmailComponent,
+          ),
+      },
+      {
         path: ROUTE_PATHS.authCallback.slice(1),
         loadComponent: () =>
           import('../app/features/auth-callback.components').then(
             (m) => m.AuthCallbackComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.paymentSuccess.slice(1),
+        loadComponent: () =>
+          import('./features/payment/payment-success.component').then(
+            (m) => m.PaymentSuccessComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.paymentCancel.slice(1),
+        loadComponent: () =>
+          import('./features/payment/payment-cancel.component').then(
+            (m) => m.PaymentCancelComponent,
           ),
       },
     ]

@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import BaseComponent from '../../components/base.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
+import { SnackBarService } from '../../core/services/snack-bar.service';
+import { TranslateService } from '@ngx-translate/core';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 @Component({
@@ -67,11 +69,15 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
 export class LoginComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
+  private readonly snackBar = inject(SnackBarService);
+  private readonly translateService = inject(TranslateService);
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
+
+  showPassword = false;
 
   constructor() {
     super();
@@ -86,18 +92,45 @@ export class LoginComponent extends BaseComponent implements OnInit {
 
   async onGoogleLogin(): Promise<void> {
     this.setLoadingState(true);
-    await this.authService.loginWithGoogle();
+    try {
+      await this.authService.loginWithGoogle();
+    } catch {
+      this.setLoadingState(false);
+    }
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
 
     this.setLoadingState(true);
-    const { email, password } = this.form.getRawValue();
-    await this.authService.loginWithEmail(email, password).finally(() => this.setLoadingState(false));
-    await this.redirectAfterLogin();
+
+    try {
+      const { email, password } = this.form.getRawValue();
+      await this.authService.loginWithEmail(email, password);
+      await this.redirectAfterLogin();
+    } catch (err: unknown) {
+      const name = (err as { name?: string })?.name ?? '';
+      const message = (err as { message?: string })?.message ?? '';
+
+      if (name === 'UserNotConfirmedException') {
+        const email = this.form.controls.email.value;
+        this.snackBar.warning(this.translateService.instant('AUTH.CONFIRM_EMAIL.NOT_CONFIRMED_WARNING'));
+        await this.navigateTo(`/confirm-email?email=${encodeURIComponent(email)}`);
+        return;
+      }
+
+      // Demais erros: exibe via snackbar usando a mensagem mapeada pelo AuthService
+      this.snackBar.error(message || 'Não foi possível entrar. Tente novamente.');
+    } finally {
+      this.setLoadingState(false);
+    }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   private async redirectAfterLogin(): Promise<void> {

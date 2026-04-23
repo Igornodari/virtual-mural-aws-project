@@ -2,9 +2,9 @@
   <!-- Brand / Logo -->
   <div class="topbar-brand">
     <mat-icon class="brand-icon">campaign</mat-icon>
-    <span class="brand-name">{{ 'APP.TOPBAR.BRAND' | translate }}</span>
+    <span class="brand-name">{{ 'LAYOUT.TOPBAR.BRAND' | translate }}</span>
     <span class="badge" [class]="'badge--' + role">
-      {{ (role === 'provider' ? 'APP.TOPBAR.ROLE_PROVIDER' : 'APP.TOPBAR.ROLE_CUSTOMER') | translate }}
+      {{ (role === 'provider' ? 'LAYOUT.TOPBAR.ROLE_PROVIDER' : 'LAYOUT.TOPBAR.ROLE_CUSTOMER') | translate }}
     </span>
   </div>
 
@@ -14,7 +14,7 @@
     <button
       mat-icon-button
       (click)="themeService.toggle()"
-      [matTooltip]="(themeService.isDark ? 'APP.TOPBAR.THEME_LIGHT' : 'APP.TOPBAR.THEME_DARK') | translate"
+      [matTooltip]="(themeService.isDark ? 'LAYOUT.TOPBAR.THEME_LIGHT' : 'LAYOUT.TOPBAR.THEME_DARK') | translate"
     >
       <mat-icon>{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
     </button>
@@ -50,13 +50,13 @@
     <mat-menu #userMenu="matMenu">
       <button mat-menu-item routerLink="/profile">
         <mat-icon>manage_accounts</mat-icon>
-        {{ 'APP.TOPBAR.MY_PROFILE' | translate }}
+        {{ 'LAYOUT.TOPBAR.MY_PROFILE' | translate }}
       </button>
 
       <!-- Idioma dentro do menu — visível apenas em mobile -->
       <button mat-menu-item [matMenuTriggerFor]="langMenuMobile" class="mobile-only">
         <mat-icon>language</mat-icon>
-        {{ 'APP.TOPBAR.LANGUAGE' | translate }}: {{ languageService.currentLabel }}
+        {{ 'LAYOUT.TOPBAR.LANGUAGE' | translate }}: {{ languageService.currentLabel }}
       </button>
 
       <mat-menu #langMenuMobile="matMenu">
@@ -77,7 +77,7 @@
       <mat-divider></mat-divider>
       <button mat-menu-item (click)="logout.emit()">
         <mat-icon>logout</mat-icon>
-        {{ 'APP.TOPBAR.LOGOUT' | translate }}
+        {{ 'LAYOUT.TOPBAR.LOGOUT' | translate }}
       </button>
     </mat-menu>
   </div>

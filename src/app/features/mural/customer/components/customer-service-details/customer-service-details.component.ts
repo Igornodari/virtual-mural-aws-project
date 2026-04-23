@@ -32,8 +32,13 @@ import {
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 import { RatingStarsComponent } from 'src/app/shared/components/rating-stars/rating-stars.component';
 import { isBlockingAppointmentStatus } from 'src/app/shared/utils/appointment-status.util';
-import { CUSTOMER_STARS, WEEKDAY_INDEX_BY_LABEL } from '../../customer.constants';
+import { CUSTOMER_STARS } from '../../customer.constants';
 import { RatingLabelPipe } from '../../pipes/rating-label.pipe';
+import {
+  AppointmentCalendarPickerComponent,
+  CalendarSelection,
+} from 'src/app/shared/components/appointment-calendar-picker/appointment-calendar-picker.component';
+import { AvailabilitySlot } from 'src/app/shared/types/availability.types';
 
 @Component({
   selector: 'app-customer-service-details',
@@ -50,6 +55,7 @@ import { RatingLabelPipe } from '../../pipes/rating-label.pipe';
     TranslateModule,
     RatingLabelPipe,
     RatingStarsComponent,
+    AppointmentCalendarPickerComponent,
   ],
   templateUrl: './customer-service-details.component.html',
   styleUrls: ['./customer-service-details.component.scss'],
@@ -68,8 +74,9 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   readonly stars = CUSTOMER_STARS;
 
   reviews: AnonymousReviewDto[] = [];
-  blockedDays: string[] = [];
-  selectedDay: string | null = null;
+  blockedDates: string[] = [];
+  availabilitySlots: AvailabilitySlot[] = [];
+  calendarSelection: CalendarSelection | null = null;
   hoverRating = 0;
   pendingRating = 0;
   pendingComment = '';
@@ -91,16 +98,8 @@ export class CustomerServiceDetailsComponent implements OnChanges {
     this.loadAvailability();
   }
 
-  isDayUnavailable(day: string): boolean {
-    return this.blockedDays.includes(day);
-  }
-
-  selectDay(day: string): void {
-    if (this.isDayUnavailable(day)) {
-      return;
-    }
-
-    this.selectedDay = this.selectedDay === day ? null : day;
+  onCalendarSelectionChange(selection: CalendarSelection): void {
+    this.calendarSelection = selection;
   }
 
   setPendingComment(comment: string): void {
@@ -108,9 +107,9 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   }
 
   schedule(): void {
-    const day = this.selectedDay;
+    const selection = this.calendarSelection;
 
-    if (!day || this.isDayUnavailable(day)) {
+    if (!selection) {
       return;
     }
 
@@ -119,9 +118,9 @@ export class CustomerServiceDetailsComponent implements OnChanges {
 
     const payload: CreateAppointmentPayload = {
       serviceId,
-      scheduledDate: this.resolveNextDateForDay(day),
-      scheduledDay: day,
-      notes: `Agendamento solicitado pelo mural para ${day}.`,
+      scheduledDate: selection.date,
+      scheduledDay: selection.day,
+      notes: `Agendamento solicitado pelo mural para ${selection.day} às ${selection.time}.`,
     };
 
     this.appointmentApi
@@ -136,7 +135,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
             return;
           }
 
-          this.selectedDay = null;
+          this.calendarSelection = null;
           this.appointmentCreated.emit(appointment);
         },
       });
@@ -182,8 +181,9 @@ export class CustomerServiceDetailsComponent implements OnChanges {
 
   private resetState(): void {
     this.reviews = [];
-    this.blockedDays = [];
-    this.selectedDay = null;
+    this.blockedDates = [];
+    this.availabilitySlots = [];
+    this.calendarSelection = null;
     this.hoverRating = 0;
     this.pendingRating = 0;
     this.pendingComment = '';
@@ -225,6 +225,16 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   private loadAvailability(): void {
     const serviceId = this.service.id;
 
+    // Carrega slots de disponibilidade do serviço
+    this.availabilitySlots = this.service.availabilitySlots?.length
+      ? this.service.availabilitySlots
+      : (this.service.availableDays ?? []).map((day) => ({
+          day,
+          startTime: '09:00',
+          endTime: '18:00',
+        }));
+
+    // Carrega datas bloqueadas (agendamentos ativos)
     this.appointmentApi
       .findByService(serviceId)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -235,13 +245,13 @@ export class CustomerServiceDetailsComponent implements OnChanges {
           }
 
           const list = Array.isArray(appointments) ? appointments : [];
-          this.blockedDays = list
+          this.blockedDates = list
             .filter((appointment) => isBlockingAppointmentStatus(appointment.status))
-            .map((appointment) => appointment.scheduledDay);
+            .map((appointment) => appointment.scheduledDate);
         },
         error: () => {
           if (this.activeServiceId === serviceId) {
-            this.blockedDays = [];
+            this.blockedDates = [];
           }
         },
       });
@@ -256,17 +266,5 @@ export class CustomerServiceDetailsComponent implements OnChanges {
       });
   }
 
-  private resolveNextDateForDay(day: string): string {
-    const targetDay = WEEKDAY_INDEX_BY_LABEL[day] ?? new Date().getDay();
-    const currentDate = new Date();
-    const diff = (targetDay - currentDate.getDay() + 7) % 7 || 7;
-
-    currentDate.setDate(currentDate.getDate() + diff);
-
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const date = String(currentDate.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${date}`;
-  }
 }
+

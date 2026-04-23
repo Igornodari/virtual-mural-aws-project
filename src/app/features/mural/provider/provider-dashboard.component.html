@@ -3,11 +3,11 @@
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-15">
       <div class="d-flex flex-col gap-10 provider-hero__text">
         <h1 class="provider-title m-0">
-          {{ 'APP.PROVIDER.HERO_TITLE' | translate }}
+          {{ 'MURAL.PROVIDER.HERO_TITLE' | translate }}
         </h1>
 
         <p class="text-muted m-0">
-          {{ 'APP.PROVIDER.HERO_SUBTITLE' | translate }}
+          {{ 'MURAL.PROVIDER.HERO_SUBTITLE' | translate }}
           <strong>{{ condoCity }}</strong
           >.
         </p>
@@ -21,7 +21,7 @@
         <div class="d-flex flex-col gap-5">
           <span class="stat-value">{{ services().length }}</span>
           <span class="stat-label text-muted">
-            {{ 'APP.PROVIDER.STATS_SERVICES' | translate }}
+            {{ 'MURAL.PROVIDER.STATS.SERVICES' | translate }}
           </span>
         </div>
       </div>
@@ -32,7 +32,7 @@
         <div class="d-flex flex-col gap-5">
           <span class="stat-value">{{ averageRating() | number: '1.1-1' }}</span>
           <span class="stat-label text-muted">
-            {{ 'APP.PROVIDER.STATS_RATING' | translate }}
+            {{ 'MURAL.PROVIDER.STATS.RATING' | translate }}
           </span>
         </div>
       </div>
@@ -43,7 +43,7 @@
         <div class="d-flex flex-col gap-5">
           <span class="stat-value">{{ totalReviews() }}</span>
           <span class="stat-label text-muted">
-            {{ 'APP.PROVIDER.STATS_REVIEWS' | translate }}
+            {{ 'MURAL.PROVIDER.STATS.REVIEWS' | translate }}
           </span>
         </div>
       </div>
@@ -59,9 +59,134 @@
     </div>
   </section>
 
+  <!-- ── Stripe Connect ───────────────────────────────────────────────────── -->
   <section class="section d-flex flex-col gap-15">
     <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
-      <h2 class="section-title m-0">Solicitacoes de agendamento</h2>
+      <h2 class="section-title m-0 d-flex align-items-center gap-8">
+        <mat-icon>payments</mat-icon>
+        {{ 'PAYMENT.STRIPE_CONNECT.SECTION_TITLE' | translate }}
+      </h2>
+    </div>
+
+    @if (stripeConnectSuccessMessage()) {
+      <div class="stripe-return-banner d-flex align-items-center gap-10">
+        <mat-icon>info</mat-icon>
+        <span>{{ stripeConnectSuccessMessage()! | translate }}</span>
+      </div>
+    }
+
+    @if (isLoadingStripe()) {
+      <app-loading-state />
+    } @else {
+      <mat-card class="surface-card">
+        <mat-card-content class="d-flex align-items-center justify-content-between flex-wrap gap-15">
+          <div class="d-flex align-items-center gap-15">
+            <!-- Status icon -->
+            @if (stripeStatus()?.status === 'active') {
+              <div class="stripe-status-icon stripe-status-icon--active">
+                <mat-icon>verified</mat-icon>
+              </div>
+            } @else if (stripeStatus()?.status === 'restricted') {
+              <div class="stripe-status-icon stripe-status-icon--restricted">
+                <mat-icon>warning</mat-icon>
+              </div>
+            } @else {
+              <div class="stripe-status-icon stripe-status-icon--pending">
+                <mat-icon>account_balance_wallet</mat-icon>
+              </div>
+            }
+
+            <div class="d-flex flex-col gap-4">
+              <strong>
+                @if (stripeStatus()?.status === 'active') {
+                  {{ 'PAYMENT.STRIPE_CONNECT.STATUS_ACTIVE' | translate }}
+                } @else if (stripeStatus()?.status === 'restricted') {
+                  {{ 'PAYMENT.STRIPE_CONNECT.STATUS_RESTRICTED' | translate }}
+                } @else if (stripeStatus()?.status === 'pending') {
+                  {{ 'PAYMENT.STRIPE_CONNECT.STATUS_PENDING' | translate }}
+                } @else {
+                  {{ 'PAYMENT.STRIPE_CONNECT.STATUS_NOT_CONNECTED' | translate }}
+                }
+              </strong>
+              <span class="text-muted" style="font-size:0.85rem;">
+                @if (stripeStatus()?.status === 'active') {
+                  {{ 'PAYMENT.STRIPE_CONNECT.STATUS_ACTIVE_DESC' | translate }}
+                } @else if (stripeStatus()?.status === 'restricted') {
+                  {{ 'PAYMENT.STRIPE_CONNECT.STATUS_RESTRICTED_DESC' | translate }}
+                } @else {
+                  {{ 'PAYMENT.STRIPE_CONNECT.STATUS_NOT_CONNECTED_DESC' | translate }}
+                }
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex gap-10 flex-wrap">
+            @if (stripeStatus()?.status === 'active') {
+              <button
+                mat-stroked-button
+                color="primary"
+                [disabled]="isConnectingStripe()"
+                (click)="openStripeDashboard()"
+              >
+                @if (isConnectingStripe()) {
+                  <mat-spinner diameter="16" />
+                } @else {
+                  <mat-icon>open_in_new</mat-icon>
+                }
+                {{ 'PAYMENT.STRIPE_CONNECT.OPEN_DASHBOARD' | translate }}
+              </button>
+            } @else {
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="isConnectingStripe()"
+                (click)="connectStripe()"
+              >
+                @if (isConnectingStripe()) {
+                  <mat-spinner diameter="16" />
+                } @else {
+                  <mat-icon>add_card</mat-icon>
+                }
+                @if (stripeStatus()?.status === 'pending') {
+                  {{ 'PAYMENT.STRIPE_CONNECT.CONTINUE_ONBOARDING' | translate }}
+                } @else {
+                  {{ 'PAYMENT.STRIPE_CONNECT.CONNECT_ACCOUNT' | translate }}
+                }
+              </button>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </section>
+
+  <!-- ── Agendamentos ──────────────────────────────────────────────────────── -->
+  <section class="section d-flex flex-col gap-15">
+    <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
+      <h2 class="section-title m-0 d-flex align-items-center gap-8">
+        <mat-icon>calendar_month</mat-icon>
+        {{ 'MURAL.KANBAN.SECTION_TITLE' | translate }}
+      </h2>
+
+      <!-- Toggle lista / kanban -->
+      <div class="view-toggle d-flex gap-5">
+        <button
+          mat-icon-button
+          [color]="appointmentsView() === 'kanban' ? 'primary' : undefined"
+          (click)="appointmentsView.set('kanban')"
+          [matTooltip]="'MURAL.KANBAN.VIEW_KANBAN' | translate"
+        >
+          <mat-icon>view_kanban</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [color]="appointmentsView() === 'list' ? 'primary' : undefined"
+          (click)="appointmentsView.set('list')"
+          [matTooltip]="'MURAL.KANBAN.VIEW_LIST' | translate"
+        >
+          <mat-icon>list</mat-icon>
+        </button>
+      </div>
     </div>
 
     @if (isLoadingAppointments()) {
@@ -69,27 +194,36 @@
     } @else if (appointments().length === 0) {
       <app-empty-state
         icon="event_busy"
-        title="Voce ainda nao recebeu solicitacoes."
-        message="Quando um morador solicitar um horario, ele aparecera aqui."
-        [translateText]="false"
+        title="MURAL.KANBAN.EMPTY_TITLE"
+        message="MURAL.KANBAN.EMPTY_MESSAGE"
+      />
+    } @else if (appointmentsView() === 'kanban') {
+      <!-- Kanban board -->
+      <app-appointment-kanban
+        [appointments]="appointments()"
+        [updatingId]="isUpdatingAppointment"
+        (statusChange)="updateAppointmentStatus($event.appointment, $event.status)"
       />
     } @else {
+      <!-- Lista compacta (view original) -->
       <div class="appointments-grid">
         @for (appointment of appointments(); track appointment.id) {
           <mat-card class="surface-card appointment-card">
             <mat-card-content class="d-flex flex-col gap-15">
               <div class="d-flex justify-content-between align-items-start gap-10">
                 <div class="d-flex flex-col gap-5">
-                  <strong>{{ appointment.service?.name || 'Servico' }}</strong>
+                  <strong>{{ appointment.service?.name || 'Serviço' }}</strong>
                   <span class="text-muted">
                     {{ appointment.customer?.displayName || 'Cliente' }}
                   </span>
                   <span class="text-muted">
-                    {{ appointment.scheduledDay }} -
+                    {{ appointment.scheduledDay }} —
                     {{ appointment.scheduledDate | date: 'dd/MM/yyyy' }}
+                    @if (appointment.scheduledTime) {
+                      · {{ appointment.scheduledTime }}
+                    }
                   </span>
                 </div>
-
                 <app-status-badge [status]="appointment.status" />
               </div>
 
@@ -105,10 +239,9 @@
                     [disabled]="isUpdatingAppointment() === appointment.id"
                     (click)="updateAppointmentStatus(appointment, 'confirmed')"
                   >
-                    Confirmar
+                    {{ 'COMMON.ACTIONS.CONFIRM' | translate }}
                   </button>
                 }
-
                 @if (canCancel(appointment)) {
                   <button
                     mat-stroked-button
@@ -116,10 +249,9 @@
                     [disabled]="isUpdatingAppointment() === appointment.id"
                     (click)="updateAppointmentStatus(appointment, 'cancelled')"
                   >
-                    Cancelar
+                    {{ 'COMMON.ACTIONS.CANCEL' | translate }}
                   </button>
                 }
-
                 @if (canComplete(appointment)) {
                   <button
                     mat-raised-button
@@ -127,15 +259,14 @@
                     [disabled]="isUpdatingAppointment() === appointment.id"
                     (click)="updateAppointmentStatus(appointment, 'completed')"
                   >
-                    Concluir servico
+                    {{ 'COMMON.ACTIONS.COMPLETE' | translate }}
                   </button>
                 }
-
                 <button
                   mat-icon-button
                   color="primary"
                   (click)="openChat(appointment)"
-                  matTooltip="Conversar com o cliente"
+                  [matTooltip]="'MURAL.KANBAN.CHAT' | translate"
                 >
                   <mat-icon>chat</mat-icon>
                 </button>
@@ -150,12 +281,12 @@
   <section class="section d-flex flex-col gap-15">
     <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10">
       <h2 class="section-title m-0">
-        {{ 'APP.PROVIDER.MY_SERVICES_TITLE' | translate }}
+        {{ 'MURAL.PROVIDER.MY_SERVICES_TITLE' | translate }}
       </h2>
 
       <button mat-raised-button color="primary" type="button" (click)="openForm()">
         <mat-icon>add</mat-icon>
-        {{ 'APP.PROVIDER.ADD_SERVICE' | translate }}
+        {{ 'MURAL.PROVIDER.ADD_SERVICE' | translate }}
       </button>
     </div>
 
@@ -164,8 +295,8 @@
     } @else if (services().length === 0) {
       <app-empty-state
         icon="storefront"
-        title="APP.PROVIDER.NO_SERVICES"
-        message="APP.PROVIDER.NO_SERVICES_HINT"
+        title="MURAL.PROVIDER.NO_SERVICES"
+        message="MURAL.PROVIDER.NO_SERVICES_HINT"
       />
     } @else {
       <div class="services-grid">
@@ -189,7 +320,7 @@
       >
         <h2 class="section-title m-0 d-flex align-items-center">
           <mat-icon class="section-icon m-r-10">bar_chart</mat-icon>
-          {{ 'APP.ANALYTICS.TITLE' | translate }}: {{ selectedAnalyticsService()!.name }}
+          {{ 'MURAL.ANALYTICS.TITLE' | translate }}: {{ selectedAnalyticsService()!.name }}
         </h2>
 
         <button mat-icon-button type="button" (click)="selectedAnalyticsService.set(null)">
@@ -211,7 +342,7 @@
         class="section-header d-flex justify-content-between align-items-center flex-wrap gap-10"
       >
         <h2 class="section-title m-0">
-          {{ (editingId() ? 'APP.PROVIDER.FORM_EDIT' : 'APP.PROVIDER.FORM_NEW') | translate }}
+          {{ (editingId() ? 'MURAL.PROVIDER.FORM.EDIT_TITLE' : 'MURAL.PROVIDER.FORM.NEW_TITLE') | translate }}
         </h2>
 
         <button mat-icon-button type="button" (click)="closeForm()">
@@ -228,19 +359,19 @@
           >
             <div class="form-grid-2">
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{ 'APP.PROVIDER.FORM_NAME' | translate }}</mat-label>
+                <mat-label>{{ 'MURAL.PROVIDER.FORM.NAME' | translate }}</mat-label>
                 <input
                   matInput
                   formControlName="name"
-                  [placeholder]="'APP.PROVIDER.FORM_NAME_PLACEHOLDER' | translate"
+                  [placeholder]="'MURAL.PROVIDER.FORM.NAME_PLACEHOLDER' | translate"
                 />
                 @if (serviceForm.controls.name.touched && serviceForm.controls.name.invalid) {
-                  <mat-error>{{ 'APP.PROVIDER.FORM_NAME_REQUIRED' | translate }}</mat-error>
+                  <mat-error>{{ 'MURAL.PROVIDER.FORM.NAME_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{ 'APP.PROVIDER.FORM_CATEGORY' | translate }}</mat-label>
+                <mat-label>{{ 'MURAL.PROVIDER.FORM.CATEGORY' | translate }}</mat-label>
                 <mat-select formControlName="category">
                   @for (cat of categories; track cat) {
                     <mat-option [value]="cat">{{ cat }}</mat-option>
@@ -250,64 +381,69 @@
             </div>
 
             <mat-form-field appearance="outline" class="w-full">
-              <mat-label>{{ 'APP.PROVIDER.FORM_DESCRIPTION' | translate }}</mat-label>
+              <mat-label>{{ 'MURAL.PROVIDER.FORM.DESCRIPTION' | translate }}</mat-label>
               <textarea
                 matInput
                 rows="3"
                 formControlName="description"
-                [placeholder]="'APP.PROVIDER.FORM_DESCRIPTION_PLACEHOLDER' | translate"
+                [placeholder]="'MURAL.PROVIDER.FORM.DESCRIPTION_PLACEHOLDER' | translate"
               ></textarea>
               @if (
                 serviceForm.controls.description.touched && serviceForm.controls.description.invalid
               ) {
-                <mat-error>{{ 'APP.PROVIDER.FORM_DESCRIPTION_REQUIRED' | translate }}</mat-error>
+                <mat-error>{{ 'MURAL.PROVIDER.FORM.DESCRIPTION_REQUIRED' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <div class="form-grid-2">
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{ 'APP.PROVIDER.FORM_PRICE' | translate }}</mat-label>
+                <mat-label>{{ 'MURAL.PROVIDER.FORM.PRICE' | translate }}</mat-label>
                 <input
                   matInput
                   formControlName="price"
-                  [placeholder]="'APP.PROVIDER.FORM_PRICE_PLACEHOLDER' | translate"
+                  [placeholder]="'MURAL.PROVIDER.FORM.PRICE_PLACEHOLDER' | translate"
                 />
                 @if (serviceForm.controls.price.touched && serviceForm.controls.price.invalid) {
-                  <mat-error>{{ 'APP.PROVIDER.FORM_PRICE_REQUIRED' | translate }}</mat-error>
+                  <mat-error>{{ 'MURAL.PROVIDER.FORM.PRICE_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{ 'APP.PROVIDER.FORM_CONTACT' | translate }}</mat-label>
+                <mat-label>{{ 'MURAL.PROVIDER.FORM.CONTACT' | translate }}</mat-label>
                 <input
                   matInput
                   formControlName="contact"
-                  [placeholder]="'APP.PROVIDER.FORM_CONTACT_PLACEHOLDER' | translate"
+                  [placeholder]="'MURAL.PROVIDER.FORM.CONTACT_PLACEHOLDER' | translate"
                 />
                 @if (serviceForm.controls.contact.touched && serviceForm.controls.contact.invalid) {
-                  <mat-error>{{ 'APP.PROVIDER.FORM_CONTACT_REQUIRED' | translate }}</mat-error>
+                  <mat-error>{{ 'MURAL.PROVIDER.FORM.CONTACT_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
             </div>
 
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>{{ 'APP.PROVIDER.FORM_DAYS' | translate }}</mat-label>
-              <mat-select formControlName="availableDays" multiple>
-                @for (day of weekdays; track day) {
-                  <mat-option [value]="day">{{ day }}</mat-option>
-                }
-              </mat-select>
+            <!-- Disponibilidade por dia e horário -->
+            <div class="form-field-wrapper d-flex flex-col gap-8">
+              <p class="form-field-label d-flex align-items-center gap-5 m-0">
+                <mat-icon style="font-size:18px;width:18px;height:18px;">event_available</mat-icon>
+                {{ 'MURAL.PROVIDER.FORM.AVAILABILITY' | translate }}
+              </p>
+
+              <app-weekly-availability-picker
+                [value]="availabilitySlots"
+                (valueChange)="onAvailabilitySlotsChange($event)"
+              />
+
               @if (
                 serviceForm.controls.availableDays.touched &&
                 serviceForm.controls.availableDays.invalid
               ) {
-                <mat-error>{{ 'APP.PROVIDER.FORM_DAYS_REQUIRED' | translate }}</mat-error>
+                <span class="form-error">{{ 'MURAL.PROVIDER.FORM.DAYS_REQUIRED' | translate }}</span>
               }
-            </mat-form-field>
+            </div>
 
             <div class="form-actions d-flex justify-content-end flex-wrap gap-10">
               <button mat-stroked-button type="button" (click)="closeForm()">
-                {{ 'APP.PROVIDER.FORM_CANCEL' | translate }}
+                {{ 'COMMON.ACTIONS.CANCEL' | translate }}
               </button>
 
               <button
@@ -321,7 +457,7 @@
                 }
 
                 {{
-                  (editingId() ? 'APP.PROVIDER.FORM_SAVE' : 'APP.PROVIDER.FORM_PUBLISH') | translate
+                  (editingId() ? 'COMMON.ACTIONS.SAVE' : 'MURAL.PROVIDER.FORM.PUBLISH') | translate
                 }}
               </button>
             </div>

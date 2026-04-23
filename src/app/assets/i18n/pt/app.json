@@ -1,5 +1,71 @@
 {
-  "APP": {
+  "COMMON": {
+    "OR": "ou",
+    "ANONYMOUS": "Anônimo",
+    "LOADING": "Carregando...",
+    "BACK_TO_LOGIN": "Voltar para login",
+    "SHOW_PASSWORD": "Mostrar senha",
+    "HIDE_PASSWORD": "Ocultar senha",
+    "ACTIONS": {
+      "SAVE": "Salvar alterações",
+      "CANCEL": "Cancelar",
+      "CONFIRM": "Confirmar",
+      "COMPLETE": "Concluir",
+      "EDIT": "Editar",
+      "REMOVE": "Remover",
+      "BACK": "Voltar",
+      "CONTINUE": "Continuar",
+      "SEARCH_ZIP": "Buscar CEP"
+    },
+    "LABELS": {
+      "EMAIL": "Email",
+      "PASSWORD": "Senha",
+      "FIRST_NAME": "Nome",
+      "LAST_NAME": "Sobrenome",
+      "PHONE": "Telefone",
+      "ZIP_CODE": "CEP",
+      "STREET": "Rua / Logradouro",
+      "NUMBER": "Número",
+      "NEIGHBORHOOD": "Bairro",
+      "COMPLEMENT": "Complemento",
+      "CITY": "Cidade",
+      "STATE": "Estado"
+    },
+    "PLACEHOLDERS": {
+      "EMAIL": "voce@exemplo.com",
+      "PHONE": "(11) 99999-9999",
+      "ZIP_CODE": "00000-000",
+      "STREET": "Ex: Rua das Flores",
+      "NUMBER": "Ex: 123",
+      "COMPLEMENT": "Apto, Bloco...",
+      "NEIGHBORHOOD": "Ex: Centro",
+      "CITY": "Ex: São Paulo"
+    },
+    "VALIDATION": {
+      "EMAIL_INVALID": "Informe um email válido.",
+      "PASSWORD_STRENGTH": "Senha deve ter mínimo 8 caracteres, maiúscula, minúscula, número e caractere especial.",
+      "PASSWORD_MIN_LENGTH": "A senha deve ter no mínimo 8 caracteres.",
+      "PASSWORDS_DO_NOT_MATCH": "As senhas não conferem."
+    },
+    "STATUS": {
+      "PENDING": "Pendente",
+      "CONFIRMED": "Confirmado",
+      "AWAITING_PAYMENT": "Aguard. Pagamento",
+      "PAID": "Pago",
+      "COMPLETED": "Concluído",
+      "CANCELLED": "Cancelado"
+    },
+    "FEEDBACK": {
+      "SUCCESS": "Operação realizada com sucesso.",
+      "UNEXPECTED_ERROR": "Erro inesperado. Tente novamente.",
+      "NETWORK_ERROR": "Não foi possível conectar ao servidor.",
+      "INVALID_PASSWORD": "Senha inválida. Verifique maiúscula, minúscula, número e caractere especial.",
+      "NOT_AUTHORIZED": "Você não tem permissão para esta ação.",
+      "USER_NOT_FOUND": "Usuário não encontrado.",
+      "REQUEST_FAILED": "A requisição falhou. Tente novamente."
+    }
+  },
+  "AUTH": {
     "LOGIN": {
       "BADGE": "Marketplace condominial",
       "TITLE": "O mural virtual que conecta moradores e serviços",
@@ -10,48 +76,76 @@
       "EXAMPLE_TITLE": "Exemplo real",
       "EXAMPLE_TEXT": "Um morador corta cabelo, outro vende doces, outro oferece manutenção. Com o mural, todos ficam visíveis para os vizinhos e fecham mais negócios.",
       "SIGN_IN_TITLE": "Entrar",
-      "SIGN_IN_SUBTITLE": "Acesse sua conta e veja o que estão disponiveis no seu condomínio.",
+      "SIGN_IN_SUBTITLE": "Acesse sua conta e veja o que estão disponíveis no seu condomínio.",
       "REDIRECTING": "Redirecionando...",
       "CONTINUE_WITH_GOOGLE": "Continuar com Google",
-      "OR": "ou",
-      "EMAIL_LABEL": "Email",
-      "EMAIL_PLACEHOLDER": "voce@exemplo.com",
-      "EMAIL_INVALID": "Informe um email válido.",
-      "PASSWORD_LABEL": "Senha",
       "PASSWORD_PLACEHOLDER": "Sua senha",
       "PASSWORD_REQUIRED": "Informe sua senha.",
       "SIGNING_IN": "Entrando...",
       "SIGN_IN_WITH_EMAIL": "Entrar com email",
-      "CREATE_ACCOUNT_LINK": "Não tem conta ? Crie uma"
+      "CREATE_ACCOUNT_LINK": "Não tem conta? Crie uma",
+      "FORGOT_PASSWORD_LINK": "Esqueceu sua senha?"
     },
     "REGISTER": {
       "TITLE": "Criar conta",
-      "SUBTITLE_CREATE": "Cadastre sua conta para acessar o mural do seu condomínio.",
+      "SUBTITLE": "Cadastre sua conta para acessar o mural do seu condomínio.",
       "SUBTITLE_CONFIRM": "Digite o código enviado para seu email.",
-      "FIRST_NAME": "Nome",
-      "LAST_NAME": "Sobrenome",
-      "EMAIL": "Email",
-      "PASSWORD": "Senha",
-      "CONFIRM_PASSWORD": "Confirmar senha",
       "CODE": "Código de confirmação",
       "CREATING": "Criando...",
       "CREATE_ACCOUNT": "Criar conta",
       "CONFIRMING": "Confirmando...",
       "CONFIRM_EMAIL": "Confirmar email",
-      "BACK_TO_LOGIN": "Voltar para login",
-      "PASSWORDS_DO_NOT_MATCH": "As senhas não conferem.",
+      "CONFIRM_PASSWORD": "Confirmar senha",
+      "CONFIRM_PASSWORD_REQUIRED": "Confirme sua senha.",
       "ACCOUNT_CREATED": "Conta criada. Verifique o código de confirmação no seu email.",
       "EMAIL_CONFIRMED": "Email confirmado. Agora você já pode entrar.",
-      "UNKNOWN_ERROR": "Não foi possível processar a solicitação."
+      "FIRST_NAME_REQUIRED": "Informe seu nome.",
+      "LAST_NAME_REQUIRED": "Informe seu sobrenome.",
+      "EMAIL_REQUIRED": "Informe seu email.",
+      "PASSWORD_REQUIRED": "Informe uma senha.",
+      "CODE_REQUIRED": "Informe o código enviado por email."
     },
-    "DASHBOARD": {
-      "BADGE": "Mural do condomínio",
-      "TITLE": "Bem-vindo ao seu painel",
-      "SUBTITLE": "Seus assets e sistema global de estilos estão ativos na aplicação.",
-      "SIGN_OUT": "Sair",
-      "SESSION_TITLE": "Sessão autenticada",
-      "SESSION_SUBTITLE": "Dados do usuário retornados pelo Cognito"
+    "CONFIRM_EMAIL": {
+      "TITLE": "Confirme seu email",
+      "SUBTITLE": "Enviamos um código de verificação para o seu email.",
+      "SENT_TO": "Código enviado para:",
+      "CODE_LABEL": "Código de verificação",
+      "CODE_PLACEHOLDER": "000000",
+      "CODE_REQUIRED": "Informe o código de verificação.",
+      "CODE_LENGTH": "O código deve ter 6 dígitos.",
+      "CODE_MISMATCH": "Código incorreto. Verifique e tente novamente.",
+      "CODE_EXPIRED": "Código expirado. Solicite um novo abaixo.",
+      "CONFIRM_BUTTON": "Confirmar email",
+      "CONFIRMING": "Confirmando...",
+      "SUCCESS": "Email confirmado com sucesso! Agora você pode entrar.",
+      "NO_CODE": "Não recebeu o código?",
+      "RESEND": "Reenviar",
+      "RESEND_SUCCESS": "Novo código enviado! Verifique seu email.",
+      "RESEND_WAIT": "Reenviar em {{seconds}}s",
+      "NOT_CONFIRMED_WARNING": "Confirme seu email antes de entrar. Verifique o código enviado para sua caixa de entrada."
     },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Esqueceu sua senha?",
+      "SUBTITLE": "Informe seu email e enviaremos um código para redefinir sua senha.",
+      "EMAIL_REQUIRED": "Informe seu email.",
+      "SEND_CODE": "Enviar código",
+      "SENDING": "Enviando...",
+      "CODE_SENT": "Código enviado! Verifique seu email.",
+      "RESET_TITLE": "Redefinir senha",
+      "RESET_SUBTITLE": "Digite o código enviado para {{email}} e escolha uma nova senha.",
+      "CODE_LABEL": "Código de confirmação",
+      "CODE_REQUIRED": "Informe o código recebido por email.",
+      "NEW_PASSWORD_LABEL": "Nova senha",
+      "NEW_PASSWORD_REQUIRED": "Informe a nova senha.",
+      "CONFIRM_PASSWORD_LABEL": "Confirmar nova senha",
+      "CONFIRM_PASSWORD_REQUIRED": "Confirme a nova senha.",
+      "RESET_PASSWORD": "Redefinir senha",
+      "RESETTING": "Redefinindo...",
+      "SUCCESS_TITLE": "Senha redefinida!",
+      "SUCCESS_MESSAGE": "Sua senha foi redefinida com sucesso. Agora você pode entrar com a nova senha."
+    }
+  },
+  "LAYOUT": {
     "TOPBAR": {
       "BRAND": "Mural do Condomínio",
       "ROLE_PROVIDER": "Prestador",
@@ -66,42 +160,92 @@
       "DASHBOARD": "Dashboard",
       "PROFILE": "Meu Perfil"
     },
+    "DASHBOARD": {
+      "BADGE": "Mural do condomínio",
+      "TITLE": "Bem-vindo ao seu painel",
+      "SUBTITLE": "Seus assets e sistema global de estilos estão ativos na aplicação.",
+      "SIGN_OUT": "Sair",
+      "SESSION_TITLE": "Sessão autenticada",
+      "SESSION_SUBTITLE": "Dados do usuário retornados pelo Cognito"
+    },
+    "LOADING": {
+      "DEFAULT": "Carregando..."
+    }
+  },
+  "ONBOARDING": {
+    "CONDOMINIUM": {
+      "TITLE": "Seu condomínio, conectado em um só lugar!",
+      "SUBTITLE": "Configure o endereço do condomínio para ativar um mural onde moradores podem comprar, vender e divulgar o que precisarem.",
+      "CEP_INVALID": "Informe um CEP válido.",
+      "STREET_REQUIRED": "Informe a rua.",
+      "NUMBER_REQUIRED": "Informe o número.",
+      "NEIGHBORHOOD_REQUIRED": "Informe o bairro.",
+      "CITY_REQUIRED": "Informe a cidade.",
+      "STATE_REQUIRED": "Selecione o estado."
+    },
+    "ROLE": {
+      "TITLE": "Escolha como você deseja usar o mural",
+      "SUBTITLE": "Defina seu perfil para acessar a experiência ideal dentro do condomínio. Você poderá comprar, contratar, vender ou anunciar serviços para outros moradores.",
+      "PROVIDER": {
+        "TITLE": "Quero anunciar e oferecer serviços",
+        "SUBTITLE": "Ideal para moradores que desejam divulgar serviços ou vender produtos dentro do condomínio.",
+        "F1": "Publique seus serviços ou produtos no mural",
+        "F2": "Ganhe visibilidade entre os moradores",
+        "F3": "Receba contatos e oportunidades com mais facilidade",
+        "F4": "Gerencie seus anúncios em um só lugar"
+      },
+      "CUSTOMER": {
+        "TITLE": "Quero buscar serviços e oportunidades",
+        "SUBTITLE": "Ideal para moradores que desejam encontrar serviços, comprar produtos e acompanhar anúncios do condomínio.",
+        "F1": "Encontre serviços oferecidos por moradores",
+        "F2": "Descubra produtos e oportunidades perto de você",
+        "F3": "Fale com prestadores de forma simples",
+        "F4": "Tenha tudo organizado em um só lugar"
+      }
+    }
+  },
+  "MURAL": {
     "PROVIDER": {
       "HERO_TITLE": "Gerencie seus serviços no condomínio",
       "HERO_SUBTITLE": "Acompanhe seus serviços, avaliações e solicitações de agendamento em",
-      "STATS_SERVICES": "Serviços ativos",
-      "STATS_RATING": "Avaliação média",
-      "STATS_REVIEWS": "Avaliações recebidas",
-      "STATS_CITY": "Cidade",
       "MY_SERVICES_TITLE": "Meus Serviços",
       "ADD_SERVICE": "Novo serviço",
       "NO_SERVICES": "Você ainda não publicou nenhum serviço.",
       "NO_SERVICES_HINT": "Clique em \"Novo serviço\" para começar a aparecer no mural.",
-      "REVIEWS": "avaliações",
-      "EDIT": "Editar",
-      "REMOVE": "Remover",
-      "FORM_NEW": "Novo serviço",
-      "FORM_EDIT": "Editar serviço",
-      "FORM_NAME": "Nome do serviço",
-      "FORM_NAME_PLACEHOLDER": "Ex: Corte de cabelo",
-      "FORM_NAME_REQUIRED": "Informe o nome do serviço.",
-      "FORM_CATEGORY": "Categoria",
-      "FORM_DESCRIPTION": "Descrição",
-      "FORM_DESCRIPTION_PLACEHOLDER": "Descreva o serviço, experiência, diferenciais...",
-      "FORM_DESCRIPTION_REQUIRED": "Informe uma descrição.",
-      "FORM_PRICE": "Preço",
-      "FORM_PRICE_PLACEHOLDER": "Ex: R$ 50,00 / hora",
-      "FORM_PRICE_REQUIRED": "Informe o preço.",
-      "FORM_CONTACT": "Contato (WhatsApp ou telefone)",
-      "FORM_CONTACT_PLACEHOLDER": "(11) 99999-9999",
-      "FORM_CONTACT_REQUIRED": "Informe o contato.",
-      "FORM_DAYS": "Dias disponíveis",
-      "FORM_DAYS_REQUIRED": "Selecione ao menos um dia.",
-      "FORM_CANCEL": "Cancelar",
-      "FORM_SAVE": "Salvar alterações",
-      "FORM_PUBLISH": "Publicar no mural"
+      "REVIEWS_LABEL": "avaliações",
+      "STATS": {
+        "SERVICES": "Serviços ativos",
+        "RATING": "Avaliação média",
+        "REVIEWS": "Avaliações recebidas",
+        "CITY": "Cidade"
+      },
+      "FORM": {
+        "NEW_TITLE": "Novo serviço",
+        "EDIT_TITLE": "Editar serviço",
+        "NAME": "Nome do serviço",
+        "NAME_PLACEHOLDER": "Ex: Corte de cabelo",
+        "NAME_REQUIRED": "Informe o nome do serviço.",
+        "CATEGORY": "Categoria",
+        "DESCRIPTION": "Descrição",
+        "DESCRIPTION_PLACEHOLDER": "Descreva o serviço, experiência, diferenciais...",
+        "DESCRIPTION_REQUIRED": "Informe uma descrição.",
+        "PRICE": "Preço",
+        "PRICE_PLACEHOLDER": "Ex: R$ 50,00 / hora",
+        "PRICE_REQUIRED": "Informe o preço.",
+        "CONTACT": "Contato (WhatsApp ou telefone)",
+        "CONTACT_PLACEHOLDER": "(11) 99999-9999",
+        "CONTACT_REQUIRED": "Informe o contato.",
+        "DAYS": "Dias disponíveis",
+        "DAYS_REQUIRED": "Configure ao menos um dia de disponibilidade.",
+        "AVAILABILITY": "Disponibilidade semanal",
+        "PUBLISH": "Publicar no mural"
+      }
     },
     "CUSTOMER": {
+      "HERO_TITLE": "Serviços para seu condomínio",
+      "HERO_SUBTITLE": "Encontre serviços e profissionais no seu condomínio em",
+      "STATS_SERVICES": "Serviços disponíveis",
+      "STATS_PROVIDERS": "Prestadores",
       "SEARCH_PLACEHOLDER": "Buscar serviços...",
       "FILTER_ALL": "Todos",
       "NO_SERVICES": "Nenhum serviço encontrado.",
@@ -109,17 +253,11 @@
       "RATING": "avaliações",
       "CONTACT": "Contato via WhatsApp",
       "SCHEDULE": "Agendar",
+      "SCHEDULE_TITLE": "Agendar horário",
+      "SCHEDULE_CONFIRM": "Confirmar agendamento",
+      "SCHEDULE_SUCCESS": "Agendamento solicitado com sucesso!",
       "REVIEWS_TITLE": "Avaliações",
       "NO_REVIEWS": "Ainda sem avaliações.",
-      "SCHEDULE_TITLE": "Agendar horário",
-      "SCHEDULE_SELECT_DAY": "Selecione um dia disponível:",
-      "SCHEDULE_CONFIRM": "Confirmar agendamento",
-      "SCHEDULE_CANCEL": "Cancelar",
-      "SCHEDULE_SUCCESS": "Agendamento solicitado com sucesso!",
-      "HERO_TITLE": "Serviços para seu condomínio",
-      "HERO_SUBTITLE": "Encontre serviços e profissionais no seu condomínio em",
-      "STATS_SERVICES": "Serviços disponíveis",
-      "STATS_PROVIDERS": "Prestadores",
       "WRITE_REVIEW": "Escrever uma avaliação",
       "YOUR_RATING": "Sua nota:",
       "REVIEW_COMMENT": "Comentário",
@@ -134,105 +272,17 @@
       "RATING_4": "Bom",
       "RATING_5": "Excelente"
     },
-    "PROFILE": {
-      "TITLE": "Meu Perfil",
-      "SUBTITLE": "Gerencie suas informações pessoais, endereço e condominio.",
-      "SECTION_PERSONAL": "Dados Pessoais",
-      "SECTION_ADDRESS": "Endereço do Condomínio",
-      "SECTION_ROLE": "Perfil de Uso",
-      "FIELD_NAME": "Nome",
-      "FIELD_LAST_NAME": "Sobrenome",
-      "FIELD_EMAIL": "Email",
-      "FIELD_PHONE": "Telefone",
-      "FIELD_CEP": "CEP",
-      "FIELD_STREET": "Rua",
-      "FIELD_NUMBER": "Número",
-      "FIELD_COMPLEMENT": "Complemento",
-      "FIELD_NEIGHBORHOOD": "Bairro",
-      "FIELD_CITY": "Cidade",
-      "FIELD_STATE": "Estado",
-      "FIELD_CONDO_NAME": "Nome do Condomínio",
-      "ROLE_PROVIDER": "Prestador de Serviço",
-      "ROLE_PROVIDER_DESC": "Publico serviços no mural para outros moradores.",
-      "ROLE_CUSTOMER": "Morador Consumidor",
-      "ROLE_CUSTOMER_DESC": "Busco e contrato serviços de outros moradores.",
-      "ROLE_CHANGE_WARNING": "Ao trocar de perfil, você será redirecionado para a dashboard correspondente.",
-      "SAVE": "Salvar alterações",
-      "SAVE_SUCCESS": "Perfil atualizado com sucesso!",
-      "BACK": "Voltar",
-      "SEARCH_CEP": "Buscar CEP",
-      "TAB_PERSONAL": "Dados Pessoais",
-      "TAB_ADDRESS": "Endereço e Condomínio",
-      "TAB_SECURITY": "Segurança",
-      "GIVEN_NAME": "Nome",
-      "FAMILY_NAME": "Sobrenome",
-      "EMAIL": "E-mail",
-      "PHONE": "Telefone",
-      "PHONE_PLACEHOLDER": "(11) 99999-9999",
-      "CONDO_NAME": "Nome do Condomínio",
-      "CONDO_NAME_PLACEHOLDER": "Ex: Residencial das Flores",
-      "SAVED_SUCCESS": "Alterações salvas com sucesso!",
-      "SECURITY_COGNITO_TITLE": "Autenticação gerenciada pela AWS",
-      "SECURITY_COGNITO_DESC": "Sua conta é autenticada via AWS Cognito. Suas credenciais são gerenciadas com segurança.",
-      "SECURITY_PASSWORD_TITLE": "Alterar senha",
-      "SECURITY_PASSWORD_DESC": "Para alterar sua senha, acesse o portal da AWS Cognito ou use a opção 'Esqueci minha senha' na tela de login."
-    },
-    "FEEDBACK": {
-      "SUCCESS_DEFAULT": "Operação realizada com sucesso.",
-      "UNEXPECTED_ERROR": "Erro inesperado. Tente novamente.",
-      "NETWORK_ERROR": "Não foi possível conectar ao servidor.",
-      "INVALID_PASSWORD": "Senha inválida. Verifique maiúscula, minúscula, número e caractere especial.",
-      "NOT_AUTHORIZED": "Você não tem permissão para esta ação.",
-      "USER_NOT_FOUND": "Usuário não encontrado.",
-      "REQUEST_FAILED": "A requisição falhou. Tente novamente."
-    },
-    "ONBOARDING": {
-      "CONDO_TITLE": "Seu condomínio, conectado em um só lugar !",
-      "CONDO_SUBTITLE": "Configure o endereço do condomínio para ativar um mural onde moradores podem comprar, vender e divulgar o que precisarem.",
-      "CONDOMINIUM": {
-        "CEP": "CEP",
-        "CEP_PLACEHOLDER": "00000-000",
-        "CEP_SEARCH": "Buscar CEP",
-        "STREET": "Rua / Logradouro",
-        "NUMBER": "Número",
-        "NEIGHBORHOOD": "Bairro",
-        "COMPLEMENT": "Complemento",
-        "CITY": "Cidade",
-        "STATE": "Estado",
-        "STREET_PLACEHOLDER": "Ex: Rua das Flores",
-        "NUMBER_PLACEHOLDER": "Ex: 123",
-        "COMPLEMENT_PLACEHOLDER": "Apto, Bloco...",
-        "NEIGHBORHOOD_PLACEHOLDER": "Ex: Centro",
-        "CITY_PLACEHOLDER": "Ex: São Paulo"
-      },
-      "ROLE": {
-        "TITLE": "Escolha como você deseja usar o mural",
-        "SUBTITLE": "Defina seu perfil para acessar a experiência ideal dentro do condomínio. Você poderá comprar, contratar, vender ou anunciar serviços para outros moradores.",
-        "PROVIDER": {
-          "TITLE": "Quero anunciar e oferecer serviços",
-          "SUBTITLE": "Ideal para moradores que desejam divulgar serviços ou vender produtos dentro do condomínio.",
-          "F1": "Publique seus serviços ou produtos no mural",
-          "F2": "Ganhe visibilidade entre os moradores",
-          "F3": "Receba contatos e oportunidades com mais facilidade",
-          "F4": "Gerencie seus anúncios em um só lugar"
-        },
-        "CUSTOMER": {
-          "TITLE": "Quero buscar serviços e oportunidades",
-          "SUBTITLE": "Ideal para moradores que desejam encontrar serviços, comprar produtos e acompanhar anúncios do condomínio.",
-          "F1": "Encontre serviços oferecidos por moradores",
-          "F2": "Descubra produtos e oportunidades perto de você",
-          "F3": "Fale com prestadores de forma simples",
-          "F4": "Tenha tudo organizado em um só lugar"
-        },
-        "CONFIRM": "Continuar"
-      },
-      "CEP_INVALID": "Informe um CEP válido.",
-      "STREET_REQUIRED": "Informe a rua.",
-      "NUMBER_REQUIRED": "Informe o número.",
-      "NEIGHBORHOOD_REQUIRED": "Informe o bairro.",
-      "CITY_REQUIRED": "Informe a cidade.",
-      "STATE_REQUIRED": "Selecione o estado.",
-      "CONTINUE": "Continuar"
+    "KANBAN": {
+      "SECTION_TITLE": "Agendamentos",
+      "VIEW_KANBAN": "Visualizar como Kanban",
+      "VIEW_LIST": "Visualizar como lista",
+      "CHAT": "Conversar com o cliente",
+      "EMPTY_COLUMN": "Nenhum agendamento",
+      "EMPTY_TITLE": "Nenhuma solicitação ainda",
+      "EMPTY_MESSAGE": "Quando um morador solicitar um horário, ele aparecerá aqui.",
+      "UNKNOWN_SERVICE": "Serviço",
+      "UNKNOWN_CUSTOMER": "Cliente",
+      "READONLY_TOOLTIP": "Coluna gerenciada pelo sistema"
     },
     "ANALYTICS": {
       "TITLE": "Analytics",
@@ -247,8 +297,84 @@
       "REVIEWS_COUNT": "avaliações",
       "COMMENTS": "Comentários",
       "NO_COMMENTS": "Nenhum comentário ainda",
-      "ANONYMOUS": "Anônimo",
       "NO_COMMENT_TEXT": "Avaliação sem comentário"
+    },
+    "SCHEDULE": {
+      "SELECT_TIME": "Escolha um horário para",
+      "NO_SLOTS": "Nenhum horário disponível neste dia."
+    }
+  },
+  "PROFILE": {
+    "TITLE": "Meu Perfil",
+    "SUBTITLE": "Gerencie suas informações pessoais, endereço e condomínio.",
+    "TABS": {
+      "PERSONAL": "Dados Pessoais",
+      "ADDRESS": "Endereço e Condomínio",
+      "SECURITY": "Segurança"
+    },
+    "PERSONAL": {
+      "SAVED_SUCCESS": "Dados pessoais salvos com sucesso!"
+    },
+    "ADDRESS": {
+      "CONDO_NAME": "Nome do Condomínio",
+      "CONDO_NAME_PLACEHOLDER": "Ex: Residencial das Flores",
+      "SAVED_SUCCESS": "Endereço atualizado com sucesso!"
+    },
+    "ROLE": {
+      "PROVIDER": "Prestador de Serviço",
+      "PROVIDER_DESC": "Publico serviços no mural para outros moradores.",
+      "CUSTOMER": "Morador Consumidor",
+      "CUSTOMER_DESC": "Busco e contrato serviços de outros moradores."
+    },
+    "SECURITY": {
+      "COGNITO_TITLE": "Autenticação gerenciada pela AWS",
+      "COGNITO_DESC": "Sua conta é autenticada via AWS Cognito. Suas credenciais são gerenciadas com segurança.",
+      "PASSWORD_TITLE": "Alterar senha",
+      "PASSWORD_DESC": "Para alterar sua senha, acesse o portal da AWS Cognito ou use a opção 'Esqueci minha senha' na tela de login.",
+      "PASSWORD_CHANGE_DESC": "Digite sua senha atual e escolha uma nova senha.",
+      "CURRENT_PASSWORD": "Senha atual",
+      "CURRENT_PASSWORD_REQUIRED": "Informe sua senha atual.",
+      "NEW_PASSWORD": "Nova senha",
+      "NEW_PASSWORD_REQUIRED": "Informe a nova senha.",
+      "CONFIRM_NEW_PASSWORD": "Confirmar nova senha",
+      "CHANGE_PASSWORD_BUTTON": "Alterar senha",
+      "PASSWORD_CHANGED_SUCCESS": "Senha alterada com sucesso!",
+      "PASSWORD_WRONG_CURRENT": "Senha atual incorreta. Verifique e tente novamente.",
+      "PASSWORD_INVALID": "Senha inválida. Use maiúscula, minúscula, número e caractere especial.",
+      "PASSWORD_LIMIT_EXCEEDED": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+      "GOOGLE_ACCOUNT_TITLE": "Conta Google",
+      "GOOGLE_ACCOUNT_DESC": "Você entrou com o Google. Para alterar sua senha, acesse as configurações da sua conta Google."
+    }
+  },
+  "PAYMENT": {
+    "GO_TO_DASHBOARD": "Ir para o painel",
+    "SUCCESS": {
+      "TITLE": "Pagamento confirmado!",
+      "MESSAGE": "Seu agendamento foi pago com sucesso. O prestador será notificado.",
+      "SESSION_ID": "ID da sessão",
+      "VERIFYING": "Confirmando pagamento...",
+      "VERIFY_ERROR": "Não foi possível confirmar automaticamente. Verifique seus agendamentos."
+    },
+    "CANCEL": {
+      "TITLE": "Pagamento cancelado",
+      "MESSAGE": "O pagamento foi cancelado. Você pode tentar novamente ou entrar em contato com o prestador.",
+      "TRY_AGAIN": "Tentar novamente"
+    },
+    "STRIPE_CONNECT": {
+      "SECTION_TITLE": "Recebimentos",
+      "STATUS_ACTIVE": "Conta de pagamentos ativa",
+      "STATUS_ACTIVE_DESC": "Você está recebendo pagamentos. A plataforma retém 5% por transação.",
+      "STATUS_PENDING": "Cadastro incompleto",
+      "STATUS_PENDING_DESC": "Conclua o cadastro para receber pagamentos dos seus clientes.",
+      "STATUS_RESTRICTED": "Conta com restrição",
+      "STATUS_RESTRICTED_DESC": "Sua conta está com restrições. Acesse o painel para resolver.",
+      "STATUS_NOT_CONNECTED": "Receba pagamentos pelo app",
+      "STATUS_NOT_CONNECTED_DESC": "Conecte sua conta para receber pagamentos dos agendamentos diretamente.",
+      "CONNECT_ACCOUNT": "Conectar conta",
+      "CONTINUE_ONBOARDING": "Continuar cadastro",
+      "OPEN_DASHBOARD": "Ver painel de pagamentos",
+      "RETURN_SUCCESS": "Cadastro enviado! Aguardando confirmação do Stripe. O status será atualizado em breve.",
+      "RETURN_REFRESH": "Link expirado. Clique em 'Continuar cadastro' para gerar um novo link."
     }
   }
 }

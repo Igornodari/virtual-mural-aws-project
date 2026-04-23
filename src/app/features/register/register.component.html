@@ -1,85 +1,105 @@
 <div class="app-auth-page">
-      <div class="app-page-shell">
-        <mat-card class="register-panel surface-card--elevated p-4">
-          <mat-card-header class="p-0 m-b-4">
-            <mat-card-title>{{ 'APP.REGISTER.TITLE' | translate }}</mat-card-title>
-            <mat-card-subtitle>
-              @if (!awaitingConfirmation) {
-                {{ 'APP.REGISTER.SUBTITLE_CREATE' | translate }}
-              } @else {
-                {{ 'APP.REGISTER.SUBTITLE_CONFIRM' | translate }}
+  <div class="app-page-shell">
+    <mat-card class="register-panel surface-card--elevated p-4">
+      <mat-card-header class="p-0 m-b-4">
+        <mat-card-title>{{ 'AUTH.REGISTER.TITLE' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'AUTH.REGISTER.SUBTITLE' | translate }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="p-0 d-flex flex-col gap-4">
+
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="d-flex flex-col gap-4">
+
+          <div class="d-flex gap-3">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>{{ 'COMMON.LABELS.FIRST_NAME' | translate }}</mat-label>
+              <input matInput formControlName="firstName" autocomplete="given-name" />
+              @if (registerForm.controls.firstName.touched && registerForm.controls.firstName.hasError('required')) {
+                <mat-error>{{ 'AUTH.REGISTER.FIRST_NAME_REQUIRED' | translate }}</mat-error>
               }
-            </mat-card-subtitle>
-          </mat-card-header>
+            </mat-form-field>
 
-          <mat-card-content class="p-0 d-flex flex-col gap-4">
-            @if (errorMessage) {
-              <div class="app-error-box">{{ errorMessage }}</div>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>{{ 'COMMON.LABELS.LAST_NAME' | translate }}</mat-label>
+              <input matInput formControlName="lastName" autocomplete="family-name" />
+              @if (registerForm.controls.lastName.touched && registerForm.controls.lastName.hasError('required')) {
+                <mat-error>{{ 'AUTH.REGISTER.LAST_NAME_REQUIRED' | translate }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'COMMON.LABELS.EMAIL' | translate }}</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="email" />
+            @if (registerForm.controls.email.touched) {
+              @if (registerForm.controls.email.hasError('required')) {
+                <mat-error>{{ 'AUTH.REGISTER.EMAIL_REQUIRED' | translate }}</mat-error>
+              } @else if (registerForm.controls.email.hasError('email')) {
+                <mat-error>{{ 'COMMON.VALIDATION.EMAIL_INVALID' | translate }}</mat-error>
+              }
             }
-            @if (successMessage) {
-              <div class="app-success-box">{{ successMessage }}</div>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'COMMON.LABELS.PASSWORD' | translate }}</mat-label>
+            <input
+              matInput
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              autocomplete="new-password"
+            />
+            <button
+              matSuffix
+              mat-icon-button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="(showPassword ? 'COMMON.HIDE_PASSWORD' : 'COMMON.SHOW_PASSWORD') | translate"
+            >
+              <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (registerForm.controls.password.touched && passwordErrors) {
+              <mat-error>{{ 'COMMON.VALIDATION.PASSWORD_STRENGTH' | translate }}</mat-error>
+            } @else if (registerForm.controls.password.touched && registerForm.controls.password.hasError('required')) {
+              <mat-error>{{ 'AUTH.REGISTER.PASSWORD_REQUIRED' | translate }}</mat-error>
             }
+          </mat-form-field>
 
-            @if (!awaitingConfirmation) {
-              <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="d-flex flex-col gap-4">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>{{ 'APP.REGISTER.FIRST_NAME' | translate }}</mat-label>
-                  <input matInput formControlName="firstName" />
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>{{ 'APP.REGISTER.LAST_NAME' | translate }}</mat-label>
-                  <input matInput formControlName="lastName" />
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>{{ 'APP.REGISTER.EMAIL' | translate }}</mat-label>
-                  <input matInput type="email" formControlName="email" />
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>{{ 'APP.REGISTER.PASSWORD' | translate }}</mat-label>
-                  <input matInput type="password" formControlName="password" />
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>{{ 'APP.REGISTER.CONFIRM_PASSWORD' | translate }}</mat-label>
-                  <input matInput type="password" formControlName="confirmPassword" />
-                </mat-form-field>
-
-                <button
-                  mat-raised-button
-                  color="primary"
-                  type="submit"
-                  [disabled]="registerForm.invalid || loading"
-                >
-                  {{
-                    (loading ? 'APP.REGISTER.CREATING' : 'APP.REGISTER.CREATE_ACCOUNT') | translate
-                  }}
-                </button>
-              </form>
-            } @else {
-              <form [formGroup]="confirmationForm" (ngSubmit)="onConfirmCode()" class="d-flex flex-col gap-4">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>{{ 'APP.REGISTER.CODE' | translate }}</mat-label>
-                  <input matInput formControlName="code" />
-                </mat-form-field>
-
-                <button
-                  mat-raised-button
-                  color="primary"
-                  type="submit"
-                  [disabled]="confirmationForm.invalid || loading"
-                >
-                  {{
-                    (loading ? 'APP.REGISTER.CONFIRMING' : 'APP.REGISTER.CONFIRM_EMAIL') | translate
-                  }}
-                </button>
-              </form>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'AUTH.REGISTER.CONFIRM_PASSWORD' | translate }}</mat-label>
+            <input
+              matInput
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              autocomplete="new-password"
+            />
+            <button
+              matSuffix
+              mat-icon-button
+              type="button"
+              (click)="toggleConfirmPasswordVisibility()"
+              [attr.aria-label]="(showConfirmPassword ? 'COMMON.HIDE_PASSWORD' : 'COMMON.SHOW_PASSWORD') | translate"
+            >
+              <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (registerForm.controls.confirmPassword.touched && registerForm.hasError('passwordMismatch')) {
+              <mat-error>{{ 'COMMON.VALIDATION.PASSWORDS_DO_NOT_MATCH' | translate }}</mat-error>
+            } @else if (registerForm.controls.confirmPassword.touched && registerForm.controls.confirmPassword.hasError('required')) {
+              <mat-error>{{ 'AUTH.REGISTER.CONFIRM_PASSWORD_REQUIRED' | translate }}</mat-error>
             }
+          </mat-form-field>
 
-            <a routerLink="/login">{{ 'APP.REGISTER.BACK_TO_LOGIN' | translate }}</a>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="loading"
+          >
+            {{ (loading ? 'AUTH.REGISTER.CREATING' : 'AUTH.REGISTER.CREATE_ACCOUNT') | translate }}
+          </button>
+        </form>
+
+        <a routerLink="/login">{{ 'COMMON.BACK_TO_LOGIN' | translate }}</a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -5,28 +5,25 @@
     <div class="service-section d-flex flex-col gap-15">
       <h4 class="section-title d-flex align-items-center m-0">
         <mat-icon class="section-icon m-r-10">event_available</mat-icon>
-        {{ 'APP.CUSTOMER.SCHEDULE_TITLE' | translate }}
+        {{ 'MURAL.CUSTOMER.SCHEDULE_TITLE' | translate }}
       </h4>
 
-      <div class="d-flex flex-wrap gap-10">
-        @for (day of service.availableDays; track day) {
-          <button
-            type="button"
-            class="filter-chip"
-            [class.filter-chip--active]="selectedDay === day"
-            [class.filter-chip--disabled]="isDayUnavailable(day)"
-            [disabled]="isDayUnavailable(day)"
-            (click)="selectDay(day)"
-          >
-            {{ day }}
-            @if (isDayUnavailable(day)) {
-              <span> - Indisponivel</span>
-            }
-          </button>
-        }
-      </div>
+      <app-appointment-calendar-picker
+        [availabilitySlots]="availabilitySlots"
+        [blockedDates]="blockedDates"
+        (selectionChange)="onCalendarSelectionChange($event)"
+      />
 
-      @if (selectedDay) {
+      @if (calendarSelection) {
+        <div class="schedule-summary surface-card d-flex align-items-center gap-10 p-10 rounded">
+          <mat-icon color="primary">event_available</mat-icon>
+          <span>
+            <strong>{{ calendarSelection.date | date:'dd/MM/yyyy' }}</strong>
+            · {{ calendarSelection.day }}
+            · {{ calendarSelection.time }}
+          </span>
+        </div>
+
         <button
           mat-raised-button
           color="accent"
@@ -38,7 +35,7 @@
             <mat-spinner diameter="18" />
           }
           <mat-icon>event_available</mat-icon>
-          {{ 'APP.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
+          {{ 'MURAL.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
         </button>
       }
     </div>
@@ -48,7 +45,7 @@
     <div class="service-section d-flex flex-col gap-15">
       <h4 class="section-title d-flex align-items-center m-0">
         <mat-icon class="section-icon m-r-10">star_rate</mat-icon>
-        {{ 'APP.CUSTOMER.REVIEWS_TITLE' | translate }}
+        {{ 'MURAL.CUSTOMER.REVIEWS_TITLE' | translate }}
       </h4>
 
       @if (service.totalReviews > 0) {
@@ -59,7 +56,7 @@
 
           <span class="text-muted">
             {{ service.totalReviews }}
-            {{ 'APP.CUSTOMER.RATING' | translate }}
+            {{ 'MURAL.CUSTOMER.RATING' | translate }}
           </span>
         </div>
       }
@@ -87,7 +84,7 @@
           }
         </div>
       } @else {
-        <p class="text-muted m-0">{{ 'APP.CUSTOMER.NO_REVIEWS' | translate }}</p>
+        <p class="text-muted m-0">{{ 'MURAL.CUSTOMER.NO_REVIEWS' | translate }}</p>
       }
     </div>
 
@@ -96,12 +93,12 @@
     <div class="service-section d-flex flex-col gap-15">
       <h4 class="section-title d-flex align-items-center m-0">
         <mat-icon class="section-icon m-r-10">rate_review</mat-icon>
-        {{ 'APP.CUSTOMER.WRITE_REVIEW' | translate }}
+        {{ 'MURAL.CUSTOMER.WRITE_REVIEW' | translate }}
       </h4>
 
       <div class="review-form d-flex flex-col gap-15">
         <div class="review-rating-row d-flex align-items-center flex-wrap gap-10">
-          <span class="text-muted">{{ 'APP.CUSTOMER.YOUR_RATING' | translate }}</span>
+          <span class="text-muted">{{ 'MURAL.CUSTOMER.YOUR_RATING' | translate }}</span>
 
           <div class="d-flex align-items-center gap-5">
             @for (star of stars; track star) {
@@ -130,16 +127,16 @@
         </div>
 
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label>{{ 'APP.CUSTOMER.REVIEW_COMMENT' | translate }}</mat-label>
+          <mat-label>{{ 'MURAL.CUSTOMER.REVIEW_COMMENT' | translate }}</mat-label>
           <textarea
             matInput
             rows="4"
             maxlength="500"
             [value]="pendingComment"
             (input)="setPendingComment($any($event.target).value)"
-            [placeholder]="'APP.CUSTOMER.REVIEW_COMMENT_HINT' | translate"
+            [placeholder]="'MURAL.CUSTOMER.REVIEW_COMMENT_HINT' | translate"
           ></textarea>
-          <mat-hint>{{ 'APP.CUSTOMER.REVIEW_ANONYMOUS_HINT' | translate }}</mat-hint>
+          <mat-hint>{{ 'MURAL.CUSTOMER.REVIEW_ANONYMOUS_HINT' | translate }}</mat-hint>
         </mat-form-field>
 
         <button
@@ -154,7 +151,7 @@
             <mat-spinner diameter="18" />
           }
           <mat-icon>send</mat-icon>
-          {{ 'APP.CUSTOMER.SUBMIT_REVIEW' | translate }}
+          {{ 'MURAL.CUSTOMER.SUBMIT_REVIEW' | translate }}
         </button>
       </div>
     </div>
