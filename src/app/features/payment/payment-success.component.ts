@@ -20,19 +20,19 @@ import { AppointmentApiService } from 'src/app/core/services/appointment-api.ser
         </div>
 
         <!-- Textos -->
-        <h1 class="ps-title">{{ 'APP.PAYMENT.SUCCESS_TITLE' | translate }}</h1>
-        <p class="ps-subtitle">{{ 'APP.PAYMENT.SUCCESS_MESSAGE' | translate }}</p>
+        <h1 class="ps-title">{{ 'PAYMENT.SUCCESS.TITLE' | translate }}</h1>
+        <p class="ps-subtitle">{{ 'PAYMENT.SUCCESS.MESSAGE' | translate }}</p>
 
         <!-- Verificando status -->
         @if (isVerifying()) {
           <div class="ps-verifying d-flex align-items-center gap-10">
             <mat-spinner diameter="18" />
-            <span>{{ 'APP.PAYMENT.VERIFYING' | translate }}</span>
+            <span>{{ 'PAYMENT.SUCCESS.VERIFYING' | translate }}</span>
           </div>
         }
 
         @if (verifyError()) {
-          <p class="ps-warn">{{ 'APP.PAYMENT.VERIFY_ERROR' | translate }}</p>
+          <p class="ps-warn">{{ 'PAYMENT.SUCCESS.VERIFY_ERROR' | translate }}</p>
         }
 
         <!-- Botão -->
@@ -44,7 +44,7 @@ import { AppointmentApiService } from 'src/app/core/services/appointment-api.ser
           (click)="goToDashboard()"
         >
           <mat-icon>home</mat-icon>
-          {{ 'APP.PAYMENT.GO_TO_DASHBOARD' | translate }}
+          {{ 'PAYMENT.GO_TO_DASHBOARD' | translate }}
         </button>
 
       </div>

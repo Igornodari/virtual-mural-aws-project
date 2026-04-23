@@ -1,6 +1,6 @@
 <section class="customer-filters">
   <mat-form-field appearance="outline" class="w-full">
-    <mat-label>{{ 'APP.CUSTOMER.SEARCH_PLACEHOLDER' | translate }}</mat-label>
+    <mat-label>{{ 'MURAL.CUSTOMER.SEARCH_PLACEHOLDER' | translate }}</mat-label>
     <mat-icon matPrefix>search</mat-icon>
     <input matInput [formControl]="searchControl" />
   </mat-form-field>
@@ -13,7 +13,7 @@
         [class.filter-chip--active]="selectedCategory === category"
         (click)="selectCategory(category)"
       >
-        {{ isAllCategory(category) ? ('APP.CUSTOMER.FILTER_ALL' | translate) : category }}
+        {{ isAllCategory(category) ? ('MURAL.CUSTOMER.FILTER_ALL' | translate) : category }}
       </button>
     }
   </div>

@@ -7,34 +7,34 @@
              style="background: var(--mat-sys-primary-container); border-radius: 50%; width: 48px; height: 48px;">
           <mat-icon style="color: var(--mat-sys-on-primary-container);">mark_email_read</mat-icon>
         </div>
-        <mat-card-title>{{ 'APP.CONFIRM_EMAIL.TITLE' | translate }}</mat-card-title>
-        <mat-card-subtitle>{{ 'APP.CONFIRM_EMAIL.SUBTITLE' | translate }}</mat-card-subtitle>
+        <mat-card-title>{{ 'AUTH.CONFIRM_EMAIL.TITLE' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'AUTH.CONFIRM_EMAIL.SUBTITLE' | translate }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content class="p-0 d-flex flex-col gap-4">
 
         <div class="app-success-box d-flex flex-col gap-1">
-          <span>{{ 'APP.CONFIRM_EMAIL.SENT_TO' | translate }}</span>
+          <span>{{ 'AUTH.CONFIRM_EMAIL.SENT_TO' | translate }}</span>
           <span class="email-highlight">{{ email }}</span>
         </div>
 
         <form [formGroup]="form" (ngSubmit)="onConfirm()" class="d-flex flex-col gap-4">
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>{{ 'APP.CONFIRM_EMAIL.CODE_LABEL' | translate }}</mat-label>
+            <mat-label>{{ 'AUTH.CONFIRM_EMAIL.CODE_LABEL' | translate }}</mat-label>
             <input
               matInput
               formControlName="code"
               autocomplete="one-time-code"
               inputmode="numeric"
               maxlength="6"
-              [placeholder]="'APP.CONFIRM_EMAIL.CODE_PLACEHOLDER' | translate"
+              [placeholder]="'AUTH.CONFIRM_EMAIL.CODE_PLACEHOLDER' | translate"
             />
             <mat-icon matSuffix>pin</mat-icon>
             @if (form.controls.code.touched) {
               @if (form.controls.code.hasError('required')) {
-                <mat-error>{{ 'APP.CONFIRM_EMAIL.CODE_REQUIRED' | translate }}</mat-error>
+                <mat-error>{{ 'AUTH.CONFIRM_EMAIL.CODE_REQUIRED' | translate }}</mat-error>
               } @else if (form.controls.code.hasError('minlength') || form.controls.code.hasError('maxlength')) {
-                <mat-error>{{ 'APP.CONFIRM_EMAIL.CODE_LENGTH' | translate }}</mat-error>
+                <mat-error>{{ 'AUTH.CONFIRM_EMAIL.CODE_LENGTH' | translate }}</mat-error>
               }
             }
           </mat-form-field>
@@ -46,21 +46,21 @@
             class="w-full"
             [disabled]="loading"
           >
-            {{ (loading ? 'APP.CONFIRM_EMAIL.CONFIRMING' : 'APP.CONFIRM_EMAIL.CONFIRM_BUTTON') | translate }}
+            {{ (loading ? 'AUTH.CONFIRM_EMAIL.CONFIRMING' : 'AUTH.CONFIRM_EMAIL.CONFIRM_BUTTON') | translate }}
           </button>
         </form>
 
         <div class="resend-row">
           <span class="text-muted" style="font-size: 0.875rem;">
-            {{ 'APP.CONFIRM_EMAIL.NO_CODE' | translate }}
+            {{ 'AUTH.CONFIRM_EMAIL.NO_CODE' | translate }}
           </span>
           @if (resendCooldown === 0) {
             <button mat-button color="primary" type="button" (click)="onResend()">
-              {{ 'APP.CONFIRM_EMAIL.RESEND' | translate }}
+              {{ 'AUTH.CONFIRM_EMAIL.RESEND' | translate }}
             </button>
           } @else {
             <span class="countdown">
-              {{ 'APP.CONFIRM_EMAIL.RESEND_WAIT' | translate : { seconds: resendCooldown } }}
+              {{ 'AUTH.CONFIRM_EMAIL.RESEND_WAIT' | translate : { seconds: resendCooldown } }}
             </span>
           }
         </div>
@@ -68,7 +68,7 @@
         <mat-divider></mat-divider>
 
         <a routerLink="/login" class="text-muted" style="font-size: 0.875rem;">
-          {{ 'APP.CONFIRM_EMAIL.BACK_TO_LOGIN' | translate }}
+          {{ 'COMMON.BACK_TO_LOGIN' | translate }}
         </a>
       </mat-card-content>
     </mat-card>

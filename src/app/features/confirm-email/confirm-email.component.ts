@@ -89,7 +89,7 @@ export class ConfirmEmailComponent extends BaseComponent implements OnInit {
 
     this.setLoadingState(true);
       await this.authService.confirmEmailCode(this.email, this.form.getRawValue().code);
-      this.snackBar.success(this.translateService.instant('APP.CONFIRM_EMAIL.SUCCESS'));
+      this.snackBar.success(this.translateService.instant('AUTH.CONFIRM_EMAIL.SUCCESS'));
       await this.navigateTo('/login');
       this.setLoadingState(false);
   }
@@ -97,7 +97,7 @@ export class ConfirmEmailComponent extends BaseComponent implements OnInit {
   async onResend(): Promise<void> {
     if (this.resendCooldown > 0) return;
       await this.authService.resendConfirmationCode(this.email);
-      this.snackBar.success(this.translateService.instant('APP.CONFIRM_EMAIL.RESEND_SUCCESS'));
+      this.snackBar.success(this.translateService.instant('AUTH.CONFIRM_EMAIL.RESEND_SUCCESS'));
       this.startCooldown(60);
   }
 

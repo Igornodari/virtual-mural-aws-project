@@ -19,5 +19,5 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class PageLoadingComponent {
   @Input() visible = true;
-  @Input() message = 'APP.LOADING.DEFAULT';
+  @Input() message = 'COMMON.LOADING';
 }

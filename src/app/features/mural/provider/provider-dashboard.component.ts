@@ -323,11 +323,11 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
   private handleStripeConnectReturn(): void {
     const param = this.route.snapshot.queryParamMap.get('stripe_connect');
     if (param === 'success') {
-      this.stripeConnectSuccessMessage.set('APP.STRIPE_CONNECT.RETURN_SUCCESS');
+      this.stripeConnectSuccessMessage.set('PAYMENT.STRIPE_CONNECT.RETURN_SUCCESS');
       // Limpa o query param da URL sem recarregar
       window.history.replaceState({}, '', '/mural/provider');
     } else if (param === 'refresh') {
-      this.stripeConnectSuccessMessage.set('APP.STRIPE_CONNECT.RETURN_REFRESH');
+      this.stripeConnectSuccessMessage.set('PAYMENT.STRIPE_CONNECT.RETURN_REFRESH');
       window.history.replaceState({}, '', '/mural/provider');
     }
   }
@@ -368,8 +368,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
     });
   }
 
-  // ── Serviços ───────────────────────────────────────────────────────────────
-
   removeService(serviceId: string): void {
     this.serviceApi.remove(serviceId).subscribe({
       next: () => {
@@ -379,8 +377,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       },
     });
   }
-
-  // ── Chat ───────────────────────────────────────────────────────────────────
 
   openChat(appointment: AppointmentDto): void {
     this.dialog.open(ChatDialogComponent, {
@@ -393,12 +389,9 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
     });
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
   private scrollToForm(): void {
     setTimeout(() => {
-      const el = document.querySelector('.service-form');
-      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelector('.service-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
   }
 }

@@ -15,21 +15,21 @@ import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 
         <div class="d-flex flex-col gap-10">
           <h1 class="payment-result-title m-0">
-            {{ 'APP.PAYMENT.CANCEL_TITLE' | translate }}
+            {{ 'PAYMENT.CANCEL.TITLE' | translate }}
           </h1>
           <p class="text-muted m-0">
-            {{ 'APP.PAYMENT.CANCEL_MESSAGE' | translate }}
+            {{ 'PAYMENT.CANCEL.MESSAGE' | translate }}
           </p>
         </div>
 
         <div class="d-flex gap-10 flex-wrap justify-content-center">
           <button mat-stroked-button (click)="goBack()">
             <mat-icon>arrow_back</mat-icon>
-            {{ 'APP.PAYMENT.TRY_AGAIN' | translate }}
+            {{ 'PAYMENT.CANCEL.TRY_AGAIN' | translate }}
           </button>
           <button mat-raised-button color="primary" (click)="goToDashboard()">
             <mat-icon>home</mat-icon>
-            {{ 'APP.PAYMENT.GO_TO_DASHBOARD' | translate }}
+            {{ 'PAYMENT.GO_TO_DASHBOARD' | translate }}
           </button>
         </div>
       </div>

@@ -217,18 +217,18 @@ export class ProfileComponent extends BaseComponent implements OnInit {
       await this.authService.changePassword(currentPassword, newPassword);
       this.passwordSuccess.set(true);
       this.passwordForm.reset();
-      const msg = this.translate.instant('APP.PROFILE.PASSWORD_CHANGED_SUCCESS');
+      const msg = this.translate.instant('PROFILE.SECURITY.PASSWORD_CHANGED_SUCCESS');
       this.snackBar.open(msg, '✕', { duration: 4000, panelClass: 'snack-success' });
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
       if (e?.name === 'NotAuthorizedException') {
-        this.passwordError.set(this.translate.instant('APP.PROFILE.PASSWORD_WRONG_CURRENT'));
+        this.passwordError.set(this.translate.instant('PROFILE.SECURITY.PASSWORD_WRONG_CURRENT'));
       } else if (e?.name === 'InvalidPasswordException' || e?.name === 'InvalidParameterException') {
-        this.passwordError.set(this.translate.instant('APP.PROFILE.PASSWORD_INVALID'));
+        this.passwordError.set(this.translate.instant('PROFILE.SECURITY.PASSWORD_INVALID'));
       } else if (e?.name === 'LimitExceededException') {
-        this.passwordError.set(this.translate.instant('APP.PROFILE.PASSWORD_LIMIT_EXCEEDED'));
+        this.passwordError.set(this.translate.instant('PROFILE.SECURITY.PASSWORD_LIMIT_EXCEEDED'));
       } else {
-        this.passwordError.set(e?.message ?? this.translate.instant('APP.FEEDBACK.UNEXPECTED_ERROR'));
+        this.passwordError.set(e?.message ?? this.translate.instant('COMMON.FEEDBACK.UNEXPECTED_ERROR'));
       }
     } finally {
       this.isSavingPassword.set(false);

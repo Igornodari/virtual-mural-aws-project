@@ -117,7 +117,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
 
       if (name === 'UserNotConfirmedException') {
         const email = this.form.controls.email.value;
-        this.snackBar.warning(this.translateService.instant('APP.CONFIRM_EMAIL.NOT_CONFIRMED_WARNING'));
+        this.snackBar.warning(this.translateService.instant('AUTH.CONFIRM_EMAIL.NOT_CONFIRMED_WARNING'));
         await this.navigateTo(`/confirm-email?email=${encodeURIComponent(email)}`);
         return;
       }

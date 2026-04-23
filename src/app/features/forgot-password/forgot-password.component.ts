@@ -100,7 +100,7 @@ export class ForgotPasswordComponent extends BaseComponent {
       const { email } = this.emailForm.getRawValue();
       await this.authService.forgotPassword(email);
       this.pendingEmail = email;
-      this.snackBar.success(this.translateService.instant('APP.FORGOT_PASSWORD.CODE_SENT'));
+      this.snackBar.success(this.translateService.instant('AUTH.FORGOT_PASSWORD.CODE_SENT'));
       this.updateViewState(() => { this.step = 'reset'; });
     } finally {
       this.setLoadingState(false);
