@@ -17,7 +17,7 @@ export default tseslint.config(
       ...angular.configs.tsRecommended,
     ],
     plugins: {
-      'prefer-arrow': preferArrow,   
+      'prefer-arrow': preferArrow,
     },
     processor: angular.processInlineTemplates,
     rules: {
@@ -66,12 +66,6 @@ export default tseslint.config(
   {
     files: ['**/*.spec.ts'],
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      'prefer-const': 'warn',
-    },
-  },
-);
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       'prefer-const': 'warn',
