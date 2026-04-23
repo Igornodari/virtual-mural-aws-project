@@ -97,8 +97,6 @@ export class RegisterComponent extends BaseComponent {
       this.snackBar.success(this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED'));
       // Redireciona para página dedicada de confirmação de email
       await this.navigateTo(`/confirm-email?email=${encodeURIComponent(email)}`);
-    } catch (err: unknown) {
-      throw err;
     } finally {
       this.setLoadingState(false);
     }

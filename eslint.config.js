@@ -6,6 +6,10 @@ import preferArrow from 'eslint-plugin-prefer-arrow';
 
 export default tseslint.config(
   {
+    // Ignora assets que não são código Angular (ex: templates de email do Cognito)
+    ignores: ['src/app/assets/email-templates/**'],
+  },
+  {
     files: ['**/*.ts'],
     extends: [
       eslint.configs.recommended,

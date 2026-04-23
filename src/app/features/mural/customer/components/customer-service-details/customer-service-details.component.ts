@@ -38,7 +38,7 @@ import {
   AppointmentCalendarPickerComponent,
   CalendarSelection,
 } from 'src/app/shared/components/appointment-calendar-picker/appointment-calendar-picker.component';
-import { AvailabilitySlot, WEEKDAY_NAME_BY_JS_INDEX } from 'src/app/shared/types/availability.types';
+import { AvailabilitySlot } from 'src/app/shared/types/availability.types';
 
 @Component({
   selector: 'app-customer-service-details',

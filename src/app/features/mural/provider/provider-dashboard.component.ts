@@ -365,4 +365,40 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       finalize(() => this.isConnectingStripe.set(false)),
     ).subscribe({
       next: (res) => window.open(res.url, '_blank'),
-    })
+    });
+  }
+
+  // ── Serviços ───────────────────────────────────────────────────────────────
+
+  removeService(serviceId: string): void {
+    this.serviceApi.remove(serviceId).subscribe({
+      next: () => {
+        this.services.update((list) => list.filter((s) => s.id !== serviceId));
+        this.recalcStats(this.services());
+        this.loadAppointmentsForServices(this.services());
+      },
+    });
+  }
+
+  // ── Chat ───────────────────────────────────────────────────────────────────
+
+  openChat(appointment: AppointmentDto): void {
+    this.dialog.open(ChatDialogComponent, {
+      data: {
+        appointmentId: appointment.id,
+        recipientName: appointment.customer?.displayName || 'Cliente',
+      },
+      width: '450px',
+      maxWidth: '95vw',
+    });
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  private scrollToForm(): void {
+    setTimeout(() => {
+      const el = document.querySelector('.service-form');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+}
