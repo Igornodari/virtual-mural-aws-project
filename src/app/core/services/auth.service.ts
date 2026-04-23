@@ -14,6 +14,7 @@ import {
   signInWithRedirect,
   signOut,
   signUp,
+  updatePassword,
 } from 'aws-amplify/auth';
 
 @Injectable({
@@ -198,6 +199,10 @@ export class AuthService {
       confirmationCode: code,
       newPassword,
     });
+  }
+
+  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    await updatePassword({ oldPassword, newPassword });
   }
 
   async getUser(): Promise<User | null> {

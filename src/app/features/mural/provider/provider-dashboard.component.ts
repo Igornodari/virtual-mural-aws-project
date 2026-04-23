@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { finalize, forkJoin } from 'rxjs';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Subscription, finalize, forkJoin, interval } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 import { FormBuilder, Validators } from '@angular/forms';
 import {
@@ -12,6 +13,10 @@ import {
   ServiceApiService,
   ServiceDto,
 } from 'src/app/core/services/service-api.service';
+import {
+  StripeConnectApiService,
+  StripeConnectStatusResponse,
+} from 'src/app/core/services/stripe-connect-api.service';
 
 import BaseComponent from 'src/app/components/base.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
@@ -20,8 +25,6 @@ import { AvailabilitySlot } from 'src/app/shared/types/availability.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
 import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
 import { WeeklyAvailabilityPickerComponent } from 'src/app/shared/components/weekly-availability-picker/weekly-availability-picker.component';
@@ -47,12 +50,15 @@ import {
   templateUrl: './provider-dashboard.component.html',
   styleUrls: ['./provider-dashboard.component.scss'],
 })
-export class ProviderDashboardComponent extends BaseComponent implements OnInit {
+export class ProviderDashboardComponent extends BaseComponent implements OnInit, OnDestroy {
+  private refreshSub: Subscription | null = null;
+  private readonly REFRESH_INTERVAL_MS = 30_000; // 30 segundos
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
-  private readonly dialog = inject(MatDialog);
+  private readonly stripeConnectApi = inject(StripeConnectApiService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly categories = CATEGORIES;
 
@@ -71,6 +77,12 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
   readonly totalReviews = signal(0);
   readonly pendingAppointments = signal(0);
   readonly isUpdatingAppointment = signal<string | null>(null);
+
+  // ── Stripe Connect ────────────────────────────────────────────────────────
+  readonly stripeStatus = signal<StripeConnectStatusResponse | null>(null);
+  readonly isLoadingStripe = signal(false);
+  readonly isConnectingStripe = signal(false);
+  readonly stripeConnectSuccessMessage = signal<string | null>(null);
 
   readonly serviceForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -93,6 +105,30 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   ngOnInit(): void {
     this.loadServices();
+    this.loadStripeStatus();
+    this.handleStripeConnectReturn();
+    this.startAutoRefresh();
+  }
+
+  ngOnDestroy(): void {
+    this.refreshSub?.unsubscribe();
+  }
+
+  private startAutoRefresh(): void {
+    this.refreshSub = interval(this.REFRESH_INTERVAL_MS).subscribe(() => {
+      // Silently refresh appointments without showing loading spinner
+      const currentServices = this.services();
+      if (!currentServices.length) return;
+      forkJoin(currentServices.map((s) => this.appointmentApi.findByService(s.id))).subscribe({
+        next: (byService) => {
+          const fresh = byService
+            .flat()
+            .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+          this.appointments.set(fresh);
+          this.pendingAppointments.set(fresh.filter((a) => a.status === 'pending').length);
+        },
+      });
+    });
   }
 
   private loadServices(): void {
@@ -279,15 +315,60 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
     });
   }
 
-  removeService(id: string): void {
-    this.serviceApi.remove(id).subscribe({
+  // ── Stripe Connect methods ─────────────────────────────────────────────────
+
+  private handleStripeConnectReturn(): void {
+    const param = this.route.snapshot.queryParamMap.get('stripe_connect');
+    if (param === 'success') {
+      this.stripeConnectSuccessMessage.set('PAYMENT.STRIPE_CONNECT.RETURN_SUCCESS');
+      // Limpa o query param da URL sem recarregar
+      window.history.replaceState({}, '', '/mural/provider');
+    } else if (param === 'refresh') {
+      this.stripeConnectSuccessMessage.set('PAYMENT.STRIPE_CONNECT.RETURN_REFRESH');
+      window.history.replaceState({}, '', '/mural/provider');
+    }
+  }
+
+  private loadStripeStatus(): void {
+    this.isLoadingStripe.set(true);
+    this.stripeConnectApi.getStatus().pipe(
+      finalize(() => this.isLoadingStripe.set(false)),
+    ).subscribe({
+      next: (status) => this.stripeStatus.set(status),
+      error: () => this.stripeStatus.set(null),
+    });
+  }
+
+  connectStripe(): void {
+    this.isConnectingStripe.set(true);
+    const status = this.stripeStatus();
+
+    const request$ = status?.accountId
+      ? this.stripeConnectApi.createOnboardingLink()
+      : this.stripeConnectApi.createOrGetAccount();
+
+    request$.pipe(
+      finalize(() => this.isConnectingStripe.set(false)),
+    ).subscribe({
+      next: (res) => {
+        window.location.href = res.onboardingUrl;
+      },
+    });
+  }
+
+  openStripeDashboard(): void {
+    this.isConnectingStripe.set(true);
+    this.stripeConnectApi.createDashboardLink().pipe(
+      finalize(() => this.isConnectingStripe.set(false)),
+    ).subscribe({
+      next: (res) => window.open(res.url, '_blank'),
+    });
+  }
+
+  removeService(serviceId: string): void {
+    this.serviceApi.remove(serviceId).subscribe({
       next: () => {
-        this.services.update((currentList) => currentList.filter((item) => item.id !== id));
-
-        if (this.selectedAnalyticsService()?.id === id) {
-          this.selectedAnalyticsService.set(null);
-        }
-
+        this.services.update((list) => list.filter((s) => s.id !== serviceId));
         this.recalcStats(this.services());
         this.loadAppointmentsForServices(this.services());
       },
@@ -296,21 +377,7 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit 
 
   private scrollToForm(): void {
     setTimeout(() => {
-      document.querySelector('.form-section')?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }, 100);
-  }
-
-  openChat(appointment: AppointmentDto): void {
-    this.dialog.open(ChatDialogComponent, {
-      data: {
-        appointmentId: appointment.id,
-        recipientName: appointment.customer?.displayName || 'Cliente',
-      },
-      width: '450px',
-      maxWidth: '95vw',
-    });
+      document.querySelector('.service-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 }

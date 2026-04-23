@@ -1,9 +1,9 @@
 <div class="app-auth-page">
       <div class="role-shell">
         <div class="role-header">
-          <span class="app-badge">{{ 'APP.TOPBAR.BRAND' | translate }}</span>
-          <h1 class="m-t-3 m-b-1">{{ 'APP.ONBOARDING.ROLE.TITLE' | translate }}</h1>
-          <p class="text-muted m-0">{{ 'APP.ONBOARDING.ROLE.SUBTITLE' | translate }}</p>
+          <span class="app-badge">{{ 'LAYOUT.TOPBAR.BRAND' | translate }}</span>
+          <h1 class="m-t-3 m-b-1">{{ 'ONBOARDING.ROLE.TITLE' | translate }}</h1>
+          <p class="text-muted m-0">{{ 'ONBOARDING.ROLE.SUBTITLE' | translate }}</p>
         </div>
 
         <div class="role-grid">
@@ -47,7 +47,7 @@
           @if (loading) {
             <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
           } @else {
-            {{ 'APP.ONBOARDING.ROLE.CONFIRM' | translate }}
+            {{ 'COMMON.ACTIONS.CONTINUE' | translate }}
           }
         </button>
       </div>

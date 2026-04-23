@@ -1,35 +1,35 @@
 <div class="app-auth-page">
       <div class="app-page-shell app-auth-grid">
         <section class="login-hero d-flex flex-col gap-6">
-          <div class="app-badge">{{ 'APP.LOGIN.BADGE' | translate }}</div>
+          <div class="app-badge">{{ 'AUTH.LOGIN.BADGE' | translate }}</div>
 
           <div class="d-flex flex-col gap-4">
-            <h1 class="login-title m-0">{{ 'APP.LOGIN.TITLE' | translate }}</h1>
-            <p class="login-copy m-0">{{ 'APP.LOGIN.SUBTITLE' | translate }}</p>
+            <h1 class="login-title m-0">{{ 'AUTH.LOGIN.TITLE' | translate }}</h1>
+            <p class="login-copy m-0">{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>
           </div>
 
           <div class="d-flex flex-col gap-3">
             <div class="d-flex items-center gap-3">
               <span class="login-dot"></span>
-              <span class="text-muted">{{ 'APP.LOGIN.FEATURE_1' | translate }}</span>
+              <span class="text-muted">{{ 'AUTH.LOGIN.FEATURE_1' | translate }}</span>
             </div>
 
             <div class="d-flex items-center gap-3">
               <span class="login-dot"></span>
-              <span class="text-muted">{{ 'APP.LOGIN.FEATURE_2' | translate }}</span>
+              <span class="text-muted">{{ 'AUTH.LOGIN.FEATURE_2' | translate }}</span>
             </div>
 
             <div class="d-flex items-center gap-3">
               <span class="login-dot"></span>
-              <span class="text-muted">{{ 'APP.LOGIN.FEATURE_3' | translate }}</span>
+              <span class="text-muted">{{ 'AUTH.LOGIN.FEATURE_3' | translate }}</span>
             </div>
           </div>
 
           <mat-card appearance="outlined" class="surface-card p-6">
             <mat-card-content class="p-0">
               <div class="d-flex flex-col gap-2">
-                <strong>{{ 'APP.LOGIN.EXAMPLE_TITLE' | translate }}</strong>
-                <p class="login-copy m-0">{{ 'APP.LOGIN.EXAMPLE_TEXT' | translate }}</p>
+                <strong>{{ 'AUTH.LOGIN.EXAMPLE_TITLE' | translate }}</strong>
+                <p class="login-copy m-0">{{ 'AUTH.LOGIN.EXAMPLE_TEXT' | translate }}</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -37,8 +37,8 @@
 
         <mat-card class="login-panel surface-card--elevated p-4">
           <mat-card-header class="p-0 m-b-4">
-            <mat-card-title>{{ 'APP.LOGIN.SIGN_IN_TITLE' | translate }}</mat-card-title>
-            <mat-card-subtitle>{{ 'APP.LOGIN.SIGN_IN_SUBTITLE' | translate }}</mat-card-subtitle>
+            <mat-card-title>{{ 'AUTH.LOGIN.SIGN_IN_TITLE' | translate }}</mat-card-title>
+            <mat-card-subtitle>{{ 'AUTH.LOGIN.SIGN_IN_SUBTITLE' | translate }}</mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content class="p-0 d-flex flex-col gap-5">
@@ -50,57 +50,57 @@
               [disabled]="loading"
             >
               {{
-                (loading ? 'APP.LOGIN.REDIRECTING' : 'APP.LOGIN.CONTINUE_WITH_GOOGLE') | translate
+                (loading ? 'AUTH.LOGIN.REDIRECTING' : 'AUTH.LOGIN.CONTINUE_WITH_GOOGLE') | translate
               }}
             </button>
 
             <div class="d-flex items-center gap-4">
               <mat-divider class="w-full"></mat-divider>
-              <span class="text-muted">{{ 'APP.LOGIN.OR' | translate }}</span>
+              <span class="text-muted">{{ 'COMMON.OR' | translate }}</span>
               <mat-divider class="w-full"></mat-divider>
             </div>
 
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-col gap-4">
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{ 'APP.LOGIN.EMAIL_LABEL' | translate }}</mat-label>
+                <mat-label>{{ 'COMMON.LABELS.EMAIL' | translate }}</mat-label>
                 <input
                   matInput
                   type="email"
                   formControlName="email"
-                  [placeholder]="'APP.LOGIN.EMAIL_PLACEHOLDER' | translate"
+                  [placeholder]="'COMMON.PLACEHOLDERS.EMAIL' | translate"
                   autocomplete="email"
                 />
                 @if (form.controls.email.touched && form.controls.email.invalid) {
-                  <mat-error>{{ 'APP.LOGIN.EMAIL_INVALID' | translate }}</mat-error>
+                  <mat-error>{{ 'COMMON.VALIDATION.EMAIL_INVALID' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{ 'APP.LOGIN.PASSWORD_LABEL' | translate }}</mat-label>
+                <mat-label>{{ 'COMMON.LABELS.PASSWORD' | translate }}</mat-label>
                 <input
                   matInput
                   [type]="showPassword ? 'text' : 'password'"
                   formControlName="password"
-                  [placeholder]="'APP.LOGIN.PASSWORD_PLACEHOLDER' | translate"
+                  [placeholder]="'AUTH.LOGIN.PASSWORD_PLACEHOLDER' | translate"
                   autocomplete="current-password"
                 />
                 <button
                   matSuffix
                   mat-icon-button
                   type="button"
-                  [attr.aria-label]="(showPassword ? 'APP.LOGIN.HIDE_PASSWORD' : 'APP.LOGIN.SHOW_PASSWORD') | translate"
+                  [attr.aria-label]="(showPassword ? 'COMMON.HIDE_PASSWORD' : 'COMMON.SHOW_PASSWORD') | translate"
                   (click)="togglePasswordVisibility()"
                 >
                   <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
                 @if (form.controls.password.touched && form.controls.password.invalid) {
-                  <mat-error>{{ 'APP.LOGIN.PASSWORD_REQUIRED' | translate }}</mat-error>
+                  <mat-error>{{ 'AUTH.LOGIN.PASSWORD_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <div class="d-flex justify-content-end">
                 <a routerLink="/forgot-password" class="text-muted" style="font-size: 0.875rem;">
-                  {{ 'APP.LOGIN.FORGOT_PASSWORD' | translate }}
+                  {{ 'AUTH.LOGIN.FORGOT_PASSWORD_LINK' | translate }}
                 </a>
               </div>
 
@@ -112,7 +112,7 @@
                 [disabled]="loading"
               >
                 {{
-                  (loading ? 'APP.LOGIN.SIGNING_IN' : 'APP.LOGIN.SIGN_IN_WITH_EMAIL') | translate
+                  (loading ? 'AUTH.LOGIN.SIGNING_IN' : 'AUTH.LOGIN.SIGN_IN_WITH_EMAIL') | translate
                 }}
               </button>
             </form>
@@ -120,7 +120,7 @@
 
           <div class="d-flex justify-content-start gap-4 m-t-4">
             <a class="m-t-10 text-muted" routerLink="/register">
-              {{ 'APP.LOGIN.CREATE_ACCOUNT_LINK' | translate }}
+              {{ 'AUTH.LOGIN.CREATE_ACCOUNT_LINK' | translate }}
             </a>
           </div>
         </mat-card>

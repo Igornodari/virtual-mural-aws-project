@@ -8,7 +8,7 @@
             <h1 class="profile-name">{{ user?.givenName || user?.displayName }}</h1>
             <span class="role-badge" [class.role-badge--provider]="currentRole === 'provider'">
               <mat-icon class="role-icon">{{ currentRole === 'provider' ? 'storefront' : 'home' }}</mat-icon>
-              {{ (currentRole === 'provider' ? 'APP.PROFILE.ROLE_PROVIDER' : 'APP.PROFILE.ROLE_CUSTOMER') | translate }}
+              {{ (currentRole === 'provider' ? 'PROFILE.ROLE.PROVIDER' : 'PROFILE.ROLE.CUSTOMER') | translate }}
             </span>
           </div>
         </div>
@@ -19,7 +19,7 @@
           <mat-tab>
             <ng-template mat-tab-label>
               <mat-icon class="tab-icon">person</mat-icon>
-              {{ 'APP.PROFILE.TAB_PERSONAL' | translate }}
+              {{ 'PROFILE.TABS.PERSONAL' | translate }}
             </ng-template>
             <div class="tab-content">
               <mat-card class="surface-card">
@@ -27,23 +27,23 @@
                   <form [formGroup]="personalForm" (ngSubmit)="savePersonal()" class="profile-form">
                     <div class="two-col">
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.PROFILE.GIVEN_NAME' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.FIRST_NAME' | translate }}</mat-label>
                         <input matInput formControlName="givenName" />
                       </mat-form-field>
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.PROFILE.FAMILY_NAME' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.LAST_NAME' | translate }}</mat-label>
                         <input matInput formControlName="familyName" />
                       </mat-form-field>
                     </div>
                     <mat-form-field appearance="outline" class="w-full">
-                      <mat-label>{{ 'APP.PROFILE.EMAIL' | translate }}</mat-label>
+                      <mat-label>{{ 'COMMON.LABELS.EMAIL' | translate }}</mat-label>
                       <input matInput formControlName="email" type="email" readonly />
                       <mat-icon matSuffix>email</mat-icon>
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="w-full">
-                      <mat-label>{{ 'APP.PROFILE.PHONE' | translate }}</mat-label>
+                      <mat-label>{{ 'COMMON.LABELS.PHONE' | translate }}</mat-label>
                       <input matInput formControlName="phone" type="tel"
-                        [placeholder]="'APP.PROFILE.PHONE_PLACEHOLDER' | translate" />
+                        [placeholder]="'COMMON.PLACEHOLDERS.PHONE' | translate" />
                       <mat-icon matSuffix>phone</mat-icon>
                     </mat-form-field>
                     <div class="form-actions">
@@ -51,7 +51,7 @@
                         [disabled]="personalForm.invalid || isSavingPersonal()">
                         @if (isSavingPersonal()) { <mat-spinner diameter="18" /> }
                         <mat-icon>save</mat-icon>
-                        {{ 'APP.PROFILE.SAVE' | translate }}
+                        {{ 'COMMON.ACTIONS.SAVE' | translate }}
                       </button>
                     </div>
                   </form>
@@ -64,23 +64,23 @@
           <mat-tab>
             <ng-template mat-tab-label>
               <mat-icon class="tab-icon">location_city</mat-icon>
-              {{ 'APP.PROFILE.TAB_ADDRESS' | translate }}
+              {{ 'PROFILE.TABS.ADDRESS' | translate }}
             </ng-template>
             <div class="tab-content">
               <mat-card class="surface-card">
                 <mat-card-content>
                   <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="profile-form">
                     <mat-form-field appearance="outline" class="w-full">
-                      <mat-label>{{ 'APP.PROFILE.CONDO_NAME' | translate }}</mat-label>
+                      <mat-label>{{ 'PROFILE.ADDRESS.CONDO_NAME' | translate }}</mat-label>
                       <input matInput formControlName="name"
-                        [placeholder]="'APP.PROFILE.CONDO_NAME_PLACEHOLDER' | translate" />
+                        [placeholder]="'PROFILE.ADDRESS.CONDO_NAME_PLACEHOLDER' | translate" />
                       <mat-icon matSuffix>apartment</mat-icon>
                     </mat-form-field>
                     <div class="cep-row">
                       <mat-form-field appearance="outline" class="cep-field">
-                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.CEP' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.ZIP_CODE' | translate }}</mat-label>
                         <input matInput formControlName="zipCode" maxlength="9"
-                          [placeholder]="'APP.ONBOARDING.CONDOMINIUM.CEP_PLACEHOLDER' | translate"
+                          [placeholder]="'COMMON.PLACEHOLDERS.ZIP_CODE' | translate"
                           (blur)="lookupCep()" />
                         <mat-icon matSuffix>pin_drop</mat-icon>
                         @if (isLookingUpCep()) { <mat-spinner matSuffix diameter="18" /> }
@@ -88,36 +88,36 @@
                       <button mat-stroked-button type="button" (click)="lookupCep()"
                         [disabled]="isLookingUpCep()">
                         <mat-icon>search</mat-icon>
-                        {{ 'APP.ONBOARDING.CONDOMINIUM.CEP_SEARCH' | translate }}
+                        {{ 'COMMON.ACTIONS.SEARCH_ZIP' | translate }}
                       </button>
                     </div>
                     <div class="two-col">
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.STREET' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.STREET' | translate }}</mat-label>
                         <input matInput formControlName="street" />
                       </mat-form-field>
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.NUMBER' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.NUMBER' | translate }}</mat-label>
                         <input matInput formControlName="number" />
                       </mat-form-field>
                     </div>
                     <div class="two-col">
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.NEIGHBORHOOD' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.NEIGHBORHOOD' | translate }}</mat-label>
                         <input matInput formControlName="neighborhood" />
                       </mat-form-field>
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.COMPLEMENT' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.COMPLEMENT' | translate }}</mat-label>
                         <input matInput formControlName="complement" />
                       </mat-form-field>
                     </div>
                     <div class="two-col">
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.CITY' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.CITY' | translate }}</mat-label>
                         <input matInput formControlName="city" />
                       </mat-form-field>
                       <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>{{ 'APP.ONBOARDING.CONDOMINIUM.STATE' | translate }}</mat-label>
+                        <mat-label>{{ 'COMMON.LABELS.STATE' | translate }}</mat-label>
                         <input matInput formControlName="state" maxlength="2" />
                       </mat-form-field>
                     </div>
@@ -126,7 +126,7 @@
                         [disabled]="addressForm.invalid || isSavingAddress()">
                         @if (isSavingAddress()) { <mat-spinner diameter="18" /> }
                         <mat-icon>save</mat-icon>
-                        {{ 'APP.PROFILE.SAVE' | translate }}
+                        {{ 'COMMON.ACTIONS.SAVE' | translate }}
                       </button>
                     </div>
                   </form>
@@ -139,28 +139,127 @@
           <mat-tab>
             <ng-template mat-tab-label>
               <mat-icon class="tab-icon">security</mat-icon>
-              {{ 'APP.PROFILE.TAB_SECURITY' | translate }}
+              {{ 'PROFILE.TABS.SECURITY' | translate }}
             </ng-template>
             <div class="tab-content">
+
+              <!-- Info de autenticação -->
               <mat-card class="surface-card">
                 <mat-card-content>
                   <div class="security-info">
                     <mat-icon class="security-icon">verified_user</mat-icon>
                     <div>
-                      <p class="security-title">{{ 'APP.PROFILE.SECURITY_COGNITO_TITLE' | translate }}</p>
-                      <p class="text-muted">{{ 'APP.PROFILE.SECURITY_COGNITO_DESC' | translate }}</p>
-                    </div>
-                  </div>
-                  <mat-divider class="m-y-3" />
-                  <div class="security-info">
-                    <mat-icon class="security-icon">lock</mat-icon>
-                    <div>
-                      <p class="security-title">{{ 'APP.PROFILE.SECURITY_PASSWORD_TITLE' | translate }}</p>
-                      <p class="text-muted">{{ 'APP.PROFILE.SECURITY_PASSWORD_DESC' | translate }}</p>
+                      <p class="security-title">{{ 'PROFILE.SECURITY.COGNITO_TITLE' | translate }}</p>
+                      <p class="text-muted">{{ 'PROFILE.SECURITY.COGNITO_DESC' | translate }}</p>
                     </div>
                   </div>
                 </mat-card-content>
               </mat-card>
+
+              <!-- Formulário de alteração de senha (apenas para usuários email/senha) -->
+              @if (!isGoogleUser) {
+                <mat-card class="surface-card" style="margin-top: 16px;">
+                  <mat-card-content>
+                    <div class="security-info" style="margin-bottom: 20px;">
+                      <mat-icon class="security-icon">lock_reset</mat-icon>
+                      <div>
+                        <p class="security-title">{{ 'PROFILE.SECURITY.PASSWORD_TITLE' | translate }}</p>
+                        <p class="text-muted">{{ 'PROFILE.SECURITY.PASSWORD_CHANGE_DESC' | translate }}</p>
+                      </div>
+                    </div>
+
+                    <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" class="profile-form">
+
+                      <!-- Senha atual -->
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'PROFILE.SECURITY.CURRENT_PASSWORD' | translate }}</mat-label>
+                        <input matInput formControlName="currentPassword"
+                          [type]="showCurrentPassword() ? 'text' : 'password'" />
+                        <button mat-icon-button matSuffix type="button"
+                          (click)="showCurrentPassword.set(!showCurrentPassword())">
+                          <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (passwordForm.get('currentPassword')?.hasError('required') && passwordForm.get('currentPassword')?.touched) {
+                          <mat-error>{{ 'PROFILE.SECURITY.CURRENT_PASSWORD_REQUIRED' | translate }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <!-- Nova senha -->
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'PROFILE.SECURITY.NEW_PASSWORD' | translate }}</mat-label>
+                        <input matInput formControlName="newPassword"
+                          [type]="showNewPassword() ? 'text' : 'password'" />
+                        <button mat-icon-button matSuffix type="button"
+                          (click)="showNewPassword.set(!showNewPassword())">
+                          <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (passwordForm.get('newPassword')?.hasError('required') && passwordForm.get('newPassword')?.touched) {
+                          <mat-error>{{ 'PROFILE.SECURITY.NEW_PASSWORD_REQUIRED' | translate }}</mat-error>
+                        }
+                        @if (passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched) {
+                          <mat-error>{{ 'COMMON.VALIDATION.PASSWORD_MIN_LENGTH' | translate }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <!-- Confirmar nova senha -->
+                      <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'PROFILE.SECURITY.CONFIRM_NEW_PASSWORD' | translate }}</mat-label>
+                        <input matInput formControlName="confirmPassword"
+                          [type]="showConfirmPassword() ? 'text' : 'password'" />
+                        <button mat-icon-button matSuffix type="button"
+                          (click)="showConfirmPassword.set(!showConfirmPassword())">
+                          <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched) {
+                          <mat-error>{{ 'COMMON.VALIDATION.PASSWORDS_DO_NOT_MATCH' | translate }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <!-- Mensagem de erro -->
+                      @if (passwordError()) {
+                        <div class="security-error">
+                          <mat-icon>error_outline</mat-icon>
+                          <span>{{ passwordError() }}</span>
+                        </div>
+                      }
+
+                      <!-- Mensagem de sucesso -->
+                      @if (passwordSuccess()) {
+                        <div class="security-success">
+                          <mat-icon>check_circle</mat-icon>
+                          <span>{{ 'PROFILE.SECURITY.PASSWORD_CHANGED_SUCCESS' | translate }}</span>
+                        </div>
+                      }
+
+                      <div class="form-actions">
+                        <button mat-raised-button color="primary" type="submit"
+                          [disabled]="passwordForm.invalid || isSavingPassword()">
+                          @if (isSavingPassword()) { <mat-spinner diameter="18" /> }
+                          <mat-icon>lock_reset</mat-icon>
+                          {{ 'PROFILE.SECURITY.CHANGE_PASSWORD_BUTTON' | translate }}
+                        </button>
+                      </div>
+
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              }
+
+              <!-- Mensagem para usuários Google -->
+              @if (isGoogleUser) {
+                <mat-card class="surface-card" style="margin-top: 16px;">
+                  <mat-card-content>
+                    <div class="security-info">
+                      <mat-icon class="security-icon" style="color: #4285F4;">person</mat-icon>
+                      <div>
+                        <p class="security-title">{{ 'PROFILE.SECURITY.GOOGLE_ACCOUNT_TITLE' | translate }}</p>
+                        <p class="text-muted">{{ 'PROFILE.SECURITY.GOOGLE_ACCOUNT_DESC' | translate }}</p>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
+
             </div>
           </mat-tab>
 

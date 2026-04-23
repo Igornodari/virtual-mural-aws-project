@@ -215,6 +215,48 @@
   padding-bottom: 40px;
 }
 
+// ── Stripe Connect ────────────────────────────────────────────────────────────
+
+.stripe-return-banner {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  font-size: 0.9rem;
+  border: 1px solid rgba(76, 175, 80, 0.25);
+}
+
+.stripe-status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  &--active {
+    background: rgba(76, 175, 80, 0.12);
+    color: #4caf50;
+  }
+
+  &--restricted {
+    background: rgba(255, 152, 0, 0.12);
+    color: #ff9800;
+  }
+
+  &--pending {
+    background: rgba(var(--mat-sys-primary-rgb, 103, 80, 164), 0.1);
+    color: var(--mat-sys-primary);
+  }
+}
+
 @media (max-width: 1100px) {
   .stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

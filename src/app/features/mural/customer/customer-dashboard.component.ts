@@ -15,7 +15,6 @@ import {
 } from 'src/app/core/services/appointment-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
 import { AppUserProfileDto } from 'src/app/core/services/user-api.service';
-import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
 import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
@@ -205,17 +204,6 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
             },
           });
       });
-  }
-
-  public openChat(appointment: AppointmentDto): void {
-    this.dialog.open(ChatDialogComponent, {
-      data: {
-        appointmentId: appointment.id,
-        recipientName: appointment.service?.provider?.displayName || 'Prestador',
-      },
-      width: '450px',
-      maxWidth: '95vw',
-    });
   }
 
   public replaceService(updatedService: ServiceDto): void {

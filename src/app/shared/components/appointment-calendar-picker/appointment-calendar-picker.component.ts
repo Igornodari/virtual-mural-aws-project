@@ -53,7 +53,7 @@ export interface CalendarSelection {
         <div class="time-slots-section d-flex flex-col gap-10">
           <p class="time-slots-label d-flex align-items-center gap-5 m-0">
             <mat-icon class="text-primary" style="font-size:18px;width:18px;height:18px;">schedule</mat-icon>
-            {{ 'APP.SCHEDULE.SELECT_TIME' | translate }}
+            {{ 'MURAL.SCHEDULE.SELECT_TIME' | translate }}
             <strong>{{ selectedDate | date:'dd/MM' }}</strong>
           </p>
 
@@ -74,7 +74,7 @@ export interface CalendarSelection {
 
       @if (selectedDate && timeSlots.length === 0) {
         <p class="text-muted text-center m-0" style="font-size:13px;">
-          {{ 'APP.SCHEDULE.NO_SLOTS' | translate }}
+          {{ 'MURAL.SCHEDULE.NO_SLOTS' | translate }}
         </p>
       }
     </div>

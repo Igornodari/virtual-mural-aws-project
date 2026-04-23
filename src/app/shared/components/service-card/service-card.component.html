@@ -57,7 +57,7 @@
           (click)="viewAnalytics.emit(service)"
         >
           <mat-icon>bar_chart</mat-icon>
-          {{ 'APP.ANALYTICS.VIEW_ANALYTICS' | translate }}
+          {{ 'MURAL.ANALYTICS.VIEW_ANALYTICS' | translate }}
         </button>
 
         <div class="service-actions d-flex align-items-center gap-5">
@@ -66,7 +66,7 @@
             color="primary"
             type="button"
             (click)="edit.emit(service)"
-            [matTooltip]="'APP.PROVIDER.EDIT' | translate"
+            [matTooltip]="'COMMON.ACTIONS.EDIT' | translate"
           >
             <mat-icon>edit</mat-icon>
           </button>
@@ -76,7 +76,7 @@
             color="warn"
             type="button"
             (click)="remove.emit(service.id)"
-            [matTooltip]="'APP.PROVIDER.REMOVE' | translate"
+            [matTooltip]="'COMMON.ACTIONS.REMOVE' | translate"
           >
             <mat-icon>delete</mat-icon>
           </button>
@@ -90,7 +90,7 @@
           (click)="contact.emit(service)"
         >
           <mat-icon>whatsapp</mat-icon>
-          {{ 'APP.CUSTOMER.CONTACT' | translate }}
+          {{ 'MURAL.CUSTOMER.CONTACT' | translate }}
         </button>
 
         <button
@@ -103,7 +103,7 @@
           <mat-icon>
             {{ expanded ? 'expand_less' : 'expand_more' }}
           </mat-icon>
-          {{ 'APP.CUSTOMER.SCHEDULE' | translate }}
+          {{ 'MURAL.CUSTOMER.SCHEDULE' | translate }}
         </button>
       }
     </div>

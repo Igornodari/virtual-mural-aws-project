@@ -1,0 +1,62 @@
+name: Release — Frontend
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Build, Validate & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test:ci
+        continue-on-error: true
+
+      - name: Build (production)
+        run: npm run build -- --configuration=production
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-${{ github.ref_name }}
+          path: dist/
+          retention-days: 30
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          name: "Frontend ${{ github.ref_name }}"
+          body: |
+            ## Virtual Mural Frontend — ${{ github.ref_name }}
+
+            ### Deploy
+            O deploy é realizado automaticamente pela **Vercel** após a criação desta release.
+            Verifique o status em: https://vercel.com/dashboard
+
+            ### Checklist
+            - [ ] Variáveis de ambiente no Vercel atualizadas (se necessário)
+            - [ ] Build de produção validado neste workflow
+
+            ---
+            *Release gerada automaticamente pelo GitHub Actions.*

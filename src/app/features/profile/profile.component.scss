@@ -31,6 +31,20 @@
     .security-info { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; }
     .security-icon { font-size: 32px; width: 32px; height: 32px; color: var(--mat-sys-primary); flex-shrink: 0; }
     .security-title { font-weight: 700; margin: 0 0 4px; }
+    .security-error {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 8px;
+      background: color-mix(in oklab, #ef4444 12%, transparent);
+      color: #dc2626; font-size: 14px;
+      mat-icon { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+    }
+    .security-success {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 8px;
+      background: color-mix(in oklab, #22c55e 12%, transparent);
+      color: #16a34a; font-size: 14px;
+      mat-icon { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+    }
     @media (max-width: 600px) {
       .two-col { grid-template-columns: 1fr; }
       .cep-row { flex-direction: column; }

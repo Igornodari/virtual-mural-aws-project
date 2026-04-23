@@ -25,35 +25,35 @@ export interface KanbanColumn {
 export const KANBAN_COLUMNS: KanbanColumn[] = [
   {
     status: 'pending',
-    labelKey: 'APP.KANBAN.PENDING',
+    labelKey: 'COMMON.STATUS.PENDING',
     icon: 'hourglass_empty',
     color: '#f59e0b',
     dropTargets: [],
   },
   {
     status: 'confirmed',
-    labelKey: 'APP.KANBAN.CONFIRMED',
+    labelKey: 'COMMON.STATUS.CONFIRMED',
     icon: 'check_circle',
     color: '#3b82f6',
     dropTargets: ['pending'],
   },
   {
     status: 'awaiting_payment',
-    labelKey: 'APP.KANBAN.AWAITING_PAYMENT',
+    labelKey: 'COMMON.STATUS.AWAITING_PAYMENT',
     icon: 'payment',
     color: '#8b5cf6',
-    dropTargets: ['confirmed'],
+    dropTargets: [], // definido automaticamente pelo fluxo de pagamento do cliente
   },
   {
     status: 'paid',
-    labelKey: 'APP.KANBAN.PAID',
+    labelKey: 'COMMON.STATUS.PAID',
     icon: 'paid',
     color: '#10b981',
-    dropTargets: ['awaiting_payment'],
+    dropTargets: [], // definido pelo webhook do Stripe
   },
   {
     status: 'completed',
-    labelKey: 'APP.KANBAN.COMPLETED',
+    labelKey: 'COMMON.STATUS.COMPLETED',
     icon: 'task_alt',
     color: '#059669',
     dropTargets: ['paid'],
@@ -110,7 +110,7 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
                 <!-- Card body -->
                 <div class="kanban-card__header d-flex justify-content-between align-items-start">
                   <span class="kanban-card__service" [matTooltip]="appt.service?.name ?? ''">
-                    {{ appt.service?.name ?? ('APP.KANBAN.UNKNOWN_SERVICE' | translate) }}
+                    {{ appt.service?.name ?? ('MURAL.KANBAN.UNKNOWN_SERVICE' | translate) }}
                   </span>
                   @if (updatingId() === appt.id) {
                     <mat-spinner diameter="16" />
@@ -120,7 +120,7 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
                 <div class="kanban-card__customer d-flex align-items-center gap-5">
                   <mat-icon style="font-size:14px;width:14px;height:14px;">person</mat-icon>
                   <span>{{
-                    appt.customer?.displayName ?? ('APP.KANBAN.UNKNOWN_CUSTOMER' | translate)
+                    appt.customer?.displayName ?? ('MURAL.KANBAN.UNKNOWN_CUSTOMER' | translate)
                   }}</span>
                 </div>
 
@@ -148,7 +148,7 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
                       "
                     >
                       <mat-icon>check</mat-icon>
-                      {{ 'APP.KANBAN.CONFIRM' | translate }}
+                      {{ 'COMMON.ACTIONS.CONFIRM' | translate }}
                     </button>
                   }
 
@@ -164,7 +164,7 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
                       "
                     >
                       <mat-icon>task_alt</mat-icon>
-                      {{ 'APP.KANBAN.COMPLETE' | translate }}
+                      {{ 'COMMON.ACTIONS.COMPLETE' | translate }}
                     </button>
                   }
 
@@ -173,7 +173,7 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
                       mat-icon-button
                       color="warn"
                       class="cancel-btn"
-                      [matTooltip]="'APP.KANBAN.CANCEL' | translate"
+                      [matTooltip]="'COMMON.ACTIONS.CANCEL' | translate"
                       [disabled]="!!updatingId()"
                       (click)="
                         $event.stopPropagation();
@@ -190,7 +190,7 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
             @if (items.length === 0) {
               <div class="kanban-empty">
                 <mat-icon>inbox</mat-icon>
-                <span>{{ 'APP.KANBAN.EMPTY_COLUMN' | translate }}</span>
+                <span>{{ 'MURAL.KANBAN.EMPTY_COLUMN' | translate }}</span>
               </div>
             }
           </div>

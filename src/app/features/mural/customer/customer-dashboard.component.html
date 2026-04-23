@@ -21,8 +21,8 @@
         <app-empty-state
           class="empty-state-card"
           icon="search_off"
-          title="APP.CUSTOMER.NO_SERVICES"
-          message="APP.CUSTOMER.NO_SERVICES_HINT"
+          title="MURAL.CUSTOMER.NO_SERVICES"
+          message="MURAL.CUSTOMER.NO_SERVICES_HINT"
         />
       </div>
     } @else {
@@ -51,7 +51,6 @@
       [isLoading]="false"
       [payingAppointmentId]="isPayingAppointment"
       (pay)="payAppointment($event)"
-      (chat)="openChat($event)"
     />
   }
 </div>

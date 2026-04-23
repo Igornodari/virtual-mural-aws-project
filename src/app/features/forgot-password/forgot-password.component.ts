@@ -100,10 +100,8 @@ export class ForgotPasswordComponent extends BaseComponent {
       const { email } = this.emailForm.getRawValue();
       await this.authService.forgotPassword(email);
       this.pendingEmail = email;
-      this.snackBar.success(this.translateService.instant('APP.FORGOT_PASSWORD.CODE_SENT'));
+      this.snackBar.success(this.translateService.instant('AUTH.FORGOT_PASSWORD.CODE_SENT'));
       this.updateViewState(() => { this.step = 'reset'; });
-    } catch (err: unknown) {
-      throw err;
     } finally {
       this.setLoadingState(false);
     }
@@ -121,8 +119,6 @@ export class ForgotPasswordComponent extends BaseComponent {
       const { code, newPassword } = this.resetForm.getRawValue();
       await this.authService.confirmForgotPassword(this.pendingEmail, code, newPassword);
       this.updateViewState(() => { this.step = 'done'; });
-    } catch (err: unknown) {
-      throw err;
     } finally {
       this.setLoadingState(false);
     }

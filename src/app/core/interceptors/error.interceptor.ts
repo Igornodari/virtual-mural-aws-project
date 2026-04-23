@@ -47,7 +47,7 @@ function resolveSuccessFeedback(
 ): { level: 'success' | 'warning'; message: string } | null {
   if (!body || typeof body !== 'object') {
     return shouldShowDefaultSuccess(method)
-      ? { level: 'success', message: t(translate, 'APP.FEEDBACK.SUCCESS_DEFAULT') }
+      ? { level: 'success', message: t(translate, 'COMMON.FEEDBACK.SUCCESS') }
       : null;
   }
 
@@ -63,7 +63,7 @@ function resolveSuccessFeedback(
   }
 
   if (shouldShowDefaultSuccess(method)) {
-    return { level: 'success', message: t(translate, 'APP.FEEDBACK.SUCCESS_DEFAULT') };
+    return { level: 'success', message: t(translate, 'COMMON.FEEDBACK.SUCCESS') };
   }
 
   return null;

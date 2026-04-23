@@ -11,8 +11,8 @@ on:
       - develop
       - master
 
-# Deploy é feito automaticamente pela Vercel via integração com GitHub
-# Este workflow só valida a qualidade do código (lint, testes e build)
+# O deploy é feito automaticamente pela Vercel via integração com GitHub.
+# Este workflow valida a qualidade do código (lint, testes e build).
 
 jobs:
   lint-test-build:
@@ -23,10 +23,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies

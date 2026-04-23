@@ -12,6 +12,8 @@ export const ROUTE_PATHS = {
   onboardingRole: '/onboarding/role',
   muralProvider: '/mural/provider',
   muralCustomer: '/mural/customer',
+  paymentSuccess: '/payment-success',
+  paymentCancel: '/payment-cancel',
 } as const;
 
 export function getDashboardRouteByRole(role: UserRole | null | undefined): string {

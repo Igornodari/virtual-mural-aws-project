@@ -94,11 +94,9 @@ export class RegisterComponent extends BaseComponent {
     try {
       const { firstName, lastName, email, password } = this.registerForm.getRawValue();
       await this.authService.registerWithEmail(email, password, firstName, lastName);
-      this.snackBar.success(this.translateService.instant('APP.REGISTER.ACCOUNT_CREATED'));
+      this.snackBar.success(this.translateService.instant('AUTH.REGISTER.ACCOUNT_CREATED'));
       // Redireciona para página dedicada de confirmação de email
       await this.navigateTo(`/confirm-email?email=${encodeURIComponent(email)}`);
-    } catch (err: unknown) {
-      throw err;
     } finally {
       this.setLoadingState(false);
     }
