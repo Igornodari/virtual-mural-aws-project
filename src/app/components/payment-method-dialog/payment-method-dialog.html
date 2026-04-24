@@ -3,11 +3,19 @@
 <mat-dialog-content>
   <mat-radio-group [(ngModel)]="selectedMethod" class="payment-methods">
     @for (method of paymentMethods; track method.value) {
-      <mat-radio-button [value]="method.value" class="payment-method">
+      <mat-radio-button
+        [value]="method.value"
+        [disabled]="method.disabled ?? false"
+        class="payment-method"
+        [class.payment-method--disabled]="method.disabled"
+      >
         <div class="payment-method-content">
-          <mat-icon>{{ method.icon }}</mat-icon>
+          <mat-icon [class.text-muted]="method.disabled">{{ method.icon }}</mat-icon>
           <div class="payment-method-text">
             <strong>{{ method.label }}</strong>
+            @if (method.disabled && method.disabledReason) {
+              <span class="payment-method-badge">{{ method.disabledReason }}</span>
+            }
             <p class="text-muted">{{ method.description }}</p>
           </div>
         </div>
