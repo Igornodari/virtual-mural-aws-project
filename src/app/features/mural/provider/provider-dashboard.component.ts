@@ -25,8 +25,6 @@ import { AvailabilitySlot } from 'src/app/shared/types/availability.types';
 import { ServiceAnalyticsComponent } from './analytics/service-analytics.component';
 import { ServiceCardComponent } from 'src/app/shared/components/service-card/service-card.component';
 import { StatusBadgeComponent } from 'src/app/shared/components/status-badge/status-badge.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ChatDialogComponent } from 'src/app/shared/components/chat-dialog/chat-dialog.component';
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
 import { WeeklyAvailabilityPickerComponent } from 'src/app/shared/components/weekly-availability-picker/weekly-availability-picker.component';
@@ -59,7 +57,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
   private readonly onboardingService = inject(OnboardingService);
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
-  private readonly dialog = inject(MatDialog);
   private readonly stripeConnectApi = inject(StripeConnectApiService);
   private readonly route = inject(ActivatedRoute);
 
@@ -375,17 +372,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
         this.recalcStats(this.services());
         this.loadAppointmentsForServices(this.services());
       },
-    });
-  }
-
-  openChat(appointment: AppointmentDto): void {
-    this.dialog.open(ChatDialogComponent, {
-      data: {
-        appointmentId: appointment.id,
-        recipientName: appointment.customer?.displayName || 'Cliente',
-      },
-      width: '450px',
-      maxWidth: '95vw',
     });
   }
 
