@@ -1,29 +1,38 @@
 <div class="full-layout">
-      <app-mural-topbar
-        [role]="userRole()"
-        [userName]="userName()"
-        (logout)="onLogout()"
-      />
+  <app-mural-topbar
+    [role]="userRole()"
+    [userName]="userName()"
+    (logout)="onLogout()"
+  />
 
-      <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav #sidenav mode="side" opened class="sidenav">
-          <mat-nav-list>
-            <a mat-list-item [routerLink]="dashboardLink()" routerLinkActive="active-link">
-              <mat-icon matListItemIcon>dashboard</mat-icon>
-              <span matListItemTitle>{{ 'LAYOUT.MENU.DASHBOARD' | translate }}</span>
-            </a>
-            <a mat-list-item [routerLink]="profileLink()" routerLinkActive="active-link">
-              <mat-icon matListItemIcon>person</mat-icon>
-              <span matListItemTitle>{{ 'LAYOUT.MENU.PROFILE' | translate }}</span>
-            </a>
-            <!-- Adicione mais itens de menu conforme necessário -->
-          </mat-nav-list>
-        </mat-sidenav>
+  <mat-sidenav-container class="sidenav-container">
+    @if (!isMobile()) {
+      <mat-sidenav mode="side" opened class="sidenav">
+        <mat-nav-list>
+          <a mat-list-item [routerLink]="dashboardLink()" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>dashboard</mat-icon>
+            <span matListItemTitle>{{ 'LAYOUT.MENU.DASHBOARD' | translate }}</span>
+          </a>
+          <a mat-list-item [routerLink]="profileLink()" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>person</mat-icon>
+            <span matListItemTitle>{{ 'LAYOUT.MENU.PROFILE' | translate }}</span>
+          </a>
+        </mat-nav-list>
+      </mat-sidenav>
+    }
 
-        <mat-sidenav-content class="content">
-          <main class="main-content">
-            <router-outlet></router-outlet>
-          </main>
-        </mat-sidenav-content>
-      </mat-sidenav-container>
-    </div>
+    <mat-sidenav-content class="content" [class.content--mobile]="isMobile()">
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+  @if (isMobile()) {
+    <app-bottom-nav
+      [role]="userRole()"
+      [dashboardLink]="dashboardLink()"
+      [profileLink]="profileLink()"
+    />
+  }
+</div>

@@ -1,0 +1,30 @@
+<nav class="bottom-nav" role="navigation">
+  <a
+    class="bottom-nav__item"
+    [routerLink]="dashboardLink"
+    routerLinkActive="bottom-nav__item--active"
+    [routerLinkActiveOptions]="{ exact: false }"
+    matRipple
+    [matRippleColor]="'rgba(0,0,0,0.05)'"
+  >
+    <div class="bottom-nav__pill">
+      <mat-icon>{{ role === 'provider' ? 'dashboard' : 'explore' }}</mat-icon>
+    </div>
+    <span class="bottom-nav__label">
+      {{ (role === 'provider' ? 'LAYOUT.MENU.DASHBOARD' : 'LAYOUT.MENU.EXPLORE') | translate }}
+    </span>
+  </a>
+
+  <a
+    class="bottom-nav__item"
+    [routerLink]="profileLink"
+    routerLinkActive="bottom-nav__item--active"
+    matRipple
+    [matRippleColor]="'rgba(0,0,0,0.05)'"
+  >
+    <div class="bottom-nav__pill">
+      <mat-icon>person</mat-icon>
+    </div>
+    <span class="bottom-nav__label">{{ 'LAYOUT.MENU.PROFILE' | translate }}</span>
+  </a>
+</nav>

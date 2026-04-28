@@ -9,6 +9,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  flex-shrink: 0;
 }
 
 .topbar-brand {
@@ -30,6 +31,15 @@
   font-weight: 700;
   font-size: 16px;
   white-space: nowrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .badge--provider {
@@ -76,10 +86,21 @@
 .desktop-only { display: flex; }
 .mobile-only { display: none !important; }
 
-@media (max-width: 600px) {
-  .mural-topbar { padding: 0 12px; height: 56px; }
+@media (max-width: 768px) {
+  .mural-topbar {
+    padding: 0 12px;
+    height: 56px;
+  }
+
   .brand-name { display: none; }
+  .badge { display: none; }
   .user-name { display: none; }
   .desktop-only { display: none !important; }
   .mobile-only { display: flex !important; }
+
+  /* No mobile só mostra ícone do usuário, sem texto */
+  .user-btn {
+    min-width: 40px;
+    padding: 0 4px;
+  }
 }
