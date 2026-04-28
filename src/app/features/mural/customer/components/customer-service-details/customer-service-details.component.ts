@@ -22,7 +22,9 @@ import { finalize } from 'rxjs';
 import {
   AppointmentApiService,
   AppointmentDto,
+  BlockedSlot,
   CreateAppointmentPayload,
+  ServiceAvailabilityDto,
 } from 'src/app/core/services/appointment-api.service';
 import {
   AnonymousReviewDto,
@@ -74,7 +76,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   readonly stars = CUSTOMER_STARS;
 
   reviews: AnonymousReviewDto[] = [];
-  blockedDates: string[] = [];
+  blockedSlots: BlockedSlot[] = [];
   availabilitySlots: AvailabilitySlot[] = [];
   calendarSelection: CalendarSelection | null = null;
   hoverRating = 0;
@@ -120,6 +122,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
       serviceId,
       scheduledDate: selection.date,
       scheduledDay: selection.day,
+      scheduledTime: selection.time,
       notes: `Agendamento solicitado pelo mural para ${selection.day} às ${selection.time}.`,
     };
 
@@ -181,7 +184,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
 
   private resetState(): void {
     this.reviews = [];
-    this.blockedDates = [];
+    this.blockedSlots = [];
     this.availabilitySlots = [];
     this.calendarSelection = null;
     this.hoverRating = 0;
@@ -234,37 +237,28 @@ export class CustomerServiceDetailsComponent implements OnChanges {
           endTime: '18:00',
         }));
 
-    // Carrega datas bloqueadas (agendamentos ativos)
+    // Carrega slots bloqueados (agendamentos confirmados/pagos)
     this.appointmentApi
       .findByService(serviceId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (appointments) => {
+        next: (response) => {
           if (this.activeServiceId !== serviceId) {
             return;
           }
 
-          const list = Array.isArray(appointments) ? appointments : [];
-          this.blockedDates = list
-            .filter((appointment) => isBlockingAppointmentStatus(appointment.status))
-            .map((appointment) => appointment.scheduledDate);
-        },
-        error: () => {
-          if (this.activeServiceId === serviceId) {
-            this.blockedDates = [];
+          if (Array.isArray(response)) {
+            // Prestador recebe lista completa — mapeia para blockedSlots
+            this.blockedSlots = response
+              .filter((a) => isBlockingAppointmentStatus(a.status))
+              .map((a) => ({
+                date: a.scheduledDate,
+                time: a.scheduledTime ?? null,
+              }));
+          } else {
+            // Cliente recebe { serviceId, blockedSlots }
+            this.blockedSlots = (response as ServiceAvailabilityDto).blockedSlots ?? [];
           }
         },
-      });
-  }
-
-  private refreshService(serviceId: string): void {
-    this.serviceApi
-      .findOne(serviceId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (updatedService) => this.serviceUpdated.emit(updatedService),
-      });
-  }
-
-}
-
+        error: () => {
+          if (this.a
