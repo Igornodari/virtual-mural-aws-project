@@ -121,7 +121,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       if (!currentServices.length) return;
       forkJoin(currentServices.map((s) => this.appointmentApi.findByService(s.id))).subscribe({
         next: (byService) => {
+          // findByService retorna AppointmentDto[] para o prestador (caso aqui)
+          // ou ServiceAvailabilityDto para o cliente. Filtramos para garantir o tipo.
           const fresh = byService
+            .filter((r): r is AppointmentDto[] => Array.isArray(r))
             .flat()
             .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
           this.appointments.set(fresh);
@@ -158,7 +161,9 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       finalize(() => this.isLoadingAppointments.set(false)),
     ).subscribe({
       next: (appointmentsByService) => {
+        // Para o prestador, findByService retorna AppointmentDto[] (cliente recebe ServiceAvailabilityDto).
         const appointments = appointmentsByService
+          .filter((r): r is AppointmentDto[] => Array.isArray(r))
           .flat()
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 

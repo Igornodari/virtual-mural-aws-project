@@ -298,3 +298,4 @@ export class CustomerServiceDetailsComponent implements OnChanges {
         next: (updatedService) => this.serviceUpdated.emit(updatedService),
       });
   }
+}
