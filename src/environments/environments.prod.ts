@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://diligent-freedom-production-94b9.up.railway.app/api/v1',
+  apiBaseUrl: 'https://mural-virtual-backend.up.railway.app/api/v1',
   version: '0.0.1',
   stripePublishableKey: 'pk_test_51Stc9CENa5vvo4XzaLtiHrX2gCNjm6YJ89UF7y5N7DxajFHccfR6ahRVgCVae3K5ZwfMYNZmII1pMUlGKBfVwEh200jEqJbfS1',
   aws: {

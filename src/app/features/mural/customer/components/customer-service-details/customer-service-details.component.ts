@@ -22,7 +22,9 @@ import { finalize } from 'rxjs';
 import {
   AppointmentApiService,
   AppointmentDto,
+  BlockedSlot,
   CreateAppointmentPayload,
+  ServiceAvailabilityDto,
 } from 'src/app/core/services/appointment-api.service';
 import {
   AnonymousReviewDto,
@@ -74,7 +76,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   readonly stars = CUSTOMER_STARS;
 
   reviews: AnonymousReviewDto[] = [];
-  blockedDates: string[] = [];
+  blockedSlots: BlockedSlot[] = [];
   availabilitySlots: AvailabilitySlot[] = [];
   calendarSelection: CalendarSelection | null = null;
   hoverRating = 0;
@@ -87,14 +89,20 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   private activeServiceId: string | null = null;
 
   ngOnChanges(): void {
-    if (!this.service?.id || this.service.id === this.activeServiceId) {
+    if (!this.service?.id) {
       return;
     }
 
-    this.activeServiceId = this.service.id;
-    this.resetState();
-    this.trackExpansion();
-    this.loadReviews();
+    const isNewService = this.service.id !== this.activeServiceId;
+
+    if (isNewService) {
+      this.activeServiceId = this.service.id;
+      this.resetState();
+      this.trackExpansion();
+      this.loadReviews();
+    }
+
+    // Sempre recarrega disponibilidade para nunca exibir dados obsoletos
     this.loadAvailability();
   }
 
@@ -120,6 +128,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
       serviceId,
       scheduledDate: selection.date,
       scheduledDay: selection.day,
+      scheduledTime: selection.time,
       notes: `Agendamento solicitado pelo mural para ${selection.day} às ${selection.time}.`,
     };
 
@@ -136,6 +145,8 @@ export class CustomerServiceDetailsComponent implements OnChanges {
           }
 
           this.calendarSelection = null;
+          // Recarrega slots bloqueados para refletir o novo agendamento pendente
+          this.loadAvailability();
           this.appointmentCreated.emit(appointment);
         },
       });
@@ -181,7 +192,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
 
   private resetState(): void {
     this.reviews = [];
-    this.blockedDates = [];
+    this.blockedSlots = [];
     this.availabilitySlots = [];
     this.calendarSelection = null;
     this.hoverRating = 0;
@@ -234,24 +245,46 @@ export class CustomerServiceDetailsComponent implements OnChanges {
           endTime: '18:00',
         }));
 
-    // Carrega datas bloqueadas (agendamentos ativos)
+    // Carrega slots bloqueados (agendamentos confirmados/pagos)
     this.appointmentApi
       .findByService(serviceId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (appointments) => {
+        next: (response) => {
           if (this.activeServiceId !== serviceId) {
             return;
           }
 
-          const list = Array.isArray(appointments) ? appointments : [];
-          this.blockedDates = list
-            .filter((appointment) => isBlockingAppointmentStatus(appointment.status))
-            .map((appointment) => appointment.scheduledDate);
+          if (Array.isArray(response)) {
+            // Prestador recebe lista completa — mapeia para blockedSlots
+            this.blockedSlots = response
+              .filter((a) => isBlockingAppointmentStatus(a.status))
+              .map((a) => ({
+                date: String(a.scheduledDate).substring(0, 10),
+                time: a.scheduledTime ?? null,
+              }));
+          } else {
+            // Cliente recebe { serviceId, blockedSlots } ou formato legado { serviceId, blockedDates }
+            const availability = response as ServiceAvailabilityDto & { blockedDates?: string[] };
+            if (availability.blockedSlots) {
+              this.blockedSlots = availability.blockedSlots.map((s) => ({
+                ...s,
+                date: String(s.date).substring(0, 10),
+              }));
+            } else if (availability.blockedDates) {
+              // Fallback: backend legado que retorna só datas (bloqueia dia inteiro)
+              this.blockedSlots = availability.blockedDates.map((d) => ({
+                date: String(d).substring(0, 10),
+                time: null,
+              }));
+            } else {
+              this.blockedSlots = [];
+            }
+          }
         },
         error: () => {
           if (this.activeServiceId === serviceId) {
-            this.blockedDates = [];
+            this.blockedSlots = [];
           }
         },
       });
@@ -265,6 +298,3 @@ export class CustomerServiceDetailsComponent implements OnChanges {
         next: (updatedService) => this.serviceUpdated.emit(updatedService),
       });
   }
-
-}
-
