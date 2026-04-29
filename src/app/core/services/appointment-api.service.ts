@@ -101,4 +101,15 @@ export class AppointmentApiService {
     );
   }
 
-  /** Verifica uma Checkout Session Stripe e atualiza o agendamento
+  /**
+   * Verifica uma Checkout Session Stripe e atualiza o agendamento associado.
+   * Usado pela página de sucesso (`/payment-success?session_id=...`) como fallback
+   * caso o webhook ainda não tenha processado o evento `checkout.session.completed`.
+   */
+  verifyPaymentSession(checkoutSessionId: string): Observable<AppointmentDto> {
+    return this.request.post<AppointmentDto, { checkoutSessionId: string }>(
+      '/appointments/verify-payment',
+      { checkoutSessionId },
+    );
+  }
+}

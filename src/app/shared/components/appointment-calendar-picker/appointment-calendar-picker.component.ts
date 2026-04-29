@@ -196,4 +196,44 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
 
   selectTime(time: string): void {
     this.selectedTime = time;
-    this.emitSelecti
+    this.emitSelection();
+  }
+
+  /** Constrói a lista de horários disponíveis para a data selecionada. */
+  private buildTimeSlots(date: Date): void {
+    const dayName = WEEKDAY_NAME_BY_JS_INDEX[date.getDay()];
+    const daySlot = this.availabilitySlots.find((s) => s.day === dayName);
+
+    if (!daySlot) {
+      this.timeSlots = [];
+      return;
+    }
+
+    const dateStr = formatDateToISO(date);
+    const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
+    const bookedTimesForDay = this.blockedSlots
+      .filter((s) => s.date === dateStr && s.time !== null)
+      .map((s) => s.time as string);
+
+    this.timeSlots = allTimes.filter((t) => !bookedTimesForDay.includes(t));
+
+    // Se o horário previamente selecionado não está mais disponível, limpa.
+    if (this.selectedTime && !this.timeSlots.includes(this.selectedTime)) {
+      this.selectedTime = null;
+    }
+  }
+
+  /** Emite a seleção completa apenas quando data e horário estão definidos. */
+  private emitSelection(): void {
+    if (!this.selectedDate || !this.selectedTime) {
+      return;
+    }
+
+    const dayName = WEEKDAY_NAME_BY_JS_INDEX[this.selectedDate.getDay()];
+    this.selectionChange.emit({
+      date: formatDateToISO(this.selectedDate),
+      day: dayName,
+      time: this.selectedTime,
+    });
+  }
+}
