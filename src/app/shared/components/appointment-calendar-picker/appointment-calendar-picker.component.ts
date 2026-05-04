@@ -130,8 +130,11 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
   /** Slots de disponibilidade do prestador */
   @Input() availabilitySlots: AvailabilitySlot[] = [];
 
-  /** Datas já bloqueadas (YYYY-MM-DD) */
-  @Input() blockedDates: string[] = [];
+  /**
+   * Slots bloqueados por agendamentos confirmados.
+   * time=null → dia inteiro bloqueado (legado); time='HH:mm' → horário específico bloqueado.
+   */
+  @Input() blockedSlots: { date: string; time: string | null }[] = [];
 
   /** Emite a seleção completa quando data + horário estão escolhidos */
   @Output() selectionChange = new EventEmitter<CalendarSelection>();
@@ -162,7 +165,23 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
     if (!hasSlot) return false;
 
     const dateStr = formatDateToISO(date);
-    if (this.blockedDates.includes(dateStr)) return false;
+
+    // Dia inteiro bloqueado (agendamento legado sem horário)
+    if (this.blockedSlots.some((s) => s.date === dateStr && s.time === null)) {
+      return false;
+    }
+
+    // Todos os horários do dia estão ocupados
+    const daySlot = this.availabilitySlots.find((s) => s.day === dayName);
+    if (daySlot) {
+      const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
+      const bookedTimesForDay = this.blockedSlots
+        .filter((s) => s.date === dateStr && s.time !== null)
+        .map((s) => s.time as string);
+      if (allTimes.length > 0 && allTimes.every((t) => bookedTimesForDay.includes(t))) {
+        return false;
+      }
+    }
 
     return true;
   };
@@ -180,23 +199,37 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
     this.emitSelection();
   }
 
+  /** Constrói a lista de horários disponíveis para a data selecionada. */
   private buildTimeSlots(date: Date): void {
     const dayName = WEEKDAY_NAME_BY_JS_INDEX[date.getDay()];
-    const slot = this.availabilitySlots.find((s) => s.day === dayName);
+    const daySlot = this.availabilitySlots.find((s) => s.day === dayName);
 
-    if (slot) {
-      this.timeSlots = generateTimeSlots(slot.startTime, slot.endTime);
-    } else {
-      // Fallback: horário comercial quando só availableDays está definido
-      this.timeSlots = generateTimeSlots('09:00', '18:00');
+    if (!daySlot) {
+      this.timeSlots = [];
+      return;
+    }
+
+    const dateStr = formatDateToISO(date);
+    const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
+    const bookedTimesForDay = this.blockedSlots
+      .filter((s) => s.date === dateStr && s.time !== null)
+      .map((s) => s.time as string);
+
+    this.timeSlots = allTimes.filter((t) => !bookedTimesForDay.includes(t));
+
+    // Se o horário previamente selecionado não está mais disponível, limpa.
+    if (this.selectedTime && !this.timeSlots.includes(this.selectedTime)) {
+      this.selectedTime = null;
     }
   }
 
+  /** Emite a seleção completa apenas quando data e horário estão definidos. */
   private emitSelection(): void {
-    if (!this.selectedDate || !this.selectedTime) return;
+    if (!this.selectedDate || !this.selectedTime) {
+      return;
+    }
 
     const dayName = WEEKDAY_NAME_BY_JS_INDEX[this.selectedDate.getDay()];
-
     this.selectionChange.emit({
       date: formatDateToISO(this.selectedDate),
       day: dayName,
