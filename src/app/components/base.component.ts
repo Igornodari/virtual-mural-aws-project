@@ -18,6 +18,8 @@ interface BaseComponentSettings {
   template: '',
 })
 export default abstract class BaseComponent {
+  // 'settings' string token é convertido por compatibilidade — Angular DI exige InjectionToken/Type aqui
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected readonly settings = inject<BaseComponentSettings>('settings' as any, {
     optional: true,
   });

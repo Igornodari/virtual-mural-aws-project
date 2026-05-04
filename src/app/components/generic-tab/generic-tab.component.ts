@@ -6,9 +6,9 @@ import { importBase } from '../../shared/constant/import-base.constant';
     imports: [...importBase],
     templateUrl: './generic-tab.component.html',})
 export class GenericTabComponent implements OnInit {
-	@Input() tabs: { label: string; content: any }[] = [];
+	@Input() tabs: { label: string; content: unknown }[] = [];
 	@Output() selectedIndexChange = new EventEmitter<number>();
-	activeTabContent: any;
+	activeTabContent: unknown;
 
 
 	onTabChange(index: number): void {

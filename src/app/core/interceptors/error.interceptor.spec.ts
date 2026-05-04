@@ -123,6 +123,7 @@ describe('errorInterceptor', () => {
 
   describe('error handling', () => {
     it('should delegate errors to ErrorHandler', () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       httpClient.get('/api/data').subscribe({ error: () => {} });
 
       httpMock.expectOne('/api/data').flush('Error', { status: 500, statusText: 'Server Error' });

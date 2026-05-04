@@ -9,8 +9,6 @@ export class AuthGuard implements CanActivate {
   private router = inject(Router);
 
 
-  constructor() {}
-
   canActivate(): boolean | UrlTree {
     const token = this.ls.getItem(LOCAL_STORAGE.TOKEN);
     const user = this.ls.getItem(LOCAL_STORAGE.USER);

@@ -131,9 +131,10 @@ export class AuthService {
     const result = await signIn({
       username,
       password,
-    }).catch(async (error: any) => {
-      const message = String(error?.message ?? '');
-      const name = String(error?.name ?? '');
+    }).catch(async (error: unknown) => {
+      const err = error as { message?: string; name?: string } | null;
+      const message = String(err?.message ?? '');
+      const name = String(err?.name ?? '');
       const authFlowIssue =
         message.includes('Auth flow') ||
         message.includes('USER_SRP_AUTH') ||

@@ -28,8 +28,6 @@ export class OnboardingService {
   readonly profile$ = this.profileSubject.asObservable();
 
 
-  constructor() {}
-
   get profile(): OnboardingProfile {
     return this.profileSubject.value;
   }

@@ -52,7 +52,7 @@ export class AppFullCalendarComponent implements AfterViewInit {
   events!: EventInput[];
   @Input()
   fetchEvents!: (events: WritableSignal<CalendarOptions>) => void;
-  @Output() onChangeDisplay = new EventEmitter<ActionDisplay>();
+  @Output() changeDisplay = new EventEmitter<ActionDisplay>();
   @Input()
   options!: CalendarOptions;
   calendarOptions = signal<CalendarOptions>({
@@ -91,7 +91,7 @@ export class AppFullCalendarComponent implements AfterViewInit {
 
   handleButtonNext(_ev: MouseEvent, _element: HTMLElement) {
     this.calendarComponent.getApi().next();
-    this.onChangeDisplay.emit({
+    this.changeDisplay.emit({
       action: 'next',
       view: this.calendarComponent.getApi().getCurrentData().viewApi,
     });
@@ -99,14 +99,14 @@ export class AppFullCalendarComponent implements AfterViewInit {
 
   handleButtonPrev(_ev: MouseEvent, _element: HTMLElement) {
     this.calendarComponent.getApi().prev();
-    this.onChangeDisplay.emit({
+    this.changeDisplay.emit({
       action: 'prev',
       view: this.calendarComponent.getApi().getCurrentData().viewApi,
     });
   }
   handleButtonToday(_ev: MouseEvent, _element: HTMLElement) {
     this.calendarComponent.getApi().today();
-    this.onChangeDisplay.emit({
+    this.changeDisplay.emit({
       action: 'today',
       view: this.calendarComponent.getApi().getCurrentData().viewApi,
     });

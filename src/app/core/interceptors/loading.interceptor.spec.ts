@@ -42,6 +42,7 @@ describe('loadingInterceptor', () => {
   });
 
   it('should set isLoading to false after request errors', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     httpClient.get('/api/data').subscribe({ error: () => {} });
 
     httpMock.expectOne('/api/data').flush('Error', { status: 500, statusText: 'Server Error' });

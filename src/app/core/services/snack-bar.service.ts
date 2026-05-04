@@ -8,8 +8,6 @@ export class SnackBarService {
   private readonly snackBar = inject(MatSnackBar);
 
 
-  constructor() {}
-
   error(message: string): void {
     this.open(message, 'snackbar-error', 4000);
   }

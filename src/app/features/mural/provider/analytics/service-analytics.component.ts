@@ -56,6 +56,7 @@ export class ServiceAnalyticsComponent implements OnChanges {
   isLoading = signal(false);
   isLoadingReviews = signal(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private chart: any = null;
 
   ngOnChanges(changes: SimpleChanges): void {
