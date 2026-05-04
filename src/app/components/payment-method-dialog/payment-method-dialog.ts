@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -12,6 +12,15 @@ export interface PaymentMethodData {
 }
 
 export type PaymentMethod = 'pix' | 'credit_card';
+
+interface PaymentMethodOption {
+  value: PaymentMethod;
+  label: string;
+  description: string;
+  icon: string;
+  disabled?: boolean;
+  disabledReason?: string;
+}
 
 @Component({
   selector: 'app-payment-method-dialog',
@@ -31,32 +40,33 @@ export class PaymentMethodDialog {
   data = inject<PaymentMethodData>(MAT_DIALOG_DATA);
   dialogRef = inject<MatDialogRef<PaymentMethodDialog>>(MatDialogRef);
 
-  selectedMethod = signal<PaymentMethod>('pix');
+  selectedMethod: PaymentMethod = 'credit_card';
 
-  paymentMethods = [
+  paymentMethods: PaymentMethodOption[] = [
     {
-      value: 'pix' as PaymentMethod,
-      label: 'PIX',
-      description: 'Pagamento instantâneo via QR Code',
-      icon: 'qr_code',
+      value: 'credit_card',
+      label: 'Cartão de Crédito',
+      description: 'Pagamento seguro via cartão',
+      icon: 'credit_card',
     },
     {
-      value: 'credit_card' as PaymentMethod,
-      label: 'Cartão de Crédito',
-      description: 'Pagamento via cartão',
-      icon: 'credit_card',
+      value: 'pix',
+      label: 'PIX',
+      description: 'Em breve — aguardando ativação na conta Stripe',
+      icon: 'qr_code',
+      disabled: true,
+      disabledReason: 'Disponível em breve',
     },
   ];
 
-
-  onConfirm() {
-    if (!this.selectedMethod()) {
+  onConfirm(): void {
+    if (!this.selectedMethod) {
       return;
     }
-    this.dialogRef.close(this.selectedMethod());
+    this.dialogRef.close(this.selectedMethod);
   }
 
-  onCancel() {
+  onCancel(): void {
     this.dialogRef.close();
   }
 }
