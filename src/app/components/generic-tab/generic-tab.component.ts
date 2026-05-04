@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef } from '@angular/core';
 import { importBase } from '../../shared/constant/import-base.constant';
 
 @Component({
@@ -6,9 +6,9 @@ import { importBase } from '../../shared/constant/import-base.constant';
     imports: [...importBase],
     templateUrl: './generic-tab.component.html',})
 export class GenericTabComponent implements OnInit {
-	@Input() tabs: { label: string; content: unknown }[] = [];
+	@Input() tabs: { label: string; content: TemplateRef<unknown> }[] = [];
 	@Output() selectedIndexChange = new EventEmitter<number>();
-	activeTabContent: unknown;
+	activeTabContent: TemplateRef<unknown> | null = null;
 
 
 	onTabChange(index: number): void {
