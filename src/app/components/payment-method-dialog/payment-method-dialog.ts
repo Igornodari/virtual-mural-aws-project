@@ -49,8 +49,6 @@ export class PaymentMethodDialog {
   ];
 
 
-  constructor() {}
-
   onConfirm() {
     if (!this.selectedMethod()) {
       return;

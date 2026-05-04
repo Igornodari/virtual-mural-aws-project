@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -8,6 +9,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
+import { BottomNavComponent } from 'src/app/components/bottom-nav/bottom-nav.component';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
@@ -26,6 +28,7 @@ import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
     MatButtonModule,
     TranslateModule,
     MuralTopbarComponent,
+    BottomNavComponent,
   ],
   templateUrl: './full.component.html',
   styleUrls: ['./full.component.scss'],
@@ -35,9 +38,11 @@ export class FullComponent {
   private readonly onboardingService = inject(OnboardingService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly breakpointObserver = inject(BreakpointObserver);
 
   userRole = signal<'provider' | 'customer'>('customer');
   userName = signal('');
+  isMobile = signal(false);
 
   constructor() {
     this.authService.$user
@@ -56,6 +61,13 @@ export class FullComponent {
       .syncFromBackend()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
+
+    this.breakpointObserver
+      .observe(['(max-width: 768px)'])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        this.isMobile.set(result.matches);
+      });
   }
 
   dashboardLink() {

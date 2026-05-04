@@ -202,10 +202,13 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
     `
       .kanban-board {
         display: flex;
-        gap: 16px;
+        gap: 12px;
         overflow-x: auto;
-        padding-bottom: 8px;
+        padding-bottom: 12px;
         align-items: flex-start;
+        /* Scroll suave no touch */
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
       }
 
       .kanban-column {
@@ -214,6 +217,36 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
         display: flex;
         flex-direction: column;
         gap: 8px;
+        scroll-snap-align: start;
+      }
+
+      /* Mobile: colunas um pouco mais largas para caber melhor */
+      @media (max-width: 600px) {
+        .kanban-board {
+          gap: 10px;
+        }
+
+        .kanban-column {
+          flex: 0 0 calc(80vw);
+          min-width: calc(80vw);
+          max-width: 320px;
+        }
+
+        .kanban-card {
+          padding: 14px;
+        }
+
+        .action-btn {
+          height: 36px !important;
+          line-height: 36px !important;
+          padding: 0 12px !important;
+          font-size: 12px !important;
+        }
+
+        .cancel-btn {
+          width: 36px !important;
+          height: 36px !important;
+        }
       }
 
       .kanban-column__header {

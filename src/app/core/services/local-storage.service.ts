@@ -9,8 +9,6 @@ export class LocalStorageService {
   private readonly errorHandler = inject(ErrorHandler);
 
 
-  constructor() {}
-
   setItem(key: string, value: string): void {
     this.cryptoService.encrypt(value).subscribe({
       next: (encryptedValue) => localStorage.setItem(key, encryptedValue),

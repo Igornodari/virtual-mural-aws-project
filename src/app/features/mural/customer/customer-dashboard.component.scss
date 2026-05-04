@@ -1,16 +1,25 @@
+/* ──────────────────────────────────────────────
+   MOBILE-FIRST — Customer Dashboard
+   Base: mobile (< 768px)
+   Scale up para tablet e desktop
+────────────────────────────────────────────── */
+
 .customer-main {
-  width: min(100%, 1480px);
+  width: 100%;
+  max-width: 1480px;
   margin: 0 auto;
-  padding: 32px 32px 40px;
+  /* Mobile: padding compacto */
+  padding: 16px 12px 24px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
 }
 
+/* Grid de serviços — 1 coluna no mobile, cresce para desktop */
 .customer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
   width: 100%;
   align-items: start;
 }
@@ -21,24 +30,28 @@
   width: 100%;
 }
 
-@media (max-width: 1200px) {
+/* ── Tablet: 768px ───────────────────────────── */
+@media (min-width: 768px) {
   .customer-main {
-    width: 100%;
-    padding: 28px 24px 36px;
+    padding: 24px 20px 36px;
+    gap: 28px;
   }
 
   .customer-grid {
     grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 20px;
   }
 }
 
-@media (max-width: 768px) {
+/* ── Desktop: 1200px ─────────────────────────── */
+@media (min-width: 1200px) {
   .customer-main {
-    padding: 24px 16px 32px;
-    gap: 24px;
+    padding: 32px 32px 40px;
+    gap: 32px;
   }
 
   .customer-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 24px;
   }
 }

@@ -6,7 +6,6 @@ export class SafeUrlPipe implements PipeTransform {
   private sanitizer = inject(DomSanitizer);
 
 
-  constructor() {}
   transform(url: string): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }

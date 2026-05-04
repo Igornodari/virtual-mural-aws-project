@@ -2,11 +2,11 @@ import { Directive, EventEmitter, HostBinding, HostListener, Output } from '@ang
 
 @Directive({
     selector: '[appDnd]',
-    standalone: false
+    standalone: true
 })
 export class DndDirective {
 	@HostBinding('class.fileover') fileOver: boolean;
-	@Output() fileDropped = new EventEmitter<any>();
+	@Output() fileDropped = new EventEmitter<FileList>();
 
 	@HostListener('dragover', ['$event']) onDragOver(evt: DragEvent) {
 		evt.preventDefault();

@@ -43,8 +43,6 @@ export class RequestService {
   };
 
 
-  constructor() {}
-
   request<TResponse, TBody = unknown>(
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     path: string,

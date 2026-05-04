@@ -21,8 +21,6 @@ export class ReviewApiService {
   private readonly api = inject(RequestService);
 
 
-  constructor() {}
-
   /** Envia uma avaliação para um serviço */
   create(payload: CreateReviewPayload): Observable<AnonymousReviewDto> {
     return this.api.post<AnonymousReviewDto>('/reviews', payload);

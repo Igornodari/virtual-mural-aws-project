@@ -18,10 +18,10 @@ export class DateTime {
 		return format(parseISO(date), formatStr);
 	}
 
-	static setStartTimeOfDay(date: string): any {
+	static setStartTimeOfDay(date: string): Date {
 		return DateTime.setMinutes(date, '00:00:00');
 	}
-	static setEndTimeOfDay(date: string): any {
+	static setEndTimeOfDay(date: string): Date {
 		return DateTime.setMinutes(date, '23:59:59');
 	}
 
