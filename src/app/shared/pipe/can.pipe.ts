@@ -9,8 +9,6 @@ export class CanPipe implements PipeTransform {
   private _permissionService = inject(PermissionService);
 
 
-  constructor() {}
-
   transform(permission: string): boolean {
     return this._permissionService.can(permission);
   }

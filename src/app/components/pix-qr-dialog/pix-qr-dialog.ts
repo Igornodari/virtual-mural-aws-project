@@ -24,8 +24,6 @@ export class PixQrDialog implements OnInit {
   qrCodeUrl = signal<string>('');
 
 
-  constructor() {}
-
   async ngOnInit() {
     if (this.data.qrCode) {
       this.qrCodeUrl.set(this.data.qrCode);

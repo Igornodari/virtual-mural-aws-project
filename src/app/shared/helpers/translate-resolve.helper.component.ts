@@ -10,8 +10,6 @@ export class TranslateResolver implements Resolve<Observable<string>> {
   private translate = inject(TranslateService);
 
 
-  constructor() {}
-
   resolve(route: import('@angular/router').ActivatedRouteSnapshot): Observable<string> {
     const titleKey = route.data['title'];
     return of(this.translate.instant(titleKey));

@@ -1,7 +1,11 @@
 <div class="carousel-container">
 		  <a
 		    class="carousel-control-prev f-s-24 p-10 m-t-20"
+		    role="button"
+		    tabindex="0"
 		    (click)="prevSlide()"
+		    (keydown.enter)="prevSlide()"
+		    (keydown.space)="prevSlide(); $event.preventDefault()"
 		    [class.disabled]="fileUrlArray.length === 0"
 		    >&#10094;</a
 		    >
@@ -10,8 +14,12 @@
 		        @for (slide of fileUrlArray; track slide; let i = $index) {
 		          <div
 		            class="carousel-item"
+		            role="button"
+		            tabindex="0"
 		            [class.active]="i === currentSlide"
 		            (click)="open(i)"
+		            (keydown.enter)="open(i)"
+		            (keydown.space)="open(i); $event.preventDefault()"
 		            >
 		            <img [attr.data-src]="slide.url" width="300" height="200" alt="voucher image" />
 		            <div class="row text-center d-flex justify-content-center align-items-center">
@@ -25,7 +33,11 @@
 		    }
 		    <a
 		      class="carousel-control-next f-s-24 p-10 m-t-20"
+		      role="button"
+		      tabindex="0"
 		      (click)="nextSlide()"
+		      (keydown.enter)="nextSlide()"
+		      (keydown.space)="nextSlide(); $event.preventDefault()"
 		      [class.disabled]="fileUrlArray.length === 0"
 		      >&#10095;</a
 		      >

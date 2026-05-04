@@ -24,8 +24,12 @@
 		@for (item of items; track $index) {
 		<div
 			class="indicator"
+			role="button"
+			tabindex="0"
 			[class.active]="$index === currentIndex"
 			(click)="goToIndex($index)"
+			(keydown.enter)="goToIndex($index)"
+			(keydown.space)="goToIndex($index); $event.preventDefault()"
 		></div>
 		}
 	</div>

@@ -15,8 +15,6 @@ export class CepValidatorDirective {
   @Output() cepInvalid = new EventEmitter<void>();
 
 
-  constructor() {}
-
   @HostListener('input', ['$event'])
   onInput(event: Event) {
     const value = (event.target as HTMLInputElement | null)?.value ?? '';

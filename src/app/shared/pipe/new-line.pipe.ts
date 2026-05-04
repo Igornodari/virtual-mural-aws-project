@@ -9,8 +9,6 @@ export class NewLine implements PipeTransform {
   private sanitizer = inject(DomSanitizer);
 
 
-  constructor() {}
-
   transform(value: string): SafeHtml {
     const text = (value ?? '').toString();
     // substitui \n por <br>

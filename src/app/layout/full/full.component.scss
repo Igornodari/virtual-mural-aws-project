@@ -1,33 +1,46 @@
 .full-layout {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    .sidenav-container {
-      flex: 1;
-    }
-    .sidenav {
-      width: 250px;
-      border-right: 1px solid var(--mat-sys-outline-variant);
-      background: var(--mat-sys-surface);
-    }
-    .content {
-      background: var(--mat-sys-surface-container);
-    }
-    .main-content {
-      padding: 20px;
-      height: 100%;
-      box-sizing: border-box;
-    }
-    .active-link {
-      background: color-mix(in oklab, var(--mat-sys-primary) 10%, transparent);
-      color: var(--mat-sys-primary);
-    }
-    @media (max-width: 600px) {
-      .sidenav {
-        width: 70px;
-      }
-      span[matListItemTitle] {
-        display: none;
-      }
-    }
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidenav-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidenav {
+  width: 250px;
+  border-right: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
+}
+
+.content {
+  background: var(--mat-sys-surface-container);
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Espaço para o bottom nav fixo no mobile */
+.content--mobile {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+.main-content {
+  padding: 24px;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.active-link {
+  background: color-mix(in oklab, var(--mat-sys-primary) 10%, transparent);
+  color: var(--mat-sys-primary);
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px 12px;
+  }
+}

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 
 export interface Filter {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	formValue?: any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	search?: any;
 	name: string;
 	page?: number;
@@ -16,8 +18,6 @@ export interface Filter {
 })
 export class FilterService {
 	public data: Filter[] = [];
-
-	constructor() {}
 
 	set(filter: Filter) {
 		const index = this.data.findIndex(data => data.name == filter.name);
@@ -36,6 +36,7 @@ export class FilterService {
 		return filter;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	update(filter: string, parans: { name: string; value: any }) {
 		const index = this.data.findIndex(data => data.name == filter);
 
@@ -80,6 +81,7 @@ export class FilterService {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	getValueSearch(operator: string, value: any) {
 		let valueSerach;
 

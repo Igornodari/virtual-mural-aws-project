@@ -41,8 +41,8 @@ export class TimePickerComponent implements ControlValueAccessor {
 
   value!: string;
   disabled = false;
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: (value: string) => void = () => undefined;
+  onTouched: () => void = () => undefined;
 
   get maxHour() {
     if (this.max) {
@@ -188,17 +188,17 @@ export class TimePickerComponent implements ControlValueAccessor {
     }
   }
 
-  writeValue(obj: any): void {
+  writeValue(obj: string): void {
     this.value = obj;
 
     this.setSelected();
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 

@@ -22,8 +22,6 @@ export class GlobalErrorHandler implements ErrorHandler {
   private readonly handledErrors = new WeakSet<object>();
 
 
-  constructor() {}
-
   handleError(error: unknown): void {
     const normalizedError = this.unwrapError(error);
 

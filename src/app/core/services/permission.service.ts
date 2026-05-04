@@ -8,8 +8,6 @@ export class PermissionService {
   private _auth = inject(AuthService);
 
 
-  constructor() {}
-
   can(permission: string): boolean {
     const user = this._auth.currentUser;
 

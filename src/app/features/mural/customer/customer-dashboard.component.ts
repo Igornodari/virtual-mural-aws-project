@@ -159,7 +159,9 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   public payAppointment(appointment: AppointmentDto): void {
     const dialogRef = this.dialog.open(PaymentMethodDialog, {
       data: { appointmentId: appointment.id },
-      width: '400px',
+      width: '440px',
+      maxWidth: '100vw',
+      panelClass: 'responsive-dialog',
     });
 
     dialogRef
@@ -198,7 +200,9 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
                     qrCode: paymentSession.qrCode,
                     qrCodeText: paymentSession.qrCodeText,
                   },
-                  width: '400px',
+                  width: '440px',
+                  maxWidth: '100vw',
+                  panelClass: 'responsive-dialog',
                 });
               }
             },

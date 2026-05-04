@@ -24,8 +24,6 @@ export class ActivityComponent implements OnInit {
   activityLogs$!: Observable<ActivityLog[]>;
 
 
-  constructor() {}
-
   ngOnInit(): void {
     if (this.$event) {
       this.$event.subscribe(() => this.fetchActivities());

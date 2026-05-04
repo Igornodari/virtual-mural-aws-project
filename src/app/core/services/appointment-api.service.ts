@@ -40,7 +40,18 @@ export interface CreateAppointmentPayload {
   serviceId: string;
   scheduledDate: string;
   scheduledDay: string;
+  scheduledTime?: string;
   notes?: string;
+}
+
+export interface BlockedSlot {
+  date: string;
+  time: string | null;
+}
+
+export interface ServiceAvailabilityDto {
+  serviceId: string;
+  blockedSlots: BlockedSlot[];
 }
 
 export interface AppointmentPaymentPayload {
@@ -72,8 +83,8 @@ export class AppointmentApiService {
     return this.request.get<AppointmentDto[]>('/appointments/mine');
   }
 
-  findByService(serviceId: string): Observable<AppointmentDto[]> {
-    return this.request.get<AppointmentDto[]>(`/appointments/service/${serviceId}`);
+  findByService(serviceId: string): Observable<ServiceAvailabilityDto | AppointmentDto[]> {
+    return this.request.get<ServiceAvailabilityDto | AppointmentDto[]>(`/appointments/service/${serviceId}`);
   }
 
   updateStatus(id: string, status: AppointmentStatus): Observable<AppointmentDto> {
@@ -90,7 +101,11 @@ export class AppointmentApiService {
     );
   }
 
-  /** Verifica uma Checkout Session Stripe e atualiza o agendamento se pago */
+  /**
+   * Verifica uma Checkout Session Stripe e atualiza o agendamento associado.
+   * Usado pela página de sucesso (`/payment-success?session_id=...`) como fallback
+   * caso o webhook ainda não tenha processado o evento `checkout.session.completed`.
+   */
   verifyPaymentSession(checkoutSessionId: string): Observable<AppointmentDto> {
     return this.request.post<AppointmentDto, { checkoutSessionId: string }>(
       '/appointments/verify-payment',

@@ -92,7 +92,7 @@ export class CustomCarouselComponent extends BaseComponent implements OnInit, Af
         { threshold: 0.1 },
       );
 
-      images.forEach((img: any) => {
+      images.forEach((img: Element) => {
         observer.observe(img);
       });
     }

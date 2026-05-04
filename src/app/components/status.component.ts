@@ -25,8 +25,6 @@ export class StatusComponent implements OnChanges {
   status!: Status;
   @Input() translationKey?: string;
 
-  constructor() {}
-
   ngOnChanges(changes: SimpleChanges) {
     if ((changes['status'] || changes['translationKey']) && this.translationKey) {
       this.translate.get(this.translationKey).subscribe((translatedLabel: string) => {

@@ -7,17 +7,15 @@
   </div>
 
   @if (!isLoading && appointments.length === 0) {
-    <p class="text-muted m-0">Voce ainda nao solicitou nenhum agendamento.</p>
+    <p class="text-muted m-0">Você ainda não solicitou nenhum agendamento.</p>
   } @else {
     <div class="appointments-list d-flex flex-col gap-10">
       @for (appointment of appointments; track appointment.id) {
-        <div
-          class="appointment-item d-flex justify-content-between align-items-start flex-wrap gap-15"
-        >
-          <div class="d-flex flex-col gap-5">
-            <strong>{{ appointment.service?.name || 'Servico' }}</strong>
+        <div class="appointment-item">
+          <div class="appointment-item__info">
+            <strong>{{ appointment.service?.name || 'Serviço' }}</strong>
             <span class="text-muted">
-              {{ appointment.scheduledDay }} - {{ appointment.scheduledDate | date: 'dd/MM/yyyy' }}
+              {{ appointment.scheduledDay }} — {{ appointment.scheduledDate | date: 'dd/MM/yyyy' }}
             </span>
             <div class="d-flex align-items-center gap-5">
               <span class="text-muted">Status:</span>
@@ -25,8 +23,8 @@
             </div>
           </div>
 
-          <div class="d-flex align-items-center gap-10">
-            @if (appointment | canPayAppointment) {
+          @if (appointment | canPayAppointment) {
+            <div class="appointment-item__actions">
               <button
                 mat-raised-button
                 color="primary"
@@ -38,9 +36,8 @@
                 }
                 Pagar no app
               </button>
-            }
-
-          </div>
+            </div>
+          }
         </div>
       }
     </div>

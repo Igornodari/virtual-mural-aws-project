@@ -1,0 +1,55 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: stretch;
+  background: var(--mat-sys-surface);
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bottom-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+  padding: 10px 8px 8px;
+  transition: color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 60px;
+
+  &--active {
+    color: var(--mat-sys-primary);
+
+    .bottom-nav__pill {
+      background: color-mix(in oklab, var(--mat-sys-primary) 14%, transparent);
+    }
+  }
+}
+
+.bottom-nav__pill {
+  width: 64px;
+  height: 32px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.bottom-nav__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}

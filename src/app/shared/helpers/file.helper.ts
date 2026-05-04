@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Validade = (file: any) => {
 	const _snackBar = inject(SnackBarService);
 	if (!file || file.length === 0) {

@@ -41,6 +41,7 @@ export default class BaseFilterComponent<T> extends BaseComponent implements Aft
     this.dialogRef.close(this.filterService.clear(this.dataChild.name).search);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setQuery(name: string, operator: string, value: any) {
     const spliName = name.split('.');
 
