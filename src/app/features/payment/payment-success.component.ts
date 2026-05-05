@@ -1,9 +1,7 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { finalize } from 'rxjs';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
-import { AppointmentApiService } from 'src/app/core/services/appointment-api.service';
 
 @Component({
   selector: 'app-payment-success',
@@ -12,35 +10,28 @@ import { AppointmentApiService } from 'src/app/core/services/appointment-api.ser
     <div class="ps-page">
       <div class="ps-card">
 
-        <!-- Ícone animado -->
         <div class="ps-icon-ring">
           <div class="ps-icon-circle">
             <mat-icon class="ps-check-icon">check</mat-icon>
           </div>
         </div>
 
-        <!-- Textos -->
         <h1 class="ps-title">{{ 'PAYMENT.SUCCESS.TITLE' | translate }}</h1>
-        <p class="ps-subtitle">{{ 'PAYMENT.SUCCESS.MESSAGE' | translate }}</p>
 
-        <!-- Verificando status -->
-        @if (isVerifying()) {
-          <div class="ps-verifying d-flex align-items-center gap-10">
-            <mat-spinner diameter="18" />
-            <span>{{ 'PAYMENT.SUCCESS.VERIFYING' | translate }}</span>
-          </div>
-        }
+        <p class="ps-subtitle">
+          Seu pagamento foi processado pela Stripe. A confirmação do agendamento
+          será atualizada automaticamente em alguns instantes.
+        </p>
 
-        @if (verifyError()) {
-          <p class="ps-warn">{{ 'PAYMENT.SUCCESS.VERIFY_ERROR' | translate }}</p>
-        }
+        <p class="ps-warn">
+          Caso o status ainda apareça como aguardando pagamento, aguarde alguns segundos
+          e atualize seus agendamentos.
+        </p>
 
-        <!-- Botão -->
         <button
           mat-raised-button
           color="primary"
           class="ps-btn"
-          [disabled]="isVerifying()"
           (click)="goToDashboard()"
         >
           <mat-icon>home</mat-icon>
@@ -76,7 +67,6 @@ import { AppointmentApiService } from 'src/app/core/services/appointment-api.ser
       text-align: center;
     }
 
-    /* Anel pulsante em volta do ícone */
     .ps-icon-ring {
       width: 96px;
       height: 96px;
@@ -107,7 +97,7 @@ import { AppointmentApiService } from 'src/app/core/services/appointment-api.ser
 
     @keyframes ring-pulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,.3); }
-      50%       { box-shadow: 0 0 0 12px rgba(76,175,80,0); }
+      50% { box-shadow: 0 0 0 12px rgba(76,175,80,0); }
     }
 
     .ps-title {
@@ -125,15 +115,11 @@ import { AppointmentApiService } from 'src/app/core/services/appointment-api.ser
       line-height: 1.5;
     }
 
-    .ps-verifying {
-      font-size: 0.85rem;
-      color: var(--mat-sys-on-surface-variant, #888);
-    }
-
     .ps-warn {
       margin: 0;
       font-size: 0.82rem;
       color: var(--mat-sys-on-surface-variant, #999);
+      line-height: 1.5;
     }
 
     .ps-btn {
@@ -145,29 +131,8 @@ import { AppointmentApiService } from 'src/app/core/services/appointment-api.ser
     }
   `],
 })
-export class PaymentSuccessComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
+export class PaymentSuccessComponent {
   private readonly router = inject(Router);
-  private readonly appointmentApi = inject(AppointmentApiService);
-
-  readonly isVerifying = signal(false);
-  readonly verifyError = signal(false);
-
-  ngOnInit(): void {
-    const sessionId = this.route.snapshot.queryParamMap.get('session_id');
-    if (sessionId) {
-      this.verifySession(sessionId);
-    }
-  }
-
-  private verifySession(sessionId: string): void {
-    this.isVerifying.set(true);
-    this.appointmentApi.verifyPaymentSession(sessionId).pipe(
-      finalize(() => this.isVerifying.set(false)),
-    ).subscribe({
-      error: () => this.verifyError.set(true),
-    });
-  }
 
   goToDashboard(): void {
     this.router.navigate([ROUTE_PATHS.muralCustomer]);

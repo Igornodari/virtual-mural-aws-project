@@ -328,9 +328,13 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       this.stripeConnectSuccessMessage.set('PAYMENT.STRIPE_CONNECT.RETURN_SUCCESS');
       // Limpa o query param da URL sem recarregar
       window.history.replaceState({}, '', '/mural/provider');
+      // Re-fetch após delay pra dar tempo da Stripe propagar charges_enabled
+      // (a primeira chamada em ngOnInit pode pegar o estado ainda em pending)
+      setTimeout(() => this.loadStripeStatus(), 1500);
     } else if (param === 'refresh') {
       this.stripeConnectSuccessMessage.set('PAYMENT.STRIPE_CONNECT.RETURN_REFRESH');
       window.history.replaceState({}, '', '/mural/provider');
+      setTimeout(() => this.loadStripeStatus(), 1500);
     }
   }
 
