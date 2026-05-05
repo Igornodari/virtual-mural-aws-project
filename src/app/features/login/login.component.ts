@@ -13,42 +13,75 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
   templateUrl: './login.component.html',
   styles: [
     `
+      :host {
+        display: block;
+      }
+
+      .app-auth-page {
+        position: relative;
+        min-height: 100vh;
+        background-image: url('/assets/images/backgrounds/login_background.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+      }
+
+      .app-auth-page::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(15, 23, 42, 0.78) 0%,
+          rgba(15, 23, 42, 0.55) 100%
+        );
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .app-auth-page > * {
+        position: relative;
+        z-index: 1;
+      }
+
       .login-hero {
-        max-width: 640px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 1rem;
+        max-width: 600px;
+        margin-inline: auto;
+      }
+
+      .login-hero-badge {
+        margin-top: 0.25rem;
       }
 
       .login-title {
-        font: var(--mat-sys-display-small);
-        line-height: 1.02;
-        letter-spacing: -0.04em;
-        color: var(--mat-sys-on-surface);
-      }
-
-      .login-copy {
-        color: var(--mat-sys-on-surface-variant);
-        font: var(--mat-sys-body-large);
-        line-height: 1.7;
-      }
-
-      .login-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
-        background: var(--mat-sys-primary);
+        font: var(--mat-sys-headline-medium);
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
       }
 
       .login-panel {
         width: 100%;
         max-width: 520px;
         margin-inline: auto;
+        background: rgba(15, 23, 42, 0.72);
+        backdrop-filter: blur(16px) saturate(120%);
+        -webkit-backdrop-filter: blur(16px) saturate(120%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
       }
 
       @media (max-width: 960px) {
-        .login-title {
-          font: var(--mat-sys-headline-large);
-        }
-
         .login-panel {
           max-width: 100%;
         }
@@ -56,7 +89,12 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
 
       @media (max-width: 600px) {
         .login-hero {
-          display: none;
+          gap: 0.75rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .login-title {
+          font: var(--mat-sys-title-large);
         }
 
         .login-panel {

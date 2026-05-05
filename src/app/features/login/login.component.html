@@ -1,38 +1,8 @@
 <div class="app-auth-page">
       <div class="app-page-shell app-auth-grid">
-        <section class="login-hero d-flex flex-col gap-6">
-          <div class="app-badge">{{ 'AUTH.LOGIN.BADGE' | translate }}</div>
-
-          <div class="d-flex flex-col gap-4">
-            <h1 class="login-title m-0">{{ 'AUTH.LOGIN.TITLE' | translate }}</h1>
-            <p class="login-copy m-0">{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>
-          </div>
-
-          <div class="d-flex flex-col gap-3">
-            <div class="d-flex items-center gap-3">
-              <span class="login-dot"></span>
-              <span class="text-muted">{{ 'AUTH.LOGIN.FEATURE_1' | translate }}</span>
-            </div>
-
-            <div class="d-flex items-center gap-3">
-              <span class="login-dot"></span>
-              <span class="text-muted">{{ 'AUTH.LOGIN.FEATURE_2' | translate }}</span>
-            </div>
-
-            <div class="d-flex items-center gap-3">
-              <span class="login-dot"></span>
-              <span class="text-muted">{{ 'AUTH.LOGIN.FEATURE_3' | translate }}</span>
-            </div>
-          </div>
-
-          <mat-card appearance="outlined" class="surface-card p-6">
-            <mat-card-content class="p-0">
-              <div class="d-flex flex-col gap-2">
-                <strong>{{ 'AUTH.LOGIN.EXAMPLE_TITLE' | translate }}</strong>
-                <p class="login-copy m-0">{{ 'AUTH.LOGIN.EXAMPLE_TEXT' | translate }}</p>
-              </div>
-            </mat-card-content>
-          </mat-card>
+        <section class="login-hero">
+          <div class="app-badge login-hero-badge">{{ 'AUTH.LOGIN.BADGE' | translate }}</div>
+          <h1 class="login-title m-0">{{ 'AUTH.LOGIN.TITLE' | translate }}</h1>
         </section>
 
         <mat-card class="login-panel surface-card--elevated p-4">
