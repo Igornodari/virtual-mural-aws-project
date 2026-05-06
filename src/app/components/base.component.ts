@@ -6,7 +6,7 @@ import { AuthService } from '../core/services/auth.service';
 import { CondominiumApiService } from '../core/services/condominium-api.service';
 import { UserApiService } from '../core/services/user-api.service';
 import { User, Condominium } from '../shared/types';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 interface BaseComponentSettings {
   loadCondominium?: boolean;
   service?: unknown;
@@ -27,6 +27,8 @@ export default abstract class BaseComponent {
   protected readonly destroyRef = inject(DestroyRef);
   private readonly _authService = inject(AuthService);
   private readonly _router = inject(Router);
+  readonly route = inject(ActivatedRoute);
+
   private readonly _ngZone = inject(NgZone);
 
   public readonly _translate = inject(TranslateService, { optional: true });
@@ -58,6 +60,10 @@ export default abstract class BaseComponent {
     });
   }
 
+
+  protected get router(): Router {
+    return this._router;
+  }
   private bindUser(): void {
     this.user$
       .pipe(takeUntilDestroyed(this.destroyRef))
