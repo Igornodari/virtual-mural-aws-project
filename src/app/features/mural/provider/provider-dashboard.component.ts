@@ -1,7 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Subscription, finalize, forkJoin, interval } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-
 import { FormBuilder, Validators } from '@angular/forms';
 import {
   AppointmentApiService,
@@ -58,7 +56,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly stripeConnectApi = inject(StripeConnectApiService);
-  private readonly route = inject(ActivatedRoute);
 
   readonly categories = CATEGORIES;
 

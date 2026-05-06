@@ -67,7 +67,43 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   }
 
   ngOnInit(): void {
+    const checkoutSessionId = this.route.snapshot.queryParamMap.get('session_id');
+
+    if (checkoutSessionId) {
+      this.verifyPaymentAndLoadDashboard(checkoutSessionId);
+      return;
+    }
+
     this.loadDashboard();
+  }
+
+
+  private verifyPaymentAndLoadDashboard(checkoutSessionId: string): void {
+    this.isLoadingDashboard = true;
+
+    this.appointmentApi
+      .verifyPaymentSession(checkoutSessionId)
+      .pipe(
+        catchError((error) => {
+          console.error('Erro ao verificar pagamento:', error);
+          return of(null);
+        }),
+        finalize(() => {
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+              payment: null,
+              session_id: null,
+            },
+            queryParamsHandling: 'merge',
+            replaceUrl: true,
+          });
+
+          this.loadDashboard();
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   private loadDashboard(): void {
