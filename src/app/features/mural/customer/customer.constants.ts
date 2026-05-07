@@ -1,17 +1,22 @@
-export const CUSTOMER_ALL_CATEGORY = 'Todas';
+import { CATEGORY_VALUES } from 'src/app/shared/constant/categories.constants';
 
-export const CUSTOMER_CATEGORIES = [
+/**
+ * Sentinel usado pelo chip "Todas" no filtro do customer.
+ * Mantido em PT porque não é persistido — só compara igualdade local.
+ * O rótulo exibido é traduzido via i18n (`MURAL.CUSTOMER.FILTER_ALL`).
+ */
+export const CUSTOMER_ALL_CATEGORY = '__ALL__';
+
+/**
+ * Lista de categorias usadas como filtro no customer dashboard.
+ * IMPORTANTE: deve usar EXATAMENTE os mesmos valores que o provider
+ * grava no backend. Antes existiam duas listas divergentes que faziam
+ * o filtro nunca achar nenhum serviço.
+ */
+export const CUSTOMER_CATEGORIES: readonly string[] = [
   CUSTOMER_ALL_CATEGORY,
-  'Beleza e Estetica',
-  'Manutencao e Reparos',
-  'Alimentacao',
-  'Aulas e Tutoria',
-  'Pets',
-  'Limpeza',
-  'Tecnologia',
-  'Saude e Bem-estar',
-  'Outros',
-] as const;
+  ...CATEGORY_VALUES,
+];
 
 export const CUSTOMER_STARS = [1, 2, 3, 4, 5] as const;
 

@@ -23,8 +23,8 @@
             </div>
           </div>
 
-          @if (appointment | canPayAppointment) {
-            <div class="appointment-item__actions">
+          <div class="appointment-item__actions d-flex align-items-center gap-5 flex-wrap">
+            @if (appointment | canPayAppointment) {
               <button
                 mat-raised-button
                 color="primary"
@@ -36,8 +36,25 @@
                 }
                 Pagar no app
               </button>
-            </div>
-          }
+            }
+
+            @if (appointment | canCancelAsCustomer) {
+              <button
+                mat-stroked-button
+                color="warn"
+                type="button"
+                [disabled]="cancellingAppointmentId === appointment.id"
+                (click)="cancelRequest.emit(appointment)"
+              >
+                @if (cancellingAppointmentId === appointment.id) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <mat-icon>close</mat-icon>
+                }
+                Cancelar
+              </button>
+            }
+          </div>
         </div>
       }
     </div>

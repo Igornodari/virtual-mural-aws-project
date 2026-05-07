@@ -13,7 +13,7 @@
         [class.filter-chip--active]="selectedCategory === category"
         (click)="selectCategory(category)"
       >
-        {{ isAllCategory(category) ? ('MURAL.CUSTOMER.FILTER_ALL' | translate) : category }}
+        {{ isAllCategory(category) ? ('MURAL.CUSTOMER.FILTER_ALL' | translate) : (category | categoryLabel | translate) }}
       </button>
     }
   </div>
