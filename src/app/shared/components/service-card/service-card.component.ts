@@ -7,6 +7,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { ServiceDto } from 'src/app/core/services/service-api.service';
+import { CategoryLabelPipe } from 'src/app/shared/pipes/category-label.pipe';
 
 @Component({
   selector: 'app-service-card',
@@ -18,7 +19,8 @@ import { ServiceDto } from 'src/app/core/services/service-api.service';
     MatIconModule,
     MatChipsModule,
     MatTooltipModule,
-    TranslateModule
+    TranslateModule,
+    CategoryLabelPipe,
   ],
   templateUrl: './service-card.component.html',
   styleUrls: ['./service-card.component.scss']

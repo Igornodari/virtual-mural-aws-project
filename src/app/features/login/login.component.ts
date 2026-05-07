@@ -17,6 +17,12 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
         display: block;
       }
 
+      /*
+       * Paleta laranja/branco — primary token (--mat-sys-primary) é
+       * rgb(250, 137, 107). Mantemos a imagem de fundo, mas trocamos o
+       * overlay escuro por um gradiente laranja claro → branco para que
+       * o painel fique sobre fundo claro com texto escuro (contraste AA).
+       */
       .app-auth-page {
         position: relative;
         min-height: 100vh;
@@ -33,8 +39,9 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
         inset: 0;
         background: linear-gradient(
           135deg,
-          rgba(15, 23, 42, 0.78) 0%,
-          rgba(15, 23, 42, 0.55) 100%
+          rgba(255, 247, 240, 0.92) 0%,
+          rgba(254, 233, 220, 0.88) 45%,
+          rgba(255, 255, 255, 0.96) 100%
         );
         backdrop-filter: blur(2px);
         -webkit-backdrop-filter: blur(2px);
@@ -60,25 +67,54 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
 
       .login-hero-badge {
         margin-top: 0.25rem;
+        background: var(--mat-sys-primary);
+        color: #ffffff;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
       }
 
+      /*
+       * Hero text: cinza-escuro #1f2937 sobre fundo claro = contraste >= 12:1.
+       * O acento usa a cor primária (laranja) só na palavra-chave para criar
+       * hierarquia sem comprometer leitura.
+       */
       .login-title {
         font: var(--mat-sys-headline-medium);
         line-height: 1.2;
         letter-spacing: -0.02em;
-        color: #ffffff;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        color: #1f2937;
+        text-shadow: none;
       }
 
       .login-panel {
         width: 100%;
         max-width: 520px;
         margin-inline: auto;
-        background: rgba(15, 23, 42, 0.72);
-        backdrop-filter: blur(16px) saturate(120%);
-        -webkit-backdrop-filter: blur(16px) saturate(120%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        background: #ffffff;
+        border: 1px solid rgba(250, 137, 107, 0.25);
+        box-shadow:
+          0 12px 36px rgba(250, 137, 107, 0.18),
+          0 2px 8px rgba(15, 23, 42, 0.06);
+      }
+
+      .login-panel ::ng-deep .mat-mdc-card-title {
+        color: #1f2937;
+        font-weight: 700;
+      }
+
+      .login-panel ::ng-deep .mat-mdc-card-subtitle {
+        color: #4b5563;
+      }
+
+      /*
+       * O .text-muted padrão (--mat-sys-on-surface-variant) ficava com
+       * contraste ruim contra o painel branco. Forçamos um cinza médio
+       * (#4b5563) que mantém AA contra branco.
+       */
+      .login-panel .text-muted,
+      .login-panel ::ng-deep .text-muted {
+        color: #4b5563;
       }
 
       @media (max-width: 960px) {

@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
-
+import { catchError, filter, finalize, forkJoin, of, switchMap } from 'rxjs';
 import BaseComponent from 'src/app/components/base.component';
+import { AppDialogConfirmationComponent } from 'src/app/components/dialog-confirmation.component';
 import {
   PaymentMethodDialog,
   PaymentMethod,
@@ -14,6 +14,7 @@ import {
   AppointmentPaymentDto,
 } from 'src/app/core/services/appointment-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 import { AppUserProfileDto } from 'src/app/core/services/user-api.service';
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
@@ -22,7 +23,11 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { CustomerAppointmentsComponent } from './components/customer-appointments/customer-appointments.component';
 import { CustomerFiltersComponent } from './components/customer-filters/customer-filters.component';
 import { CustomerHeroComponent } from './components/customer-hero/customer-hero.component';
-import { CustomerServiceDetailsComponent } from './components/customer-service-details/customer-service-details.component';
+import {
+  CustomerServiceDetailsDialog,
+  CustomerServiceDetailsDialogData,
+  CustomerServiceDetailsDialogResult,
+} from './components/customer-service-details/customer-service-details-dialog.component';
 import { CUSTOMER_ALL_CATEGORY, CUSTOMER_CATEGORIES } from './customer.constants';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
@@ -33,7 +38,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CustomerAppointmentsComponent,
     CustomerFiltersComponent,
     CustomerHeroComponent,
-    CustomerServiceDetailsComponent,
     EmptyStateComponent,
     LoadingStateComponent,
   ],
@@ -44,6 +48,8 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(SnackBarService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   public services: ServiceDto[] = [];
   public visibleServices: ServiceDto[] = [];
@@ -51,16 +57,23 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   public searchTerm = '';
   public selectedCategory = CUSTOMER_ALL_CATEGORY;
-  public expandedId: string | null = null;
 
   public isLoadingDashboard = true;
   public isPayingAppointment: string | null = null;
+  public isCancellingAppointment: string | null = null;
 
   public totalServices = 0;
   public uniqueProviders = 0;
   public condoCity = 'Nao definido';
 
   public readonly categories = CUSTOMER_CATEGORIES;
+
+  // Strip diacritics regex (U+0300..U+036F). Constructed via String.fromCharCode
+  // to avoid encoding issues at write time.
+  private static readonly DIACRITICS_RE = new RegExp(
+    '[' + String.fromCharCode(0x0300) + '-' + String.fromCharCode(0x036f) + ']',
+    'g',
+  );
 
   constructor() {
     super();
@@ -75,6 +88,14 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     }
 
     this.loadDashboard();
+  }
+
+
+  private runAfterCurrentChangeDetection(callback: () => void): void {
+    setTimeout(() => {
+      callback();
+      this.cdr.detectChanges();
+    }, 0);
   }
 
 
@@ -152,7 +173,13 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
   }
 
   private normalize(value: string | null | undefined): string {
-    return (value ?? '').toLocaleLowerCase().trim();
+    // NFD + strip diacritics: faz "Manutencao" virar "manutencao",
+    // assim o usuario pode buscar sem acento e ainda achar.
+    return (value ?? '')
+      .toLocaleLowerCase()
+      .normalize('NFD')
+      .replace(CustomerDashboardComponent.DIACRITICS_RE, '')
+      .trim();
   }
 
   private sortAppointments(appointments: AppointmentDto[] | null | undefined): AppointmentDto[] {
@@ -170,8 +197,47 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.syncServiceView();
   }
 
-  public toggleExpand(service: ServiceDto): void {
-    this.expandedId = this.expandedId === service.id ? null : service.id;
+  /**
+   * Abre o detalhe do servico (calendario + reviews + agendar) em um
+   * modal Material. Antes era um card empilhado abaixo do service-card
+   * dentro do mesmo grid, o que quebrava o layout.
+   */
+  public openServiceDetails(service: ServiceDto): void {
+    const dialogRef = this.dialog.open<
+      CustomerServiceDetailsDialog,
+      CustomerServiceDetailsDialogData,
+      CustomerServiceDetailsDialogResult | undefined
+    >(CustomerServiceDetailsDialog, {
+      data: { service },
+      width: '720px',
+      maxWidth: '100vw',
+      panelClass: 'responsive-dialog',
+      autoFocus: false,
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (!result) {
+          return;
+        }
+
+        if (result.type === 'appointmentCreated') {
+          this.addAppointment(result.appointment);
+
+          if (result.service) {
+            this.replaceService(result.service);
+          }
+
+          this.snackBar.success('Agendamento solicitado com sucesso.');
+          return;
+        }
+
+        if (result.type === 'serviceUpdated') {
+          this.replaceService(result.service);
+        }
+      });
   }
 
   public contactWhatsApp(service: ServiceDto): void {
@@ -182,16 +248,27 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
     const phone = service.contact.replace(/\D/g, '');
     const message = encodeURIComponent(
-      `Ola! Vi seu servico "${service.name}" no mural do condominio e gostaria de mais informacoes.`,
+      'Ola! Vi seu servico "' + service.name + '" no mural do condominio e gostaria de mais informacoes.',
     );
 
-    window.open(`https://wa.me/55${phone}?text=${message}`, '_blank');
+    window.open('https://wa.me/55' + phone + '?text=' + message, '_blank');
   }
 
   public addAppointment(appointment: AppointmentDto): void {
-    this.appointments = [appointment, ...this.appointments];
-  }
+    const alreadyExists = this.appointments.some(
+      (item) => item.id === appointment.id,
+    );
 
+    if (alreadyExists) {
+      this.replaceAppointment(appointment);
+      return;
+    }
+
+    this.appointments = this.sortAppointments([
+      appointment,
+      ...this.appointments,
+    ]);
+  }
   public payAppointment(appointment: AppointmentDto): void {
     const dialogRef = this.dialog.open(PaymentMethodDialog, {
       data: { appointmentId: appointment.id },
@@ -243,6 +320,54 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
               }
             },
           });
+      });
+  }
+
+  /**
+   * Cancela o agendamento como morador. Permitido apenas enquanto o
+   * pagamento ainda nao foi efetivado (status pending / confirmed /
+   * awaiting_payment). Pede confirmacao antes de chamar a API porque
+   * eh acao destrutiva, e mostra snackbar com erro vindo do backend
+   * caso o status ja tenha avancado para paid.
+   */
+  public cancelAppointment(appointment: AppointmentDto): void {
+    const confirmRef = this.dialog.open(AppDialogConfirmationComponent, {
+      data: {
+        title: 'Cancelar agendamento',
+        subTitle:
+          'Tem certeza que deseja cancelar este agendamento? Essa acao nao pode ser desfeita.',
+      },
+      width: '420px',
+      maxWidth: '100vw',
+      panelClass: 'responsive-dialog',
+    });
+
+    confirmRef
+      .afterClosed()
+      .pipe(
+        filter((confirmed) => !!confirmed),
+        switchMap(() => {
+          this.isCancellingAppointment = appointment.id;
+          return this.appointmentApi.cancelByCustomer(appointment.id).pipe(
+            catchError((error: { message?: string }) => {
+              const message =
+                error?.message ??
+                'Nao foi possivel cancelar este agendamento.';
+              this.snackBar.error(message);
+              return of(null);
+            }),
+            finalize(() => {
+              this.isCancellingAppointment = null;
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((updated) => {
+        if (updated) {
+          this.replaceAppointment(updated);
+          this.snackBar.success('Agendamento cancelado.');
+        }
       });
   }
 

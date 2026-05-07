@@ -1,4 +1,14 @@
 {
+  "CATEGORY": {
+    "CLEANING": "Limpeza",
+    "MAINTENANCE": "Manutenção",
+    "BEAUTY": "Beleza",
+    "TUTORING": "Aulas Particulares",
+    "TECHNOLOGY": "Tecnologia",
+    "PETS": "Pets",
+    "HEALTH": "Saúde",
+    "OTHERS": "Outros"
+  },
   "COMMON": {
     "OR": "ou",
     "ANONYMOUS": "Anônimo",
@@ -351,6 +361,7 @@
     "GO_TO_DASHBOARD": "Ir para o painel",
     "SUCCESS": {
       "TITLE": "Pagamento confirmado!",
+      "ERROR_TITLE": "Quase lá",
       "MESSAGE": "Seu agendamento foi pago com sucesso. O prestador será notificado.",
       "SESSION_ID": "ID da sessão",
       "VERIFYING": "Confirmando pagamento...",

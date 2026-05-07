@@ -1,4 +1,14 @@
 {
+  "CATEGORY": {
+    "CLEANING": "Cleaning",
+    "MAINTENANCE": "Maintenance",
+    "BEAUTY": "Beauty",
+    "TUTORING": "Tutoring",
+    "TECHNOLOGY": "Technology",
+    "PETS": "Pets",
+    "HEALTH": "Health",
+    "OTHERS": "Other"
+  },
   "COMMON": {
     "OR": "or",
     "ANONYMOUS": "Anonymous",
@@ -351,6 +361,7 @@
     "GO_TO_DASHBOARD": "Go to dashboard",
     "SUCCESS": {
       "TITLE": "Payment confirmed!",
+      "ERROR_TITLE": "Almost there",
       "MESSAGE": "Your appointment has been paid successfully. The provider will be notified.",
       "SESSION_ID": "Session ID",
       "VERIFYING": "Confirming payment...",

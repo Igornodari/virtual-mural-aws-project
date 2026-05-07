@@ -107,4 +107,16 @@ export class AppointmentApiService {
       { checkoutSessionId },
     );
   }
+
+  /**
+   * Cancela o agendamento como morador. Permitido apenas quando o
+   * status é `pending` ou `awaiting_payment` (antes do pagamento ser
+   * efetivado). Depois de pago, o backend retornará 400.
+   */
+  cancelByCustomer(id: string): Observable<AppointmentDto> {
+    return this.request.patchPath<AppointmentDto, Record<string, never>>(
+      `/appointments/${id}/cancel`,
+      {},
+    );
+  }
 }
