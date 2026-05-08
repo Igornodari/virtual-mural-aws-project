@@ -17,4 +17,5 @@ export class BottomNavComponent {
   @Input({ required: true }) role!: TopbarRole;
   @Input({ required: true }) dashboardLink!: string;
   @Input({ required: true }) profileLink!: string;
+  @Input({ required: true }) appointmentsLink!: string;
 }

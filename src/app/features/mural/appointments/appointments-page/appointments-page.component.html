@@ -1,0 +1,15 @@
+<div class="app-page-shell appointments-page">
+  <app-appointment-panel
+    [role]="role()"
+    [appointments]="appointments()"
+    [isLoading]="isLoading()"
+    [viewMode]="viewMode()"
+    [updatingAppointmentId]="updatingAppointmentId()"
+    [payingAppointmentId]="payingAppointmentId()"
+    [cancellingAppointmentId]="cancellingAppointmentId()"
+    (viewModeChange)="viewMode.set($event)"
+    (pay)="onPayAppointment($event)"
+    (cancelAsCustomer)="onCancelAsCustomer($event)"
+    (statusChange)="onProviderStatusChange($event)"
+  />
+</div>

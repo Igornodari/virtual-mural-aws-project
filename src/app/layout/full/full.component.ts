@@ -78,6 +78,9 @@ export class FullComponent {
     return ROUTE_PATHS.profile;
   }
 
+  appointmentsLink() {
+    return ROUTE_PATHS.muralAppointments;
+  }
   onLogout() {
     this.authService.logout();
     this.router.navigate([ROUTE_PATHS.login]);

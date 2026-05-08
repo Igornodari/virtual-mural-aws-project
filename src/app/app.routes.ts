@@ -78,6 +78,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: ROUTE_PATHS.muralAppointments.slice(1),
+        canActivate: [onboardingGuard],
+        loadComponent: () =>
+          import('./features/mural/appointments/appointments-page/appointments-page.component').then(
+            (m) => m.MuralAppointmentsPageComponent,
+          ),
+      },
+      {
         path: ROUTE_PATHS.muralCustomer.slice(1),
         canActivate: [onboardingGuard],
         loadComponent: () =>
