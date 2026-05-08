@@ -9,18 +9,23 @@ export class SnackBarService {
 
 
   error(message: string): void {
-    this.open(message, 'snackbar-error', 4000);
+    this.snackBar.open(message, undefined, {
+      duration: 4000,
+      panelClass: 'snackbar-error',
+    });
   }
 
   warning(message: string): void {
-    this.open(message, 'snackbar-warning', 3500);
+    this.snackBar.open(message, undefined, {
+      duration: 3500,
+      panelClass: 'snackbar-warning',
+    });
   }
 
   success(message: string): void {
-    this.open(message, 'snackbar-success', 3000);
-  }
-
-  private open(message: string, panelClass: string, duration: number): void {
-    this.snackBar.open(message, 'Fechar', { duration, panelClass: [panelClass] });
+    this.snackBar.open(message, undefined, {
+      duration: 3000,
+      panelClass: 'snackbar-success',
+    });
   }
 }

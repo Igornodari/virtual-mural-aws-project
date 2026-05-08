@@ -1,12 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import BaseComponent from 'src/app/components/base.component';
 
-import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
-import { SnackBarService } from 'src/app/core/services/snack-bar.service';
+import { ServiceDto } from 'src/app/core/services/service-api.service';
+
 import { AppUserProfileDto } from 'src/app/core/services/user-api.service';
 
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
@@ -40,9 +39,7 @@ import { CUSTOMER_ALL_CATEGORY, CUSTOMER_CATEGORIES } from './customer.constants
   styleUrls: ['./customer-dashboard.component.scss'],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
-  private readonly serviceApi = inject(ServiceApiService);
-  private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(SnackBarService);
+
 
   public services: ServiceDto[] = [];
   public visibleServices: ServiceDto[] = [];

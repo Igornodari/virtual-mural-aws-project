@@ -7,6 +7,9 @@ import { CondominiumApiService } from '../core/services/condominium-api.service'
 import { UserApiService } from '../core/services/user-api.service';
 import { User, Condominium } from '../shared/types';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ServiceApiService } from '../core/services/service-api.service';
+import { MatDialog } from '@angular/material/dialog';
+import { SnackBarService } from '../core/services/snack-bar.service';
 interface BaseComponentSettings {
   loadCondominium?: boolean;
   service?: unknown;
@@ -34,6 +37,10 @@ export default abstract class BaseComponent {
   public readonly _translate = inject(TranslateService, { optional: true });
   public readonly userApi = inject(UserApiService);
   public readonly condominiumApi = inject(CondominiumApiService);
+  public readonly serviceApi = inject(ServiceApiService);
+  public readonly dialog = inject(MatDialog);
+  public readonly snackBar = inject(SnackBarService);
+  public readonly translateService = inject(TranslateService);
 
   protected readonly user$ = this._authService.$user.pipe(
     shareReplay({ bufferSize: 1, refCount: true }),

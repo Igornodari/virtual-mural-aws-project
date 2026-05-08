@@ -5,10 +5,6 @@ export type AppTheme = 'light' | 'dark';
 
 const STORAGE_KEY = 'APP_THEME';
 
-/**
- * Gerencia o tema da aplicação (light/dark).
- * Aplica a classe `dark-theme` no elemento <html> e persiste a preferência no localStorage.
- */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly platformId = inject(PLATFORM_ID);
