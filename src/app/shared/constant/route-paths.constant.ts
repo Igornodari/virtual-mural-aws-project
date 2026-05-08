@@ -8,6 +8,7 @@ export const ROUTE_PATHS = {
   authCallback: '/auth/callback',
   dashboard: '/dashboard',
   profile: '/profile',
+  muralAppointments: '/mural/appointments',
   onboardingCondominium: '/onboarding/condominium',
   onboardingRole: '/onboarding/role',
   muralProvider: '/mural/provider',

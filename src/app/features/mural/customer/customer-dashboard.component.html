@@ -36,14 +36,5 @@
         }
       </section>
     }
-
-    <app-customer-appointments
-      [appointments]="appointments"
-      [isLoading]="false"
-      [payingAppointmentId]="isPayingAppointment"
-      [cancellingAppointmentId]="isCancellingAppointment"
-      (pay)="payAppointment($event)"
-      (cancelRequest)="cancelAppointment($event)"
-    />
   }
 </div>

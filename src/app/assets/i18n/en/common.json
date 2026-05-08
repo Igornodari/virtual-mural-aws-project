@@ -70,6 +70,7 @@
 	"REPROVE": "Reject",
 	"REVERT": "Revert",
 	"PREVIEW": "Previous",
+  "APPOINTMENTS": "Appointments",
 	"BOLETO_GENERATED": "Boleto generated",
 	"ISSUE_OF_BILL": "Boleto issuance",
 	"FINISH": "Finished",
