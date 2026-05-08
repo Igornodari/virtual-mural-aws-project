@@ -1,9 +1,12 @@
 import { Routes } from '@angular/router';
+
 import { authGuard } from './core/guards/auth.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
-import { ROUTE_PATHS } from './shared/constant/route-paths.constant';
+
 import { BlankComponent } from './layout/blank/blank.component';
 import { FullComponent } from './layout/full/full.component';
+
+import { ROUTE_PATHS } from './shared/constant/route-paths.constant';
 
 export const routes: Routes = [
   {
@@ -18,31 +21,35 @@ export const routes: Routes = [
       {
         path: ROUTE_PATHS.login.slice(1),
         loadComponent: () =>
-          import('./features/login/login.component').then((m) => m.LoginComponent),
+          import('./features/auth/login/login.component').then(
+            (m) => m.LoginComponent,
+          ),
       },
       {
         path: ROUTE_PATHS.register.slice(1),
         loadComponent: () =>
-          import('./features/register/register.component').then((m) => m.RegisterComponent),
+          import('./features/auth/register/register.component').then(
+            (m) => m.RegisterComponent,
+          ),
       },
       {
         path: ROUTE_PATHS.forgotPassword.slice(1),
         loadComponent: () =>
-          import('./features/forgot-password/forgot-password.component').then(
+          import('./features/auth/forgot-password/forgot-password.component').then(
             (m) => m.ForgotPasswordComponent,
           ),
       },
       {
         path: ROUTE_PATHS.confirmEmail.slice(1),
         loadComponent: () =>
-          import('./features/confirm-email/confirm-email.component').then(
+          import('./features/auth/confirm-email/confirm-email.component').then(
             (m) => m.ConfirmEmailComponent,
           ),
       },
       {
         path: ROUTE_PATHS.authCallback.slice(1),
         loadComponent: () =>
-          import('../app/features/auth-callback.components').then(
+          import('./features/auth/callback/auth-callback.components').then(
             (m) => m.AuthCallbackComponent,
           ),
       },
@@ -60,10 +67,9 @@ export const routes: Routes = [
             (m) => m.PaymentCancelComponent,
           ),
       },
-    ]
+    ],
   },
 
-  // Layout para páginas autenticadas (Dashboards, Perfil, etc.)
   {
     path: '',
     component: FullComponent,
@@ -78,14 +84,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: ROUTE_PATHS.muralAppointments.slice(1),
-        canActivate: [onboardingGuard],
-        loadComponent: () =>
-          import('./features/mural/appointments/appointments-page/appointments-page.component').then(
-            (m) => m.MuralAppointmentsPageComponent,
-          ),
-      },
-      {
         path: ROUTE_PATHS.muralCustomer.slice(1),
         canActivate: [onboardingGuard],
         loadComponent: () =>
@@ -94,19 +92,30 @@ export const routes: Routes = [
           ),
       },
       {
+        path: ROUTE_PATHS.muralAppointments.slice(1),
+        canActivate: [onboardingGuard],
+        loadComponent: () =>
+          import('./features/mural/appointments/appointments-page/appointments-page.component').then(
+            (m) => m.MuralAppointmentsPageComponent,
+          ),
+      },
+      {
         path: ROUTE_PATHS.profile.slice(1),
         loadComponent: () =>
-          import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+          import('./features/profile/profile.component').then(
+            (m) => m.ProfileComponent,
+          ),
       },
       {
         path: ROUTE_PATHS.dashboard.slice(1),
         loadComponent: () =>
-          import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+          import('./features/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent,
+          ),
       },
-    ]
+    ],
   },
 
-  // Layout para Onboarding (sem Sidebar, apenas Blank)
   {
     path: '',
     component: BlankComponent,
@@ -126,7 +135,7 @@ export const routes: Routes = [
             (m) => m.RoleOnboardingComponent,
           ),
       },
-    ]
+    ],
   },
 
   {

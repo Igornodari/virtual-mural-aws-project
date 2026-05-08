@@ -8,9 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import BaseComponent from '../../components/base.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
@@ -39,8 +39,6 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
 export class ProfileComponent extends BaseComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly translate = inject(TranslateService);
 
   isSavingPersonal = signal(false);
   isSavingAddress = signal(false);
@@ -217,18 +215,18 @@ export class ProfileComponent extends BaseComponent implements OnInit {
       await this.authService.changePassword(currentPassword, newPassword);
       this.passwordSuccess.set(true);
       this.passwordForm.reset();
-      const msg = this.translate.instant('PROFILE.SECURITY.PASSWORD_CHANGED_SUCCESS');
-      this.snackBar.open(msg, '✕', { duration: 4000, panelClass: 'snack-success' });
+      const msg = this.translateService.instant('PROFILE.SECURITY.PASSWORD_CHANGED_SUCCESS');
+      this.snackBar.success(msg);
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
       if (e?.name === 'NotAuthorizedException') {
-        this.passwordError.set(this.translate.instant('PROFILE.SECURITY.PASSWORD_WRONG_CURRENT'));
+        this.passwordError.set(this.translateService.instant('PROFILE.SECURITY.PASSWORD_WRONG_CURRENT'));
       } else if (e?.name === 'InvalidPasswordException' || e?.name === 'InvalidParameterException') {
-        this.passwordError.set(this.translate.instant('PROFILE.SECURITY.PASSWORD_INVALID'));
+        this.passwordError.set(this.translateService.instant('PROFILE.SECURITY.PASSWORD_INVALID'));
       } else if (e?.name === 'LimitExceededException') {
-        this.passwordError.set(this.translate.instant('PROFILE.SECURITY.PASSWORD_LIMIT_EXCEEDED'));
+        this.passwordError.set(this.translateService.instant('PROFILE.SECURITY.PASSWORD_LIMIT_EXCEEDED'));
       } else {
-        this.passwordError.set(e?.message ?? this.translate.instant('COMMON.FEEDBACK.UNEXPECTED_ERROR'));
+        this.passwordError.set(e?.message ?? this.translateService.instant('COMMON.FEEDBACK.UNEXPECTED_ERROR'));
       }
     } finally {
       this.isSavingPassword.set(false);

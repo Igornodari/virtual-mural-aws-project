@@ -1,0 +1,98 @@
+<div class="app-auth-page">
+      <div class="app-page-shell app-auth-grid">
+        <section class="login-hero">
+          <div class="app-badge login-hero-badge">{{ 'AUTH.LOGIN.BADGE' | translate }}</div>
+          <h1 class="login-title m-0">{{ 'AUTH.LOGIN.TITLE' | translate }}</h1>
+        </section>
+
+        <mat-card class="login-panel surface-card--elevated p-4">
+          <mat-card-header class="p-0 m-b-4">
+            <mat-card-title>{{ 'AUTH.LOGIN.SIGN_IN_TITLE' | translate }}</mat-card-title>
+            <mat-card-subtitle>{{ 'AUTH.LOGIN.SIGN_IN_SUBTITLE' | translate }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="p-0 d-flex flex-col gap-5">
+            <button
+              mat-stroked-button
+              type="button"
+              class="w-full"
+              (click)="onGoogleLogin()"
+              [disabled]="loading"
+            >
+              {{
+                (loading ? 'AUTH.LOGIN.REDIRECTING' : 'AUTH.LOGIN.CONTINUE_WITH_GOOGLE') | translate
+              }}
+            </button>
+
+            <div class="d-flex items-center gap-4">
+              <mat-divider class="w-full"></mat-divider>
+              <span class="text-muted">{{ 'COMMON.OR' | translate }}</span>
+              <mat-divider class="w-full"></mat-divider>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-col gap-4">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ 'COMMON.LABELS.EMAIL' | translate }}</mat-label>
+                <input
+                  matInput
+                  type="email"
+                  formControlName="email"
+                  [placeholder]="'COMMON.PLACEHOLDERS.EMAIL' | translate"
+                  autocomplete="email"
+                />
+                @if (form.controls.email.touched && form.controls.email.invalid) {
+                  <mat-error>{{ 'COMMON.VALIDATION.EMAIL_INVALID' | translate }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ 'COMMON.LABELS.PASSWORD' | translate }}</mat-label>
+                <input
+                  matInput
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  [placeholder]="'AUTH.LOGIN.PASSWORD_PLACEHOLDER' | translate"
+                  autocomplete="current-password"
+                />
+                <button
+                  matSuffix
+                  mat-icon-button
+                  type="button"
+                  [attr.aria-label]="(showPassword ? 'COMMON.HIDE_PASSWORD' : 'COMMON.SHOW_PASSWORD') | translate"
+                  (click)="togglePasswordVisibility()"
+                >
+                  <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (form.controls.password.touched && form.controls.password.invalid) {
+                  <mat-error>{{ 'AUTH.LOGIN.PASSWORD_REQUIRED' | translate }}</mat-error>
+                }
+              </mat-form-field>
+
+              <div class="d-flex justify-content-end">
+                <a routerLink="/forgot-password" class="text-muted" style="font-size: 0.875rem;">
+                  {{ 'AUTH.LOGIN.FORGOT_PASSWORD_LINK' | translate }}
+                </a>
+              </div>
+
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                class="w-full"
+                [disabled]="loading"
+              >
+                {{
+                  (loading ? 'AUTH.LOGIN.SIGNING_IN' : 'AUTH.LOGIN.SIGN_IN_WITH_EMAIL') | translate
+                }}
+              </button>
+            </form>
+          </mat-card-content>
+
+          <div class="d-flex justify-content-start gap-4 m-t-4">
+            <a class="m-t-10 text-muted" routerLink="/register">
+              {{ 'AUTH.LOGIN.CREATE_ACCOUNT_LINK' | translate }}
+            </a>
+          </div>
+        </mat-card>
+      </div>
+    </div>

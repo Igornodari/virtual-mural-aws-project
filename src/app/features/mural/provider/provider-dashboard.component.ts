@@ -13,7 +13,6 @@ import {
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 
 import {
-  ServiceApiService,
   ServiceDto,
 } from 'src/app/core/services/service-api.service';
 
@@ -52,7 +51,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
 
   private readonly fb = inject(FormBuilder);
   private readonly onboardingService = inject(OnboardingService);
-  private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly stripeConnectApi = inject(StripeConnectApiService);
 

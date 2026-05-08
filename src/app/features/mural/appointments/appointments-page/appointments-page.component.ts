@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { catchError, filter, finalize, forkJoin, of, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -18,9 +17,7 @@ import {
   AppointmentStatus,
 } from 'src/app/core/services/appointment-api.service';
 
-import { ServiceApiService } from 'src/app/core/services/service-api.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
-import { SnackBarService } from 'src/app/core/services/snack-bar.service';
 
 import {
   AppointmentPanelComponent,
@@ -37,10 +34,7 @@ import {
 })
 export class MuralAppointmentsPageComponent extends BaseComponent implements OnInit {
   private readonly appointmentApi = inject(AppointmentApiService);
-  private readonly serviceApi = inject(ServiceApiService);
   private readonly onboardingService = inject(OnboardingService);
-  private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(SnackBarService);
 
   readonly role = signal<AppointmentPanelRole>('customer');
   readonly appointments = signal<AppointmentDto[]>([]);
