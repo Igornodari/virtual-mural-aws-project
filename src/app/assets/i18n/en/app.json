@@ -161,6 +161,9 @@
       "BRAND": "Condo Board",
       "ROLE_PROVIDER": "Provider",
       "ROLE_CUSTOMER": "Resident",
+      "MODE_RESIDENT": "Resident",
+      "MODE_PROVIDER": "Provider",
+      "MODE_TOGGLE_ARIA": "Switch between resident and provider mode",
       "THEME_LIGHT": "Switch to light theme",
       "THEME_DARK": "Switch to dark theme",
       "MY_PROFILE": "My Profile",
@@ -169,6 +172,8 @@
     },
     "MENU": {
       "DASHBOARD": "Dashboard",
+      "PROVIDER_DASHBOARD": "My services",
+      "PROVIDER_DASHBOARD_SHORT": "Services",
       "PROFILE": "My Profile"
     },
     "DASHBOARD": {
@@ -193,27 +198,14 @@
       "NEIGHBORHOOD_REQUIRED": "Please enter the neighborhood.",
       "CITY_REQUIRED": "Please enter the city.",
       "STATE_REQUIRED": "Please select the state."
-    },
-    "ROLE": {
-      "TITLE": "Choose how you want to use the board",
-      "SUBTITLE": "Set your profile to access the best experience inside your condominium. You can buy, hire, sell, or promote services for other residents.",
-      "PROVIDER": {
-        "TITLE": "I want to promote and offer services",
-        "SUBTITLE": "Ideal for residents who want to promote services or sell products within the condominium.",
-        "F1": "Publish your services or products on the board",
-        "F2": "Gain visibility among residents",
-        "F3": "Receive contacts and opportunities more easily",
-        "F4": "Manage your listings in one place"
-      },
-      "CUSTOMER": {
-        "TITLE": "I want to find services and opportunities",
-        "SUBTITLE": "Ideal for residents who want to find services, buy products, and browse condominium listings.",
-        "F1": "Find services offered by residents",
-        "F2": "Discover products and opportunities near you",
-        "F3": "Contact providers easily",
-        "F4": "Keep everything organized in one place"
-      }
     }
+  },
+  "PROVIDER_GUARD": {
+    "NEEDS_ACTIVATION": "Activate provider mode in your profile to access this area."
+  },
+  "APPOINTMENTS_PAGE": {
+    "TAB_AS_CUSTOMER": "As resident",
+    "TAB_AS_PROVIDER": "As provider"
   },
   "MURAL": {
     "PROVIDER": {
@@ -267,6 +259,7 @@
       "SCHEDULE_TITLE": "Schedule appointment",
       "SCHEDULE_CONFIRM": "Confirm appointment",
       "SCHEDULE_SUCCESS": "Appointment requested successfully!",
+      "OWN_SERVICE_NOTICE": "This is your service — you can't book it yourself. Bookings you receive appear under \"As provider\" in the appointments page.",
       "REVIEWS_TITLE": "Reviews",
       "NO_REVIEWS": "No reviews yet.",
       "WRITE_REVIEW": "Write a review",
@@ -332,10 +325,25 @@
       "SAVED_SUCCESS": "Address updated successfully!"
     },
     "ROLE": {
-      "PROVIDER": "Service Provider",
+      "RESIDENT": "Resident",
+      "PROVIDER": "Provider",
       "PROVIDER_DESC": "I publish services on the board for other residents.",
       "CUSTOMER": "Resident",
       "CUSTOMER_DESC": "I search and hire services from other residents."
+    },
+    "BECOME_PROVIDER": {
+      "TITLE": "Want to offer services in the condo?",
+      "DESCRIPTION": "Activate provider mode to publish services, receive bookings, and configure payments inside the app.",
+      "CTA": "Become a provider",
+      "DIALOG_TITLE": "Activate provider mode",
+      "DIALOG_BODY": "By activating provider mode you can publish services on the board and receive payments via Stripe. You can deactivate it later, as long as you have no active services or pending bookings.",
+      "SUCCESS": "Provider mode activated!",
+      "ERROR": "Could not activate provider mode. Please try again."
+    },
+    "PROVIDER_ACTIVE": {
+      "TITLE": "Provider mode active",
+      "DESCRIPTION": "You can publish services and receive bookings from the provider panel.",
+      "CTA": "Open provider panel"
     },
     "SECURITY": {
       "COGNITO_TITLE": "Authentication managed by AWS",

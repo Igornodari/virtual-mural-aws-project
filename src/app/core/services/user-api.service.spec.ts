@@ -20,10 +20,9 @@ describe('UserApiService', () => {
     displayName: 'Igor Nodari',
     phone: '11999998888',
     condominiumId: 'condo1',
-    roleInCondominium: 'provider',
+    isProvider: true,
     onboardingCompleted: true,
     addressCompleted: true,
-    roleCompleted: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   };
@@ -75,22 +74,22 @@ describe('UserApiService', () => {
       req.flush(mockProfile);
     });
 
-    it('should PATCH /users/me/onboarding with roleInCondominium', () => {
-      const payload: UpdateOnboardingPayload = { roleInCondominium: 'customer' };
+    it('should PATCH /users/me/onboarding with isProvider', () => {
+      const payload: UpdateOnboardingPayload = { isProvider: true };
 
       service.updateOnboarding(payload).subscribe((res) => {
-        expect(res.roleInCondominium).toBe('customer');
+        expect(res.isProvider).toBe(true);
       });
 
       const req = httpMock.expectOne(`${BASE}/users/me/onboarding`);
       expect(req.request.body).toEqual(payload);
-      req.flush({ ...mockProfile, roleInCondominium: 'customer' });
+      req.flush({ ...mockProfile, isProvider: true });
     });
 
     it('should PATCH /users/me/onboarding with both fields', () => {
       const payload: UpdateOnboardingPayload = {
         condominiumId: 'condo2',
-        roleInCondominium: 'provider',
+        isProvider: true,
       };
 
       service.updateOnboarding(payload).subscribe();
@@ -98,6 +97,29 @@ describe('UserApiService', () => {
       const req = httpMock.expectOne(`${BASE}/users/me/onboarding`);
       expect(req.request.body).toEqual(payload);
       req.flush(mockProfile);
+    });
+  });
+
+  describe('becomeProvider', () => {
+    it('should PATCH /users/me/onboarding with isProvider=true by default', () => {
+      service.becomeProvider().subscribe((res) => {
+        expect(res.isProvider).toBe(true);
+      });
+
+      const req = httpMock.expectOne(`${BASE}/users/me/onboarding`);
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ isProvider: true });
+      req.flush({ ...mockProfile, isProvider: true });
+    });
+
+    it('should PATCH with isProvider=false to deactivate', () => {
+      service.becomeProvider(false).subscribe((res) => {
+        expect(res.isProvider).toBe(false);
+      });
+
+      const req = httpMock.expectOne(`${BASE}/users/me/onboarding`);
+      expect(req.request.body).toEqual({ isProvider: false });
+      req.flush({ ...mockProfile, isProvider: false });
     });
   });
 

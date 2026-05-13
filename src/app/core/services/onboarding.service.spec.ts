@@ -13,10 +13,9 @@ const mockProfile: AppUserProfileDto = {
   familyName: 'Nodari',
   displayName: 'Igor Nodari',
   condominiumId: null,
-  roleInCondominium: null,
+  isProvider: false,
   onboardingCompleted: false,
   addressCompleted: false,
-  roleCompleted: false,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 };
@@ -37,7 +36,11 @@ const mockCondominium: CondominiumDto = {
 
 describe('OnboardingService', () => {
   let service: OnboardingService;
-  let userApiSpy: { getMe: ReturnType<typeof vi.fn>; updateOnboarding: ReturnType<typeof vi.fn> };
+  let userApiSpy: {
+    getMe: ReturnType<typeof vi.fn>;
+    updateOnboarding: ReturnType<typeof vi.fn>;
+    becomeProvider: ReturnType<typeof vi.fn>;
+  };
   let condominiumApiSpy: {
     findOne: ReturnType<typeof vi.fn>;
     findByZipCode: ReturnType<typeof vi.fn>;
@@ -50,6 +53,7 @@ describe('OnboardingService', () => {
     userApiSpy = {
       getMe: vi.fn().mockReturnValue(of(mockProfile)),
       updateOnboarding: vi.fn().mockReturnValue(of(mockProfile)),
+      becomeProvider: vi.fn().mockReturnValue(of({ ...mockProfile, isProvider: true })),
     };
 
     condominiumApiSpy = {
@@ -80,8 +84,7 @@ describe('OnboardingService', () => {
     it('should start with empty profile when localStorage is empty', () => {
       expect(service.isOnboardingComplete).toBe(false);
       expect(service.hasCondominium).toBe(false);
-      expect(service.hasRole).toBe(false);
-      expect(service.role).toBeNull();
+      expect(service.isProvider).toBe(false);
     });
   });
 
@@ -99,71 +102,82 @@ describe('OnboardingService', () => {
       expect(service.resolveNextRoute()).toBe(ROUTE_PATHS.onboardingCondominium);
     });
 
-    it('should return onboarding role when condominium is set but no role', () => {
+    it('should return customer dashboard (default) when condominium is set', () => {
       service.saveLocalCondominiumAddress(mockAddress, 'condo1');
-      expect(service.resolveNextRoute()).toBe(ROUTE_PATHS.onboardingRole);
+      expect(service.resolveNextRoute()).toBe(ROUTE_PATHS.muralCustomer);
     });
 
-    it('should return provider dashboard when role is provider', () => {
-      service['persist']({ condominiumId: 'condo1', condominiumAddress: mockAddress, role: 'provider', onboardingCompleted: true });
-      expect(service.resolveNextRoute()).toBe(ROUTE_PATHS.muralProvider);
-    });
-
-    it('should return customer dashboard when role is customer', () => {
-      service['persist']({ condominiumId: 'condo1', condominiumAddress: mockAddress, role: 'customer', onboardingCompleted: true });
+    it('should still return customer dashboard even when user is provider (provider is opt-in tab)', () => {
+      service['persist']({
+        condominiumId: 'condo1',
+        condominiumAddress: mockAddress,
+        isProvider: true,
+        onboardingCompleted: true,
+      });
       expect(service.resolveNextRoute()).toBe(ROUTE_PATHS.muralCustomer);
     });
   });
 
-  describe('saveRole', () => {
-    it('should update profile role synchronously', () => {
-      service.saveRole('provider').subscribe();
-      expect(service.role).toBe('provider');
-      expect(service.hasRole).toBe(true);
+  describe('activateProvider', () => {
+    it('should flip isProvider locally and call the API', () => {
+      service.activateProvider().subscribe();
+      expect(service.isProvider).toBe(true);
+      expect(userApiSpy.becomeProvider).toHaveBeenCalledWith(true);
     });
 
-    it('should call updateOnboarding on the user API', () => {
-      service.saveRole('customer').subscribe();
-      expect(userApiSpy.updateOnboarding).toHaveBeenCalledWith({ roleInCondominium: 'customer' });
-    });
-
-    it('should complete even when the API call fails', () => {
-      userApiSpy.updateOnboarding.mockReturnValue(throwError(() => new Error('Network error')));
+    it('should revert local state on API failure', () => {
+      userApiSpy.becomeProvider.mockReturnValue(throwError(() => new Error('Network error')));
       let completed = false;
-      service.saveRole('provider').subscribe({ complete: () => (completed = true) });
+      service.activateProvider().subscribe({ complete: () => (completed = true) });
       expect(completed).toBe(true);
-      expect(service.role).toBe('provider');
+      expect(service.isProvider).toBe(false);
+    });
+  });
+
+  describe('deactivateProvider', () => {
+    it('should set isProvider to false via the API', () => {
+      userApiSpy.becomeProvider.mockReturnValue(of({ ...mockProfile, isProvider: false }));
+      service['persist']({
+        condominiumId: 'condo1',
+        condominiumAddress: mockAddress,
+        isProvider: true,
+        onboardingCompleted: true,
+      });
+
+      service.deactivateProvider().subscribe();
+      expect(userApiSpy.becomeProvider).toHaveBeenCalledWith(false);
+      expect(service.isProvider).toBe(false);
     });
   });
 
   describe('syncFromBackend', () => {
     it('should update profile with backend data (no condominium)', () => {
       userApiSpy.getMe.mockReturnValue(
-        of({ ...mockProfile, condominiumId: null, roleInCondominium: null }),
+        of({ ...mockProfile, condominiumId: null, isProvider: false }),
       );
 
       service.syncFromBackend().subscribe();
       expect(service.hasCondominium).toBe(false);
-      expect(service.role).toBeNull();
+      expect(service.isProvider).toBe(false);
     });
 
     it('should fetch condominium when user has condominiumId but no local address', () => {
       userApiSpy.getMe.mockReturnValue(
-        of({ ...mockProfile, condominiumId: 'condo1', roleInCondominium: 'provider' }),
+        of({ ...mockProfile, condominiumId: 'condo1', isProvider: true }),
       );
 
       service.syncFromBackend().subscribe();
 
       expect(condominiumApiSpy.findOne).toHaveBeenCalledWith('condo1');
       expect(service.hasCondominium).toBe(true);
-      expect(service.role).toBe('provider');
+      expect(service.isProvider).toBe(true);
     });
 
     it('should not fetch condominium when local address already exists', () => {
       service.saveLocalCondominiumAddress(mockAddress, 'condo1');
 
       userApiSpy.getMe.mockReturnValue(
-        of({ ...mockProfile, condominiumId: 'condo1', roleInCondominium: 'provider' }),
+        of({ ...mockProfile, condominiumId: 'condo1', isProvider: true }),
       );
 
       service.syncFromBackend().subscribe();
@@ -180,23 +194,47 @@ describe('OnboardingService', () => {
 
   describe('clear', () => {
     it('should reset profile to empty state', () => {
-      service['persist']({ ...service.profile, role: 'provider' });
-      expect(service.role).toBe('provider');
+      service['persist']({
+        condominiumId: 'condo1',
+        condominiumAddress: mockAddress,
+        isProvider: true,
+        onboardingCompleted: true,
+      });
+      expect(service.isProvider).toBe(true);
 
       service.clear();
-      expect(service.role).toBeNull();
+      expect(service.isProvider).toBe(false);
       expect(service.isOnboardingComplete).toBe(false);
     });
   });
 
   describe('isOnboardingComplete', () => {
-    it('should be false when no condominium address or role', () => {
+    it('should be false when no condominium address', () => {
       expect(service.isOnboardingComplete).toBe(false);
     });
 
-    it('should be false when only address is set', () => {
+    it('should be true when address is set (provider mode is opt-in, not required)', () => {
       service.saveLocalCondominiumAddress(mockAddress, 'condo1');
-      expect(service.isOnboardingComplete).toBe(false);
+      expect(service.isOnboardingComplete).toBe(true);
+    });
+  });
+
+  describe('legacy localStorage migration', () => {
+    it('should derive isProvider from legacy role field in localStorage', () => {
+      localStorage.setItem(
+        'APP_ONBOARDING',
+        JSON.stringify({
+          condominiumId: 'condo1',
+          condominiumAddress: mockAddress,
+          role: 'provider',
+          onboardingCompleted: true,
+        }),
+      );
+
+      // Recriar o serviço para forçar leitura do localStorage
+      const reloaded = TestBed.inject(OnboardingService);
+      const profile = reloaded['loadFromStorage']();
+      expect(profile.isProvider).toBe(true);
     });
   });
 });

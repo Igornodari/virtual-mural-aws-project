@@ -8,35 +8,44 @@
         {{ 'MURAL.CUSTOMER.SCHEDULE_TITLE' | translate }}
       </h4>
 
-      <app-appointment-calendar-picker
-        [availabilitySlots]="availabilitySlots"
-        [blockedSlots]="blockedSlots"
-        (selectionChange)="onCalendarSelectionChange($event)"
-      />
-
-      @if (calendarSelection) {
-        <div class="schedule-summary surface-card d-flex align-items-center gap-10 p-10 rounded">
-          <mat-icon color="primary">event_available</mat-icon>
-          <span>
-            <strong>{{ calendarSelection.date | date:'dd/MM/yyyy' }}</strong>
-            · {{ calendarSelection.day }}
-            · {{ calendarSelection.time }}
-          </span>
+      <!-- Aviso e bloqueio quando o serviço aberto é do próprio usuário.
+           Esconde o calendário/CTA porque a ação não é válida pra ele. -->
+      @if (isOwnService) {
+        <div class="own-service-notice surface-card d-flex align-items-center gap-10 p-10 rounded">
+          <mat-icon>info</mat-icon>
+          <span>{{ 'MURAL.CUSTOMER.OWN_SERVICE_NOTICE' | translate }}</span>
         </div>
+      } @else {
+        <app-appointment-calendar-picker
+          [availabilitySlots]="availabilitySlots"
+          [blockedSlots]="blockedSlots"
+          (selectionChange)="onCalendarSelectionChange($event)"
+        />
 
-        <button
-          mat-raised-button
-          color="accent"
-          class="w-full"
-          [disabled]="isScheduling"
-          (click)="schedule()"
-        >
-          @if (isScheduling) {
-            <mat-spinner diameter="18" />
-          }
-          <mat-icon>event_available</mat-icon>
-          {{ 'MURAL.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
-        </button>
+        @if (calendarSelection) {
+          <div class="schedule-summary surface-card d-flex align-items-center gap-10 p-10 rounded">
+            <mat-icon color="primary">event_available</mat-icon>
+            <span>
+              <strong>{{ calendarSelection.date | date:'dd/MM/yyyy' }}</strong>
+              · {{ calendarSelection.day }}
+              · {{ calendarSelection.time }}
+            </span>
+          </div>
+
+          <button
+            mat-raised-button
+            color="accent"
+            class="w-full"
+            [disabled]="isScheduling"
+            (click)="schedule()"
+          >
+            @if (isScheduling) {
+              <mat-spinner diameter="18" />
+            }
+            <mat-icon>event_available</mat-icon>
+            {{ 'MURAL.CUSTOMER.SCHEDULE_CONFIRM' | translate }}
+          </button>
+        }
       }
     </div>
 

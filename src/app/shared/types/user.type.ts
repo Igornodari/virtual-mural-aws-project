@@ -10,7 +10,7 @@ export interface User {
   avatarUrl: string;
   locale: string;
   address: string;
-  phone:string;
+  phone: string;
   authProvider: 'google' | 'cognito' | 'email-password' | 'unknown';
   cognitoUsername: string;
   providerUserId: string;
@@ -23,8 +23,6 @@ export interface User {
   metadata: Record<string, unknown>;
 }
 
-export type UserRoleInCondo = 'provider' | 'customer';
-
 export interface AppUserProfile {
   id: string;
   cognitoSub: string;
@@ -34,10 +32,13 @@ export interface AppUserProfile {
   avatarUrl?: string;
   condominiumId?: string | null;
   condominium?: Condominium | null;
-  roleInCondominium?: UserRoleInCondo | null;
+  /**
+   * Flag opt-in: indica que o usuário ativou o modo prestador.
+   * Todo usuário autenticado com condomínio é morador por padrão.
+   */
+  isProvider: boolean;
   onboardingCompleted: boolean;
   addressCompleted: boolean;
-  roleCompleted: boolean;
   createdAt: string;
   updatedAt: string;
 }

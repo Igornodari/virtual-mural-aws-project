@@ -116,11 +116,14 @@ export class CondominiumOnboardingComponent extends BaseComponent {
     this.onboardingService.ensureCondominiumRegistration(address).pipe(
       finalize(() => this.setLoadingState(false)),
     ).subscribe({
+      // Após cadastrar o condomínio, todo usuário cai direto no dashboard
+      // de morador. Quem quiser oferecer serviços ativa o modo prestador
+      // pelo perfil.
       next: () => {
-        this.navigateTo(ROUTE_PATHS.onboardingRole);
+        this.navigateTo(ROUTE_PATHS.muralCustomer);
       },
       error: () => {
-        this.navigateTo(ROUTE_PATHS.onboardingRole);
+        this.navigateTo(ROUTE_PATHS.muralCustomer);
       },
     });
   }

@@ -35,6 +35,7 @@ import {
   ReviewApiService,
 } from 'src/app/core/services/review-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import { UserApiService } from 'src/app/core/services/user-api.service';
 import { RatingStarsComponent } from 'src/app/shared/components/rating-stars/rating-stars.component';
 import { isBlockingAppointmentStatus } from 'src/app/shared/utils/appointment-status.util';
 import { CUSTOMER_STARS } from '../../customer.constants';
@@ -70,6 +71,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly reviewApi = inject(ReviewApiService);
+  private readonly userApi = inject(UserApiService);
 
   @Input({ required: true }) service!: ServiceDto;
 
@@ -91,12 +93,39 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   isScheduling = false;
   isReviewing = false;
 
+  /**
+   * Id do usuário autenticado conforme o banco (não confundir com
+   * `AuthService.user.id`, que armazena o Cognito sub). Usamos esse
+   * id pra detectar se o serviço atual pertence ao usuário e bloquear
+   * o agendamento de auto-atendimento.
+   */
+  private currentDbUserId: string | null = null;
+
+  /** Verdadeiro quando o serviço aberto pertence ao usuário autenticado. */
+  get isOwnService(): boolean {
+    return (
+      !!this.currentDbUserId && this.service?.providerId === this.currentDbUserId
+    );
+  }
+
   private activeServiceId: string | null = null;
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.viewDestroyed = true;
     });
+
+    // Carrega o id do usuário no banco uma vez por sessão do componente.
+    // Não usamos AuthService.user.id porque ele é o Cognito sub.
+    this.userApi
+      .getMe()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (me) => {
+          this.currentDbUserId = me?.id ?? null;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
 
@@ -144,6 +173,13 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   const selection = this.calendarSelection;
 
   if (!selection) {
+    return;
+  }
+
+  // Bloqueio defensivo de UI — o backend também rejeita, mas evitamos
+  // a viagem desnecessária e damos feedback imediato no caso raro de o
+  // botão ter sido renderizado antes da resposta de getMe().
+  if (this.isOwnService) {
     return;
   }
 

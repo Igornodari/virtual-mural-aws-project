@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./customer-hero.component.scss'],
 })
 export class CustomerHeroComponent {
-  @Input() condoCity = 'Nao definido';
+  @Input() condoCity:any;
   @Input() totalServices = 0;
   @Input() uniqueProviders = 0;
 }

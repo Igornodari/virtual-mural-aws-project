@@ -11,15 +11,36 @@
     }
     .avatar-icon { font-size: 36px; width: 36px; height: 36px; color: var(--mat-sys-primary); }
     .profile-name { font-size: 22px; font-weight: 800; margin: 0 0 6px; }
-    .role-badge {
+    .role-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .role-tag {
       display: inline-flex; align-items: center; gap: 4px;
       padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
       background: color-mix(in oklab, #0284c7 15%, transparent); color: #0284c7;
     }
-    .role-badge--provider {
+    .role-tag--provider {
       background: color-mix(in oklab, #7c3aed 15%, transparent); color: #7c3aed;
     }
     .role-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Card de ativação/visualização do modo prestador. */
+    .provider-card {
+      border: 1px solid var(--mat-sys-outline-variant);
+    }
+    .provider-card__body {
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .provider-card__icon {
+      font-size: 40px; width: 40px; height: 40px;
+      color: color-mix(in oklab, #7c3aed 80%, var(--mat-sys-on-surface));
+      flex-shrink: 0;
+    }
+    .provider-card__icon--active { color: #16a34a; }
+    .provider-card__text { flex: 1; min-width: 200px; }
+    .provider-card__title { margin: 0 0 4px; font-size: 16px; font-weight: 700; }
+    @media (max-width: 600px) {
+      .provider-card__body { flex-direction: column; align-items: flex-start; }
+      .provider-card__body button { width: 100%; }
+    }
     .profile-tabs { width: 100%; }
     .tab-icon { font-size: 18px; width: 18px; height: 18px; margin-right: 6px; }
     .tab-content { padding: 24px 0; }

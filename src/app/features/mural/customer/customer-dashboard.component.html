@@ -3,7 +3,7 @@
     <app-loading-state [diameter]="48" />
   } @else {
     <app-customer-hero
-      [condoCity]="condoCity"
+      [condoCity]="condoCity | async"
       [totalServices]="totalServices"
       [uniqueProviders]="uniqueProviders"
     />

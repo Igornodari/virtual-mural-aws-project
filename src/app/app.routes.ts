@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
+import { providerGuard } from './core/guards/provider.guard';
 
 import { BlankComponent } from './layout/blank/blank.component';
 import { FullComponent } from './layout/full/full.component';
@@ -77,7 +78,9 @@ export const routes: Routes = [
     children: [
       {
         path: ROUTE_PATHS.muralProvider.slice(1),
-        canActivate: [onboardingGuard],
+        // Sequência: onboardingGuard verifica vínculo com condomínio;
+        // providerGuard verifica se o modo prestador foi ativado.
+        canActivate: [onboardingGuard, providerGuard],
         loadComponent: () =>
           import('./features/mural/provider/provider-dashboard.component').then(
             (m) => m.ProviderDashboardComponent,
@@ -126,13 +129,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/onboarding/condominium/condominium-onboarding.component').then(
             (m) => m.CondominiumOnboardingComponent,
-          ),
-      },
-      {
-        path: ROUTE_PATHS.onboardingRole.slice(1),
-        loadComponent: () =>
-          import('./features/onboarding/role/role-onboarding.component').then(
-            (m) => m.RoleOnboardingComponent,
           ),
       },
     ],

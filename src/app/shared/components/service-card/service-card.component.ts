@@ -1,26 +1,14 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
 import { ServiceDto } from 'src/app/core/services/service-api.service';
 import { CategoryLabelPipe } from 'src/app/shared/pipes/category-label.pipe';
+import { importBase } from '../../constant/import-base.constant';
 
 @Component({
   selector: 'app-service-card',
   standalone: true,
   imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatTooltipModule,
-    TranslateModule,
-    CategoryLabelPipe,
+    importBase,
+    CategoryLabelPipe
   ],
   templateUrl: './service-card.component.html',
   styleUrls: ['./service-card.component.scss']

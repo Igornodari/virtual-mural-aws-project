@@ -16,7 +16,9 @@
     <!-- Título + preço destacado -->
     <div class="service-card__heading d-flex justify-content-between align-items-start gap-10">
       <h3 class="service-title m-0">{{ service.name }}</h3>
-      <span class="service-price">{{ service.price }}</span>
+      <span class="service-price">
+        R$ {{ service.price | mask:'separator.2': { thousandSeparator: '.', decimalMarker: ',' } }}
+      </span>
     </div>
 
     <!-- Descrição -->
@@ -27,85 +29,60 @@
     <!-- Contato -->
     <div class="service-meta d-flex align-items-center gap-5">
       <mat-icon class="meta-icon">call</mat-icon>
-      <span class="service-contact">{{ service.contact }}</span>
+      <span class="service-contact">
+        {{ service.contact | mask:'(00) 00000-0000' }}
+      </span>
     </div>
 
     <!-- Dias Disponíveis -->
     <div class="chips-row d-flex flex-wrap gap-5">
       @if (isProvider) {
-        @for (day of service.availableDays; track day) {
-          <mat-chip>{{ day }}</mat-chip>
-        }
+      @for (day of service.availableDays; track day) {
+      <mat-chip>{{ day }}</mat-chip>
+      }
       } @else {
-        @for (day of service.availableDays.slice(0, 3); track day) {
-          <span class="day-badge">{{ day }}</span>
-        }
-        @if (service.availableDays.length > 3) {
-          <span class="day-badge day-badge--more">
-            +{{ service.availableDays.length - 3 }}
-          </span>
-        }
+      @for (day of service.availableDays.slice(0, 3); track day) {
+      <span class="day-badge">{{ day }}</span>
+      }
+      @if (service.availableDays.length > 3) {
+      <span class="day-badge day-badge--more">
+        +{{ service.availableDays.length - 3 }}
+      </span>
+      }
       }
     </div>
 
     <!-- Footer: Ações específicas por perfil -->
     <div class="service-card__footer d-flex justify-content-between align-items-center flex-wrap gap-10">
       @if (isProvider) {
-        <button
-          mat-button
-          type="button"
-          class="analytics-trigger"
-          (click)="viewAnalytics.emit(service)"
-        >
-          <mat-icon>bar_chart</mat-icon>
-          {{ 'MURAL.ANALYTICS.VIEW_ANALYTICS' | translate }}
+      <button mat-button type="button" class="analytics-trigger" (click)="viewAnalytics.emit(service)">
+        <mat-icon>bar_chart</mat-icon>
+        {{ 'MURAL.ANALYTICS.VIEW_ANALYTICS' | translate }}
+      </button>
+
+      <div class="service-actions d-flex align-items-center gap-5">
+        <button mat-icon-button color="primary" type="button" (click)="edit.emit(service)"
+          [matTooltip]="'COMMON.ACTIONS.EDIT' | translate">
+          <mat-icon>edit</mat-icon>
         </button>
 
-        <div class="service-actions d-flex align-items-center gap-5">
-          <button
-            mat-icon-button
-            color="primary"
-            type="button"
-            (click)="edit.emit(service)"
-            [matTooltip]="'COMMON.ACTIONS.EDIT' | translate"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            color="warn"
-            type="button"
-            (click)="remove.emit(service.id)"
-            [matTooltip]="'COMMON.ACTIONS.REMOVE' | translate"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
+        <button mat-icon-button color="warn" type="button" (click)="remove.emit(service.id)"
+          [matTooltip]="'COMMON.ACTIONS.REMOVE' | translate">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
       } @else {
-        <button
-          mat-stroked-button
-          color="primary"
-          class="flex-1"
-          type="button"
-          (click)="contact.emit(service)"
-        >
-          <mat-icon>whatsapp</mat-icon>
-          {{ 'MURAL.CUSTOMER.CONTACT' | translate }}
-        </button>
+      <button mat-stroked-button color="primary" class="flex-1" type="button" (click)="contact.emit(service)">
+        <mat-icon>whatsapp</mat-icon>
+        {{ 'MURAL.CUSTOMER.CONTACT' | translate }}
+      </button>
 
-        <button
-          mat-raised-button
-          color="primary"
-          class="flex-1"
-          type="button"
-          (click)="toggleExpand.emit()"
-        >
-          <mat-icon>
-            {{ expanded ? 'expand_less' : 'event_available' }}
-          </mat-icon>
-          {{ 'MURAL.CUSTOMER.SCHEDULE' | translate }}
-        </button>
+      <button mat-raised-button color="primary" class="flex-1" type="button" (click)="toggleExpand.emit()">
+        <mat-icon>
+          {{ expanded ? 'expand_less' : 'event_available' }}
+        </mat-icon>
+        {{ 'MURAL.CUSTOMER.SCHEDULE' | translate }}
+      </button>
       }
     </div>
   </mat-card-content>
