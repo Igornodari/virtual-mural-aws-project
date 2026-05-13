@@ -3,7 +3,7 @@
     <app-loading-state [diameter]="48" />
   } @else {
     <app-customer-hero
-      [condoCity]="condoCity"
+      [condoCity]="condoCity | async"
       [totalServices]="totalServices"
       [uniqueProviders]="uniqueProviders"
     />
@@ -30,27 +30,11 @@
         @for (service of visibleServices; track service.id) {
           <app-service-card
             [service]="service"
-            [expanded]="expandedId === service.id"
-            (toggleExpand)="toggleExpand(service)"
+            (toggleExpand)="openServiceDetails(service)"
             (contact)="contactWhatsApp($event)"
           />
-
-          @if (expandedId === service.id) {
-            <app-customer-service-details
-              [service]="service"
-              (appointmentCreated)="addAppointment($event)"
-              (serviceUpdated)="replaceService($event)"
-            />
-          }
         }
       </section>
     }
-
-    <app-customer-appointments
-      [appointments]="appointments"
-      [isLoading]="false"
-      [payingAppointmentId]="isPayingAppointment"
-      (pay)="payAppointment($event)"
-    />
   }
 </div>

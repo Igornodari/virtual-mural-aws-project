@@ -1,19 +1,45 @@
-import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom, ErrorHandler } from '@angular/core';
-import { ThemeService } from './core/services/theme.service';
-import { GlobalErrorHandler } from './handler/global-error.handler';
-import { HttpClient, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  LOCALE_ID,
+  importProvidersFrom,
+  ErrorHandler,
+} from '@angular/core';
+
 import { registerLocaleData } from '@angular/common';
 import localePtBr from '@angular/common/locales/pt';
 import localePtBrExtra from '@angular/common/locales/extra/pt';
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+
+import {
+  HttpClient,
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
+
+import { provideRouter } from '@angular/router';
+
+import {
+  TranslateLoader,
+  TranslateModule,
+  TranslateService,
+} from '@ngx-translate/core';
+
 import { firstValueFrom } from 'rxjs';
+
 import { routes } from './app.routes';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { errorInterceptor } from './core/interceptors/error.interceptor';
-import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+
+import { ThemeService } from './core/services/theme.service';
+import { GlobalErrorHandler } from './core/handlers/global-error.handler';
+
+import { authInterceptor } from './core/interceptors/auth/auth.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading/loading.interceptor';
+import { errorInterceptor } from './core/interceptors/errors/error.interceptor';
+
 import { AppTranslateLoader } from './shared/helpers/translate-loader.helper';
+import { responseFeedbackInterceptor } from './core/interceptors/response/response-feedback.interceptor';
+import { requestInterceptor } from './core/interceptors/request/request.interceptor';
+import { provideEnvironmentNgxMask } from 'ngx-mask';
 
 registerLocaleData(localePtBr, 'pt-BR', localePtBrExtra);
 
@@ -35,7 +61,8 @@ const initializeLanguage = (translate: TranslateService) => () => {
   translate.addLangs(['pt', 'en']);
   translate.setDefaultLang('pt');
 
-  let storedLang = null;
+  let storedLang: string | null = null;
+
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
       storedLang = window.localStorage.getItem('LANGUAGE');
@@ -45,11 +72,13 @@ const initializeLanguage = (translate: TranslateService) => () => {
   }
 
   const browserLang = translate.getBrowserLang();
-  const selected = storedLang === 'en' || storedLang === 'pt'
-    ? storedLang
-    : browserLang === 'en'
-      ? 'en'
-      : 'pt';
+
+  const selected =
+    storedLang === 'en' || storedLang === 'pt'
+      ? storedLang
+      : browserLang === 'en'
+        ? 'en'
+        : 'pt';
 
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -61,28 +90,42 @@ const initializeLanguage = (translate: TranslateService) => () => {
 
   return firstValueFrom(translate.use(selected));
 };
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideAnimations(),
-    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor, authInterceptor, errorInterceptor])),
+    provideEnvironmentNgxMask(),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([
+        loadingInterceptor,
+        requestInterceptor,
+        authInterceptor,
+        responseFeedbackInterceptor,
+        errorInterceptor,
+      ]),
+    ),
+
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
+
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandler,
     },
+
     {
       provide: LOCALE_ID,
       useValue: 'pt-BR',
     },
+
     {
       provide: APP_INITIALIZER,
       useFactory: initializeLanguage,
       deps: [TranslateService],
       multi: true,
     },
+
     {
-      // Inicializa o ThemeService para aplicar o tema salvo antes da primeira renderização
       provide: APP_INITIALIZER,
       useFactory: (themeService: ThemeService) => () => themeService.theme(),
       deps: [ThemeService],

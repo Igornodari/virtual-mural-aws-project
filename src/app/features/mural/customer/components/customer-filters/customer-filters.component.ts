@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { CUSTOMER_ALL_CATEGORY } from '../../customer.constants';
+import { CategoryLabelPipe } from 'src/app/shared/pipes/category-label.pipe';
 
 @Component({
   selector: 'app-customer-filters',
@@ -19,6 +20,7 @@ import { CUSTOMER_ALL_CATEGORY } from '../../customer.constants';
     MatIconModule,
     MatInputModule,
     TranslateModule,
+    CategoryLabelPipe,
   ],
   templateUrl: './customer-filters.component.html',
   styleUrls: ['./customer-filters.component.scss'],

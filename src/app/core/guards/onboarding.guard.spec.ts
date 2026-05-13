@@ -81,16 +81,15 @@ describe('onboardingGuard', () => {
     expect(tree.toString()).toBe(ROUTE_PATHS.onboardingCondominium);
   });
 
-  it('should redirect to onboarding role when condominium is set but role is missing', async () => {
+  it('should allow access once condominium is set, regardless of provider mode', async () => {
     authServiceSpy.isAuthenticated.mockResolvedValue(true);
-    onboardingServiceSpy.resolveNextRoute.mockReturnValue(ROUTE_PATHS.onboardingRole);
+    onboardingServiceSpy.resolveNextRoute.mockReturnValue(ROUTE_PATHS.muralCustomer);
 
     const result = await TestBed.runInInjectionContext(() =>
       onboardingGuard({} as any, {} as any),
     );
 
-    const tree = result as UrlTree;
-    expect(tree.toString()).toBe(ROUTE_PATHS.onboardingRole);
+    expect(result).toBe(true);
   });
 
   it('should call syncFromBackend before resolving route', async () => {

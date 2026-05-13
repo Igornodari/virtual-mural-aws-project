@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
-import { CondominiumAddress, OnboardingProfile, UserRole } from '../../shared/types';
-import { getDashboardRouteByRole, ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
+import { CondominiumAddress, OnboardingProfile } from '../../shared/types';
+import { getDefaultMuralRoute, ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 import {
   CondominiumApiService,
   CondominiumDto,
@@ -13,7 +13,7 @@ const STORAGE_KEY = 'APP_ONBOARDING';
 const EMPTY_ONBOARDING_PROFILE: OnboardingProfile = {
   condominiumId: null,
   condominiumAddress: null,
-  role: null,
+  isProvider: false,
   onboardingCompleted: false,
 };
 
@@ -32,25 +32,20 @@ export class OnboardingService {
     return this.profileSubject.value;
   }
 
+  /**
+   * O onboarding considera apenas o vínculo com um condomínio.
+   * Tornar-se prestador é opt-in pós-onboarding (não trava o app).
+   */
   get isOnboardingComplete(): boolean {
-    const profile = this.profile;
-    return !!(profile.condominiumAddress && profile.role && profile.onboardingCompleted);
+    return !!(this.profile.condominiumAddress && this.profile.onboardingCompleted);
   }
 
   get hasCondominium(): boolean {
     return !!this.profile.condominiumId;
   }
 
-  get hasRole(): boolean {
-    return !!this.profile.role;
-  }
-
-  get role(): UserRole | null {
-    return this.profile.role;
-  }
-
-  resolveDashboardRoute(role: UserRole | null = this.profile.role): string {
-    return getDashboardRouteByRole(role);
+  get isProvider(): boolean {
+    return this.profile.isProvider;
   }
 
   resolveNextRoute(): string {
@@ -58,11 +53,9 @@ export class OnboardingService {
       return ROUTE_PATHS.onboardingCondominium;
     }
 
-    if (!this.hasRole) {
-      return ROUTE_PATHS.onboardingRole;
-    }
-
-    return this.resolveDashboardRoute();
+    // Todos caem no dashboard de morador por padrão. Prestadores acessam
+    // a área de prestador via toggle/menu.
+    return getDefaultMuralRoute();
   }
 
   syncFromBackend(): Observable<AppUserProfileDto> {
@@ -108,7 +101,7 @@ export class OnboardingService {
           ...this.profile,
           condominiumId,
           condominiumAddress: address,
-          onboardingCompleted: !!(address && this.profile.role),
+          onboardingCompleted: !!address,
         });
 
         if (condominiumId) {
@@ -159,7 +152,7 @@ export class OnboardingService {
           ...this.profile,
           condominiumId: condominium.id,
           condominiumAddress: address,
-          onboardingCompleted: !!(address && this.profile.role),
+          onboardingCompleted: !!address,
         });
 
         this.userApi
@@ -175,14 +168,44 @@ export class OnboardingService {
     );
   }
 
-  saveRole(role: UserRole): Observable<unknown> {
-    this.persist({
-      ...this.profile,
-      role,
-      onboardingCompleted: !!(this.profile.condominiumAddress && role),
-    });
+  /**
+   * Ativa o modo prestador para o usuário. Idempotente.
+   * Após o sucesso, o caller normalmente navega para /mural/provider,
+   * onde o fluxo do Stripe Connect é apresentado se ainda não estiver
+   * configurado.
+   */
+  activateProvider(): Observable<AppUserProfileDto | null> {
+    this.persist({ ...this.profile, isProvider: true });
 
-    return this.userApi.updateOnboarding({ roleInCondominium: role }).pipe(
+    return this.userApi.becomeProvider(true).pipe(
+      tap((user) => {
+        this.persist({
+          ...this.profile,
+          isProvider: user?.isProvider ?? true,
+        });
+      }),
+      catchError((error) => {
+        // Em caso de falha, reverte o estado local
+        this.persist({ ...this.profile, isProvider: false });
+        this.errorHandler.handleError(error);
+        return of(null);
+      }),
+    );
+  }
+
+  /**
+   * Desativa o modo prestador. Idempotente.
+   * A regra de negócio (não permitir desativar se houver serviços ativos
+   * ou agendamentos pendentes) é aplicada no backend.
+   */
+  deactivateProvider(): Observable<AppUserProfileDto | null> {
+    return this.userApi.becomeProvider(false).pipe(
+      tap((user) => {
+        this.persist({
+          ...this.profile,
+          isProvider: user?.isProvider ?? false,
+        });
+      }),
       catchError((error) => {
         this.errorHandler.handleError(error);
         return of(null);
@@ -198,7 +221,7 @@ export class OnboardingService {
       ...this.profile,
       condominiumId,
       condominiumAddress: address,
-      onboardingCompleted: !!(address && this.profile.role),
+      onboardingCompleted: !!address,
     });
   }
 
@@ -226,7 +249,7 @@ export class OnboardingService {
         : user.condominiumId
           ? this.profile.condominiumAddress
           : null,
-      role: user.roleInCondominium as UserRole | null,
+      isProvider: user.isProvider,
       onboardingCompleted: user.onboardingCompleted,
     };
   }
@@ -248,7 +271,22 @@ export class OnboardingService {
       if (typeof window !== 'undefined' && window.localStorage) {
         const raw = window.localStorage.getItem(STORAGE_KEY);
         if (raw) {
-          return JSON.parse(raw) as OnboardingProfile;
+          const parsed = JSON.parse(raw) as Partial<OnboardingProfile> & {
+            // Compatibilidade com profile antigo que tinha role: 'provider' | 'customer'
+            role?: 'provider' | 'customer' | null;
+          };
+          // Migração transparente do localStorage: se vier o campo `role`
+          // antigo, deriva `isProvider` a partir dele.
+          const isProvider =
+            typeof parsed.isProvider === 'boolean'
+              ? parsed.isProvider
+              : parsed.role === 'provider';
+          return {
+            condominiumId: parsed.condominiumId ?? null,
+            condominiumAddress: parsed.condominiumAddress ?? null,
+            isProvider,
+            onboardingCompleted: parsed.onboardingCompleted ?? false,
+          };
         }
       }
     } catch {

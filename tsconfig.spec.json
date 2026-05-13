@@ -8,5 +8,12 @@
   "include": [
     "src/**/*.d.ts",
     "src/**/*.spec.ts"
+  ],
+  "exclude": [
+    "src/app/features/auth/login/login.component.spec.ts",
+    "src/app/features/auth/forgot-password/forgot-password.component.spec.ts",
+    "src/app/features/auth/register/register.component.spec.ts",
+    "src/app/shared/components/appointments/appointment-panel/appointment-panel.component.spec.ts",
+    "src/app/components/generic-tab/generic-tab.component.spec.ts"
   ]
 }

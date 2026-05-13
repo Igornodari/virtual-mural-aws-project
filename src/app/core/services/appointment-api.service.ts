@@ -13,6 +13,17 @@ export type AppointmentStatus =
 export type PaymentMethod = 'pix' | 'credit_card';
 export type PaymentStatus = 'pending' | 'processing' | 'paid' | 'failed';
 
+/**
+ * Em respostas de `findMine`, o backend informa em qual papel o usuário
+ * autenticado se relaciona com o agendamento. Permite classificar cada
+ * item nas abas "Como morador" / "Como prestador" sem precisar comparar
+ * IDs no frontend (que poderiam vir de fontes distintas — Cognito sub
+ * vs. id do banco — e gerar bugs sutis de categorização).
+ *
+ * Vem `undefined` em endpoints que não fazem essa marcação.
+ */
+export type AppointmentViewerRole = 'customer' | 'provider';
+
 export interface AppointmentDto {
   id: string;
   serviceId: string;
@@ -29,9 +40,12 @@ export interface AppointmentDto {
     name: string;
     price: string;
     contact: string;
-    provider?: { displayName: string };
+    providerId?: string;
+    provider?: { id?: string; displayName: string };
   };
   customer?: { displayName: string; phone?: string };
+  /** Presente apenas nas respostas de findMine. */
+  viewerRole?: AppointmentViewerRole;
   createdAt: string;
   updatedAt: string;
 }
@@ -105,6 +119,18 @@ export class AppointmentApiService {
     return this.request.post<AppointmentDto, { checkoutSessionId: string }>(
       '/appointments/verify-payment',
       { checkoutSessionId },
+    );
+  }
+
+  /**
+   * Cancela o agendamento como morador. Permitido apenas quando o
+   * status é `pending` ou `awaiting_payment` (antes do pagamento ser
+   * efetivado). Depois de pago, o backend retornará 400.
+   */
+  cancelByCustomer(id: string): Observable<AppointmentDto> {
+    return this.request.patchPath<AppointmentDto, Record<string, never>>(
+      `/appointments/${id}/cancel`,
+      {},
     );
   }
 }

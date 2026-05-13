@@ -1,9 +1,13 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
   Input,
   OnChanges,
   Output,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -20,14 +24,15 @@ import {
 } from '../../types/availability.types';
 
 export interface CalendarSelection {
-  date: string;      // YYYY-MM-DD
-  day: string;       // 'Segunda-feira'
-  time: string;      // 'HH:mm'
+  date: string; // YYYY-MM-DD
+  day: string; // 'Segunda-feira'
+  time: string; // 'HH:mm'
 }
 
 @Component({
   selector: 'app-appointment-calendar-picker',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     MatDatepickerModule,
@@ -38,7 +43,6 @@ export interface CalendarSelection {
   ],
   template: `
     <div class="calendar-picker d-flex flex-col gap-20">
-      <!-- Calendário inline -->
       <div class="calendar-wrapper">
         <mat-calendar
           [minDate]="minDate"
@@ -48,13 +52,19 @@ export interface CalendarSelection {
         />
       </div>
 
-      <!-- Seleção de horário -->
       @if (selectedDate && timeSlots.length > 0) {
         <div class="time-slots-section d-flex flex-col gap-10">
           <p class="time-slots-label d-flex align-items-center gap-5 m-0">
-            <mat-icon class="text-primary" style="font-size:18px;width:18px;height:18px;">schedule</mat-icon>
+            <mat-icon
+              class="text-primary"
+              style="font-size:18px;width:18px;height:18px;"
+            >
+              schedule
+            </mat-icon>
+
             {{ 'MURAL.SCHEDULE.SELECT_TIME' | translate }}
-            <strong>{{ selectedDate | date:'dd/MM' }}</strong>
+
+            <strong>{{ selectedDate | date: 'dd/MM' }}</strong>
           </p>
 
           <div class="time-slots-grid">
@@ -79,161 +89,239 @@ export interface CalendarSelection {
       }
     </div>
   `,
-  styles: [`
-    .calendar-wrapper {
-      display: flex;
-      justify-content: center;
+  styles: [
+    `
+      .calendar-wrapper {
+        display: flex;
+        justify-content: center;
 
-      mat-calendar {
-        width: 100%;
-        max-width: 360px;
+        mat-calendar {
+          width: 100%;
+          max-width: 360px;
+        }
       }
-    }
 
-    .time-slots-label {
-      font-size: 14px;
-      color: var(--mat-sys-on-surface-variant, #666);
-    }
+      .time-slots-label {
+        font-size: 14px;
+        color: var(--mat-sys-on-surface-variant, #666);
+      }
 
-    .time-slots-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+      .time-slots-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
 
-    .time-slot-btn {
-      padding: 6px 14px;
-      border: 1.5px solid var(--mat-sys-outline-variant, #ccc);
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      background: transparent;
-      color: var(--mat-sys-on-surface, #111);
-      cursor: pointer;
-      transition: all 0.15s;
+      .time-slot-btn {
+        padding: 6px 14px;
+        border: 1.5px solid var(--mat-sys-outline-variant, #ccc);
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        background: transparent;
+        color: var(--mat-sys-on-surface, #111);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
 
-      &:hover {
+      .time-slot-btn:hover {
         border-color: var(--mat-sys-primary, #e8541e);
         color: var(--mat-sys-primary, #e8541e);
         background: var(--mat-sys-surface-variant, #fff3ee);
       }
 
-      &--active {
+      .time-slot-btn--active {
         background: var(--mat-sys-primary, #e8541e);
         border-color: var(--mat-sys-primary, #e8541e);
         color: #fff;
       }
-    }
-  `],
+    `,
+  ],
 })
 export class AppointmentCalendarPickerComponent implements OnChanges {
-  /** Slots de disponibilidade do prestador */
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+
   @Input() availabilitySlots: AvailabilitySlot[] = [];
 
-  /**
-   * Slots bloqueados por agendamentos confirmados.
-   * time=null → dia inteiro bloqueado (legado); time='HH:mm' → horário específico bloqueado.
-   */
   @Input() blockedSlots: { date: string; time: string | null }[] = [];
 
-  /** Emite a seleção completa quando data + horário estão escolhidos */
   @Output() selectionChange = new EventEmitter<CalendarSelection>();
 
-  readonly minDate = new Date(new Date().setDate(new Date().getDate() + 1));
+  readonly minDate = this.getTomorrow();
 
   selectedDate: Date | null = null;
   selectedTime: string | null = null;
   timeSlots: string[] = [];
 
-  ngOnChanges(): void {
-    // Reavalia quando os inputs mudam
-    if (this.selectedDate) {
-      this.buildTimeSlots(this.selectedDate);
-    }
+  private viewDestroyed = false;
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.viewDestroyed = true;
+    });
   }
 
-  /** Filtra datas disponíveis no mat-calendar */
+  ngOnChanges(): void {
+    if (!this.selectedDate) {
+      return;
+    }
+
+    this.deferStateChange(() => {
+      if (!this.selectedDate) {
+        return;
+      }
+
+      if (!this.dateFilter(this.selectedDate)) {
+        this.selectedDate = null;
+        this.selectedTime = null;
+        this.timeSlots = [];
+        return;
+      }
+
+      this.buildTimeSlots(this.selectedDate);
+
+      if (this.selectedTime && !this.timeSlots.includes(this.selectedTime)) {
+        this.selectedTime = null;
+      }
+    });
+  }
+
   dateFilter = (date: Date | null): boolean => {
-    if (!date) return false;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (date <= today) return false;
-
-    const dayName = WEEKDAY_NAME_BY_JS_INDEX[date.getDay()];
-    const hasSlot = this.availabilitySlots.some((s) => s.day === dayName);
-    if (!hasSlot) return false;
-
-    const dateStr = formatDateToISO(date);
-
-    // Dia inteiro bloqueado (agendamento legado sem horário)
-    if (this.blockedSlots.some((s) => s.date === dateStr && s.time === null)) {
+    if (!date) {
       return false;
     }
 
-    // Todos os horários do dia estão ocupados
-    const daySlot = this.availabilitySlots.find((s) => s.day === dayName);
-    if (daySlot) {
-      const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
-      const bookedTimesForDay = this.blockedSlots
-        .filter((s) => s.date === dateStr && s.time !== null)
-        .map((s) => s.time as string);
-      if (allTimes.length > 0 && allTimes.every((t) => bookedTimesForDay.includes(t))) {
-        return false;
-      }
+    const normalizedDate = this.normalizeDate(date);
+    const today = this.normalizeDate(new Date());
+
+    if (normalizedDate <= today) {
+      return false;
     }
 
-    return true;
+    const dayName = WEEKDAY_NAME_BY_JS_INDEX[normalizedDate.getDay()];
+
+    const daySlot = this.availabilitySlots.find((slot) => slot.day === dayName);
+
+    if (!daySlot) {
+      return false;
+    }
+
+    const dateStr = formatDateToISO(normalizedDate);
+
+    const isFullDayBlocked = this.blockedSlots.some(
+      (slot) => slot.date === dateStr && slot.time === null,
+    );
+
+    if (isFullDayBlocked) {
+      return false;
+    }
+
+    const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
+
+    if (!allTimes.length) {
+      return false;
+    }
+
+    const bookedTimesForDay = this.getBookedTimesForDay(dateStr);
+
+    return allTimes.some((time) => !bookedTimesForDay.includes(time));
   };
 
   onDateSelected(date: Date | null): void {
-    if (!date) return;
+    if (!date) {
+      return;
+    }
 
-    this.selectedDate = date;
-    this.selectedTime = null;
-    this.buildTimeSlots(date);
+    this.deferStateChange(() => {
+      const normalizedDate = this.normalizeDate(date);
+
+      this.selectedDate = normalizedDate;
+      this.selectedTime = null;
+      this.buildTimeSlots(normalizedDate);
+    });
   }
 
   selectTime(time: string): void {
-    this.selectedTime = time;
-    this.emitSelection();
+    if (!this.selectedDate) {
+      return;
+    }
+
+    if (!this.timeSlots.includes(time)) {
+      return;
+    }
+
+    this.deferStateChange(() => {
+      this.selectedTime = time;
+      this.emitSelection();
+    });
   }
 
-  /** Constrói a lista de horários disponíveis para a data selecionada. */
   private buildTimeSlots(date: Date): void {
-    const dayName = WEEKDAY_NAME_BY_JS_INDEX[date.getDay()];
-    const daySlot = this.availabilitySlots.find((s) => s.day === dayName);
+    const normalizedDate = this.normalizeDate(date);
+    const dayName = WEEKDAY_NAME_BY_JS_INDEX[normalizedDate.getDay()];
+
+    const daySlot = this.availabilitySlots.find((slot) => slot.day === dayName);
 
     if (!daySlot) {
       this.timeSlots = [];
       return;
     }
 
-    const dateStr = formatDateToISO(date);
+    const dateStr = formatDateToISO(normalizedDate);
     const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
-    const bookedTimesForDay = this.blockedSlots
-      .filter((s) => s.date === dateStr && s.time !== null)
-      .map((s) => s.time as string);
+    const bookedTimesForDay = this.getBookedTimesForDay(dateStr);
 
-    this.timeSlots = allTimes.filter((t) => !bookedTimesForDay.includes(t));
+    this.timeSlots = allTimes.filter(
+      (time) => !bookedTimesForDay.includes(time),
+    );
 
-    // Se o horário previamente selecionado não está mais disponível, limpa.
     if (this.selectedTime && !this.timeSlots.includes(this.selectedTime)) {
       this.selectedTime = null;
     }
   }
 
-  /** Emite a seleção completa apenas quando data e horário estão definidos. */
   private emitSelection(): void {
     if (!this.selectedDate || !this.selectedTime) {
       return;
     }
 
     const dayName = WEEKDAY_NAME_BY_JS_INDEX[this.selectedDate.getDay()];
+
     this.selectionChange.emit({
       date: formatDateToISO(this.selectedDate),
       day: dayName,
       time: this.selectedTime,
+    });
+  }
+
+  private getBookedTimesForDay(dateStr: string): string[] {
+    return this.blockedSlots
+      .filter((slot) => slot.date === dateStr && slot.time !== null)
+      .map((slot) => slot.time as string);
+  }
+
+  private normalizeDate(date: Date): Date {
+    const normalized = new Date(date);
+    normalized.setHours(0, 0, 0, 0);
+    return normalized;
+  }
+
+  private getTomorrow(): Date {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow;
+  }
+
+  private deferStateChange(callback: () => void): void {
+    queueMicrotask(() => {
+      if (this.viewDestroyed) {
+        return;
+      }
+
+      callback();
+      this.cdr.detectChanges();
     });
   }
 }

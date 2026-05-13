@@ -1,0 +1,174 @@
+<section class="appointments-panel surface-card">
+  <div class="appointments-panel__header">
+    <div>
+      <h2 class="section-title-lg m-0">
+        @if (role === 'provider') {
+          Agendamentos recebidos
+        } @else {
+          Meus agendamentos
+        }
+      </h2>
+
+      <p class="text-muted m-0">
+        @if (role === 'provider') {
+          Gerencie as solicitações dos moradores.
+        } @else {
+          Acompanhe seus horários solicitados.
+        }
+      </p>
+    </div>
+
+    <div class="appointments-panel__actions">
+      @if (isLoading) {
+        <mat-spinner diameter="24" />
+      }
+
+      @if (role === 'provider') {
+        <button
+          mat-icon-button
+          [color]="viewMode === 'kanban' ? 'primary' : undefined"
+          type="button"
+          matTooltip="Kanban"
+          (click)="setViewMode('kanban')"
+        >
+          <mat-icon>view_kanban</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          [color]="viewMode === 'list' ? 'primary' : undefined"
+          type="button"
+          matTooltip="Lista"
+          (click)="setViewMode('list')"
+        >
+          <mat-icon>list</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <app-loading-state />
+  } @else if (!appointments.length) {
+    <app-empty-state
+      icon="event_busy"
+      title="Nenhum agendamento encontrado"
+      message="Quando houver solicitações, elas aparecerão aqui."
+    />
+  } @else if (role === 'provider' && viewMode === 'kanban') {
+    <app-appointment-kanban
+      [appointments]="appointments"
+      [updatingId]="updatingSignal"
+      (statusChange)="statusChange.emit($event)"
+    />
+  } @else {
+    <div class="appointments-list">
+      @for (appointment of appointments; track appointment.id) {
+        <mat-card class="appointment-card surface-card">
+          <mat-card-content class="appointment-card__content">
+            <div class="appointment-card__main">
+              <div class="appointment-card__info">
+                <strong>{{ appointment.service?.name || 'Serviço' }}</strong>
+
+                @if (role === 'provider') {
+                  <span class="text-muted">
+                    {{ appointment.customer?.displayName || 'Cliente' }}
+                  </span>
+                }
+
+                <span class="text-muted">
+                  {{ appointment.scheduledDay }} —
+                  {{ appointment.scheduledDate | date: 'dd/MM/yyyy' }}
+
+                  @if (appointment.scheduledTime) {
+                    · {{ appointment.scheduledTime }}
+                  }
+                </span>
+
+                @if (appointment.notes) {
+                  <p class="text-muted m-0">{{ appointment.notes }}</p>
+                }
+              </div>
+
+              <app-status-badge [status]="appointment.status" />
+            </div>
+
+            <div class="appointment-card__actions">
+              @if (role === 'customer') {
+                @if (canPay(appointment)) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="button"
+                    [disabled]="payingAppointmentId === appointment.id"
+                    (click)="pay.emit(appointment)"
+                  >
+                    @if (payingAppointmentId === appointment.id) {
+                      <mat-spinner diameter="18" />
+                    }
+                    Pagar no app
+                  </button>
+                }
+
+                @if (canCancelAsCustomer(appointment)) {
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    type="button"
+                    [disabled]="cancellingAppointmentId === appointment.id"
+                    (click)="cancelAsCustomer.emit(appointment)"
+                  >
+                    @if (cancellingAppointmentId === appointment.id) {
+                      <mat-spinner diameter="18" />
+                    } @else {
+                      <mat-icon>close</mat-icon>
+                    }
+                    Cancelar
+                  </button>
+                }
+              }
+
+              @if (role === 'provider') {
+                @if (canConfirm(appointment)) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="button"
+                    [disabled]="updatingAppointmentId === appointment.id"
+                    (click)="statusChange.emit({ appointment, status: 'confirmed' })"
+                  >
+                    Confirmar
+                  </button>
+                }
+
+                @if (canCancelAsProvider(appointment)) {
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    type="button"
+                    [disabled]="updatingAppointmentId === appointment.id"
+                    (click)="statusChange.emit({ appointment, status: 'cancelled' })"
+                  >
+                    Cancelar
+                  </button>
+                }
+
+                @if (canComplete(appointment)) {
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    type="button"
+                    [disabled]="updatingAppointmentId === appointment.id"
+                    (click)="statusChange.emit({ appointment, status: 'completed' })"
+                  >
+                    Concluir
+                  </button>
+                }
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

@@ -3,9 +3,35 @@
   <div class="topbar-brand">
     <mat-icon class="brand-icon">campaign</mat-icon>
     <span class="brand-name">{{ 'LAYOUT.TOPBAR.BRAND' | translate }}</span>
-    <span class="badge" [class]="'badge--' + role">
-      {{ (role === 'provider' ? 'LAYOUT.TOPBAR.ROLE_PROVIDER' : 'LAYOUT.TOPBAR.ROLE_CUSTOMER') | translate }}
-    </span>
+
+    <!-- Toggle de modo: aparece só para quem é prestador. Mostra em
+         qual papel a navegação está acontecendo e permite alternar. -->
+    @if (isProvider) {
+      <div class="mode-toggle" role="tablist" aria-label="{{ 'LAYOUT.TOPBAR.MODE_TOGGLE_ARIA' | translate }}">
+        <button
+          type="button"
+          role="tab"
+          class="mode-toggle__btn"
+          [class.mode-toggle__btn--active]="activeMode === 'customer'"
+          [attr.aria-selected]="activeMode === 'customer'"
+          (click)="switchMode('customer')"
+        >
+          <mat-icon>explore</mat-icon>
+          <span>{{ 'LAYOUT.TOPBAR.MODE_RESIDENT' | translate }}</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="mode-toggle__btn"
+          [class.mode-toggle__btn--active]="activeMode === 'provider'"
+          [attr.aria-selected]="activeMode === 'provider'"
+          (click)="switchMode('provider')"
+        >
+          <mat-icon>handyman</mat-icon>
+          <span>{{ 'LAYOUT.TOPBAR.MODE_PROVIDER' | translate }}</span>
+        </button>
+      </div>
+    }
   </div>
 
   <!-- Ações -->

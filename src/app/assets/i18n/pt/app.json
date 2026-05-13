@@ -1,4 +1,14 @@
 {
+  "CATEGORY": {
+    "CLEANING": "Limpeza",
+    "MAINTENANCE": "Manutenção",
+    "BEAUTY": "Beleza",
+    "TUTORING": "Aulas Particulares",
+    "TECHNOLOGY": "Tecnologia",
+    "PETS": "Pets",
+    "HEALTH": "Saúde",
+    "OTHERS": "Outros"
+  },
   "COMMON": {
     "OR": "ou",
     "ANONYMOUS": "Anônimo",
@@ -151,6 +161,9 @@
       "BRAND": "Mural do Condomínio",
       "ROLE_PROVIDER": "Prestador",
       "ROLE_CUSTOMER": "Morador",
+      "MODE_RESIDENT": "Morador",
+      "MODE_PROVIDER": "Prestador",
+      "MODE_TOGGLE_ARIA": "Alternar entre modo morador e modo prestador",
       "THEME_LIGHT": "Mudar para tema claro",
       "THEME_DARK": "Mudar para tema escuro",
       "MY_PROFILE": "Meu Perfil",
@@ -159,6 +172,8 @@
     },
     "MENU": {
       "DASHBOARD": "Dashboard",
+      "PROVIDER_DASHBOARD": "Meus serviços",
+      "PROVIDER_DASHBOARD_SHORT": "Meus serv.",
       "PROFILE": "Meu Perfil"
     },
     "DASHBOARD": {
@@ -183,27 +198,14 @@
       "NEIGHBORHOOD_REQUIRED": "Informe o bairro.",
       "CITY_REQUIRED": "Informe a cidade.",
       "STATE_REQUIRED": "Selecione o estado."
-    },
-    "ROLE": {
-      "TITLE": "Escolha como você deseja usar o mural",
-      "SUBTITLE": "Defina seu perfil para acessar a experiência ideal dentro do condomínio. Você poderá comprar, contratar, vender ou anunciar serviços para outros moradores.",
-      "PROVIDER": {
-        "TITLE": "Quero anunciar e oferecer serviços",
-        "SUBTITLE": "Ideal para moradores que desejam divulgar serviços ou vender produtos dentro do condomínio.",
-        "F1": "Publique seus serviços ou produtos no mural",
-        "F2": "Ganhe visibilidade entre os moradores",
-        "F3": "Receba contatos e oportunidades com mais facilidade",
-        "F4": "Gerencie seus anúncios em um só lugar"
-      },
-      "CUSTOMER": {
-        "TITLE": "Quero buscar serviços e oportunidades",
-        "SUBTITLE": "Ideal para moradores que desejam encontrar serviços, comprar produtos e acompanhar anúncios do condomínio.",
-        "F1": "Encontre serviços oferecidos por moradores",
-        "F2": "Descubra produtos e oportunidades perto de você",
-        "F3": "Fale com prestadores de forma simples",
-        "F4": "Tenha tudo organizado em um só lugar"
-      }
     }
+  },
+  "PROVIDER_GUARD": {
+    "NEEDS_ACTIVATION": "Ative o modo prestador no seu perfil para acessar essa área."
+  },
+  "APPOINTMENTS_PAGE": {
+    "TAB_AS_CUSTOMER": "Como morador",
+    "TAB_AS_PROVIDER": "Como prestador"
   },
   "MURAL": {
     "PROVIDER": {
@@ -257,6 +259,7 @@
       "SCHEDULE_TITLE": "Agendar horário",
       "SCHEDULE_CONFIRM": "Confirmar agendamento",
       "SCHEDULE_SUCCESS": "Agendamento solicitado com sucesso!",
+      "OWN_SERVICE_NOTICE": "Este é o seu serviço — você não pode agendar nele mesmo. Os agendamentos recebidos aparecem em \"Como prestador\" no menu de agendamentos.",
       "REVIEWS_TITLE": "Avaliações",
       "NO_REVIEWS": "Ainda sem avaliações.",
       "WRITE_REVIEW": "Escrever uma avaliação",
@@ -322,10 +325,25 @@
       "SAVED_SUCCESS": "Endereço atualizado com sucesso!"
     },
     "ROLE": {
-      "PROVIDER": "Prestador de Serviço",
+      "RESIDENT": "Morador",
+      "PROVIDER": "Prestador",
       "PROVIDER_DESC": "Publico serviços no mural para outros moradores.",
-      "CUSTOMER": "Morador Consumidor",
+      "CUSTOMER": "Morador",
       "CUSTOMER_DESC": "Busco e contrato serviços de outros moradores."
+    },
+    "BECOME_PROVIDER": {
+      "TITLE": "Quer oferecer serviços no condomínio?",
+      "DESCRIPTION": "Ative o modo prestador para publicar serviços, receber agendamentos e configurar pagamentos pelo app.",
+      "CTA": "Virar prestador",
+      "DIALOG_TITLE": "Ativar modo prestador",
+      "DIALOG_BODY": "Ao ativar o modo prestador, você poderá publicar serviços no mural do condomínio e receber pagamentos via Stripe. Você poderá desativar esse modo depois, desde que não tenha serviços ativos ou agendamentos em andamento.",
+      "SUCCESS": "Modo prestador ativado!",
+      "ERROR": "Não foi possível ativar o modo prestador. Tente novamente."
+    },
+    "PROVIDER_ACTIVE": {
+      "TITLE": "Modo prestador ativo",
+      "DESCRIPTION": "Você pode publicar serviços e receber agendamentos pelo painel de prestador.",
+      "CTA": "Abrir painel de prestador"
     },
     "SECURITY": {
       "COGNITO_TITLE": "Autenticação gerenciada pela AWS",
@@ -351,6 +369,7 @@
     "GO_TO_DASHBOARD": "Ir para o painel",
     "SUCCESS": {
       "TITLE": "Pagamento confirmado!",
+      "ERROR_TITLE": "Quase lá",
       "MESSAGE": "Seu agendamento foi pago com sucesso. O prestador será notificado.",
       "SESSION_ID": "ID da sessão",
       "VERIFYING": "Confirmando pagamento...",

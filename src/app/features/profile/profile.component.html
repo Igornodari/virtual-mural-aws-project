@@ -6,12 +6,73 @@
           </div>
           <div>
             <h1 class="profile-name">{{ user?.givenName || user?.displayName }}</h1>
-            <span class="role-badge" [class.role-badge--provider]="currentRole === 'provider'">
-              <mat-icon class="role-icon">{{ currentRole === 'provider' ? 'storefront' : 'home' }}</mat-icon>
-              {{ (currentRole === 'provider' ? 'PROFILE.ROLE.PROVIDER' : 'PROFILE.ROLE.CUSTOMER') | translate }}
-            </span>
+            <!-- Indica os papéis ativos do usuário. Morador é implícito
+                 para qualquer usuário com condomínio; prestador é opt-in. -->
+            <div class="role-tags">
+              <span class="role-tag">
+                <mat-icon class="role-icon">home</mat-icon>
+                {{ 'PROFILE.ROLE.RESIDENT' | translate }}
+              </span>
+              @if (isProvider()) {
+                <span class="role-tag role-tag--provider">
+                  <mat-icon class="role-icon">handyman</mat-icon>
+                  {{ 'PROFILE.ROLE.PROVIDER' | translate }}
+                </span>
+              }
+            </div>
           </div>
         </div>
+
+        <!-- Card de ativação/gestão do modo prestador. -->
+        <mat-card class="surface-card provider-card">
+          <mat-card-content>
+            @if (!isProvider()) {
+              <div class="provider-card__body">
+                <mat-icon class="provider-card__icon">handyman</mat-icon>
+                <div class="provider-card__text">
+                  <h3 class="provider-card__title">
+                    {{ 'PROFILE.BECOME_PROVIDER.TITLE' | translate }}
+                  </h3>
+                  <p class="text-muted">
+                    {{ 'PROFILE.BECOME_PROVIDER.DESCRIPTION' | translate }}
+                  </p>
+                </div>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="button"
+                  (click)="becomeProvider()"
+                  [disabled]="isActivatingProvider()"
+                >
+                  @if (isActivatingProvider()) { <mat-spinner diameter="18" /> }
+                  <mat-icon>add_business</mat-icon>
+                  {{ 'PROFILE.BECOME_PROVIDER.CTA' | translate }}
+                </button>
+              </div>
+            } @else {
+              <div class="provider-card__body">
+                <mat-icon class="provider-card__icon provider-card__icon--active">verified</mat-icon>
+                <div class="provider-card__text">
+                  <h3 class="provider-card__title">
+                    {{ 'PROFILE.PROVIDER_ACTIVE.TITLE' | translate }}
+                  </h3>
+                  <p class="text-muted">
+                    {{ 'PROFILE.PROVIDER_ACTIVE.DESCRIPTION' | translate }}
+                  </p>
+                </div>
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  type="button"
+                  (click)="goToProviderDashboard()"
+                >
+                  <mat-icon>open_in_new</mat-icon>
+                  {{ 'PROFILE.PROVIDER_ACTIVE.CTA' | translate }}
+                </button>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
 
         <mat-tab-group animationDuration="200ms" class="profile-tabs">
 

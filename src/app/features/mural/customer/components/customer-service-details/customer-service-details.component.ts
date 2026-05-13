@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   EventEmitter,
@@ -8,6 +9,8 @@ import {
   Output,
   inject,
 } from '@angular/core';
+
+
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -32,6 +35,7 @@ import {
   ReviewApiService,
 } from 'src/app/core/services/review-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
+import { UserApiService } from 'src/app/core/services/user-api.service';
 import { RatingStarsComponent } from 'src/app/shared/components/rating-stars/rating-stars.component';
 import { isBlockingAppointmentStatus } from 'src/app/shared/utils/appointment-status.util';
 import { CUSTOMER_STARS } from '../../customer.constants';
@@ -67,6 +71,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly reviewApi = inject(ReviewApiService);
+  private readonly userApi = inject(UserApiService);
 
   @Input({ required: true }) service!: ServiceDto;
 
@@ -74,6 +79,8 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   @Output() serviceUpdated = new EventEmitter<ServiceDto>();
 
   readonly stars = CUSTOMER_STARS;
+  private readonly cdr = inject(ChangeDetectorRef);
+  private viewDestroyed = false;
 
   reviews: AnonymousReviewDto[] = [];
   blockedSlots: BlockedSlot[] = [];
@@ -86,7 +93,41 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   isScheduling = false;
   isReviewing = false;
 
+  /**
+   * Id do usuário autenticado conforme o banco (não confundir com
+   * `AuthService.user.id`, que armazena o Cognito sub). Usamos esse
+   * id pra detectar se o serviço atual pertence ao usuário e bloquear
+   * o agendamento de auto-atendimento.
+   */
+  private currentDbUserId: string | null = null;
+
+  /** Verdadeiro quando o serviço aberto pertence ao usuário autenticado. */
+  get isOwnService(): boolean {
+    return (
+      !!this.currentDbUserId && this.service?.providerId === this.currentDbUserId
+    );
+  }
+
   private activeServiceId: string | null = null;
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.viewDestroyed = true;
+    });
+
+    // Carrega o id do usuário no banco uma vez por sessão do componente.
+    // Não usamos AuthService.user.id porque ele é o Cognito sub.
+    this.userApi
+      .getMe()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (me) => {
+          this.currentDbUserId = me?.id ?? null;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
 
   ngOnChanges(): void {
     if (!this.service?.id) {
@@ -95,63 +136,87 @@ export class CustomerServiceDetailsComponent implements OnChanges {
 
     const isNewService = this.service.id !== this.activeServiceId;
 
+    // Carrega reviews/availability APENAS quando o servico realmente muda.
+    // Antes loadAvailability rodava todo ngOnChanges e isso causava
+    // re-renders do picker em cada CD do parent.
     if (isNewService) {
       this.activeServiceId = this.service.id;
       this.resetState();
       this.trackExpansion();
       this.loadReviews();
+      this.loadAvailability();
     }
+  }
 
-    // Sempre recarrega disponibilidade para nunca exibir dados obsoletos
-    this.loadAvailability();
+  private deferStateChange(callback: () => void): void {
+    queueMicrotask(() => {
+      if (this.viewDestroyed) {
+        return;
+      }
+
+      callback();
+      this.cdr.detectChanges();
+    });
   }
 
   onCalendarSelectionChange(selection: CalendarSelection): void {
-    this.calendarSelection = selection;
+    this.deferStateChange(() => {
+      this.calendarSelection = selection;
+    });
   }
 
   setPendingComment(comment: string): void {
     this.pendingComment = comment;
   }
 
-  schedule(): void {
-    const selection = this.calendarSelection;
+ schedule(): void {
+  const selection = this.calendarSelection;
 
-    if (!selection) {
-      return;
-    }
-
-    const serviceId = this.service.id;
-    this.isScheduling = true;
-
-    const payload: CreateAppointmentPayload = {
-      serviceId,
-      scheduledDate: selection.date,
-      scheduledDay: selection.day,
-      scheduledTime: selection.time,
-      notes: `Agendamento solicitado pelo mural para ${selection.day} às ${selection.time}.`,
-    };
-
-    this.appointmentApi
-      .create(payload)
-      .pipe(
-        finalize(() => (this.isScheduling = false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: (appointment) => {
-          if (this.activeServiceId !== serviceId) {
-            return;
-          }
-
-          this.calendarSelection = null;
-          // Recarrega slots bloqueados para refletir o novo agendamento pendente
-          this.loadAvailability();
-          this.appointmentCreated.emit(appointment);
-        },
-      });
+  if (!selection) {
+    return;
   }
 
+  // Bloqueio defensivo de UI — o backend também rejeita, mas evitamos
+  // a viagem desnecessária e damos feedback imediato no caso raro de o
+  // botão ter sido renderizado antes da resposta de getMe().
+  if (this.isOwnService) {
+    return;
+  }
+
+  const serviceId = this.service.id;
+  this.isScheduling = true;
+
+  const payload: CreateAppointmentPayload = {
+    serviceId,
+    scheduledDate: selection.date,
+    scheduledDay: selection.day,
+    scheduledTime: selection.time,
+    notes:
+      'Agendamento solicitado pelo mural para ' +
+      selection.day +
+      ' as ' +
+      selection.time +
+      '.',
+  };
+
+  this.appointmentApi
+    .create(payload)
+    .pipe(
+      finalize(() => {
+        this.isScheduling = false;
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    )
+    .subscribe({
+      next: (appointment) => {
+        if (this.activeServiceId !== serviceId) {
+          return;
+        }
+
+        this.appointmentCreated.emit(appointment);
+      },
+    });
+}
   submitReview(): void {
     const rating = this.pendingRating;
 
@@ -181,10 +246,13 @@ export class CustomerServiceDetailsComponent implements OnChanges {
             return;
           }
 
-          this.pendingRating = 0;
-          this.hoverRating = 0;
-          this.pendingComment = '';
-          this.reviews = [newReview, ...this.reviews];
+          this.deferStateChange(() => {
+            this.pendingRating = 0;
+            this.hoverRating = 0;
+            this.pendingComment = '';
+            this.reviews = [newReview, ...this.reviews];
+          });
+
           this.refreshService(serviceId);
         },
       });
@@ -219,7 +287,9 @@ export class CustomerServiceDetailsComponent implements OnChanges {
       .pipe(
         finalize(() => {
           if (this.activeServiceId === serviceId) {
-            this.isLoadingReviews = false;
+            this.deferStateChange(() => {
+              this.isLoadingReviews = false;
+            });
           }
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -227,7 +297,9 @@ export class CustomerServiceDetailsComponent implements OnChanges {
       .subscribe({
         next: (reviews) => {
           if (this.activeServiceId === serviceId) {
-            this.reviews = Array.isArray(reviews) ? reviews : [];
+            this.deferStateChange(() => {
+              this.reviews = Array.isArray(reviews) ? reviews : [];
+            });
           }
         },
       });
@@ -236,16 +308,18 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   private loadAvailability(): void {
     const serviceId = this.service.id;
 
-    // Carrega slots de disponibilidade do serviço
-    this.availabilitySlots = this.service.availabilitySlots?.length
+    const nextAvailabilitySlots = this.service.availabilitySlots?.length
       ? this.service.availabilitySlots
       : (this.service.availableDays ?? []).map((day) => ({
-          day,
-          startTime: '09:00',
-          endTime: '18:00',
-        }));
+        day,
+        startTime: '09:00',
+        endTime: '18:00',
+      }));
 
-    // Carrega slots bloqueados (agendamentos confirmados/pagos)
+    this.deferStateChange(() => {
+      this.availabilitySlots = nextAvailabilitySlots;
+    });
+
     this.appointmentApi
       .findByService(serviceId)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -255,24 +329,28 @@ export class CustomerServiceDetailsComponent implements OnChanges {
             return;
           }
 
-          if (Array.isArray(response)) {
-            // Prestador recebe lista completa — mapeia para blockedSlots
-            this.blockedSlots = response
-              .filter((a) => isBlockingAppointmentStatus(a.status))
-              .map((a) => ({
-                date: String(a.scheduledDate).substring(0, 10),
-                time: a.scheduledTime ?? null,
-              }));
-          } else {
-            // Cliente recebe { serviceId, blockedSlots } ou formato legado { serviceId, blockedDates }
-            const availability = response as ServiceAvailabilityDto & { blockedDates?: string[] };
+          this.deferStateChange(() => {
+            if (Array.isArray(response)) {
+              this.blockedSlots = response
+                .filter((a) => isBlockingAppointmentStatus(a.status))
+                .map((a) => ({
+                  date: String(a.scheduledDate).substring(0, 10),
+                  time: a.scheduledTime ?? null,
+                }));
+
+              return;
+            }
+
+            const availability = response as ServiceAvailabilityDto & {
+              blockedDates?: string[];
+            };
+
             if (availability.blockedSlots) {
               this.blockedSlots = availability.blockedSlots.map((s) => ({
                 ...s,
                 date: String(s.date).substring(0, 10),
               }));
             } else if (availability.blockedDates) {
-              // Fallback: backend legado que retorna só datas (bloqueia dia inteiro)
               this.blockedSlots = availability.blockedDates.map((d) => ({
                 date: String(d).substring(0, 10),
                 time: null,
@@ -280,11 +358,13 @@ export class CustomerServiceDetailsComponent implements OnChanges {
             } else {
               this.blockedSlots = [];
             }
-          }
+          });
         },
         error: () => {
           if (this.activeServiceId === serviceId) {
-            this.blockedSlots = [];
+            this.deferStateChange(() => {
+              this.blockedSlots = [];
+            });
           }
         },
       });

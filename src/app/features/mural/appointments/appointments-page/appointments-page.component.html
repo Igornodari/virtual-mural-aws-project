@@ -1,0 +1,28 @@
+<div class="app-page-shell appointments-page">
+  <!-- Quando o usuário é prestador, oferece as duas visões em abas.
+       Quando é apenas morador, mostra direto o painel de cliente. -->
+  @if (isProvider()) {
+    <mat-tab-group
+      class="appointments-tabs"
+      [selectedIndex]="activeTab() === 'asProvider' ? 1 : 0"
+      (selectedIndexChange)="setActiveTab($event === 1 ? 'asProvider' : 'asCustomer')"
+    >
+      <mat-tab [label]="'APPOINTMENTS_PAGE.TAB_AS_CUSTOMER' | translate" />
+      <mat-tab [label]="'APPOINTMENTS_PAGE.TAB_AS_PROVIDER' | translate" />
+    </mat-tab-group>
+  }
+
+  <app-appointment-panel
+    [role]="currentPanelRole()"
+    [appointments]="currentAppointments()"
+    [isLoading]="isLoading()"
+    [viewMode]="viewMode()"
+    [updatingAppointmentId]="updatingAppointmentId()"
+    [payingAppointmentId]="payingAppointmentId()"
+    [cancellingAppointmentId]="cancellingAppointmentId()"
+    (viewModeChange)="viewMode.set($event)"
+    (pay)="onPayAppointment($event)"
+    (cancelAsCustomer)="onCancelAsCustomer($event)"
+    (statusChange)="onProviderStatusChange($event)"
+  />
+</div>
