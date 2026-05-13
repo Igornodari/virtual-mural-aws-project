@@ -9,6 +9,6 @@ export const environment = {
     userPoolWebClientId: '3m3i285a6d5tlje7h3p4t1ueu2',
     domain: 'sa-east-1nimyy2v3k.auth.sa-east-1.amazoncognito.com',
     redirectSignIn: 'https://virtual-mural-aws-project.vercel.app/auth/callback',
-    redirectSignOut: 'https://virtual-mural-aws-project.vercel.app/',
+    redirectSignOut: 'https://virtual-mural-aws-project.vercel.app/login',
   },
 };
