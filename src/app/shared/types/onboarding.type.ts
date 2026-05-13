@@ -1,5 +1,3 @@
-export type UserRole = 'provider' | 'customer';
-
 export interface CondominiumAddress {
   name?: string;
   zipCode: string;
@@ -14,6 +12,6 @@ export interface CondominiumAddress {
 export interface OnboardingProfile {
   condominiumId: string | null;
   condominiumAddress: CondominiumAddress | null;
-  role: UserRole | null;
+  isProvider: boolean;
   onboardingCompleted: boolean;
 }

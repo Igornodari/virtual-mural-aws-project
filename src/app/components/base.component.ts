@@ -1,7 +1,7 @@
 import { Component, DestroyRef, NgZone, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, shareReplay, take } from 'rxjs';
+import { catchError, filter, map, Observable, of, shareReplay, take } from 'rxjs';
 import { AuthService } from '../core/services/auth.service';
 import { CondominiumApiService } from '../core/services/condominium-api.service';
 import { UserApiService } from '../core/services/user-api.service';
@@ -21,8 +21,7 @@ interface BaseComponentSettings {
   template: '',
 })
 export default abstract class BaseComponent {
-  // 'settings' string token é convertido por compatibilidade — Angular DI exige InjectionToken/Type aqui
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   protected readonly settings = inject<BaseComponentSettings>('settings' as any, {
     optional: true,
   });
@@ -67,6 +66,12 @@ export default abstract class BaseComponent {
     });
   }
 
+  get condoCity(): Observable<string> {
+    return this.user$.pipe(
+      catchError(() => of(null)),
+      map((user) => user?.condominium?.name || 'Não definido'),
+    );
+  }
 
   protected get router(): Router {
     return this._router;
@@ -88,6 +93,7 @@ export default abstract class BaseComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((condominium) => {
         this.condominium = condominium;
+        console.log('Condominium updated in BaseComponent:', this.condominium);
       });
   }
 

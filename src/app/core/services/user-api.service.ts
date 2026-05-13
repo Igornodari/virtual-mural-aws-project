@@ -2,8 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RequestService } from './request.service';
 
-export type UserRole = 'provider' | 'customer';
-
 export interface AppUserProfileDto {
   id: string;
   cognitoSub: string;
@@ -14,10 +12,14 @@ export interface AppUserProfileDto {
   phone?: string;
   avatarUrl?: string;
   condominiumId: string | null;
-  roleInCondominium: UserRole | null;
+  /**
+   * Flag opt-in: true significa que o usuário ativou o modo prestador
+   * e pode publicar serviços. Todo usuário autenticado e com condomínio
+   * é morador por padrão (não há flag para isso).
+   */
+  isProvider: boolean;
   onboardingCompleted: boolean;
   addressCompleted: boolean;
-  roleCompleted: boolean;
   createdAt: string;
   updatedAt: string;
   stripeAccountId?: string | null;
@@ -37,7 +39,7 @@ export interface AppUserProfileDto {
 
 export interface UpdateOnboardingPayload {
   condominiumId?: string;
-  roleInCondominium?: UserRole;
+  isProvider?: boolean;
 }
 
 export interface UpdateProfilePayload {
@@ -60,6 +62,14 @@ export class UserApiService {
       '/users/me/onboarding',
       payload,
     );
+  }
+
+  /**
+   * Ativa ou desativa o modo prestador do usuário autenticado.
+   * Conveniência sobre `updateOnboarding` para o fluxo "Virar prestador".
+   */
+  becomeProvider(value: boolean = true): Observable<AppUserProfileDto> {
+    return this.updateOnboarding({ isProvider: value });
   }
 
   updateProfile(payload: UpdateProfilePayload): Observable<AppUserProfileDto> {

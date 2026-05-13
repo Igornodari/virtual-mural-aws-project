@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TopbarRole } from '../mural-topbar/mural-topbar.component';
+import { TopbarActiveMode } from '../mural-topbar/mural-topbar.component';
 
 @Component({
   selector: 'app-bottom-nav',
@@ -14,8 +14,14 @@ import { TopbarRole } from '../mural-topbar/mural-topbar.component';
   styleUrls: ['./bottom-nav.component.scss'],
 })
 export class BottomNavComponent {
-  @Input({ required: true }) role!: TopbarRole;
-  @Input({ required: true }) dashboardLink!: string;
-  @Input({ required: true }) profileLink!: string;
+  /** Se o usuário ativou o modo prestador. Habilita o 4o item da nav. */
+  @Input({ required: true }) isProvider = false;
+
+  /** Modo ativo, usado apenas para destacar o item correto. */
+  @Input({ required: true }) activeMode: TopbarActiveMode = 'customer';
+
+  @Input({ required: true }) customerLink!: string;
+  @Input({ required: true }) providerLink!: string;
   @Input({ required: true }) appointmentsLink!: string;
+  @Input({ required: true }) profileLink!: string;
 }

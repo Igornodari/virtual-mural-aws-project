@@ -1,14 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { TranslateModule } from '@ngx-translate/core';
 import BaseComponent from '../../../components/base.component';
+import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 /** Valida força de senha compatível com a política padrão do AWS Cognito */
 const passwordStrengthValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
@@ -34,15 +28,9 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
   selector: 'app-register',
   standalone: true,
   imports: [
+    importBase,
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    TranslateModule,
   ],
   templateUrl: './register.component.html',
   styles: [

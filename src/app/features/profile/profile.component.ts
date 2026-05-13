@@ -1,21 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTabsModule } from '@angular/material/tabs';
-import { TranslateModule } from '@ngx-translate/core';
+import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import BaseComponent from '../../components/base.component';
+import { AppDialogConfirmationComponent } from '../../components/dialog-confirmation.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { CreateCondominiumPayload } from '../../core/services/condominium-api.service';
 import { AppUserProfileDto, UpdateProfilePayload } from '../../core/services/user-api.service';
+import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
+import { filter, switchMap } from 'rxjs/operators';
+import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const newPwd = group.get('newPassword')?.value;
@@ -27,11 +20,7 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
   selector: 'app-profile',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule,
-    MatButtonModule, MatCardModule, MatDividerModule,
-    MatFormFieldModule, MatIconModule, MatInputModule,
-    MatProgressSpinnerModule, MatSnackBarModule, MatTabsModule,
-    TranslateModule,
+    importBase,
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
@@ -44,18 +33,18 @@ export class ProfileComponent extends BaseComponent implements OnInit {
   isSavingAddress = signal(false);
   isLookingUpCep = signal(false);
   isSavingPassword = signal(false);
+  isActivatingProvider = signal(false);
   passwordError = signal<string | null>(null);
   passwordSuccess = signal(false);
   showCurrentPassword = signal(false);
   showNewPassword = signal(false);
   showConfirmPassword = signal(false);
 
+  /** Reflete a flag opt-in. Sincroniza com o OnboardingService. */
+  isProvider = signal(false);
+
   get isGoogleUser(): boolean {
     return this.user?.authProvider === 'google';
-  }
-
-  get currentRole(): 'provider' | 'customer' {
-    return this.onboardingService.profile.role ?? 'customer';
   }
 
   personalForm = this.fb.nonNullable.group({
@@ -90,6 +79,65 @@ export class ProfileComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.loadCurrentData();
     this.loadProfileFromApi();
+    this.onboardingService.profile$
+      .subscribe((profile) => {
+        this.isProvider.set(profile.isProvider);
+      });
+  }
+
+  /**
+   * Inicia o fluxo de ativação do modo prestador. Abre um diálogo
+   * explicando o que muda (cadastro de serviços, recebimento de
+   * pagamentos via Stripe) antes de confirmar. Após sucesso, navega
+   * para o dashboard de prestador, onde o usuário pode configurar o
+   * Stripe Connect se ainda não o fez.
+   */
+  becomeProvider(): void {
+    const confirmRef = this.dialog.open(AppDialogConfirmationComponent, {
+      data: {
+        title: this.translateService.instant('PROFILE.BECOME_PROVIDER.DIALOG_TITLE'),
+        subTitle: this.translateService.instant('PROFILE.BECOME_PROVIDER.DIALOG_BODY'),
+      },
+      width: '480px',
+      maxWidth: '100vw',
+      panelClass: 'responsive-dialog',
+    });
+
+    confirmRef
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          this.isActivatingProvider.set(true);
+          return this.onboardingService.activateProvider();
+        }),
+      )
+      .subscribe({
+        next: (result) => {
+          this.isActivatingProvider.set(false);
+          if (result) {
+            this.snackBar.success(
+              this.translateService.instant('PROFILE.BECOME_PROVIDER.SUCCESS'),
+            );
+            this.navigateTo(ROUTE_PATHS.muralProvider);
+          } else {
+            this.snackBar.error(
+              this.translateService.instant('PROFILE.BECOME_PROVIDER.ERROR'),
+            );
+          }
+        },
+        error: () => {
+          this.isActivatingProvider.set(false);
+          this.snackBar.error(
+            this.translateService.instant('PROFILE.BECOME_PROVIDER.ERROR'),
+          );
+        },
+      });
+  }
+
+  /** Atalho de navegação para o dashboard de prestador. */
+  goToProviderDashboard(): void {
+    this.navigateTo(ROUTE_PATHS.muralProvider);
   }
 
   private loadCurrentData(): void {

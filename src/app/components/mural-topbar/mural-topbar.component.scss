@@ -33,23 +33,47 @@
   white-space: nowrap;
 }
 
-.badge {
+/* Toggle de modo morador/prestador no topbar.
+   Aparece apenas quando o usuário ativou o modo prestador. */
+.mode-toggle {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
+  gap: 2px;
+  margin-left: 8px;
+  padding: 2px;
   border-radius: 999px;
-  font-size: 11px;
+  background: var(--mat-sys-surface-container-high);
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+.mode-toggle__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover:not(.mode-toggle__btn--active) {
+    background: var(--mat-sys-surface-container-highest);
+  }
 }
 
-.badge--provider {
-  background: color-mix(in oklab, #7c3aed 18%, transparent);
-  color: #7c3aed;
-}
-
-.badge--customer {
-  background: color-mix(in oklab, #0284c7 18%, transparent);
-  color: #0284c7;
+.mode-toggle__btn--active {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
 }
 
 .topbar-actions {
@@ -93,7 +117,8 @@
   }
 
   .brand-name { display: none; }
-  .badge { display: none; }
+  /* No mobile o modo é alternado pelo bottom-nav, então escondemos o toggle. */
+  .mode-toggle { display: none; }
   .user-name { display: none; }
   .desktop-only { display: none !important; }
   .mobile-only { display: flex !important; }

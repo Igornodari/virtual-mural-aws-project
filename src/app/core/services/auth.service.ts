@@ -1,5 +1,5 @@
 import { Injectable, NgZone, inject } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AmplifyService } from './amplify.service';
 import { Condominium, Unit, User } from '../../shared/types';
 import {
@@ -16,6 +16,7 @@ import {
   signUp,
   updatePassword,
 } from 'aws-amplify/auth';
+import { AppUserProfileDto, UserApiService } from './user-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,7 @@ import {
 export class AuthService {
   private readonly amplifyService = inject(AmplifyService);
   private readonly ngZone = inject(NgZone);
-
+  private readonly userApi = inject(UserApiService);
   private readonly emptyUser: User = {
     id: '',
     email: '',
@@ -81,7 +82,48 @@ export class AuthService {
   }
 
   setCurrentCondominium(condominium: Condominium | null): void {
-    this.condominiumSubject.next(condominium);
+    this.ngZone.run(() => {
+      this.condominiumSubject.next(condominium);
+
+      const currentUser = this.userSubject.value;
+
+      if (currentUser) {
+        this.userSubject.next({
+          ...currentUser,
+          condominium,
+        });
+      }
+    });
+  }
+
+  private async syncBackendProfile(): Promise<void> {
+    try {
+      const profile = await firstValueFrom(this.userApi.getMe());
+
+      const backendProfile = profile as AppUserProfileDto & {
+        user?: Partial<User>;
+        condominium?: Condominium | null;
+      };
+
+      const currentUser = this.userSubject.value;
+
+      const backendUser = backendProfile.user ?? {};
+      const condominium =
+        backendProfile.condominium ??
+        backendUser.condominium ??
+        null;
+
+      const mergedUser: User = {
+        ...this.emptyUser,
+        ...currentUser,
+        ...backendUser,
+        condominium,
+      };
+
+      this.setCurrentUser(mergedUser);
+    } catch (error) {
+      console.warn('Não foi possível carregar o perfil completo do backend.', error);
+    }
   }
 
   // Compatibilidade temporária com código legado.
@@ -316,10 +358,10 @@ export class AuthService {
       googleProfileDraft,
       cognitoCurrentUser: cognitoCurrentUser
         ? {
-            username: cognitoCurrentUser.username,
-            userId: cognitoCurrentUser.userId,
-            signInProvider: cognitoCurrentUser.signInDetails?.authFlowType ?? null,
-          }
+          username: cognitoCurrentUser.username,
+          userId: cognitoCurrentUser.userId,
+          signInProvider: cognitoCurrentUser.signInDetails?.authFlowType ?? null,
+        }
         : null,
     };
   }
@@ -343,6 +385,7 @@ export class AuthService {
     const accessPayload = (session.tokens?.accessToken?.payload ?? {}) as Record<string, unknown>;
     const mappedUser = this.mapClaimsToUser(payload, accessPayload, {}, cognitoUser);
     this.setCurrentUser(mappedUser);
+    await this.syncBackendProfile();
   }
 
   private extractGoogleProfileDraft(
@@ -397,8 +440,8 @@ export class AuthService {
     const id = this.claimToString(idTokenClaims['sub'] ?? cognitoCurrentUser?.userId);
     const cognitoUsername = this.claimToString(
       idTokenClaims['cognito:username'] ??
-        accessTokenClaims['username'] ??
-        cognitoCurrentUser?.username,
+      accessTokenClaims['username'] ??
+      cognitoCurrentUser?.username,
     );
     const identities = Array.isArray(idTokenClaims['identities'])
       ? (idTokenClaims['identities'] as Record<string, unknown>[])

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { Subscription, finalize, forkJoin, interval, of } from 'rxjs';
+import {  Subscription, finalize, forkJoin, interval, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { FormBuilder, Validators } from '@angular/forms';
 
@@ -84,10 +84,6 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
   });
 
   availabilitySlots: AvailabilitySlot[] = [];
-
-  get condoCity(): string {
-    return this.onboardingService.profile.condominiumAddress?.city || '-';
-  }
 
   ngOnInit(): void {
     this.loadServices();
@@ -194,10 +190,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
     this.availabilitySlots = service.availabilitySlots?.length
       ? service.availabilitySlots
       : (service.availableDays ?? []).map((day) => ({
-          day,
-          startTime: '09:00',
-          endTime: '18:00',
-        }));
+        day,
+        startTime: '09:00',
+        endTime: '18:00',
+      }));
 
     this.serviceForm.patchValue({
       name: service.name,
@@ -265,8 +261,8 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
           this.services.update((currentList) =>
             currentEditingId
               ? currentList.map((item) =>
-                  item.id === currentEditingId ? savedService : item,
-                )
+                item.id === currentEditingId ? savedService : item,
+              )
               : [...currentList, savedService],
           );
 

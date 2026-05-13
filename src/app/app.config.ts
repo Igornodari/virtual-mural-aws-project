@@ -18,7 +18,6 @@ import {
 } from '@angular/common/http';
 
 import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
 
 import {
   TranslateLoader,
@@ -40,6 +39,7 @@ import { errorInterceptor } from './core/interceptors/errors/error.interceptor';
 import { AppTranslateLoader } from './shared/helpers/translate-loader.helper';
 import { responseFeedbackInterceptor } from './core/interceptors/response/response-feedback.interceptor';
 import { requestInterceptor } from './core/interceptors/request/request.interceptor';
+import { provideEnvironmentNgxMask } from 'ngx-mask';
 
 registerLocaleData(localePtBr, 'pt-BR', localePtBrExtra);
 
@@ -94,7 +94,7 @@ const initializeLanguage = (translate: TranslateService) => () => {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideAnimations(),
+    provideEnvironmentNgxMask(),
     provideHttpClient(
       withFetch(),
       withInterceptors([

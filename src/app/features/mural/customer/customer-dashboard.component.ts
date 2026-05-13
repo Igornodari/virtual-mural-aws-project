@@ -51,7 +51,6 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
 
   public totalServices = 0;
   public uniqueProviders = 0;
-  public condoCity = 'Nao definido';
 
   public readonly categories = CUSTOMER_CATEGORIES;
 
@@ -68,8 +67,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.isLoadingDashboard = true;
 
     forkJoin({
-      profile: this.userApi
-        .getMe()
+      profile: this.userApi.getMe()
         .pipe(catchError(() => of(null as AppUserProfileDto | null))),
 
       services: this.serviceApi
@@ -82,9 +80,7 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ profile, services }) => {
-        this.condoCity = profile?.condominium?.name || 'Nao definido';
-
+      .subscribe(({ services }) => {
         this.services = Array.isArray(services) ? services : [];
 
         this.syncServiceView();
