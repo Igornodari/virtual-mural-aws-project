@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
+import { NotificationBellComponent } from '../notifications/notification-bell.component';
 
 export type TopbarActiveMode = 'provider' | 'customer';
 
@@ -24,6 +25,7 @@ export type TopbarActiveMode = 'provider' | 'customer';
     MatTooltipModule,
     MatDividerModule,
     TranslateModule,
+    NotificationBellComponent,
   ],
   templateUrl: './mural-topbar.component.html',
   styleUrls: ['./mural-topbar.component.scss'],

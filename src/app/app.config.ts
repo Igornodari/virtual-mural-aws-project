@@ -46,7 +46,7 @@ registerLocaleData(localePtBr, 'pt-BR', localePtBrExtra);
 export const HttpLoaderFactory = (http: HttpClient) =>
   new AppTranslateLoader(http, {
     prefix: './assets/i18n/',
-    parts: ['common', 'enums', 'header', 'home', 'login', 'sidebar', 'app'],
+    parts: ['common', 'enums', 'header', 'home', 'login', 'sidebar', 'app', 'notifications'],
   });
 
 const provideTranslation = () => ({

@@ -1,0 +1,89 @@
+{
+  "NOTIFICATIONS": {
+    "BELL": {
+      "ARIA_LABEL": "Abrir notificações",
+      "BADGE_OVERFLOW": "9+"
+    },
+    "PANEL": {
+      "TITLE": "Notificações",
+      "EMPTY": "Você ainda não tem notificações.",
+      "EMPTY_UNREAD": "Você está em dia! Sem novas notificações.",
+      "MARK_ALL_READ": "Marcar todas como lidas",
+      "VIEW_ALL": "Ver todas",
+      "ENABLE_PUSH": "Ativar notificações push",
+      "PUSH_ENABLED": "Notificações push ativadas",
+      "PUSH_DENIED": "Notificações bloqueadas no navegador",
+      "LOADING": "Carregando...",
+      "JUST_NOW": "Agora mesmo",
+      "MINUTES_AGO": "há {{count}} min",
+      "HOURS_AGO": "há {{count}}h",
+      "DAYS_AGO": "há {{count}}d",
+      "TABS": {
+        "ALL": "Todas",
+        "UNREAD": "Não lidas"
+      }
+    },
+    "TYPES": {
+      "NEW_APPOINTMENT_REQUEST": {
+        "TITLE": "Novo agendamento recebido",
+        "MESSAGE": "{{customerName}} solicitou um agendamento para o serviço {{serviceName}} no dia {{scheduledDate}} às {{scheduledTime}}."
+      },
+      "APPOINTMENT_CONFIRMED": {
+        "TITLE": "Agendamento confirmado",
+        "MESSAGE": "Seu agendamento para {{serviceName}} foi confirmado pelo prestador."
+      },
+      "APPOINTMENT_REJECTED": {
+        "TITLE": "Agendamento recusado",
+        "MESSAGE": "O prestador recusou seu agendamento para {{serviceName}}."
+      },
+      "CUSTOMER_CANCELLED": {
+        "TITLE": "Agendamento cancelado",
+        "MESSAGE": "{{customerName}} cancelou o agendamento do serviço {{serviceName}}."
+      },
+      "PROVIDER_CANCELLED": {
+        "TITLE": "Agendamento cancelado pelo prestador",
+        "MESSAGE": "O prestador cancelou seu agendamento para {{serviceName}}."
+      },
+      "APPOINTMENT_REMINDER": {
+        "TITLE": "Seu agendamento está chegando",
+        "MESSAGE": "Você tem um agendamento para {{serviceName}} {{scheduledDay}} às {{scheduledTime}}."
+      },
+      "APPOINTMENT_COMPLETED": {
+        "TITLE": "Serviço concluído",
+        "MESSAGE": "Seu agendamento de {{serviceName}} foi concluído. Avalie o prestador!"
+      },
+      "PAYMENT_CONFIRMED": {
+        "TITLE": "Pagamento confirmado",
+        "MESSAGE": "{{customerName}} realizou o pagamento do serviço {{serviceName}}."
+      },
+      "PAYMENT_FAILED": {
+        "TITLE": "Pagamento não aprovado",
+        "MESSAGE": "Não conseguimos confirmar o pagamento do seu agendamento de {{serviceName}}. Tente novamente."
+      },
+      "PAYMENT_PENDING_PROVIDER": {
+        "TITLE": "Pagamento pendente",
+        "MESSAGE": "O pagamento do agendamento {{serviceName}} de {{customerName}} ainda não foi concluído."
+      },
+      "RESCHEDULE_REQUESTED": {
+        "TITLE": "Reagendamento solicitado",
+        "MESSAGE": "Há uma nova proposta de reagendamento para {{serviceName}}."
+      },
+      "RESCHEDULE_ACCEPTED": {
+        "TITLE": "Reagendamento aceito",
+        "MESSAGE": "Seu pedido de reagendamento para {{serviceName}} foi aceito."
+      },
+      "RESCHEDULE_REJECTED": {
+        "TITLE": "Reagendamento recusado",
+        "MESSAGE": "Seu pedido de reagendamento para {{serviceName}} foi recusado."
+      },
+      "NEW_SERVICE_AVAILABLE": {
+        "TITLE": "Novo serviço no seu condomínio",
+        "MESSAGE": "{{providerName}} publicou um novo serviço: {{serviceName}}."
+      },
+      "NEW_REVIEW": {
+        "TITLE": "Nova avaliação recebida",
+        "MESSAGE": "{{customerName}} avaliou seu serviço {{serviceName}} com {{rating}} estrelas."
+      }
+    }
+  }
+}
