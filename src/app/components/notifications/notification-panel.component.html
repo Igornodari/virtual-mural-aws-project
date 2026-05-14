@@ -1,4 +1,15 @@
-<div class="notif-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="false">
+<!--
+  stopPropagation impede que clicks/key presses dentro do painel borbulhem
+  até o NotificationBell, que fechá-lo-ia. O painel não é interativo por si
+  só — quem tem ação é cada notif-item (botão dentro do list).
+-->
+<div
+  class="notif-panel"
+  role="dialog"
+  aria-modal="false"
+  (click)="$event.stopPropagation()"
+  (keydown)="$event.stopPropagation()"
+>
   <!-- Header -->
   <header class="notif-panel__header">
     <h3 class="notif-panel__title">{{ 'NOTIFICATIONS.PANEL.TITLE' | translate }}</h3>

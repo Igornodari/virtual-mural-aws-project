@@ -2,7 +2,6 @@ import {
   Injectable,
   Signal,
   computed,
-  effect,
   inject,
   signal,
   DestroyRef,
