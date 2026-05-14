@@ -6,6 +6,7 @@ import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topb
 import { BottomNavComponent } from 'src/app/components/bottom-nav/bottom-nav.component';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
+import { PushSubscriptionService } from 'src/app/core/services/push-subscription.service';
 import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 import { filter } from 'rxjs/operators';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
@@ -24,6 +25,7 @@ import { importBase } from 'src/app/shared/constant/import-base.constant';
 export class FullComponent {
   private readonly authService = inject(AuthService);
   private readonly onboardingService = inject(OnboardingService);
+  private readonly pushService = inject(PushSubscriptionService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly breakpointObserver = inject(BreakpointObserver);
@@ -67,6 +69,11 @@ export class FullComponent {
       .syncFromBackend()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
+
+    // Detecta o estado de Web Push (sem pedir permissão). O painel
+    // de notificações usa esse signal para mostrar/esconder o banner
+    // "Ativar notificações push".
+    void this.pushService.detect();
 
     this.breakpointObserver
       .observe(['(max-width: 768px)'])

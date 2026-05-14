@@ -1,0 +1,125 @@
+<div class="notif-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="false">
+  <!-- Header -->
+  <header class="notif-panel__header">
+    <h3 class="notif-panel__title">{{ 'NOTIFICATIONS.PANEL.TITLE' | translate }}</h3>
+
+    <div class="notif-panel__header-actions">
+      @if (center.unread() > 0) {
+        <button
+          type="button"
+          mat-button
+          class="notif-panel__mark-all"
+          (click)="onMarkAllRead($event)"
+        >
+          {{ 'NOTIFICATIONS.PANEL.MARK_ALL_READ' | translate }}
+        </button>
+      }
+      <button
+        mat-icon-button
+        type="button"
+        class="notif-panel__close"
+        [attr.aria-label]="'NOTIFICATIONS.PANEL.TITLE' | translate"
+        (click)="closed.emit()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Push opt-in (apenas se o estado pede ação do usuário) -->
+  @if (push.status() === 'default' || push.status() === 'granted-no-subscription') {
+    <div class="notif-panel__push-banner">
+      <mat-icon>notifications_active</mat-icon>
+      <span>{{ 'NOTIFICATIONS.PANEL.ENABLE_PUSH' | translate }}</span>
+      <button mat-stroked-button type="button" (click)="onEnablePush($event)">
+        {{ 'NOTIFICATIONS.PANEL.ENABLE_PUSH' | translate }}
+      </button>
+    </div>
+  }
+  @if (push.status() === 'denied') {
+    <div class="notif-panel__push-banner notif-panel__push-banner--denied">
+      <mat-icon>block</mat-icon>
+      <span>{{ 'NOTIFICATIONS.PANEL.PUSH_DENIED' | translate }}</span>
+    </div>
+  }
+
+  <!-- Tabs all/unread -->
+  <nav class="notif-panel__tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      class="notif-panel__tab"
+      [class.notif-panel__tab--active]="tab() === 'all'"
+      (click)="tab.set('all')"
+    >
+      {{ 'NOTIFICATIONS.PANEL.TABS.ALL' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="notif-panel__tab"
+      [class.notif-panel__tab--active]="tab() === 'unread'"
+      (click)="tab.set('unread')"
+    >
+      {{ 'NOTIFICATIONS.PANEL.TABS.UNREAD' | translate }}
+      @if (center.unread() > 0) {
+        <span class="notif-panel__tab-badge">{{ center.unread() }}</span>
+      }
+    </button>
+  </nav>
+
+  <!-- Lista -->
+  <div class="notif-panel__list" role="list">
+    @if (center.loading()) {
+      <div class="notif-panel__loading">
+        <mat-spinner diameter="24"></mat-spinner>
+        <span>{{ 'NOTIFICATIONS.PANEL.LOADING' | translate }}</span>
+      </div>
+    }
+    @else if (visibleItems().length === 0) {
+      <div class="notif-panel__empty">
+        <mat-icon>notifications_none</mat-icon>
+        <p>
+          {{
+            (tab() === 'unread'
+              ? 'NOTIFICATIONS.PANEL.EMPTY_UNREAD'
+              : 'NOTIFICATIONS.PANEL.EMPTY'
+            ) | translate
+          }}
+        </p>
+      </div>
+    }
+    @else {
+      @for (n of visibleItems(); track n.id) {
+        <button
+          type="button"
+          role="listitem"
+          class="notif-item"
+          [class.notif-item--unread]="!n.read"
+          [class.notif-item--severity-success]="n.severity === 'success'"
+          [class.notif-item--severity-warning]="n.severity === 'warning'"
+          [class.notif-item--severity-error]="n.severity === 'error'"
+          (click)="onItemClick(n)"
+        >
+          <mat-icon class="notif-item__icon" aria-hidden="true">
+            {{ iconFor(n.type) }}
+          </mat-icon>
+
+          <div class="notif-item__body">
+            <div class="notif-item__title">
+              {{ titleKey(n) | translate: vars(n) }}
+            </div>
+            <div class="notif-item__message">
+              {{ messageKey(n) | translate: vars(n) }}
+            </div>
+            <div class="notif-item__time">{{ relativeTime(n.createdAt) }}</div>
+          </div>
+
+          @if (!n.read) {
+            <span class="notif-item__dot" aria-hidden="true"></span>
+          }
+        </button>
+      }
+    }
+  </div>
+</div>

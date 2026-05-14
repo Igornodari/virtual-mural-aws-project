@@ -1,0 +1,89 @@
+{
+  "NOTIFICATIONS": {
+    "BELL": {
+      "ARIA_LABEL": "Open notifications",
+      "BADGE_OVERFLOW": "9+"
+    },
+    "PANEL": {
+      "TITLE": "Notifications",
+      "EMPTY": "You don't have any notifications yet.",
+      "EMPTY_UNREAD": "All caught up! No new notifications.",
+      "MARK_ALL_READ": "Mark all as read",
+      "VIEW_ALL": "View all",
+      "ENABLE_PUSH": "Enable push notifications",
+      "PUSH_ENABLED": "Push notifications enabled",
+      "PUSH_DENIED": "Notifications blocked by the browser",
+      "LOADING": "Loading...",
+      "JUST_NOW": "Just now",
+      "MINUTES_AGO": "{{count}}m ago",
+      "HOURS_AGO": "{{count}}h ago",
+      "DAYS_AGO": "{{count}}d ago",
+      "TABS": {
+        "ALL": "All",
+        "UNREAD": "Unread"
+      }
+    },
+    "TYPES": {
+      "NEW_APPOINTMENT_REQUEST": {
+        "TITLE": "New appointment received",
+        "MESSAGE": "{{customerName}} requested a booking for {{serviceName}} on {{scheduledDate}} at {{scheduledTime}}."
+      },
+      "APPOINTMENT_CONFIRMED": {
+        "TITLE": "Appointment confirmed",
+        "MESSAGE": "Your appointment for {{serviceName}} has been confirmed by the provider."
+      },
+      "APPOINTMENT_REJECTED": {
+        "TITLE": "Appointment declined",
+        "MESSAGE": "The provider declined your appointment for {{serviceName}}."
+      },
+      "CUSTOMER_CANCELLED": {
+        "TITLE": "Appointment cancelled",
+        "MESSAGE": "{{customerName}} cancelled the booking for {{serviceName}}."
+      },
+      "PROVIDER_CANCELLED": {
+        "TITLE": "Appointment cancelled by provider",
+        "MESSAGE": "The provider cancelled your appointment for {{serviceName}}."
+      },
+      "APPOINTMENT_REMINDER": {
+        "TITLE": "Your appointment is coming up",
+        "MESSAGE": "You have an appointment for {{serviceName}} {{scheduledDay}} at {{scheduledTime}}."
+      },
+      "APPOINTMENT_COMPLETED": {
+        "TITLE": "Service completed",
+        "MESSAGE": "Your booking for {{serviceName}} has been completed. Rate the provider!"
+      },
+      "PAYMENT_CONFIRMED": {
+        "TITLE": "Payment confirmed",
+        "MESSAGE": "{{customerName}} paid for the service {{serviceName}}."
+      },
+      "PAYMENT_FAILED": {
+        "TITLE": "Payment not approved",
+        "MESSAGE": "We couldn't confirm the payment for your {{serviceName}} booking. Please try again."
+      },
+      "PAYMENT_PENDING_PROVIDER": {
+        "TITLE": "Payment pending",
+        "MESSAGE": "Payment for {{customerName}}'s booking of {{serviceName}} hasn't been completed yet."
+      },
+      "RESCHEDULE_REQUESTED": {
+        "TITLE": "Reschedule requested",
+        "MESSAGE": "There's a new reschedule proposal for {{serviceName}}."
+      },
+      "RESCHEDULE_ACCEPTED": {
+        "TITLE": "Reschedule accepted",
+        "MESSAGE": "Your reschedule request for {{serviceName}} was accepted."
+      },
+      "RESCHEDULE_REJECTED": {
+        "TITLE": "Reschedule declined",
+        "MESSAGE": "Your reschedule request for {{serviceName}} was declined."
+      },
+      "NEW_SERVICE_AVAILABLE": {
+        "TITLE": "New service in your building",
+        "MESSAGE": "{{providerName}} just published a new service: {{serviceName}}."
+      },
+      "NEW_REVIEW": {
+        "TITLE": "New review received",
+        "MESSAGE": "{{customerName}} rated your service {{serviceName}} with {{rating}} stars."
+      }
+    }
+  }
+}

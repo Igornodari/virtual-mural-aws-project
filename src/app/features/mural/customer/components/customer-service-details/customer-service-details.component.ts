@@ -45,6 +45,12 @@ import {
   CalendarSelection,
 } from 'src/app/shared/components/appointment-calendar-picker/appointment-calendar-picker.component';
 import { AvailabilitySlot } from 'src/app/shared/types/availability.types';
+type ApiBlockedSlot = {
+  date?: string | Date;
+  time?: string | null;
+  scheduledDate?: string | Date;
+  scheduledTime?: string | null;
+};
 
 @Component({
   selector: 'app-customer-service-details',
@@ -148,6 +154,9 @@ export class CustomerServiceDetailsComponent implements OnChanges {
     }
   }
 
+
+
+
   private deferStateChange(callback: () => void): void {
     queueMicrotask(() => {
       if (this.viewDestroyed) {
@@ -157,6 +166,54 @@ export class CustomerServiceDetailsComponent implements OnChanges {
       callback();
       this.cdr.detectChanges();
     });
+  }
+
+  private toDateKey(value: string | Date | null | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const day = String(value.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    }
+
+    return String(value).substring(0, 10);
+  }
+
+  private normalizeBlockedSlot(slot: ApiBlockedSlot): BlockedSlot | null {
+    const date = this.toDateKey(slot.date ?? slot.scheduledDate);
+    const time = slot.time ?? slot.scheduledTime ?? null;
+
+    if (!date) {
+      return null;
+    }
+
+    return {
+      date,
+      time,
+    };
+  }
+
+
+  private normalizeAvailabilityBlockedSlots(
+    availability: ServiceAvailabilityDto & { blockedDates?: string[] },
+  ): BlockedSlot[] {
+    const blockedByTime = (availability.blockedSlots ?? [])
+      .map((slot) => this.normalizeBlockedSlot(slot as ApiBlockedSlot))
+      .filter((slot): slot is BlockedSlot => !!slot);
+
+    const blockedFullDays = (availability.blockedDates ?? [])
+      .map((date) => ({
+        date: this.toDateKey(date),
+        time: null,
+      }))
+      .filter((slot) => !!slot.date);
+
+    return [...blockedByTime, ...blockedFullDays];
   }
 
   onCalendarSelectionChange(selection: CalendarSelection): void {
@@ -169,54 +226,54 @@ export class CustomerServiceDetailsComponent implements OnChanges {
     this.pendingComment = comment;
   }
 
- schedule(): void {
-  const selection = this.calendarSelection;
+  schedule(): void {
+    const selection = this.calendarSelection;
 
-  if (!selection) {
-    return;
+    if (!selection) {
+      return;
+    }
+
+    // Bloqueio defensivo de UI — o backend também rejeita, mas evitamos
+    // a viagem desnecessária e damos feedback imediato no caso raro de o
+    // botão ter sido renderizado antes da resposta de getMe().
+    if (this.isOwnService) {
+      return;
+    }
+
+    const serviceId = this.service.id;
+    this.isScheduling = true;
+
+    const payload: CreateAppointmentPayload = {
+      serviceId,
+      scheduledDate: this.toDateKey(selection.date),
+       scheduledDay: selection.day,
+      scheduledTime: selection.time,
+      notes:
+        'Agendamento solicitado pelo mural para ' +
+        selection.day +
+        ' as ' +
+        selection.time +
+        '.',
+    };
+
+    this.appointmentApi
+      .create(payload)
+      .pipe(
+        finalize(() => {
+          this.isScheduling = false;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (appointment) => {
+          if (this.activeServiceId !== serviceId) {
+            return;
+          }
+
+          this.appointmentCreated.emit(appointment);
+        },
+      });
   }
-
-  // Bloqueio defensivo de UI — o backend também rejeita, mas evitamos
-  // a viagem desnecessária e damos feedback imediato no caso raro de o
-  // botão ter sido renderizado antes da resposta de getMe().
-  if (this.isOwnService) {
-    return;
-  }
-
-  const serviceId = this.service.id;
-  this.isScheduling = true;
-
-  const payload: CreateAppointmentPayload = {
-    serviceId,
-    scheduledDate: selection.date,
-    scheduledDay: selection.day,
-    scheduledTime: selection.time,
-    notes:
-      'Agendamento solicitado pelo mural para ' +
-      selection.day +
-      ' as ' +
-      selection.time +
-      '.',
-  };
-
-  this.appointmentApi
-    .create(payload)
-    .pipe(
-      finalize(() => {
-        this.isScheduling = false;
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    )
-    .subscribe({
-      next: (appointment) => {
-        if (this.activeServiceId !== serviceId) {
-          return;
-        }
-
-        this.appointmentCreated.emit(appointment);
-      },
-    });
-}
   submitReview(): void {
     const rating = this.pendingRating;
 
@@ -345,19 +402,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
               blockedDates?: string[];
             };
 
-            if (availability.blockedSlots) {
-              this.blockedSlots = availability.blockedSlots.map((s) => ({
-                ...s,
-                date: String(s.date).substring(0, 10),
-              }));
-            } else if (availability.blockedDates) {
-              this.blockedSlots = availability.blockedDates.map((d) => ({
-                date: String(d).substring(0, 10),
-                time: null,
-              }));
-            } else {
-              this.blockedSlots = [];
-            }
+            this.blockedSlots = this.normalizeAvailabilityBlockedSlots(availability);
           });
         },
         error: () => {
@@ -378,4 +423,6 @@ export class CustomerServiceDetailsComponent implements OnChanges {
         next: (updatedService) => this.serviceUpdated.emit(updatedService),
       });
   }
+
+
 }
