@@ -2,7 +2,6 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { OnboardingService } from '../services/onboarding.service';
-import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 
 /**
  * Permite a navegação para qualquer rota dentro de /mural/* desde que o
