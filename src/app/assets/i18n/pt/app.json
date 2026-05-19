@@ -403,5 +403,10 @@
 		"MESSAGE": "Para continuar usando o Mural Virtual do Condomínio, confirme que leu e aceita nossos Termos de Uso e Política de Privacidade.",
 		"ACCEPT": "Li e aceito",
 		"DECLINE": "Sair"
+	},
+	"NOT_FOUND": {
+		"TITLE": "Página não encontrada",
+		"MESSAGE": "O endereço que você tentou acessar não existe ou foi removido.",
+		"GO_HOME": "Voltar para o início"
 	}
 }

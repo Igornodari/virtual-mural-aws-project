@@ -403,5 +403,10 @@
 		"MESSAGE": "To keep using Mural Virtual do Condomínio, please confirm you have read and accepted our Terms of Use and Privacy Policy.",
 		"ACCEPT": "I accept",
 		"DECLINE": "Sign out"
+	},
+	"NOT_FOUND": {
+		"TITLE": "Page not found",
+		"MESSAGE": "The address you tried to access does not exist or has been removed.",
+		"GO_HOME": "Back to home"
 	}
 }

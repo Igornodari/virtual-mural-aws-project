@@ -1,0 +1,33 @@
+{
+  "name": "Mural do Condomínio",
+  "short_name": "Mural",
+  "description": "Plataforma de serviços e comunicação do seu condomínio",
+  "start_url": "/mural/customer",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1A6B6B",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mural de Serviços",
+      "url": "/mural/customer",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
