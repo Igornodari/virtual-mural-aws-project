@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
-import BaseComponent from '../../components/base.component';
-import { AppDialogConfirmationComponent } from '../../components/dialog-confirmation.component';
+import BaseComponent from '../../shared/components/base-component/base.component';
+import { AppDialogConfirmationComponent } from '../../shared/components/dialog-confirmation/dialog-confirmation.component';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { CreateCondominiumPayload } from '../../core/services/condominium-api.service';
 import { AppUserProfileDto, UpdateProfilePayload } from '../../core/services/user-api.service';

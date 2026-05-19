@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
-import BaseComponent from '../../../components/base.component';
+import BaseComponent from '../../../shared/components/base-component/base.component';
 
 /** Valida força de senha compatível com AWS Cognito */
 const passwordStrengthValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {

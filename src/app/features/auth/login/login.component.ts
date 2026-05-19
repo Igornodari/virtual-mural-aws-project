@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import BaseComponent from '../../../components/base.component';
+import BaseComponent from '../../../shared/components/base-component/base.component';
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 

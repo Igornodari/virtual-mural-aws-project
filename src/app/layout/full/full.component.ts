@@ -6,8 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { filter, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { MuralTopbarComponent } from 'src/app/components/mural-topbar/mural-topbar.component';
-import { BottomNavComponent } from 'src/app/components/bottom-nav/bottom-nav.component';
+import { MuralTopbarComponent } from 'src/app/shared/components/mural-topbar/mural-topbar.component';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { PushSubscriptionService } from 'src/app/core/services/push-subscription.service';
@@ -18,6 +17,7 @@ import {
   TermsAcceptanceDialogComponent,
   TermsAcceptanceResult,
 } from 'src/app/shared/components/terms-acceptance-dialog/terms-acceptance-dialog.component';
+import { BottomNavComponent } from 'src/app/shared/components/bottom-nav/bottom-nav.component';
 
 @Component({
   selector: 'app-full',
@@ -131,7 +131,12 @@ export class FullComponent {
     return ref.afterClosed().pipe(
       switchMap((result) => {
         if (result === 'accepted') {
-          return this.userApi.acceptTerms();
+          // Após o aceite, re-sincroniza o perfil local para que
+          // termsAcceptedAt seja gravado e o modal não reabra em
+          // navegações subsequentes.
+          return this.userApi.acceptTerms().pipe(
+            switchMap(() => this.onboardingService.syncFromBackend()),
+          );
         }
         // Recusou — faz logout
         this.authService.logout();
