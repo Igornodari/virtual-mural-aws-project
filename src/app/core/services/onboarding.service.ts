@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { CondominiumAddress, OnboardingProfile } from '../../shared/types';
 import { getDefaultMuralRoute, ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 import {
@@ -26,6 +26,14 @@ export class OnboardingService {
   private readonly profileSubject = new BehaviorSubject<OnboardingProfile>(this.loadFromStorage());
 
   readonly profile$ = this.profileSubject.asObservable();
+
+  /**
+   * Cache da requisição em voo: garante que chamadas concorrentes a
+   * syncFromBackend() compartilhem um único GET /users/me, evitando
+   * o rate-limit que ocorre quando guards + FullComponent disparam
+   * simultaneamente no mesmo ciclo de navegação.
+   */
+  private syncInFlight: Observable<AppUserProfileDto> | null = null;
 
 
   get profile(): OnboardingProfile {
@@ -59,29 +67,46 @@ export class OnboardingService {
   }
 
   syncFromBackend(): Observable<AppUserProfileDto> {
-    return this.userApi.getMe().pipe(
-      switchMap((user) => {
-        if (user.condominiumId && !this.profile.condominiumAddress) {
-          return this.condominiumApi.findOne(user.condominiumId).pipe(
-            tap((condominium) => {
-              this.persist(this.mapBackendProfile(user, condominium));
-            }),
-            map(() => user),
-            catchError(() => {
-              this.persist(this.mapBackendProfile(user));
-              return of(user);
-            }),
-          );
-        }
+    // Deduplica chamadas concorrentes: guards + FullComponent disparam ao
+    // mesmo tempo no mesmo ciclo de navegação. Com shareReplay(1), todos
+    // recebem o mesmo resultado de um único GET /users/me.
+    if (!this.syncInFlight) {
+      this.syncInFlight = this.userApi.getMe().pipe(
+        switchMap((user) => {
+          if (user.condominiumId && !this.profile.condominiumAddress) {
+            return this.condominiumApi.findOne(user.condominiumId).pipe(
+              tap((condominium) => {
+                this.persist(this.mapBackendProfile(user, condominium));
+              }),
+              map(() => user),
+              catchError(() => {
+                this.persist(this.mapBackendProfile(user));
+                return of(user);
+              }),
+            );
+          }
 
-        this.persist(this.mapBackendProfile(user));
-        return of(user);
-      }),
-      catchError((error) => {
-        this.errorHandler.handleError(error);
-        return of({} as AppUserProfileDto);
-      }),
-    );
+          this.persist(this.mapBackendProfile(user));
+          return of(user);
+        }),
+        catchError((error) => {
+          this.errorHandler.handleError(error);
+          // Em caso de erro (ex: 429 rate-limit), retorna o perfil em cache
+          // para não disparar fluxos que dependem de termsAcceptedAt vazio.
+          const cached = this.profileSubject.value;
+          return of({
+            condominiumId: cached.condominiumId,
+            isProvider: cached.isProvider,
+            onboardingCompleted: cached.onboardingCompleted,
+            termsAcceptedAt: null,
+          } as AppUserProfileDto);
+        }),
+        shareReplay(1),
+        finalize(() => { this.syncInFlight = null; }),
+      );
+    }
+
+    return this.syncInFlight;
   }
 
   syncAndResolveNextRoute(): Observable<string> {

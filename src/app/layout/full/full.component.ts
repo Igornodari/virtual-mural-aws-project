@@ -131,7 +131,12 @@ export class FullComponent {
     return ref.afterClosed().pipe(
       switchMap((result) => {
         if (result === 'accepted') {
-          return this.userApi.acceptTerms();
+          // Após o aceite, re-sincroniza o perfil local para que
+          // termsAcceptedAt seja gravado e o modal não reabra em
+          // navegações subsequentes.
+          return this.userApi.acceptTerms().pipe(
+            switchMap(() => this.onboardingService.syncFromBackend()),
+          );
         }
         // Recusou — faz logout
         this.authService.logout();
