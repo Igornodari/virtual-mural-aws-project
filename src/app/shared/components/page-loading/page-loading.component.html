@@ -1,0 +1,11 @@
+@if (visible) {
+      <div class="page-loading-overlay" role="status" [attr.aria-label]="message | translate">
+        <div class="page-loading-content">
+          <div class="page-loading-logo">
+            <span class="logo-icon">🏢</span>
+          </div>
+          <mat-spinner diameter="48" />
+          <p class="page-loading-message">{{ message | translate }}</p>
+        </div>
+      </div>
+    }

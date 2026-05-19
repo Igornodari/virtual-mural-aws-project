@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import BaseComponent from '../../components/base.component';
+import BaseComponent from '../../shared/components/base-component/base.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 
 @Component({

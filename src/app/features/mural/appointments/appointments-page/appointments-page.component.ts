@@ -2,13 +2,13 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { catchError, filter, finalize, of, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import BaseComponent from 'src/app/components/base.component';
-import { AppDialogConfirmationComponent } from 'src/app/components/dialog-confirmation.component';
+import BaseComponent from 'src/app/shared/components/base-component/base.component';
+import { AppDialogConfirmationComponent } from 'src/app/shared/components/dialog-confirmation/dialog-confirmation.component';
 import {
   PaymentMethod,
   PaymentMethodDialog,
-} from 'src/app/components/payment-method-dialog/payment-method-dialog';
-import { PixQrDialog } from 'src/app/components/pix-qr-dialog/pix-qr-dialog';
+} from 'src/app/shared/components/payment-method-dialog/payment-method-dialog';
+import { PixQrDialog } from 'src/app/shared/components/pix-qr-dialog/pix-qr-dialog';
 
 import {
   AppointmentApiService,

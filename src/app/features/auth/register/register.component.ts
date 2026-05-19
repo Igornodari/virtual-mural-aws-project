@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import BaseComponent from '../../../components/base.component';
+import BaseComponent from '../../../shared/components/base-component/base.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
 import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 

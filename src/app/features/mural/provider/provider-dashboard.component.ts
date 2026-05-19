@@ -3,7 +3,7 @@ import {  Subscription, finalize, forkJoin, interval, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import BaseComponent from 'src/app/components/base.component';
+import BaseComponent from 'src/app/shared/components/base-component/base.component';
 
 import {
   AppointmentApiService,

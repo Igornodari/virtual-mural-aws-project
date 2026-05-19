@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import BaseComponent from 'src/app/components/base.component';
+import BaseComponent from 'src/app/shared/components/base-component/base.component';
 
 import { ServiceDto } from 'src/app/core/services/service-api.service';
 

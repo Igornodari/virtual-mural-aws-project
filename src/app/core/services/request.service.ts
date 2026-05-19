@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../environments/environments';
-import { BRASIL_API } from '../../shared/constant/path.contant';
+import { BRASIL_API } from '../../shared/constant/path.constant';
 import { ActivityLog, ListResponse } from '../../shared/types';
 
 export type ApiTarget = 'CORE' | 'BRASIL_API';

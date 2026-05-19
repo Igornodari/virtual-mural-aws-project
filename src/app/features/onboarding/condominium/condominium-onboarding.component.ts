@@ -5,7 +5,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import BaseComponent from '../../../components/base.component';
+import BaseComponent from '../../../shared/components/base-component/base.component';
 import { OnboardingService } from '../../../core/services/onboarding.service';
 import { ROUTE_PATHS } from '../../../shared/constant/route-paths.constant';
 import { CondominiumAddress } from '../../../shared/types';

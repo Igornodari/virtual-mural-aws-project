@@ -5,9 +5,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
-import { LoadingComponent } from '../../components/loading.component';
-import { StatusComponent } from '../../components/status.component';
-import { RecordReadingComponent } from '../../components/record-reading.component';
+import { LoadingComponent } from '../components/loading/loading.component';
+import { StatusComponent } from '../components/status/status.component';
 import { MaterialModule } from '../../../material.module';
 export { MaterialModule } from '../../../material.module';
 export { CommonModule } from '@angular/common';
@@ -17,9 +16,8 @@ export { MatDatepickerModule } from '@angular/material/datepicker';
 export { RouterModule } from '@angular/router';
 export { TranslateModule } from '@ngx-translate/core';
 export { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
-export { LoadingComponent } from '../../components/loading.component';
-export { StatusComponent } from '../../components/status.component';
-export { RecordReadingComponent } from '../../components/record-reading.component';
+export { LoadingComponent } from '../components/loading/loading.component';
+export { StatusComponent } from '../components/status/status.component';
 
 export const importBase = [
   MaterialModule,
@@ -34,5 +32,4 @@ export const importBase = [
   RouterModule,
   StatusComponent,
   TranslateModule,
-  RecordReadingComponent,
 ];
