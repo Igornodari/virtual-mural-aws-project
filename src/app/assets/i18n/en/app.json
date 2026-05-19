@@ -1,400 +1,412 @@
 {
-  "CATEGORY": {
-    "CLEANING": "Cleaning",
-    "MAINTENANCE": "Maintenance",
-    "BEAUTY": "Beauty",
-    "TUTORING": "Tutoring",
-    "TECHNOLOGY": "Technology",
-    "PETS": "Pets",
-    "HEALTH": "Health",
-    "OTHERS": "Other"
-  },
-  "COMMON": {
-    "OR": "or",
-    "ANONYMOUS": "Anonymous",
-    "LOADING": "Loading...",
-    "BACK_TO_LOGIN": "Back to login",
-    "SHOW_PASSWORD": "Show password",
-    "HIDE_PASSWORD": "Hide password",
-    "ACTIONS": {
-      "SAVE": "Save changes",
-      "CANCEL": "Cancel",
-      "CONFIRM": "Confirm",
-      "COMPLETE": "Complete",
-      "EDIT": "Edit",
-      "REMOVE": "Remove",
-      "BACK": "Back",
-      "CONTINUE": "Continue",
-      "SEARCH_ZIP": "Search ZIP"
-    },
-    "LABELS": {
-      "EMAIL": "Email",
-      "PASSWORD": "Password",
-      "FIRST_NAME": "First name",
-      "LAST_NAME": "Last name",
-      "PHONE": "Phone",
-      "ZIP_CODE": "ZIP code",
-      "STREET": "Street",
-      "NUMBER": "Number",
-      "NEIGHBORHOOD": "Neighborhood",
-      "COMPLEMENT": "Complement",
-      "CITY": "City",
-      "STATE": "State"
-    },
-    "PLACEHOLDERS": {
-      "EMAIL": "you@example.com",
-      "PHONE": "(11) 99999-9999",
-      "ZIP_CODE": "00000-000",
-      "STREET": "E.g. Flower Street",
-      "NUMBER": "E.g. 123",
-      "COMPLEMENT": "Apt, Block...",
-      "NEIGHBORHOOD": "E.g. Downtown",
-      "CITY": "E.g. São Paulo"
-    },
-    "VALIDATION": {
-      "EMAIL_INVALID": "Please enter a valid email.",
-      "PASSWORD_STRENGTH": "Password must be at least 8 characters with uppercase, lowercase, number and special character.",
-      "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long.",
-      "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
-    },
-    "STATUS": {
-      "PENDING": "Pending",
-      "CONFIRMED": "Confirmed",
-      "AWAITING_PAYMENT": "Awaiting Payment",
-      "PAID": "Paid",
-      "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
-    },
-    "FEEDBACK": {
-      "SUCCESS": "Operation completed successfully.",
-      "UNEXPECTED_ERROR": "Unexpected error. Please try again.",
-      "NETWORK_ERROR": "Unable to connect to the server.",
-      "INVALID_PASSWORD": "Invalid password. Check uppercase, lowercase, number and special character requirements.",
-      "NOT_AUTHORIZED": "You are not authorized for this action.",
-      "USER_NOT_FOUND": "User not found.",
-      "REQUEST_FAILED": "Request failed. Please try again."
-    }
-  },
-  "AUTH": {
-    "LOGIN": {
-      "BADGE": "Condo marketplace",
-      "TITLE": "The virtual board that connects residents and services",
-      "HERO_IMAGE_ALT": "Illustration of the condominium virtual board",
-      "SUBTITLE": "Discover products and local services available inside your condominium. A simple way to connect who offers with who needs.",
-      "FEATURE_1": "Haircuts, sweets, maintenance, pets and more",
-      "FEATURE_2": "More visibility for resident entrepreneurs",
-      "FEATURE_3": "More convenience for people living in the condo",
-      "EXAMPLE_TITLE": "Real world example",
-      "EXAMPLE_TEXT": "One resident cuts hair, another sells sweets, another offers maintenance. With the board, everyone becomes visible to neighbors and closes more deals.",
-      "SIGN_IN_TITLE": "Sign in",
-      "SIGN_IN_SUBTITLE": "Access your account and see what is available in your condo.",
-      "REDIRECTING": "Redirecting...",
-      "CONTINUE_WITH_GOOGLE": "Continue with Google",
-      "PASSWORD_PLACEHOLDER": "Your password",
-      "PASSWORD_REQUIRED": "Please enter your password.",
-      "SIGNING_IN": "Signing in...",
-      "SIGN_IN_WITH_EMAIL": "Sign in with email",
-      "CREATE_ACCOUNT_LINK": "Do not have an account? Create one",
-      "FORGOT_PASSWORD_LINK": "Forgot your password?"
-    },
-    "REGISTER": {
-      "TITLE": "Create account",
-      "SUBTITLE": "Register your account to access your condominium board.",
-      "SUBTITLE_CONFIRM": "Enter the code sent to your email.",
-      "CODE": "Confirmation code",
-      "CREATING": "Creating...",
-      "CREATE_ACCOUNT": "Create account",
-      "CONFIRMING": "Confirming...",
-      "CONFIRM_EMAIL": "Confirm email",
-      "CONFIRM_PASSWORD": "Confirm password",
-      "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password.",
-      "ACCOUNT_CREATED": "Account created. Check your email for the confirmation code.",
-      "EMAIL_CONFIRMED": "Email confirmed. You can now log in.",
-      "FIRST_NAME_REQUIRED": "Please enter your first name.",
-      "LAST_NAME_REQUIRED": "Please enter your last name.",
-      "EMAIL_REQUIRED": "Please enter your email.",
-      "PASSWORD_REQUIRED": "Please enter a password.",
-      "CODE_REQUIRED": "Please enter the code sent to your email."
-    },
-    "CONFIRM_EMAIL": {
-      "TITLE": "Confirm your email",
-      "SUBTITLE": "We sent a verification code to your email.",
-      "SENT_TO": "Code sent to:",
-      "CODE_LABEL": "Verification code",
-      "CODE_PLACEHOLDER": "000000",
-      "CODE_REQUIRED": "Please enter the verification code.",
-      "CODE_LENGTH": "The code must be 6 digits.",
-      "CODE_MISMATCH": "Incorrect code. Please check and try again.",
-      "CODE_EXPIRED": "Code expired. Please request a new one below.",
-      "CONFIRM_BUTTON": "Confirm email",
-      "CONFIRMING": "Confirming...",
-      "SUCCESS": "Email confirmed! You can now sign in.",
-      "NO_CODE": "Didn't receive the code?",
-      "RESEND": "Resend",
-      "RESEND_SUCCESS": "New code sent! Check your email.",
-      "RESEND_WAIT": "Resend in {{seconds}}s",
-      "NOT_CONFIRMED_WARNING": "Please confirm your email before signing in. Check the code sent to your inbox."
-    },
-    "FORGOT_PASSWORD": {
-      "TITLE": "Forgot your password?",
-      "SUBTITLE": "Enter your email and we will send you a code to reset your password.",
-      "EMAIL_REQUIRED": "Please enter your email.",
-      "SEND_CODE": "Send code",
-      "SENDING": "Sending...",
-      "CODE_SENT": "Code sent! Check your email.",
-      "RESET_TITLE": "Reset your password",
-      "RESET_SUBTITLE": "Enter the code sent to {{email}} and choose a new password.",
-      "CODE_LABEL": "Confirmation code",
-      "CODE_REQUIRED": "Please enter the code received by email.",
-      "NEW_PASSWORD_LABEL": "New password",
-      "NEW_PASSWORD_REQUIRED": "Please enter a new password.",
-      "CONFIRM_PASSWORD_LABEL": "Confirm new password",
-      "CONFIRM_PASSWORD_REQUIRED": "Please confirm your new password.",
-      "RESET_PASSWORD": "Reset password",
-      "RESETTING": "Resetting...",
-      "SUCCESS_TITLE": "Password reset!",
-      "SUCCESS_MESSAGE": "Your password was successfully reset. You can now sign in with your new password."
-    }
-  },
-  "LAYOUT": {
-    "TOPBAR": {
-      "BRAND": "Condo Board",
-      "ROLE_PROVIDER": "Provider",
-      "ROLE_CUSTOMER": "Resident",
-      "MODE_RESIDENT": "Resident",
-      "MODE_PROVIDER": "Provider",
-      "MODE_TOGGLE_ARIA": "Switch between resident and provider mode",
-      "THEME_LIGHT": "Switch to light theme",
-      "THEME_DARK": "Switch to dark theme",
-      "MY_PROFILE": "My Profile",
-      "LOGOUT": "Logout",
-      "LANGUAGE": "Language"
-    },
-    "MENU": {
-      "DASHBOARD": "Dashboard",
-      "PROVIDER_DASHBOARD": "My services",
-      "PROVIDER_DASHBOARD_SHORT": "Services",
-      "PROFILE": "My Profile"
-    },
-    "DASHBOARD": {
-      "BADGE": "Condo board",
-      "TITLE": "Welcome to your workspace",
-      "SUBTITLE": "Your assets and global style system are now active across the application.",
-      "SIGN_OUT": "Sign out",
-      "SESSION_TITLE": "Authenticated session",
-      "SESSION_SUBTITLE": "User data returned by Cognito"
-    },
-    "LOADING": {
-      "DEFAULT": "Loading..."
-    }
-  },
-  "ONBOARDING": {
-    "CONDOMINIUM": {
-      "TITLE": "Your condo, connected in one place",
-      "SUBTITLE": "Set up your condominium address to activate a community board where residents can buy, sell, and share whatever they need.",
-      "CEP_INVALID": "Please enter a valid ZIP code.",
-      "STREET_REQUIRED": "Please enter the street.",
-      "NUMBER_REQUIRED": "Please enter the number.",
-      "NEIGHBORHOOD_REQUIRED": "Please enter the neighborhood.",
-      "CITY_REQUIRED": "Please enter the city.",
-      "STATE_REQUIRED": "Please select the state."
-    }
-  },
-  "PROVIDER_GUARD": {
-    "NEEDS_ACTIVATION": "Activate provider mode in your profile to access this area."
-  },
-  "APPOINTMENTS_PAGE": {
-    "TAB_AS_CUSTOMER": "As resident",
-    "TAB_AS_PROVIDER": "As provider"
-  },
-  "MURAL": {
-    "PROVIDER": {
-      "HERO_TITLE": "Manage your services in the condominium",
-      "HERO_SUBTITLE": "Track your services, reviews, and booking requests in",
-      "MY_SERVICES_TITLE": "My Services",
-      "ADD_SERVICE": "New service",
-      "NO_SERVICES": "You have not published any service yet.",
-      "NO_SERVICES_HINT": "Click \"New service\" to start appearing on the board.",
-      "REVIEWS_LABEL": "reviews",
-      "STATS": {
-        "SERVICES": "Active services",
-        "RATING": "Average rating",
-        "REVIEWS": "Reviews received",
-        "CITY": "City"
-      },
-      "FORM": {
-        "NEW_TITLE": "New service",
-        "EDIT_TITLE": "Edit service",
-        "NAME": "Service name",
-        "NAME_PLACEHOLDER": "E.g.: Haircut",
-        "NAME_REQUIRED": "Please enter the service name.",
-        "CATEGORY": "Category",
-        "DESCRIPTION": "Description",
-        "DESCRIPTION_PLACEHOLDER": "Describe the service, experience, highlights...",
-        "DESCRIPTION_REQUIRED": "Please enter a description.",
-        "PRICE": "Price",
-        "PRICE_PLACEHOLDER": "E.g.: $50.00 / hour",
-        "PRICE_REQUIRED": "Please enter the price.",
-        "CONTACT": "Contact (WhatsApp or phone)",
-        "CONTACT_PLACEHOLDER": "(11) 99999-9999",
-        "CONTACT_REQUIRED": "Please enter a contact.",
-        "DAYS": "Available days",
-        "DAYS_REQUIRED": "Configure at least one availability day.",
-        "AVAILABILITY": "Weekly availability",
-        "PUBLISH": "Publish on board"
-      }
-    },
-    "CUSTOMER": {
-      "HERO_TITLE": "Services for your condominium",
-      "HERO_SUBTITLE": "Find services and professionals in your condominium in",
-      "STATS_SERVICES": "Available services",
-      "STATS_PROVIDERS": "Providers",
-      "SEARCH_PLACEHOLDER": "Search services...",
-      "FILTER_ALL": "All",
-      "NO_SERVICES": "No services found.",
-      "NO_SERVICES_HINT": "Try another filter or wait for new listings in your condo.",
-      "RATING": "reviews",
-      "CONTACT": "Contact via WhatsApp",
-      "SCHEDULE": "Schedule",
-      "SCHEDULE_TITLE": "Schedule appointment",
-      "SCHEDULE_CONFIRM": "Confirm appointment",
-      "SCHEDULE_SUCCESS": "Appointment requested successfully!",
-      "OWN_SERVICE_NOTICE": "This is your service — you can't book it yourself. Bookings you receive appear under \"As provider\" in the appointments page.",
-      "REVIEWS_TITLE": "Reviews",
-      "NO_REVIEWS": "No reviews yet.",
-      "WRITE_REVIEW": "Write a review",
-      "YOUR_RATING": "Your rating:",
-      "REVIEW_COMMENT": "Comment",
-      "REVIEW_COMMENT_HINT": "Tell us about your experience...",
-      "REVIEW_ANONYMOUS_HINT": "Your identity will remain anonymous",
-      "SUBMIT_REVIEW": "Submit review",
-      "REVIEW_SENT": "Review submitted successfully!",
-      "REVIEW_ERROR": "Error submitting review. Please try again.",
-      "RATING_1": "Terrible",
-      "RATING_2": "Poor",
-      "RATING_3": "Average",
-      "RATING_4": "Good",
-      "RATING_5": "Excellent"
-    },
-    "KANBAN": {
-      "SECTION_TITLE": "Appointments",
-      "VIEW_KANBAN": "View as Kanban",
-      "VIEW_LIST": "View as list",
-      "CHAT": "Chat with customer",
-      "EMPTY_COLUMN": "No appointments",
-      "EMPTY_TITLE": "No requests yet",
-      "EMPTY_MESSAGE": "When a resident requests an appointment, it will appear here.",
-      "UNKNOWN_SERVICE": "Service",
-      "UNKNOWN_CUSTOMER": "Customer",
-      "READONLY_TOOLTIP": "Column managed by the system"
-    },
-    "ANALYTICS": {
-      "TITLE": "Analytics",
-      "SELECT_SERVICE": "Select a service to view analytics",
-      "VIEW_ANALYTICS": "View analytics",
-      "CLICKS": "Views",
-      "INTERESTS": "Interested",
-      "COMPLETIONS": "Completed",
-      "ABANDONMENTS": "Abandoned",
-      "TAB_FUNNEL": "Funnel",
-      "TAB_REVIEWS": "Reviews",
-      "REVIEWS_COUNT": "reviews",
-      "COMMENTS": "Comments",
-      "NO_COMMENTS": "No comments yet",
-      "NO_COMMENT_TEXT": "Rating without comment"
-    },
-    "SCHEDULE": {
-      "SELECT_TIME": "Choose a time slot for",
-      "NO_SLOTS": "No time slots available for this day."
-    }
-  },
-  "PROFILE": {
-    "TITLE": "My Profile",
-    "SUBTITLE": "Manage your personal information, address and condominium.",
-    "TABS": {
-      "PERSONAL": "Personal Data",
-      "ADDRESS": "Address & Condominium",
-      "SECURITY": "Security"
-    },
-    "PERSONAL": {
-      "SAVED_SUCCESS": "Personal data saved successfully!"
-    },
-    "ADDRESS": {
-      "CONDO_NAME": "Condominium Name",
-      "CONDO_NAME_PLACEHOLDER": "e.g. Residencial das Flores",
-      "SAVED_SUCCESS": "Address updated successfully!"
-    },
-    "ROLE": {
-      "RESIDENT": "Resident",
-      "PROVIDER": "Provider",
-      "PROVIDER_DESC": "I publish services on the board for other residents.",
-      "CUSTOMER": "Resident",
-      "CUSTOMER_DESC": "I search and hire services from other residents."
-    },
-    "BECOME_PROVIDER": {
-      "TITLE": "Want to offer services in the condo?",
-      "DESCRIPTION": "Activate provider mode to publish services, receive bookings, and configure payments inside the app.",
-      "CTA": "Become a provider",
-      "DIALOG_TITLE": "Activate provider mode",
-      "DIALOG_BODY": "By activating provider mode you can publish services on the board and receive payments via Stripe. You can deactivate it later, as long as you have no active services or pending bookings.",
-      "SUCCESS": "Provider mode activated!",
-      "ERROR": "Could not activate provider mode. Please try again."
-    },
-    "PROVIDER_ACTIVE": {
-      "TITLE": "Provider mode active",
-      "DESCRIPTION": "You can publish services and receive bookings from the provider panel.",
-      "CTA": "Open provider panel"
-    },
-    "SECURITY": {
-      "COGNITO_TITLE": "Authentication managed by AWS",
-      "COGNITO_DESC": "Your account is authenticated via AWS Cognito. Your credentials are managed securely.",
-      "PASSWORD_TITLE": "Change password",
-      "PASSWORD_DESC": "To change your password, access the AWS Cognito portal or use the 'Forgot password' option on the login screen.",
-      "PASSWORD_CHANGE_DESC": "Enter your current password and choose a new one.",
-      "CURRENT_PASSWORD": "Current password",
-      "CURRENT_PASSWORD_REQUIRED": "Please enter your current password.",
-      "NEW_PASSWORD": "New password",
-      "NEW_PASSWORD_REQUIRED": "Please enter a new password.",
-      "CONFIRM_NEW_PASSWORD": "Confirm new password",
-      "CHANGE_PASSWORD_BUTTON": "Change password",
-      "PASSWORD_CHANGED_SUCCESS": "Password changed successfully!",
-      "PASSWORD_WRONG_CURRENT": "Current password is incorrect. Please check and try again.",
-      "PASSWORD_INVALID": "Invalid password. Use uppercase, lowercase, number and special character.",
-      "PASSWORD_LIMIT_EXCEEDED": "Too many attempts. Please wait a few minutes and try again.",
-      "GOOGLE_ACCOUNT_TITLE": "Google Account",
-      "GOOGLE_ACCOUNT_DESC": "You signed in with Google. To change your password, visit your Google account settings."
-    }
-  },
-  "PAYMENT": {
-    "GO_TO_DASHBOARD": "Go to dashboard",
-    "SUCCESS": {
-      "TITLE": "Payment confirmed!",
-      "ERROR_TITLE": "Almost there",
-      "MESSAGE": "Your appointment has been paid successfully. The provider will be notified.",
-      "SESSION_ID": "Session ID",
-      "VERIFYING": "Confirming payment...",
-      "VERIFY_ERROR": "Could not confirm automatically. Please check your appointments."
-    },
-    "CANCEL": {
-      "TITLE": "Payment cancelled",
-      "MESSAGE": "The payment was cancelled. You can try again or contact the provider.",
-      "TRY_AGAIN": "Try again"
-    },
-    "STRIPE_CONNECT": {
-      "SECTION_TITLE": "Payments",
-      "STATUS_ACTIVE": "Payments account active",
-      "STATUS_ACTIVE_DESC": "You are receiving payments. The platform retains 5% per transaction.",
-      "STATUS_PENDING": "Incomplete registration",
-      "STATUS_PENDING_DESC": "Complete your registration to receive payments from your clients.",
-      "STATUS_RESTRICTED": "Account restricted",
-      "STATUS_RESTRICTED_DESC": "Your account has restrictions. Access the dashboard to resolve them.",
-      "STATUS_NOT_CONNECTED": "Receive payments in-app",
-      "STATUS_NOT_CONNECTED_DESC": "Connect your account to receive appointment payments directly.",
-      "CONNECT_ACCOUNT": "Connect account",
-      "CONTINUE_ONBOARDING": "Continue registration",
-      "OPEN_DASHBOARD": "Open payments dashboard",
-      "RETURN_SUCCESS": "Registration submitted! Waiting for Stripe confirmation. Status will update shortly.",
-      "RETURN_REFRESH": "Link expired. Click 'Continue registration' to generate a new link."
-    }
-  }
+	"CATEGORY": {
+		"CLEANING": "Cleaning",
+		"MAINTENANCE": "Maintenance",
+		"BEAUTY": "Beauty",
+		"TUTORING": "Tutoring",
+		"TECHNOLOGY": "Technology",
+		"PETS": "Pets",
+		"HEALTH": "Health",
+		"OTHERS": "Other"
+	},
+	"COMMON": {
+		"OR": "or",
+		"ANONYMOUS": "Anonymous",
+		"LOADING": "Loading...",
+		"BACK_TO_LOGIN": "Back to login",
+		"SHOW_PASSWORD": "Show password",
+		"HIDE_PASSWORD": "Hide password",
+		"ACTIONS": {
+			"SAVE": "Save changes",
+			"CANCEL": "Cancel",
+			"CONFIRM": "Confirm",
+			"COMPLETE": "Complete",
+			"EDIT": "Edit",
+			"REMOVE": "Remove",
+			"BACK": "Back",
+			"CONTINUE": "Continue",
+			"SEARCH_ZIP": "Search ZIP"
+		},
+		"LABELS": {
+			"EMAIL": "Email",
+			"PASSWORD": "Password",
+			"FIRST_NAME": "First name",
+			"LAST_NAME": "Last name",
+			"PHONE": "Phone",
+			"ZIP_CODE": "ZIP code",
+			"STREET": "Street",
+			"NUMBER": "Number",
+			"NEIGHBORHOOD": "Neighborhood",
+			"COMPLEMENT": "Complement",
+			"CITY": "City",
+			"STATE": "State"
+		},
+		"PLACEHOLDERS": {
+			"EMAIL": "you@example.com",
+			"PHONE": "(11) 99999-9999",
+			"ZIP_CODE": "00000-000",
+			"STREET": "E.g. Flower Street",
+			"NUMBER": "E.g. 123",
+			"COMPLEMENT": "Apt, Block...",
+			"NEIGHBORHOOD": "E.g. Downtown",
+			"CITY": "E.g. São Paulo"
+		},
+		"VALIDATION": {
+			"EMAIL_INVALID": "Please enter a valid email.",
+			"PASSWORD_STRENGTH": "Password must be at least 8 characters with uppercase, lowercase, number and special character.",
+			"PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long.",
+			"PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
+		},
+		"STATUS": {
+			"PENDING": "Pending",
+			"CONFIRMED": "Confirmed",
+			"AWAITING_PAYMENT": "Awaiting Payment",
+			"PAID": "Paid",
+			"COMPLETED": "Completed",
+			"CANCELLED": "Cancelled"
+		},
+		"FEEDBACK": {
+			"SUCCESS": "Operation completed successfully.",
+			"UNEXPECTED_ERROR": "Unexpected error. Please try again.",
+			"NETWORK_ERROR": "Unable to connect to the server.",
+			"INVALID_PASSWORD": "Invalid password. Check uppercase, lowercase, number and special character requirements.",
+			"NOT_AUTHORIZED": "You are not authorized for this action.",
+			"USER_NOT_FOUND": "User not found.",
+			"REQUEST_FAILED": "Request failed. Please try again."
+		}
+	},
+	"AUTH": {
+		"LOGIN": {
+			"BADGE": "Condo marketplace",
+			"TITLE": "The virtual board that connects residents and services",
+			"HERO_IMAGE_ALT": "Illustration of the condominium virtual board",
+			"SUBTITLE": "Discover products and local services available inside your condominium. A simple way to connect who offers with who needs.",
+			"FEATURE_1": "Haircuts, sweets, maintenance, pets and more",
+			"FEATURE_2": "More visibility for resident entrepreneurs",
+			"FEATURE_3": "More convenience for people living in the condo",
+			"EXAMPLE_TITLE": "Real world example",
+			"EXAMPLE_TEXT": "One resident cuts hair, another sells sweets, another offers maintenance. With the board, everyone becomes visible to neighbors and closes more deals.",
+			"SIGN_IN_TITLE": "Sign in",
+			"SIGN_IN_SUBTITLE": "Access your account and see what is available in your condo.",
+			"REDIRECTING": "Redirecting...",
+			"CONTINUE_WITH_GOOGLE": "Continue with Google",
+			"PASSWORD_PLACEHOLDER": "Your password",
+			"PASSWORD_REQUIRED": "Please enter your password.",
+			"SIGNING_IN": "Signing in...",
+			"SIGN_IN_WITH_EMAIL": "Sign in with email",
+			"CREATE_ACCOUNT_LINK": "Do not have an account? Create one",
+			"FORGOT_PASSWORD_LINK": "Forgot your password?"
+		},
+		"REGISTER": {
+			"TITLE": "Create account",
+			"SUBTITLE": "Register your account to access your condominium board.",
+			"SUBTITLE_CONFIRM": "Enter the code sent to your email.",
+			"CODE": "Confirmation code",
+			"CREATING": "Creating...",
+			"CREATE_ACCOUNT": "Create account",
+			"CONFIRMING": "Confirming...",
+			"CONFIRM_EMAIL": "Confirm email",
+			"CONFIRM_PASSWORD": "Confirm password",
+			"CONFIRM_PASSWORD_REQUIRED": "Please confirm your password.",
+			"ACCOUNT_CREATED": "Account created. Check your email for the confirmation code.",
+			"EMAIL_CONFIRMED": "Email confirmed. You can now log in.",
+			"FIRST_NAME_REQUIRED": "Please enter your first name.",
+			"LAST_NAME_REQUIRED": "Please enter your last name.",
+			"EMAIL_REQUIRED": "Please enter your email.",
+			"PASSWORD_REQUIRED": "Please enter a password.",
+			"CODE_REQUIRED": "Please enter the code sent to your email.",
+			"TERMS_REQUIRED": "You must accept the Terms of Use and Privacy Policy to continue."
+		},
+		"CONFIRM_EMAIL": {
+			"TITLE": "Confirm your email",
+			"SUBTITLE": "We sent a verification code to your email.",
+			"SENT_TO": "Code sent to:",
+			"CODE_LABEL": "Verification code",
+			"CODE_PLACEHOLDER": "000000",
+			"CODE_REQUIRED": "Please enter the verification code.",
+			"CODE_LENGTH": "The code must be 6 digits.",
+			"CODE_MISMATCH": "Incorrect code. Please check and try again.",
+			"CODE_EXPIRED": "Code expired. Please request a new one below.",
+			"CONFIRM_BUTTON": "Confirm email",
+			"CONFIRMING": "Confirming...",
+			"SUCCESS": "Email confirmed! You can now sign in.",
+			"NO_CODE": "Didn't receive the code?",
+			"RESEND": "Resend",
+			"RESEND_SUCCESS": "New code sent! Check your email.",
+			"RESEND_WAIT": "Resend in {{seconds}}s",
+			"NOT_CONFIRMED_WARNING": "Please confirm your email before signing in. Check the code sent to your inbox."
+		},
+		"FORGOT_PASSWORD": {
+			"TITLE": "Forgot your password?",
+			"SUBTITLE": "Enter your email and we will send you a code to reset your password.",
+			"EMAIL_REQUIRED": "Please enter your email.",
+			"SEND_CODE": "Send code",
+			"SENDING": "Sending...",
+			"CODE_SENT": "Code sent! Check your email.",
+			"RESET_TITLE": "Reset your password",
+			"RESET_SUBTITLE": "Enter the code sent to {{email}} and choose a new password.",
+			"CODE_LABEL": "Confirmation code",
+			"CODE_REQUIRED": "Please enter the code received by email.",
+			"NEW_PASSWORD_LABEL": "New password",
+			"NEW_PASSWORD_REQUIRED": "Please enter a new password.",
+			"CONFIRM_PASSWORD_LABEL": "Confirm new password",
+			"CONFIRM_PASSWORD_REQUIRED": "Please confirm your new password.",
+			"RESET_PASSWORD": "Reset password",
+			"RESETTING": "Resetting...",
+			"SUCCESS_TITLE": "Password reset!",
+			"SUCCESS_MESSAGE": "Your password was successfully reset. You can now sign in with your new password."
+		}
+	},
+	"LAYOUT": {
+		"TOPBAR": {
+			"BRAND": "Condo Board",
+			"ROLE_PROVIDER": "Provider",
+			"ROLE_CUSTOMER": "Resident",
+			"MODE_RESIDENT": "Resident",
+			"MODE_PROVIDER": "Provider",
+			"MODE_TOGGLE_ARIA": "Switch between resident and provider mode",
+			"THEME_LIGHT": "Switch to light theme",
+			"THEME_DARK": "Switch to dark theme",
+			"MY_PROFILE": "My Profile",
+			"LOGOUT": "Logout",
+			"LANGUAGE": "Language"
+		},
+		"MENU": {
+			"DASHBOARD": "Dashboard",
+			"PROVIDER_DASHBOARD": "My services",
+			"PROVIDER_DASHBOARD_SHORT": "Services",
+			"PROFILE": "My Profile"
+		},
+		"DASHBOARD": {
+			"BADGE": "Condo board",
+			"TITLE": "Welcome to your workspace",
+			"SUBTITLE": "Your assets and global style system are now active across the application.",
+			"SIGN_OUT": "Sign out",
+			"SESSION_TITLE": "Authenticated session",
+			"SESSION_SUBTITLE": "User data returned by Cognito"
+		},
+		"LOADING": {
+			"DEFAULT": "Loading..."
+		}
+	},
+	"ONBOARDING": {
+		"CONDOMINIUM": {
+			"TITLE": "Your condo, connected in one place",
+			"SUBTITLE": "Set up your condominium address to activate a community board where residents can buy, sell, and share whatever they need.",
+			"CEP_INVALID": "Please enter a valid ZIP code.",
+			"STREET_REQUIRED": "Please enter the street.",
+			"NUMBER_REQUIRED": "Please enter the number.",
+			"NEIGHBORHOOD_REQUIRED": "Please enter the neighborhood.",
+			"CITY_REQUIRED": "Please enter the city.",
+			"STATE_REQUIRED": "Please select the state."
+		}
+	},
+	"PROVIDER_GUARD": {
+		"NEEDS_ACTIVATION": "Activate provider mode in your profile to access this area."
+	},
+	"APPOINTMENTS_PAGE": {
+		"TAB_AS_CUSTOMER": "As resident",
+		"TAB_AS_PROVIDER": "As provider"
+	},
+	"MURAL": {
+		"PROVIDER": {
+			"HERO_TITLE": "Manage your services in the condominium",
+			"HERO_SUBTITLE": "Track your services, reviews, and booking requests in",
+			"MY_SERVICES_TITLE": "My Services",
+			"ADD_SERVICE": "New service",
+			"NO_SERVICES": "You have not published any service yet.",
+			"NO_SERVICES_HINT": "Click \"New service\" to start appearing on the board.",
+			"REVIEWS_LABEL": "reviews",
+			"STATS": {
+				"SERVICES": "Active services",
+				"RATING": "Average rating",
+				"REVIEWS": "Reviews received",
+				"CITY": "City"
+			},
+			"FORM": {
+				"NEW_TITLE": "New service",
+				"EDIT_TITLE": "Edit service",
+				"NAME": "Service name",
+				"NAME_PLACEHOLDER": "E.g.: Haircut",
+				"NAME_REQUIRED": "Please enter the service name.",
+				"CATEGORY": "Category",
+				"DESCRIPTION": "Description",
+				"DESCRIPTION_PLACEHOLDER": "Describe the service, experience, highlights...",
+				"DESCRIPTION_REQUIRED": "Please enter a description.",
+				"PRICE": "Price",
+				"PRICE_PLACEHOLDER": "E.g.: $50.00 / hour",
+				"PRICE_REQUIRED": "Please enter the price.",
+				"CONTACT": "Contact (WhatsApp or phone)",
+				"CONTACT_PLACEHOLDER": "(11) 99999-9999",
+				"CONTACT_REQUIRED": "Please enter a contact.",
+				"DAYS": "Available days",
+				"DAYS_REQUIRED": "Configure at least one availability day.",
+				"AVAILABILITY": "Weekly availability",
+				"PUBLISH": "Publish on board"
+			}
+		},
+		"CUSTOMER": {
+			"HERO_TITLE": "Services for your condominium",
+			"HERO_SUBTITLE": "Find services and professionals in your condominium in",
+			"STATS_SERVICES": "Available services",
+			"STATS_PROVIDERS": "Providers",
+			"SEARCH_PLACEHOLDER": "Search services...",
+			"FILTER_ALL": "All",
+			"NO_SERVICES": "No services found.",
+			"NO_SERVICES_HINT": "Try another filter or wait for new listings in your condo.",
+			"RATING": "reviews",
+			"CONTACT": "Contact via WhatsApp",
+			"SCHEDULE": "Schedule",
+			"SCHEDULE_TITLE": "Schedule appointment",
+			"SCHEDULE_CONFIRM": "Confirm appointment",
+			"SCHEDULE_SUCCESS": "Appointment requested successfully!",
+			"OWN_SERVICE_NOTICE": "This is your service — you can't book it yourself. Bookings you receive appear under \"As provider\" in the appointments page.",
+			"REVIEWS_TITLE": "Reviews",
+			"NO_REVIEWS": "No reviews yet.",
+			"WRITE_REVIEW": "Write a review",
+			"YOUR_RATING": "Your rating:",
+			"REVIEW_COMMENT": "Comment",
+			"REVIEW_COMMENT_HINT": "Tell us about your experience...",
+			"REVIEW_ANONYMOUS_HINT": "Your identity will remain anonymous",
+			"SUBMIT_REVIEW": "Submit review",
+			"REVIEW_SENT": "Review submitted successfully!",
+			"REVIEW_ERROR": "Error submitting review. Please try again.",
+			"RATING_1": "Terrible",
+			"RATING_2": "Poor",
+			"RATING_3": "Average",
+			"RATING_4": "Good",
+			"RATING_5": "Excellent"
+		},
+		"KANBAN": {
+			"SECTION_TITLE": "Appointments",
+			"VIEW_KANBAN": "View as Kanban",
+			"VIEW_LIST": "View as list",
+			"CHAT": "Chat with customer",
+			"EMPTY_COLUMN": "No appointments",
+			"EMPTY_TITLE": "No requests yet",
+			"EMPTY_MESSAGE": "When a resident requests an appointment, it will appear here.",
+			"UNKNOWN_SERVICE": "Service",
+			"UNKNOWN_CUSTOMER": "Customer",
+			"READONLY_TOOLTIP": "Column managed by the system"
+		},
+		"ANALYTICS": {
+			"TITLE": "Analytics",
+			"SELECT_SERVICE": "Select a service to view analytics",
+			"VIEW_ANALYTICS": "View analytics",
+			"CLICKS": "Views",
+			"INTERESTS": "Interested",
+			"COMPLETIONS": "Completed",
+			"ABANDONMENTS": "Abandoned",
+			"TAB_FUNNEL": "Funnel",
+			"TAB_REVIEWS": "Reviews",
+			"REVIEWS_COUNT": "reviews",
+			"COMMENTS": "Comments",
+			"NO_COMMENTS": "No comments yet",
+			"NO_COMMENT_TEXT": "Rating without comment"
+		},
+		"SCHEDULE": {
+			"SELECT_TIME": "Choose a time slot for",
+			"NO_SLOTS": "No time slots available for this day."
+		}
+	},
+	"PROFILE": {
+		"TITLE": "My Profile",
+		"SUBTITLE": "Manage your personal information, address and condominium.",
+		"TABS": {
+			"PERSONAL": "Personal Data",
+			"ADDRESS": "Address & Condominium",
+			"SECURITY": "Security"
+		},
+		"PERSONAL": {
+			"SAVED_SUCCESS": "Personal data saved successfully!"
+		},
+		"ADDRESS": {
+			"CONDO_NAME": "Condominium Name",
+			"CONDO_NAME_PLACEHOLDER": "e.g. Residencial das Flores",
+			"SAVED_SUCCESS": "Address updated successfully!"
+		},
+		"ROLE": {
+			"RESIDENT": "Resident",
+			"PROVIDER": "Provider",
+			"PROVIDER_DESC": "I publish services on the board for other residents.",
+			"CUSTOMER": "Resident",
+			"CUSTOMER_DESC": "I search and hire services from other residents."
+		},
+		"BECOME_PROVIDER": {
+			"TITLE": "Want to offer services in the condo?",
+			"DESCRIPTION": "Activate provider mode to publish services, receive bookings, and configure payments inside the app.",
+			"CTA": "Become a provider",
+			"DIALOG_TITLE": "Activate provider mode",
+			"DIALOG_BODY": "By activating provider mode you can publish services on the board and receive payments via Stripe. You can deactivate it later, as long as you have no active services or pending bookings.",
+			"SUCCESS": "Provider mode activated!",
+			"ERROR": "Could not activate provider mode. Please try again."
+		},
+		"PROVIDER_ACTIVE": {
+			"TITLE": "Provider mode active",
+			"DESCRIPTION": "You can publish services and receive bookings from the provider panel.",
+			"CTA": "Open provider panel"
+		},
+		"SECURITY": {
+			"COGNITO_TITLE": "Authentication managed by AWS",
+			"COGNITO_DESC": "Your account is authenticated via AWS Cognito. Your credentials are managed securely.",
+			"PASSWORD_TITLE": "Change password",
+			"PASSWORD_DESC": "To change your password, access the AWS Cognito portal or use the 'Forgot password' option on the login screen.",
+			"PASSWORD_CHANGE_DESC": "Enter your current password and choose a new one.",
+			"CURRENT_PASSWORD": "Current password",
+			"CURRENT_PASSWORD_REQUIRED": "Please enter your current password.",
+			"NEW_PASSWORD": "New password",
+			"NEW_PASSWORD_REQUIRED": "Please enter a new password.",
+			"CONFIRM_NEW_PASSWORD": "Confirm new password",
+			"CHANGE_PASSWORD_BUTTON": "Change password",
+			"PASSWORD_CHANGED_SUCCESS": "Password changed successfully!",
+			"PASSWORD_WRONG_CURRENT": "Current password is incorrect. Please check and try again.",
+			"PASSWORD_INVALID": "Invalid password. Use uppercase, lowercase, number and special character.",
+			"PASSWORD_LIMIT_EXCEEDED": "Too many attempts. Please wait a few minutes and try again.",
+			"GOOGLE_ACCOUNT_TITLE": "Google Account",
+			"GOOGLE_ACCOUNT_DESC": "You signed in with Google. To change your password, visit your Google account settings."
+		}
+	},
+	"PAYMENT": {
+		"GO_TO_DASHBOARD": "Go to dashboard",
+		"SUCCESS": {
+			"TITLE": "Payment confirmed!",
+			"ERROR_TITLE": "Almost there",
+			"MESSAGE": "Your appointment has been paid successfully. The provider will be notified.",
+			"SESSION_ID": "Session ID",
+			"VERIFYING": "Confirming payment...",
+			"VERIFY_ERROR": "Could not confirm automatically. Please check your appointments."
+		},
+		"CANCEL": {
+			"TITLE": "Payment cancelled",
+			"MESSAGE": "The payment was cancelled. You can try again or contact the provider.",
+			"TRY_AGAIN": "Try again"
+		},
+		"STRIPE_CONNECT": {
+			"SECTION_TITLE": "Payments",
+			"STATUS_ACTIVE": "Payments account active",
+			"STATUS_ACTIVE_DESC": "You are receiving payments. The platform retains 5% per transaction.",
+			"STATUS_PENDING": "Incomplete registration",
+			"STATUS_PENDING_DESC": "Complete your registration to receive payments from your clients.",
+			"STATUS_RESTRICTED": "Account restricted",
+			"STATUS_RESTRICTED_DESC": "Your account has restrictions. Access the dashboard to resolve them.",
+			"STATUS_NOT_CONNECTED": "Receive payments in-app",
+			"STATUS_NOT_CONNECTED_DESC": "Connect your account to receive appointment payments directly.",
+			"CONNECT_ACCOUNT": "Connect account",
+			"CONTINUE_ONBOARDING": "Continue registration",
+			"OPEN_DASHBOARD": "Open payments dashboard",
+			"RETURN_SUCCESS": "Registration submitted! Waiting for Stripe confirmation. Status will update shortly.",
+			"RETURN_REFRESH": "Link expired. Click 'Continue registration' to generate a new link."
+		}
+	},
+	"TERMS_MODAL": {
+		"TITLE": "Updated terms",
+		"MESSAGE": "To keep using Mural Virtual do Condomínio, please confirm you have read and accepted our Terms of Use and Privacy Policy.",
+		"ACCEPT": "I accept",
+		"DECLINE": "Sign out"
+	},
+	"NOT_FOUND": {
+		"TITLE": "Page not found",
+		"MESSAGE": "The address you tried to access does not exist or has been removed.",
+		"GO_HOME": "Back to home"
+	}
 }

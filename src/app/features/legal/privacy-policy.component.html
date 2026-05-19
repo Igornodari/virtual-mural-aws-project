@@ -1,0 +1,114 @@
+<div class="legal-page">
+  <div class="legal-container">
+    <div class="legal-back">
+      <a mat-button [routerLink]="loginPath">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </a>
+    </div>
+
+    <div class="legal-header">
+      <h1>Política de Privacidade</h1>
+      <p class="legal-updated">Última atualização: {{ lastUpdated }}</p>
+    </div>
+
+    <div class="legal-content">
+      <h2>1. Introdução</h2>
+      <p>
+        Esta Política descreve como o Mural Virtual do Condomínio ("Plataforma") coleta,
+        usa e protege seus dados pessoais, em conformidade com a Lei Geral de Proteção de
+        Dados (LGPD — Lei nº 13.709/2018).
+      </p>
+
+      <h2>2. Dados que coletamos</h2>
+      <ul>
+        <li><strong>Cadastro:</strong> nome, sobrenome, email e senha;</li>
+        <li><strong>Perfil:</strong> telefone, foto de perfil;</li>
+        <li><strong>Endereço:</strong> CEP e dados do condomínio vinculado;</li>
+        <li><strong>Agendamentos:</strong> serviços contratados, datas, valores e status;</li>
+        <li><strong>Pagamentos:</strong> dados processados pela Stripe (não armazenamos dados de cartão);</li>
+        <li><strong>Uso:</strong> logs de acesso, endereço IP, dispositivo e navegador.</li>
+      </ul>
+
+      <h2>3. Como usamos seus dados</h2>
+      <ul>
+        <li>Autenticar e manter sua conta ativa;</li>
+        <li>Exibir seus serviços e perfil para outros moradores do mesmo condomínio;</li>
+        <li>Processar pagamentos e repasses via Stripe Connect;</li>
+        <li>Enviar notificações sobre agendamentos e atualizações da Plataforma;</li>
+        <li>Cumprir obrigações legais;</li>
+        <li>Melhorar a experiência do usuário com base em dados de uso agregados.</li>
+      </ul>
+
+      <h2>4. Base legal para o tratamento (LGPD Art. 7)</h2>
+      <p>Tratamos seus dados com base em:</p>
+      <ul>
+        <li><strong>Consentimento (Art. 7, I):</strong> fornecido no momento do cadastro;</li>
+        <li><strong>Execução de contrato (Art. 7, V):</strong> para processar agendamentos e pagamentos;</li>
+        <li><strong>Obrigação legal (Art. 7, II):</strong> para cumprir exigências fiscais e regulatórias.</li>
+      </ul>
+
+      <h2>5. Compartilhamento de dados</h2>
+      <p>Seus dados podem ser compartilhados com:</p>
+      <ul>
+        <li><strong>Stripe, Inc.:</strong> para processamento de pagamentos;</li>
+        <li><strong>Amazon Web Services (AWS):</strong> para autenticação (Cognito) e envio de emails (SES);</li>
+        <li><strong>Outros moradores do condomínio:</strong> dados do perfil público (nome, foto, serviços).</li>
+      </ul>
+      <p>Não vendemos seus dados pessoais a terceiros.</p>
+
+      <h2>6. Seus direitos (LGPD Art. 18)</h2>
+      <p>Você tem direito a:</p>
+      <ul>
+        <li><strong>Acessar</strong> seus dados (disponível em Perfil → Exportar meus dados);</li>
+        <li><strong>Corrigir</strong> dados incompletos ou desatualizados (disponível em Perfil);</li>
+        <li><strong>Eliminar</strong> seus dados (disponível em Perfil → Excluir conta);</li>
+        <li><strong>Revogar</strong> o consentimento a qualquer momento;</li>
+        <li><strong>Portabilidade</strong> dos seus dados mediante solicitação.</li>
+      </ul>
+
+      <h2>7. Retenção de dados</h2>
+      <p>
+        Mantemos seus dados enquanto sua conta estiver ativa. Ao excluir a conta, seus
+        dados pessoais são anonimizados imediatamente. Dados de transações financeiras
+        podem ser retidos por até 5 anos para fins fiscais e legais.
+      </p>
+
+      <h2>8. Segurança</h2>
+      <p>
+        Adotamos medidas técnicas e organizacionais para proteger seus dados, incluindo
+        criptografia em trânsito (HTTPS/TLS), autenticação robusta via AWS Cognito e
+        controle de acesso por papéis.
+      </p>
+
+      <h2>9. Cookies e rastreamento</h2>
+      <p>
+        Utilizamos apenas cookies essenciais para o funcionamento da Plataforma
+        (autenticação e preferências). Não utilizamos cookies de rastreamento para
+        fins publicitários.
+      </p>
+
+      <h2>10. Encarregado de dados (DPO)</h2>
+      <p>
+        O responsável pelo tratamento de dados é o titular da Plataforma. Para exercer
+        seus direitos ou tirar dúvidas sobre privacidade, entre em contato:
+      </p>
+
+      <h2>11. Alterações nesta política</h2>
+      <p>
+        Podemos atualizar esta Política periodicamente. Notificaremos sobre mudanças
+        relevantes via email ou aviso dentro da Plataforma.
+      </p>
+
+      <div class="legal-contact">
+        <p>
+          <strong>Contato de privacidade:</strong>
+          <a href="mailto:privacidade@virtual-mural.com">privacidade&#64;virtual-mural.com</a>
+        </p>
+        <p>
+          Veja também nossos <a [routerLink]="termosPath">Termos de Uso</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

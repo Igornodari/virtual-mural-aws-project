@@ -1,11 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import BaseComponent from '../../../components/base.component';
 import { importBase } from 'src/app/shared/constant/import-base.constant';
+import { ROUTE_PATHS } from 'src/app/shared/constant/route-paths.constant';
 
-/** Valida força de senha compatível com a política padrão do AWS Cognito */
-const passwordStrengthValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+/** Valida forca de senha compativel com a politica padrao do AWS Cognito */
+const passwordStrengthValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
   const value: string = control.value ?? '';
   if (!value) return null;
   const errors: Record<string, boolean> = {};
@@ -18,20 +29,20 @@ const passwordStrengthValidator: ValidatorFn = (control: AbstractControl): Valid
 };
 
 /** Valida que confirmPassword bate com password */
-const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+const passwordMatchValidator: ValidatorFn = (
+  group: AbstractControl,
+): ValidationErrors | null => {
   const password = group.get('password')?.value ?? '';
   const confirm = group.get('confirmPassword')?.value ?? '';
-  return password && confirm && password !== confirm ? { passwordMismatch: true } : null;
+  return password && confirm && password !== confirm
+    ? { passwordMismatch: true }
+    : null;
 };
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [
-    importBase,
-    CommonModule,
-    ReactiveFormsModule,
-  ],
+  imports: [importBase, CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
   styles: [
     `
@@ -40,13 +51,30 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
         max-width: 520px;
         margin-inline: auto;
       }
+      .terms-checkbox-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--mat-sys-on-surface-variant);
+        a {
+          color: var(--mat-sys-primary);
+          text-decoration: underline;
+        }
+      }
     `,
   ],
 })
 export class RegisterComponent extends BaseComponent {
   private readonly fb = inject(FormBuilder);
+
   showPassword = false;
   showConfirmPassword = false;
+
+  readonly termosPath = ROUTE_PATHS.termos;
+  readonly privacidadePath = ROUTE_PATHS.privacidade;
+
   registerForm = this.fb.nonNullable.group(
     {
       firstName: ['', [Validators.required]],
@@ -54,6 +82,8 @@ export class RegisterComponent extends BaseComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, passwordStrengthValidator]],
       confirmPassword: ['', [Validators.required]],
+      /** LGPD — consentimento obrigatorio (Art. 7, I da Lei 13.709/2018) */
+      termsAccepted: [false, [Validators.requiredTrue]],
     },
     { validators: passwordMatchValidator },
   );
@@ -63,7 +93,9 @@ export class RegisterComponent extends BaseComponent {
   }
 
   get passwordErrors(): Record<string, boolean> | null {
-    return this.registerForm.controls.password.errors?.['passwordStrength'] ?? null;
+    return (
+      this.registerForm.controls.password.errors?.['passwordStrength'] ?? null
+    );
   }
 
   async onRegister(): Promise<void> {
@@ -75,11 +107,20 @@ export class RegisterComponent extends BaseComponent {
     this.setLoadingState(true);
 
     try {
-      const { firstName, lastName, email, password } = this.registerForm.getRawValue();
-      await this.authService.registerWithEmail(email, password, firstName, lastName);
-      this.snackBar.success(this.translateService.instant('AUTH.REGISTER.ACCOUNT_CREATED'));
-      // Redireciona para página dedicada de confirmação de email
-      await this.navigateTo(`/confirm-email?email=${encodeURIComponent(email)}`);
+      const { firstName, lastName, email, password } =
+        this.registerForm.getRawValue();
+      await this.authService.registerWithEmail(
+        email,
+        password,
+        firstName,
+        lastName,
+      );
+      this.snackBar.success(
+        this.translateService.instant('AUTH.REGISTER.ACCOUNT_CREATED'),
+      );
+      await this.navigateTo(
+        `/confirm-email?email=${encodeURIComponent(email)}`,
+      );
     } finally {
       this.setLoadingState(false);
     }

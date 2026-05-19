@@ -4,20 +4,102 @@
   <meta charset="utf-8">
   <title>Mural do Condomínio</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ── Viewport e mobile ───────────────────────────────────────────── -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1A6B6B">
+  <meta name="description" content="Plataforma de serviços e comunicação do seu condomínio">
+
+  <!-- ── PWA manifest ────────────────────────────────────────────────── -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- ── iOS / Safari ────────────────────────────────────────────────── -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mural">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
+  <!-- ── Favicon ─────────────────────────────────────────────────────── -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-  <!-- Pré-conexão para reduzir latência das fontes -->
+  <!-- ── Pré-conexão para reduzir latência das fontes ────────────────── -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Material Icons: necessário para o componente <mat-icon> funcionar -->
+  <!-- ── Material Icons ──────────────────────────────────────────────── -->
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp"
   />
+
+  <!-- ── Loading spinner inline — evita tela em branco no bootstrap ──── -->
+  <style>
+    #app-loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: #ffffff;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+    #app-loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .app-loading__logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      background: #1A6B6B;
+    }
+    .app-loading__spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #e0e0e0;
+      border-top-color: #1A6B6B;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (prefers-color-scheme: dark) {
+      #app-loading { background: #121212; }
+      .app-loading__logo { background: #2a9090; }
+    }
+  </style>
 </head>
 <body>
+  <!-- Spinner visível até o Angular terminar o bootstrap -->
+  <div id="app-loading" aria-label="Carregando..." aria-live="polite">
+    <div class="app-loading__logo" aria-hidden="true"></div>
+    <div class="app-loading__spinner" aria-hidden="true"></div>
+  </div>
+
   <app-root></app-root>
+
+  <script>
+    // Remove o spinner assim que o Angular inicializar o primeiro componente
+    (function () {
+      var el = document.getElementById('app-loading');
+      if (!el) return;
+      var observer = new MutationObserver(function () {
+        var root = document.querySelector('app-root');
+        if (root && root.children.length > 0) {
+          el.classList.add('hidden');
+          setTimeout(function () { el.remove(); }, 350);
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.querySelector('app-root') || document.body, {
+        childList: true,
+        subtree: true,
+      });
+    })();
+  </script>
 </body>
 </html>
