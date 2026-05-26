@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable, Injector, NgZone, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SnackBarService } from '../services/snack-bar.service';
+import { SentryReporter } from '../reporters/sentry.reporter';
 
 interface AwsErrorPayload {
   __type?: string;
@@ -13,6 +14,19 @@ interface AwsErrorPayload {
 }
 
 const HANDLED_BY_GLOBAL_ERROR_HANDLER = Symbol('HANDLED_BY_GLOBAL_ERROR_HANDLER');
+
+/**
+ * Erros HTTP de cliente (4xx) são esperados e tratados pela UI.
+ * Apenas erros de servidor (5xx) e erros JS inesperados merecem
+ * atenção no monitoramento — alertas de 4xx gerariam muito ruído.
+ * Status 0 = falha de rede, também relevante para monitorar.
+ */
+function shouldReportToSentry(error: unknown): boolean {
+  if (!(error instanceof HttpErrorResponse)) {
+    return true; // Erros JS inesperados sempre reportar
+  }
+  return error.status === 0 || error.status >= 500;
+}
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
@@ -34,6 +48,10 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (this.isChunkLoadError(normalizedError)) {
       window.location.reload();
       return;
+    }
+
+    if (shouldReportToSentry(normalizedError)) {
+      SentryReporter.capture(normalizedError);
     }
 
     const snackBar = this.injector.get(SnackBarService);
