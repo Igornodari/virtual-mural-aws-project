@@ -36,7 +36,7 @@
     "@fullcalendar/timegrid": "^6.1.20",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@sentry/angular": "^8.53.0",
+    "@sentry/angular": "^10.0.0",
     "@stripe/stripe-js": "^8.11.0",
     "aws-amplify": "^6.16.2",
     "cpf-cnpj-validator": "^1.0.3",
