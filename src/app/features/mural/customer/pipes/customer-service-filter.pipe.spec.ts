@@ -42,7 +42,7 @@ describe('CustomerServiceFilterPipe', () => {
   it('deve filtrar por termo de busca no nome', () => {
     const services = [
       makeService({ name: 'Pintura Residencial' }),
-      makeService({ id: 'svc-2', name: 'Limpeza Geral' }),
+      makeService({ id: 'svc-2', name: 'Limpeza Geral', description: 'Limpeza geral' }),
     ];
     const result = pipe.transform(services, 'pintura', CUSTOMER_ALL_CATEGORY);
     expect(result).toHaveLength(1);

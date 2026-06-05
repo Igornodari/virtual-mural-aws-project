@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EMPTY, of } from 'rxjs';
 import { ActivityComponent } from './activity.component';
 import { MatDialog } from '@angular/material/dialog';
-import { RequestService } from '../../core/services/request.service';
+import { RequestService } from 'src/app/core/services/request.service';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';

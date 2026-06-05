@@ -114,25 +114,25 @@ describe('DateTime', () => {
 
   describe('add', () => {
     it('deve adicionar dias', () => {
-      const base = new Date('2025-01-10');
+      const base = new Date(2025, 0, 10);
       const result = DateTime.add(base, { days: 5 });
       expect(result.getDate()).toBe(15);
     });
 
     it('deve adicionar semanas', () => {
-      const base = new Date('2025-01-01');
+      const base = new Date(2025, 0, 1);
       const result = DateTime.add(base, { weeks: 2 });
       expect(result.getDate()).toBe(15);
     });
 
     it('deve adicionar meses', () => {
-      const base = new Date('2025-01-01');
+      const base = new Date(2025, 0, 1);
       const result = DateTime.add(base, { months: 3 });
       expect(result.getMonth()).toBe(3); // abril
     });
 
     it('deve adicionar anos', () => {
-      const base = new Date('2025-01-01');
+      const base = new Date(2025, 0, 1);
       const result = DateTime.add(base, { years: 1 });
       expect(result.getFullYear()).toBe(2026);
     });

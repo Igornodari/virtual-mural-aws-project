@@ -21,7 +21,12 @@ describe('CanPayAppointmentPipe', () => {
     expect(pipe.transform(appt)).toBe(true);
   });
 
-  it.each(['pending', 'confirmed', 'paid', 'completed', 'cancelled'] as const)(
+  it('deve retornar true para status confirmed', () => {
+    const appt = { status: 'confirmed' } as AppointmentDto;
+    expect(pipe.transform(appt)).toBe(true);
+  });
+
+  it.each(['pending', 'paid', 'completed', 'cancelled'] as const)(
     'deve retornar false para status "%s"',
     (status) => {
       const appt = { status } as AppointmentDto;

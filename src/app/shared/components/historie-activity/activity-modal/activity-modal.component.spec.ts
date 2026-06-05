@@ -1,8 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivityModalComponent } from './activity-modal.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+
+import { ActivityModalComponent } from './activity-modal.component';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 class FakeLoader implements TranslateLoader {
   getTranslation() {
@@ -16,7 +22,12 @@ describe('ActivityModalComponent', () => {
   let dialogRefSpy: { close: ReturnType<typeof vi.fn> };
 
   const mockActivityLogs = [
-    { id: '1', action: 'create', description: 'Created service', createdAt: '2024-01-01' },
+    {
+      id: '1',
+      action: 'create',
+      description: 'Created service',
+      createdAt: '2024-01-01',
+    },
   ];
 
   beforeEach(async () => {
@@ -25,11 +36,25 @@ describe('ActivityModalComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         ActivityModalComponent,
-        TranslateModule.forRoot({ loader: { provide: TranslateLoader, useClass: FakeLoader } }),
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: FakeLoader },
+        }),
       ],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideAnimationsAsync(),
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MAT_DIALOG_DATA, useValue: { activityLogs: mockActivityLogs } },
+        {
+          provide: AuthService,
+          useValue: { $user: of(null), $condominium: of(null) },
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: { get: () => null } } },
+        },
+        { provide: Router, useValue: { navigateByUrl: vi.fn(), url: '/' } },
       ],
     }).compileComponents();
 

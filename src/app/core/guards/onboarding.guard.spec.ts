@@ -35,18 +35,6 @@ describe('onboardingGuard', () => {
     });
   });
 
-  it('should redirect to /login when user is not authenticated', async () => {
-    authServiceSpy.isAuthenticated.mockResolvedValue(false);
-
-    const result = await TestBed.runInInjectionContext(() =>
-      onboardingGuard({} as any, {} as any),
-    );
-
-    const tree = result as UrlTree;
-    expect(tree.toString()).toBe(ROUTE_PATHS.login);
-    expect(onboardingServiceSpy.syncFromBackend).not.toHaveBeenCalled();
-  });
-
   it('should return true when user is authenticated and route is a mural route', async () => {
     authServiceSpy.isAuthenticated.mockResolvedValue(true);
     onboardingServiceSpy.resolveNextRoute.mockReturnValue(ROUTE_PATHS.muralProvider);

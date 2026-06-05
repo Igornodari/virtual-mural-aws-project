@@ -23,6 +23,7 @@ describe('UserApiService', () => {
     isProvider: true,
     onboardingCompleted: true,
     addressCompleted: true,
+    termsAcceptedAt: null,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   };
