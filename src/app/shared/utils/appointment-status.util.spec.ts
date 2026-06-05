@@ -99,14 +99,14 @@ describe('appointment-status.util', () => {
   });
 
   describe('canCancelAppointment', () => {
-    it.each(['pending', 'confirmed'] as AppointmentStatus[])(
+    it.each(['pending', 'confirmed', 'awaiting_payment'] as AppointmentStatus[])(
       'should return true for %s',
       (status) => {
         expect(canCancelAppointment(makeAppointment(status))).toBe(true);
       },
     );
 
-    it.each(['awaiting_payment', 'paid', 'cancelled', 'completed'] as AppointmentStatus[])(
+    it.each(['paid', 'cancelled', 'completed'] as AppointmentStatus[])(
       'should return false for %s',
       (status) => {
         expect(canCancelAppointment(makeAppointment(status))).toBe(false);

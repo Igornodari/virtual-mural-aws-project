@@ -28,20 +28,22 @@ describe('GenericTabComponent', () => {
   });
 
   it('should initialize with the first tab content', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component.tabs = [
-      { label: 'Tab 1', content: 'Content 1' },
-      { label: 'Tab 2', content: 'Content 2' },
+      { label: 'Tab 1', content: 'Content 1' as any },
+      { label: 'Tab 2', content: 'Content 2' as any },
     ];
     component.ngOnInit();
-    expect(component.activeTabContent).toBe('Content 1');
+    expect(component.activeTabContent as unknown as string).toBe('Content 1');
   });
 
   it('should change activeTabContent when onTabChange is called', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component.tabs = [
-      { label: 'Tab 1', content: 'Content 1' },
-      { label: 'Tab 2', content: 'Content 2' },
+      { label: 'Tab 1', content: 'Content 1' as any },
+      { label: 'Tab 2', content: 'Content 2' as any },
     ];
     component.onTabChange(1);
-    expect(component.activeTabContent).toBe('Content 2');
+    expect(component.activeTabContent as unknown as string).toBe('Content 2');
   });
 });

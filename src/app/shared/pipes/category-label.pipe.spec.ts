@@ -1,4 +1,5 @@
 import { CategoryLabelPipe } from './category-label.pipe';
+import { SERVICE_CATEGORIES } from '../constant/categories.constants';
 
 describe('CategoryLabelPipe', () => {
   let pipe: CategoryLabelPipe;
@@ -7,15 +8,16 @@ describe('CategoryLabelPipe', () => {
     pipe = new CategoryLabelPipe();
   });
 
-  it('deve retornar chave i18n para categoria conhecida', () => {
-    expect(pipe.transform('CLEANING')).toMatch(/^CATEGORY\./);
+  it('deve retornar a chave i18n para um valor de categoria conhecido', () => {
+    const cleaning = SERVICE_CATEGORIES[0]; // { value: 'Limpeza', i18nKey: 'CATEGORY.CLEANING' }
+    expect(pipe.transform(cleaning.value)).toBe(cleaning.i18nKey);
+    expect(pipe.transform(cleaning.value)).toMatch(/^CATEGORY\./);
   });
 
-  it('deve retornar chave i18n para todas as categorias do sistema', () => {
-    const categories = ['CLEANING', 'MAINTENANCE', 'BEAUTY', 'TUTORING', 'TECHNOLOGY', 'PETS', 'HEALTH', 'OTHERS'];
-    categories.forEach((cat) => {
-      const result = pipe.transform(cat);
-      expect(result).toMatch(/^CATEGORY\./);
+  it('deve retornar a chave i18n correta para todas as categorias do sistema', () => {
+    SERVICE_CATEGORIES.forEach(({ value, i18nKey }) => {
+      expect(pipe.transform(value)).toBe(i18nKey);
+      expect(pipe.transform(value)).toMatch(/^CATEGORY\./);
     });
   });
 
@@ -25,10 +27,10 @@ describe('CategoryLabelPipe', () => {
   });
 
   it('deve retornar CATEGORY.OTHERS para null', () => {
-    expect(pipe.transform(null as any)).toBe('CATEGORY.OTHERS');
+    expect(pipe.transform(null as unknown as string)).toBe('CATEGORY.OTHERS');
   });
 
   it('deve retornar CATEGORY.OTHERS para undefined', () => {
-    expect(pipe.transform(undefined as any)).toBe('CATEGORY.OTHERS');
+    expect(pipe.transform(undefined as unknown as string)).toBe('CATEGORY.OTHERS');
   });
 });

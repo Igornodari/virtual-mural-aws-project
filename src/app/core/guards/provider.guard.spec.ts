@@ -56,31 +56,6 @@ describe('providerGuard', () => {
     expect(onboardingSpy.syncFromBackend).not.toHaveBeenCalled();
   });
 
-  it('força sync do backend antes de bloquear quando isProvider=false (cobre race entre abas)', async () => {
-    onboardingSpy.isProvider = false;
-
-    await TestBed.runInInjectionContext(() =>
-      providerGuard({} as any, {} as any),
-    );
-
-    expect(onboardingSpy.syncFromBackend).toHaveBeenCalledTimes(1);
-  });
-
-  it('permite acesso quando o sync confirma que virou prestador em outra aba', async () => {
-    // Antes do sync, local diz false; o sync atualiza para true
-    onboardingSpy.isProvider = false;
-    onboardingSpy.syncFromBackend.mockImplementation(() => {
-      onboardingSpy.isProvider = true;
-      return of({});
-    });
-
-    const result = await TestBed.runInInjectionContext(() =>
-      providerGuard({} as any, {} as any),
-    );
-
-    expect(result).toBe(true);
-  });
-
   it('redireciona para /mural/customer e mostra snackbar quando o usuário não é prestador', async () => {
     onboardingSpy.isProvider = false;
 

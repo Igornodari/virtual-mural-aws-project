@@ -68,6 +68,7 @@ function makeProfile(
     isProvider: false,
     onboardingCompleted: true,
     addressCompleted: true,
+    termsAcceptedAt: null,
     createdAt: '',
     updatedAt: '',
     ...overrides,
