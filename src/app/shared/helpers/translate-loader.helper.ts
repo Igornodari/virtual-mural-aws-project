@@ -11,7 +11,7 @@ export class AppTranslateLoader implements TranslateLoader {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	getTranslation(lang: string): Observable<any> {
-		const prefix = this.config?.prefix ?? './assets/i18n/';
+		const prefix = this.config?.prefix ?? '/assets/i18n/';
 		const suffix = this.config?.suffix ?? '.json';
 		const parts = this.config?.parts ?? ['pt', 'en'];
 		

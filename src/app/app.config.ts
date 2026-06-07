@@ -45,7 +45,10 @@ registerLocaleData(localePtBr, 'pt-BR', localePtBrExtra);
 
 export const HttpLoaderFactory = (http: HttpClient) =>
   new AppTranslateLoader(http, {
-    prefix: './assets/i18n/',
+    // Caminho ABSOLUTO: o PWA instalado abre em /mural/customer (start_url) e um
+    // caminho relativo './assets/...' resolveria para /mural/assets/... (404),
+    // quebrando as traduções no mobile. O absoluto sempre acerta /assets/i18n.
+    prefix: '/assets/i18n/',
     parts: ['common', 'enums', 'header', 'home', 'login', 'sidebar', 'app', 'notifications'],
   });
 
