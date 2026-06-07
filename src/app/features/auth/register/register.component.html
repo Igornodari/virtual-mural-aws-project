@@ -88,6 +88,26 @@
             }
           </mat-form-field>
 
+          <!-- LGPD — Consentimento obrigatório (Art. 7, I da Lei 13.709/2018) -->
+          <div class="terms-checkbox-row">
+            <mat-checkbox
+              formControlName="termsAccepted"
+              color="primary"
+              aria-label="Aceitar Termos de Uso e Política de Privacidade"
+            ></mat-checkbox>
+            <span>
+              Li e aceito os
+              <a [routerLink]="termosPath" target="_blank" rel="noopener">Termos de Uso</a>
+              e a
+              <a [routerLink]="privacidadePath" target="_blank" rel="noopener">Política de Privacidade</a>
+            </span>
+          </div>
+          @if (registerForm.controls.termsAccepted.touched && registerForm.controls.termsAccepted.hasError('required')) {
+            <mat-error style="font-size: 0.75rem; margin-top: -8px;">
+              {{ 'AUTH.REGISTER.TERMS_REQUIRED' | translate }}
+            </mat-error>
+          }
+
           <button
             mat-raised-button
             color="primary"

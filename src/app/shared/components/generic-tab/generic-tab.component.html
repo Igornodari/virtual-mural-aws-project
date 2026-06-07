@@ -1,0 +1,10 @@
+<mat-tab-group (selectedIndexChange)="onTabChange($event)">
+		  @for (tab of tabs; track tab) {
+		    <mat-tab [label]="tab.label | translate"></mat-tab>
+		  }
+		</mat-tab-group>
+		@if (activeTabContent) {
+		  <div>
+		    <ng-container *ngTemplateOutlet="activeTabContent"></ng-container>
+		  </div>
+		}

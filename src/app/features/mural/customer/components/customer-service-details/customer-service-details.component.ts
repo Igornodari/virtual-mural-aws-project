@@ -35,7 +35,7 @@ import {
   ReviewApiService,
 } from 'src/app/core/services/review-api.service';
 import { ServiceApiService, ServiceDto } from 'src/app/core/services/service-api.service';
-import { UserApiService } from 'src/app/core/services/user-api.service';
+import { OnboardingService } from 'src/app/core/services/onboarding.service';
 import { RatingStarsComponent } from 'src/app/shared/components/rating-stars/rating-stars.component';
 import { isBlockingAppointmentStatus } from 'src/app/shared/utils/appointment-status.util';
 import { CUSTOMER_STARS } from '../../customer.constants';
@@ -77,7 +77,7 @@ export class CustomerServiceDetailsComponent implements OnChanges {
   private readonly serviceApi = inject(ServiceApiService);
   private readonly appointmentApi = inject(AppointmentApiService);
   private readonly reviewApi = inject(ReviewApiService);
-  private readonly userApi = inject(UserApiService);
+  private readonly onboardingService = inject(OnboardingService);
 
   @Input({ required: true }) service!: ServiceDto;
 
@@ -123,8 +123,8 @@ export class CustomerServiceDetailsComponent implements OnChanges {
 
     // Carrega o id do usuário no banco uma vez por sessão do componente.
     // Não usamos AuthService.user.id porque ele é o Cognito sub.
-    this.userApi
-      .getMe()
+    this.onboardingService
+      .getProfile()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (me) => {

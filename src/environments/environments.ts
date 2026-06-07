@@ -2,6 +2,7 @@ export const environment = {
   production: false,
   apiBaseUrl: 'http://localhost:3001/api/v1',
   version: '0.0.1',
+  sentryDsn: '',  // Deixe vazio em dev ou configure com DSN de dev do sentry.io
   stripePublishableKey: 'pk_test_51Stc9KE7dWoPv7ZuBIWrv5G00ehRaDv7Rglj71rDUhmi9Jcy8K79qiAS1YWDAle5heuamXb691ID6M34MfLX5pLA00jqC75W5v',
   aws: {
     region: 'sa-east-1',

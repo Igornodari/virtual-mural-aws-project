@@ -13,13 +13,15 @@ export interface AppUserProfileDto {
   avatarUrl?: string;
   condominiumId: string | null;
   /**
-   * Flag opt-in: true significa que o usuário ativou o modo prestador
-   * e pode publicar serviços. Todo usuário autenticado e com condomínio
-   * é morador por padrão (não há flag para isso).
+   * Flag opt-in: true significa que o usuario ativou o modo prestador
+   * e pode publicar servicos. Todo usuario autenticado e com condominio
+   * e morador por padrao (nao ha flag para isso).
    */
   isProvider: boolean;
   onboardingCompleted: boolean;
   addressCompleted: boolean;
+  /** LGPD — timestamp do ultimo aceite dos termos. Null = nao aceitou ainda. */
+  termsAcceptedAt: string | null;
   createdAt: string;
   updatedAt: string;
   stripeAccountId?: string | null;
@@ -65,8 +67,8 @@ export class UserApiService {
   }
 
   /**
-   * Ativa ou desativa o modo prestador do usuário autenticado.
-   * Conveniência sobre `updateOnboarding` para o fluxo "Virar prestador".
+   * Ativa ou desativa o modo prestador do usuario autenticado.
+   * Conveniencia sobre updateOnboarding para o fluxo "Virar prestador".
    */
   becomeProvider(value: boolean = true): Observable<AppUserProfileDto> {
     return this.updateOnboarding({ isProvider: value });
@@ -77,5 +79,13 @@ export class UserApiService {
       '/users/me/profile',
       payload,
     );
+  }
+
+  /**
+   * LGPD — Consentimento (Art. 7, I da Lei 13.709/2018)
+   * Registra o aceite explicito dos Termos de Uso e Politica de Privacidade.
+   */
+  acceptTerms(): Observable<AppUserProfileDto> {
+    return this.request.post<AppUserProfileDto>('/users/me/accept-terms', {});
   }
 }

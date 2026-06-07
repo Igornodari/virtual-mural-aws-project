@@ -68,6 +68,21 @@ export const routes: Routes = [
             (m) => m.PaymentCancelComponent,
           ),
       },
+      // ── Documentos legais (LGPD) — públicos, sem auth ──────────────────
+      {
+        path: ROUTE_PATHS.termos.slice(1),
+        loadComponent: () =>
+          import('./features/legal/terms-of-use.component').then(
+            (m) => m.TermsOfUseComponent,
+          ),
+      },
+      {
+        path: ROUTE_PATHS.privacidade.slice(1),
+        loadComponent: () =>
+          import('./features/legal/privacy-policy.component').then(
+            (m) => m.PrivacyPolicyComponent,
+          ),
+      },
     ],
   },
 
@@ -136,6 +151,9 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: ROUTE_PATHS.login.slice(1),
+    loadComponent: () =>
+      import('./features/pages/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent,
+      ),
   },
 ];

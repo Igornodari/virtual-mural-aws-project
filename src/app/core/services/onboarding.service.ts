@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { CondominiumAddress, OnboardingProfile } from '../../shared/types';
 import { getDefaultMuralRoute, ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 import {
@@ -27,6 +27,22 @@ export class OnboardingService {
 
   readonly profile$ = this.profileSubject.asObservable();
 
+  /**
+   * Cache da requisição em voo: garante que chamadas concorrentes a
+   * syncFromBackend() compartilhem um único GET /users/me, evitando
+   * o rate-limit que ocorre quando guards + FullComponent disparam
+   * simultaneamente no mesmo ciclo de navegação.
+   */
+  private syncInFlight: Observable<AppUserProfileDto> | null = null;
+
+  /**
+   * Perfil cru do backend em cache, com o instante da última busca.
+   * Colapsa a rajada de GET /users/me que acontece quando guard +
+   * FullComponent + componentes de feature carregam na mesma navegação.
+   */
+  private cachedProfile: AppUserProfileDto | null = null;
+  private cachedAt = 0;
+  private readonly profileCacheTtlMs = 10_000;
 
   get profile(): OnboardingProfile {
     return this.profileSubject.value;
@@ -58,30 +74,79 @@ export class OnboardingService {
     return getDefaultMuralRoute();
   }
 
-  syncFromBackend(): Observable<AppUserProfileDto> {
-    return this.userApi.getMe().pipe(
-      switchMap((user) => {
-        if (user.condominiumId && !this.profile.condominiumAddress) {
-          return this.condominiumApi.findOne(user.condominiumId).pipe(
-            tap((condominium) => {
-              this.persist(this.mapBackendProfile(user, condominium));
-            }),
-            map(() => user),
-            catchError(() => {
-              this.persist(this.mapBackendProfile(user));
-              return of(user);
-            }),
-          );
-        }
+  /**
+   * Fonte única de leitura do perfil.
+   * - Dentro da janela de cache (`profileCacheTtlMs`) devolve o último perfil
+   *   sem novo request — elimina os GET /users/me redundantes da navegação.
+   * - Fora da janela (ou com `force`) busca no backend, deduplicando chamadas
+   *   concorrentes via `shareReplay`.
+   */
+  getProfile(force = false): Observable<AppUserProfileDto> {
+    const isFresh =
+      !force &&
+      this.cachedProfile !== null &&
+      Date.now() - this.cachedAt < this.profileCacheTtlMs;
 
-        this.persist(this.mapBackendProfile(user));
-        return of(user);
-      }),
-      catchError((error) => {
-        this.errorHandler.handleError(error);
-        return of({} as AppUserProfileDto);
-      }),
-    );
+    if (isFresh) {
+      return of(this.cachedProfile as AppUserProfileDto);
+    }
+
+    if (!this.syncInFlight) {
+      this.syncInFlight = this.userApi.getMe().pipe(
+        tap((user) => {
+          this.cachedProfile = user;
+          this.cachedAt = Date.now();
+        }),
+        switchMap((user) => {
+          if (user.condominiumId && !this.profile.condominiumAddress) {
+            return this.condominiumApi.findOne(user.condominiumId).pipe(
+              tap((condominium) => {
+                this.persist(this.mapBackendProfile(user, condominium));
+              }),
+              map(() => user),
+              catchError(() => {
+                this.persist(this.mapBackendProfile(user));
+                return of(user);
+              }),
+            );
+          }
+
+          this.persist(this.mapBackendProfile(user));
+          return of(user);
+        }),
+        catchError((error) => {
+          this.errorHandler.handleError(error);
+          // Em caso de erro (ex: 429 rate-limit), retorna o perfil em cache
+          // para não disparar fluxos que dependem de termsAcceptedAt vazio.
+          const cached = this.profileSubject.value;
+          return of({
+            condominiumId: cached.condominiumId,
+            isProvider: cached.isProvider,
+            onboardingCompleted: cached.onboardingCompleted,
+            termsAcceptedAt: null,
+          } as AppUserProfileDto);
+        }),
+        shareReplay(1),
+        finalize(() => { this.syncInFlight = null; }),
+      );
+    }
+
+    return this.syncInFlight;
+  }
+
+  /**
+   * Mantido por compatibilidade com guards e FullComponent. Delega para
+   * `getProfile`. Use `force = true` para garantir dado fresco logo após
+   * uma mutação (ex.: aceite de termos).
+   */
+  syncFromBackend(force = false): Observable<AppUserProfileDto> {
+    return this.getProfile(force);
+  }
+
+  /** Invalida o cache de perfil após mutações que alteram o backend. */
+  private invalidateProfileCache(): void {
+    this.cachedProfile = null;
+    this.cachedAt = 0;
   }
 
   syncAndResolveNextRoute(): Observable<string> {
@@ -103,6 +168,7 @@ export class OnboardingService {
           condominiumAddress: address,
           onboardingCompleted: !!address,
         });
+        this.invalidateProfileCache();
 
         if (condominiumId) {
           this.userApi
@@ -154,6 +220,7 @@ export class OnboardingService {
           condominiumAddress: address,
           onboardingCompleted: !!address,
         });
+        this.invalidateProfileCache();
 
         this.userApi
           .updateOnboarding({ condominiumId: condominium.id })
@@ -183,6 +250,7 @@ export class OnboardingService {
           ...this.profile,
           isProvider: user?.isProvider ?? true,
         });
+        this.invalidateProfileCache();
       }),
       catchError((error) => {
         // Em caso de falha, reverte o estado local
@@ -205,6 +273,7 @@ export class OnboardingService {
           ...this.profile,
           isProvider: user?.isProvider ?? false,
         });
+        this.invalidateProfileCache();
       }),
       catchError((error) => {
         this.errorHandler.handleError(error);
@@ -227,6 +296,7 @@ export class OnboardingService {
 
   clear(): void {
     this.persist(EMPTY_ONBOARDING_PROFILE);
+    this.invalidateProfileCache();
   }
 
   private mapBackendProfile(

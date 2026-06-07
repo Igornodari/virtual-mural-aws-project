@@ -1,6 +1,5 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { OnboardingService } from '../services/onboarding.service';
@@ -9,22 +8,17 @@ import { ROUTE_PATHS } from '../../shared/constant/route-paths.constant';
 /**
  * Guarda a área de prestador: só permite a navegação se o usuário tiver
  * ativado o modo prestador (`isProvider === true`). Caso contrário,
- * redireciona para o dashboard de morador com um snackbar indicando que
- * o modo prestador precisa ser ativado pelo perfil.
+ * redireciona para o dashboard de morador com um snackbar informativo.
+ *
+ * Nota: o onboardingGuard sempre precede este guard e já chamou
+ * syncFromBackend(), portanto o perfil local já está sincronizado —
+ * não repetimos a chamada ao backend para evitar requests redundantes.
  */
-export const providerGuard: CanActivateFn = async () => {
+export const providerGuard: CanActivateFn = () => {
   const onboardingService = inject(OnboardingService);
   const router = inject(Router);
   const snackBar = inject(MatSnackBar);
   const translate = inject(TranslateService);
-
-  // Garante que temos o estado mais atual do backend antes de bloquear.
-  // O onboardingGuard global já roda antes, mas refazemos defensivamente
-  // para o caso de o usuário ter ativado/desativado o modo prestador em
-  // outra aba.
-  if (!onboardingService.isProvider) {
-    await firstValueFrom(onboardingService.syncFromBackend());
-  }
 
   if (onboardingService.isProvider) {
     return true;

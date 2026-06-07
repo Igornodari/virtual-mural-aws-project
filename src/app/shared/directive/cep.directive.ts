@@ -1,6 +1,6 @@
 import { Directive, EventEmitter, HostListener, Output, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { URI_PATH } from '../constant/path.contant';
+import { URI_PATH } from '../constant/path.constant';
 import { AddressData } from '../types/address-data';
 import { RequestService } from '../../core/services/request.service';
 

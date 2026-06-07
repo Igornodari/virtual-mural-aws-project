@@ -1,0 +1,109 @@
+<div class="legal-page">
+  <div class="legal-container">
+    <div class="legal-back">
+      <a mat-button [routerLink]="loginPath">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </a>
+    </div>
+
+    <div class="legal-header">
+      <h1>Termos de Uso</h1>
+      <p class="legal-updated">Última atualização: {{ lastUpdated }}</p>
+    </div>
+
+    <div class="legal-content">
+      <h2>1. Aceitação dos termos</h2>
+      <p>
+        Ao criar uma conta ou utilizar o Mural Virtual do Condomínio ("Plataforma"), você
+        concorda com estes Termos de Uso. Caso não concorde, não utilize a Plataforma.
+      </p>
+
+      <h2>2. Descrição do serviço</h2>
+      <p>
+        O Mural Virtual do Condomínio é uma plataforma que conecta moradores de condomínios
+        a outros moradores que oferecem serviços locais (prestadores). A Plataforma facilita
+        a descoberta, o agendamento e o pagamento de serviços dentro do mesmo condomínio.
+      </p>
+
+      <h2>3. Elegibilidade</h2>
+      <p>
+        Para utilizar a Plataforma, você deve:
+      </p>
+      <ul>
+        <li>Ter 18 anos ou mais;</li>
+        <li>Ser morador ou ter vínculo com um condomínio cadastrado;</li>
+        <li>Fornecer informações verdadeiras e atualizadas no cadastro.</li>
+      </ul>
+
+      <h2>4. Conta e responsabilidades</h2>
+      <p>
+        Você é responsável pela confidencialidade da sua senha e por todas as atividades
+        realizadas na sua conta. Em caso de uso não autorizado, notifique-nos imediatamente
+        em <a href="mailto:suporte@virtual-mural.com">suporte&#64;virtual-mural.com</a>.
+      </p>
+
+      <h2>5. Conduta dos usuários</h2>
+      <p>É proibido utilizar a Plataforma para:</p>
+      <ul>
+        <li>Publicar serviços falsos ou enganosos;</li>
+        <li>Assediar, ameaçar ou discriminar outros usuários;</li>
+        <li>Violar leis ou regulamentos aplicáveis;</li>
+        <li>Coletar dados de outros usuários sem consentimento.</li>
+      </ul>
+
+      <h2>6. Serviços e pagamentos</h2>
+      <p>
+        Os pagamentos são processados pela Stripe, Inc. A Plataforma cobra uma taxa de
+        intermediação de até 5% sobre o valor de cada serviço. O prestador recebe o valor
+        restante diretamente em sua conta bancária via Stripe Connect.
+      </p>
+      <p>
+        A Plataforma não se responsabiliza pela qualidade ou pela entrega dos serviços
+        oferecidos pelos prestadores.
+      </p>
+
+      <h2>7. Avaliações</h2>
+      <p>
+        Após a conclusão de um agendamento, moradores podem avaliar prestadores. As
+        avaliações devem ser verdadeiras e baseadas na experiência real com o serviço.
+      </p>
+
+      <h2>8. Suspensão e encerramento</h2>
+      <p>
+        Reservamo-nos o direito de suspender ou encerrar contas que violem estes Termos,
+        a critério exclusivo da Plataforma e sem aviso prévio nos casos de violações graves.
+      </p>
+
+      <h2>9. Limitação de responsabilidade</h2>
+      <p>
+        A Plataforma é fornecida "no estado em que se encontra". Não garantimos
+        disponibilidade ininterrupta e não nos responsabilizamos por danos indiretos
+        decorrentes do uso ou da impossibilidade de uso da Plataforma.
+      </p>
+
+      <h2>10. Alterações nos termos</h2>
+      <p>
+        Podemos atualizar estes Termos a qualquer momento. Informaremos sobre alterações
+        relevantes por email ou por aviso dentro da Plataforma. O uso continuado após a
+        notificação implica na aceitação dos termos atualizados.
+      </p>
+
+      <h2>11. Lei aplicável</h2>
+      <p>
+        Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito
+        o foro da Comarca de São Paulo — SP para dirimir quaisquer conflitos.
+      </p>
+
+      <div class="legal-contact">
+        <p>
+          <strong>Dúvidas?</strong> Entre em contato:
+          <a href="mailto:suporte@virtual-mural.com">suporte&#64;virtual-mural.com</a>
+        </p>
+        <p>
+          Veja também nossa <a [routerLink]="privacidadePath">Política de Privacidade</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

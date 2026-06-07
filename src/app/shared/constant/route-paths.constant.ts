@@ -20,6 +20,9 @@ export const ROUTE_PATHS = {
   muralProvider: '/mural/provider',
   paymentSuccess: '/payment-success',
   paymentCancel: '/payment-cancel',
+  /** Documentos legais — rotas públicas, sem auth guard. */
+  termos: '/termos',
+  privacidade: '/privacidade',
 } as const;
 
 /**
