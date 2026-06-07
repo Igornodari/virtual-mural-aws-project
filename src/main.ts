@@ -10,5 +10,6 @@ SentryReporter.initialize(
   environment.production ? 'production' : 'development',
 );
 
+
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));
