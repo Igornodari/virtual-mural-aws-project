@@ -90,7 +90,7 @@ function configureTestBed(
         provide: AppointmentApiService,
         useValue: { findMine: vi.fn().mockReturnValue(of(appointments)) },
       },
-      { provide: OnboardingService, useValue: { isProvider } },
+      { provide: OnboardingService, useValue: { isProvider, getProfile: vi.fn().mockReturnValue(of(profile)) } },
       {
         provide: UserApiService,
         useValue: { getMe: vi.fn().mockReturnValue(of(profile)) },
@@ -195,7 +195,7 @@ describe('MuralAppointmentsPageComponent — classificação', () => {
           provide: AppointmentApiService,
           useValue: { findMine: vi.fn().mockReturnValue(of([])) },
         },
-        { provide: OnboardingService, useValue: { isProvider: true } },
+        { provide: OnboardingService, useValue: { isProvider: true, getProfile: vi.fn().mockReturnValue(of(null as unknown as AppUserProfileDto)) } },
         {
           provide: UserApiService,
           useValue: { getMe: vi.fn().mockReturnValue(of(null as any)) },

@@ -142,8 +142,10 @@ export class MuralAppointmentsPageComponent extends BaseComponent implements OnI
    * dependem de `dbUserId` e `allAppointments`.
    */
   private loadCurrentDbUserId(): void {
-    this.userApi
-      .getMe()
+    // Reutiliza o perfil em cache do OnboardingService (já buscado pelo
+    // onboardingGuard nesta navegação) em vez de um GET /users/me próprio.
+    this.onboardingService
+      .getProfile()
       .pipe(
         catchError(() => of(null)),
         takeUntilDestroyed(this.destroyRef),

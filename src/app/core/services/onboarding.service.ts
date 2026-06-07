@@ -35,6 +35,14 @@ export class OnboardingService {
    */
   private syncInFlight: Observable<AppUserProfileDto> | null = null;
 
+  /**
+   * Perfil cru do backend em cache, com o instante da última busca.
+   * Colapsa a rajada de GET /users/me que acontece quando guard +
+   * FullComponent + componentes de feature carregam na mesma navegação.
+   */
+  private cachedProfile: AppUserProfileDto | null = null;
+  private cachedAt = 0;
+  private readonly profileCacheTtlMs = 10_000;
 
   get profile(): OnboardingProfile {
     return this.profileSubject.value;
@@ -66,12 +74,29 @@ export class OnboardingService {
     return getDefaultMuralRoute();
   }
 
-  syncFromBackend(): Observable<AppUserProfileDto> {
-    // Deduplica chamadas concorrentes: guards + FullComponent disparam ao
-    // mesmo tempo no mesmo ciclo de navegação. Com shareReplay(1), todos
-    // recebem o mesmo resultado de um único GET /users/me.
+  /**
+   * Fonte única de leitura do perfil.
+   * - Dentro da janela de cache (`profileCacheTtlMs`) devolve o último perfil
+   *   sem novo request — elimina os GET /users/me redundantes da navegação.
+   * - Fora da janela (ou com `force`) busca no backend, deduplicando chamadas
+   *   concorrentes via `shareReplay`.
+   */
+  getProfile(force = false): Observable<AppUserProfileDto> {
+    const isFresh =
+      !force &&
+      this.cachedProfile !== null &&
+      Date.now() - this.cachedAt < this.profileCacheTtlMs;
+
+    if (isFresh) {
+      return of(this.cachedProfile as AppUserProfileDto);
+    }
+
     if (!this.syncInFlight) {
       this.syncInFlight = this.userApi.getMe().pipe(
+        tap((user) => {
+          this.cachedProfile = user;
+          this.cachedAt = Date.now();
+        }),
         switchMap((user) => {
           if (user.condominiumId && !this.profile.condominiumAddress) {
             return this.condominiumApi.findOne(user.condominiumId).pipe(
@@ -109,6 +134,21 @@ export class OnboardingService {
     return this.syncInFlight;
   }
 
+  /**
+   * Mantido por compatibilidade com guards e FullComponent. Delega para
+   * `getProfile`. Use `force = true` para garantir dado fresco logo após
+   * uma mutação (ex.: aceite de termos).
+   */
+  syncFromBackend(force = false): Observable<AppUserProfileDto> {
+    return this.getProfile(force);
+  }
+
+  /** Invalida o cache de perfil após mutações que alteram o backend. */
+  private invalidateProfileCache(): void {
+    this.cachedProfile = null;
+    this.cachedAt = 0;
+  }
+
   syncAndResolveNextRoute(): Observable<string> {
     return this.syncFromBackend().pipe(
       map(() => this.resolveNextRoute()),
@@ -128,6 +168,7 @@ export class OnboardingService {
           condominiumAddress: address,
           onboardingCompleted: !!address,
         });
+        this.invalidateProfileCache();
 
         if (condominiumId) {
           this.userApi
@@ -179,6 +220,7 @@ export class OnboardingService {
           condominiumAddress: address,
           onboardingCompleted: !!address,
         });
+        this.invalidateProfileCache();
 
         this.userApi
           .updateOnboarding({ condominiumId: condominium.id })
@@ -208,6 +250,7 @@ export class OnboardingService {
           ...this.profile,
           isProvider: user?.isProvider ?? true,
         });
+        this.invalidateProfileCache();
       }),
       catchError((error) => {
         // Em caso de falha, reverte o estado local
@@ -230,6 +273,7 @@ export class OnboardingService {
           ...this.profile,
           isProvider: user?.isProvider ?? false,
         });
+        this.invalidateProfileCache();
       }),
       catchError((error) => {
         this.errorHandler.handleError(error);
@@ -252,6 +296,7 @@ export class OnboardingService {
 
   clear(): void {
     this.persist(EMPTY_ONBOARDING_PROFILE);
+    this.invalidateProfileCache();
   }
 
   private mapBackendProfile(

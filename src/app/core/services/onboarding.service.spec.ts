@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { OnboardingService } from './onboarding.service';
 import { UserApiService, AppUserProfileDto } from './user-api.service';
 import { CondominiumApiService, CondominiumDto } from './condominium-api.service';
@@ -238,4 +238,62 @@ describe('OnboardingService', () => {
       expect(profile.isProvider).toBe(true);
     });
   });
+
+  describe('getProfile — cache e deduplicação (bugfix rate-limit)', () => {
+    it('deduplica chamadas concorrentes em um único GET /users/me', () => {
+      const gate = new Subject<AppUserProfileDto>();
+      userApiSpy.getMe.mockReturnValue(gate.asObservable());
+
+      const seen: number[] = [];
+      service.getProfile().subscribe(() => seen.push(1));
+      service.getProfile().subscribe(() => seen.push(2));
+      service.syncFromBackend().subscribe(() => seen.push(3));
+
+      // Enquanto o request não resolve, há apenas UMA chamada compartilhada.
+      expect(userApiSpy.getMe).toHaveBeenCalledTimes(1);
+
+      gate.next(mockProfile);
+      gate.complete();
+
+      expect(seen).toHaveLength(3);
+    });
+
+    it('serve do cache em chamadas sequenciais dentro da janela (1 request)', () => {
+      vi.useFakeTimers();
+      try {
+        service.getProfile().subscribe();
+        service.getProfile().subscribe();
+        service.syncFromBackend().subscribe();
+        expect(userApiSpy.getMe).toHaveBeenCalledTimes(1);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('force = true ignora o cache e busca de novo', () => {
+      service.getProfile().subscribe();
+      service.getProfile(true).subscribe();
+      expect(userApiSpy.getMe).toHaveBeenCalledTimes(2);
+    });
+
+    it('busca de novo depois que o TTL do cache expira', () => {
+      vi.useFakeTimers();
+      try {
+        service.getProfile().subscribe();
+        vi.advanceTimersByTime(10_001);
+        service.getProfile().subscribe();
+        expect(userApiSpy.getMe).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('invalida o cache após activateProvider (mutação)', () => {
+      service.getProfile().subscribe();
+      service.activateProvider().subscribe();
+      service.getProfile().subscribe();
+      expect(userApiSpy.getMe).toHaveBeenCalledTimes(2);
+    });
+  });
+
 });

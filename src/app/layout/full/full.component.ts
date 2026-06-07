@@ -135,7 +135,9 @@ export class FullComponent {
           // termsAcceptedAt seja gravado e o modal não reabra em
           // navegações subsequentes.
           return this.userApi.acceptTerms().pipe(
-            switchMap(() => this.onboardingService.syncFromBackend()),
+            // force = true: o aceite acabou de mudar o backend, então
+            // ignoramos o cache e buscamos o perfil atualizado.
+            switchMap(() => this.onboardingService.syncFromBackend(true)),
           );
         }
         // Recusou — faz logout
