@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -7,6 +7,7 @@ import BaseComponent from 'src/app/shared/components/base-component/base.compone
 import { ServiceDto } from 'src/app/core/services/service-api.service';
 
 import { AppUserProfileDto } from 'src/app/core/services/user-api.service';
+import { OnboardingService } from 'src/app/core/services/onboarding.service';
 
 import { EmptyStateComponent } from 'src/app/shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from 'src/app/shared/components/loading-state/loading-state.component';
@@ -39,7 +40,7 @@ import { CUSTOMER_ALL_CATEGORY, CUSTOMER_CATEGORIES } from './customer.constants
   styleUrls: ['./customer-dashboard.component.scss'],
 })
 export class CustomerDashboardComponent extends BaseComponent implements OnInit {
-
+  private readonly onboardingService = inject(OnboardingService);
 
   public services: ServiceDto[] = [];
   public visibleServices: ServiceDto[] = [];
@@ -67,7 +68,8 @@ export class CustomerDashboardComponent extends BaseComponent implements OnInit 
     this.isLoadingDashboard = true;
 
     forkJoin({
-      profile: this.userApi.getMe()
+      profile: this.onboardingService
+        .getProfile()
         .pipe(catchError(() => of(null as AppUserProfileDto | null))),
 
       services: this.serviceApi
