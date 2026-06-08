@@ -160,7 +160,15 @@
 .notif-panel__list {
   overflow-y: auto;
   flex: 1;
+  // min-height: 0 é obrigatório: sem isso o item flex não encolhe abaixo
+  // da altura do conteúdo, a lista estoura o max-height do painel e nunca
+  // vira um container rolável (bug clássico de flexbox em mobile).
+  min-height: 0;
+  // Evita que o scroll "vaze" para a página atrás do bottom sheet.
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  // Respeita a safe area inferior (notch/gesture bar) no mobile.
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .notif-panel__empty,

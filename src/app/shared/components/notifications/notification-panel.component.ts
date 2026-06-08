@@ -62,6 +62,11 @@ export class NotificationPanelComponent {
   /** Aba ativa — controlamos local. */
   readonly tab = signal<Tab>('all');
 
+  /** True enquanto a inscrição de push está em andamento. */
+  readonly pushLoading = signal(false);
+  /** Chave i18n do erro ao inscrever, ou null se não houve erro. */
+  readonly pushError = signal<string | null>(null);
+
   readonly visibleItems = computed(() => {
     const items = this.center.items();
     return this.tab() === 'unread' ? items.filter((n) => !n.read) : items;
@@ -135,10 +140,16 @@ export class NotificationPanelComponent {
 
   async onEnablePush(event: MouseEvent): Promise<void> {
     event.stopPropagation();
+    this.pushError.set(null);
+    this.pushLoading.set(true);
     try {
       await this.push.subscribe();
     } catch {
-      // status já é atualizado pelo service
+      // O status já é atualizado pelo service; aqui damos feedback
+      // visível ao usuário em vez de engolir o erro silenciosamente.
+      this.pushError.set('NOTIFICATIONS.PANEL.PUSH_ERROR');
+    } finally {
+      this.pushLoading.set(false);
     }
   }
 
