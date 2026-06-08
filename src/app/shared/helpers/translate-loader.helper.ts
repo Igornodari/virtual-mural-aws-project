@@ -3,6 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+/**
+ * Versão de cache-busting dos arquivos de i18n.
+ *
+ * Os JSONs em /assets/i18n NÃO têm hash no nome, então um deploy não invalida
+ * o cache do navegador/PWA sozinho (a Vercel servia /assets como `immutable`).
+ * Anexar `?v=<versão>` muda a URL a cada bump, forçando o cliente a baixar a
+ * versão nova e ignorar qualquer cópia antiga congelada no cache.
+ *
+ * BUMP este valor sempre que alterar os arquivos de tradução.
+ */
+const I18N_VERSION = '2026-06-08';
+
 export class AppTranslateLoader implements TranslateLoader {
 	constructor(
 		private http: HttpClient,
@@ -23,7 +35,9 @@ export class AppTranslateLoader implements TranslateLoader {
 		}
 		
 		const requests = parts.map(part =>
-			this.http.get(`${prefix}${lang}/${part}${suffix}`).pipe(catchError(() => of({})))
+			this.http
+				.get(`${prefix}${lang}/${part}${suffix}?v=${I18N_VERSION}`)
+				.pipe(catchError(() => of({})))
 		);
 
 		return forkJoin(requests).pipe(
