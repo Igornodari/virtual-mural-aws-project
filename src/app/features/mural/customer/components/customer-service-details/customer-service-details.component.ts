@@ -114,6 +114,18 @@ export class CustomerServiceDetailsComponent implements OnChanges {
     );
   }
 
+  /**
+   * Passo da grade de horários (duração + pausa), repassado ao calendário
+   * para que a grade do morador seja idêntica à do backend. Fallback 60/0.
+   */
+  get serviceStepMinutes(): number {
+    const duration = Number(this.service?.durationMinutes);
+    const breakMinutes = Number(this.service?.breakBetweenAppointmentsMinutes);
+    const step =
+      (duration > 0 ? duration : 60) + (breakMinutes >= 0 ? breakMinutes : 0);
+    return Math.max(1, step);
+  }
+
   private activeServiceId: string | null = null;
 
   constructor() {
@@ -423,6 +435,4 @@ export class CustomerServiceDetailsComponent implements OnChanges {
         next: (updatedService) => this.serviceUpdated.emit(updatedService),
       });
   }
-
-
 }

@@ -356,6 +356,80 @@
             <div class="form-field-wrapper d-flex flex-col gap-8">
               <p class="form-field-label d-flex align-items-center gap-5 m-0">
                 <mat-icon style="font-size: 18px; width: 18px; height: 18px;">
+                  timelapse
+                </mat-icon>
+
+                {{ 'MURAL.PROVIDER.FORM.DURATION' | translate }}
+              </p>
+
+              <div class="d-flex align-items-start gap-10 flex-wrap">
+                <mat-form-field appearance="outline" class="duration-field">
+                  <mat-label>{{ 'MURAL.PROVIDER.FORM.HOURS' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="0"
+                    formControlName="durationHours"
+                  />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="duration-field">
+                  <mat-label>{{ 'MURAL.PROVIDER.FORM.MINUTES' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="0"
+                    max="59"
+                    formControlName="durationMins"
+                  />
+                </mat-form-field>
+              </div>
+
+              <span class="form-hint">
+                {{ 'MURAL.PROVIDER.FORM.DURATION_HELPER' | translate }}
+              </span>
+            </div>
+
+            <div class="form-field-wrapper d-flex flex-col gap-8">
+              <p class="form-field-label d-flex align-items-center gap-5 m-0">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">
+                  pause_circle
+                </mat-icon>
+
+                {{ 'MURAL.PROVIDER.FORM.BREAK' | translate }}
+              </p>
+
+              <div class="d-flex align-items-start gap-10 flex-wrap">
+                <mat-form-field appearance="outline" class="duration-field">
+                  <mat-label>{{ 'MURAL.PROVIDER.FORM.HOURS' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="0"
+                    formControlName="breakHours"
+                  />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="duration-field">
+                  <mat-label>{{ 'MURAL.PROVIDER.FORM.MINUTES' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="0"
+                    max="59"
+                    formControlName="breakMins"
+                  />
+                </mat-form-field>
+              </div>
+
+              <span class="form-hint">
+                {{ 'MURAL.PROVIDER.FORM.BREAK_HELPER' | translate }}
+              </span>
+            </div>
+
+            <div class="form-field-wrapper d-flex flex-col gap-8">
+              <p class="form-field-label d-flex align-items-center gap-5 m-0">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">
                   event_available
                 </mat-icon>
 

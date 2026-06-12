@@ -11,6 +11,10 @@ export interface ServiceDto {
   category: string;
   availableDays: string[];
   availabilitySlots?: { day: string; startTime: string; endTime: string }[] | null;
+  /** Duração estimada do atendimento (min). Usada para gerar os horários. */
+  durationMinutes?: number;
+  /** Pausa entre atendimentos (min). */
+  breakBetweenAppointmentsMinutes?: number;
   rating: number;
   totalReviews: number;
   isActive: boolean;
@@ -50,6 +54,8 @@ export interface CreateServicePayload {
   category: string;
   availableDays: string[];
   availabilitySlots?: { day: string; startTime: string; endTime: string }[];
+  durationMinutes?: number;
+  breakBetweenAppointmentsMinutes?: number;
 }
 
 export type UpdateServicePayload = Partial<CreateServicePayload>;
