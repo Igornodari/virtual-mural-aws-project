@@ -62,6 +62,8 @@ import { WEEKDAYS } from '../../types/provider.types';
       border-radius: 8px;
       background: var(--mat-sys-surface-variant, #f5f5f5);
       transition: background 0.2s;
+      /* Permite que a faixa de horário quebre para baixo no mobile. */
+      flex-wrap: wrap;
 
       &:hover {
         background: var(--mat-sys-surface-container, #eeeeee);
@@ -83,6 +85,9 @@ import { WEEKDAYS } from '../../types/provider.types';
 
     .time-range {
       flex: 1;
+      min-width: 0;
+      /* Os inputs quebram entre si se faltar espaço. */
+      flex-wrap: wrap;
     }
 
     .time-icon {
@@ -90,6 +95,7 @@ import { WEEKDAYS } from '../../types/provider.types';
       width: 18px;
       height: 18px;
       color: var(--mat-sys-primary, #e8541e);
+      flex-shrink: 0;
     }
 
     .time-input {
@@ -101,6 +107,10 @@ import { WEEKDAYS } from '../../types/provider.types';
       background: var(--mat-sys-surface, #fff);
       color: var(--mat-sys-on-surface, #111);
       cursor: pointer;
+      /* Largura adequada que encolhe sem estourar a linha. */
+      min-width: 0;
+      flex: 1 1 96px;
+      max-width: 140px;
 
       &:focus {
         outline: 2px solid var(--mat-sys-primary, #e8541e);
@@ -112,6 +122,23 @@ import { WEEKDAYS } from '../../types/provider.types';
     .time-separator {
       color: var(--mat-sys-on-surface-variant, #666);
       font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Mobile: o checkbox ocupa a linha inteira e a faixa de horário desce,
+       evitando overflow horizontal em telas estreitas. */
+    @media (max-width: 599.98px) {
+      .day-checkbox {
+        min-width: 100%;
+      }
+
+      .time-range {
+        width: 100%;
+      }
+
+      .time-input {
+        max-width: none;
+      }
     }
   `],
 })

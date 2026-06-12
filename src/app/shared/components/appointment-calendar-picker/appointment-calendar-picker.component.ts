@@ -7,6 +7,7 @@ import {
   Input,
   OnChanges,
   Output,
+  SimpleChanges,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -146,6 +147,12 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
 
   @Input() blockedSlots: { date: string; time: string | null }[] = [];
 
+  /**
+   * Passo da grade de horários, em minutos (duração + pausa do serviço).
+   * Mantém a grade do morador idêntica à do backend. Default 60.
+   */
+  @Input() stepMinutes = 60;
+
   @Output() selectionChange = new EventEmitter<CalendarSelection>();
 
   readonly minDate = this.getTomorrow();
@@ -162,17 +169,38 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
     });
   }
 
-  ngOnChanges(): void {
-    if (!this.selectedDate) {
+  /**
+   * Função passada ao `mat-calendar`. É REATRIBUÍDA (nova referência) sempre
+   * que a disponibilidade muda — ver `refreshDateFilter()`. O `mat-calendar`
+   * só re-avalia o filtro quando a referência do @Input muda (ou ao navegar
+   * entre meses); manter a mesma referência fazia a disponibilidade carregada
+   * de forma assíncrona só aparecer depois de clicar nas setas (o bug).
+   */
+  dateFilter: (date: Date | null) => boolean = (date) =>
+    this.isDateSelectable(date);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const availabilityChanged =
+      !!changes['availabilitySlots'] ||
+      !!changes['blockedSlots'] ||
+      !!changes['stepMinutes'];
+
+    if (!availabilityChanged) {
       return;
     }
 
     this.deferStateChange(() => {
+      // Nova referência de dateFilter → força o mat-calendar a re-avaliar a
+      // disponibilidade já no PRIMEIRO carregamento, sem depender de o
+      // usuário navegar entre meses. Mesma lógica usada na navegação.
+      this.refreshDateFilter();
+
       if (!this.selectedDate) {
         return;
       }
 
-      if (!this.dateFilter(this.selectedDate)) {
+      // Se a nova disponibilidade invalidou o dia já selecionado, limpa.
+      if (!this.isDateSelectable(this.selectedDate)) {
         this.selectedDate = null;
         this.selectedTime = null;
         this.timeSlots = [];
@@ -187,7 +215,20 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
     });
   }
 
-  dateFilter = (date: Date | null): boolean => {
+  /** Gera uma nova referência de `dateFilter` para forçar o re-render. */
+  private refreshDateFilter(): void {
+    this.dateFilter = (date) => this.isDateSelectable(date);
+  }
+
+  /**
+   * Predicado de disponibilidade de um dia. Reutilizado no primeiro
+   * carregamento e na navegação do calendário.
+   *
+   * Um dia é selecionável quando: é futuro, o dia da semana tem janela de
+   * atendimento, não está bloqueado o dia inteiro e ainda existe ao menos
+   * UM horário livre (não confirmado).
+   */
+  private isDateSelectable(date: Date | null): boolean {
     if (!date) {
       return false;
     }
@@ -217,7 +258,11 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
       return false;
     }
 
-    const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
+    const allTimes = generateTimeSlots(
+      daySlot.startTime,
+      daySlot.endTime,
+      this.stepMinutes,
+    );
 
     if (!allTimes.length) {
       return false;
@@ -226,7 +271,7 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
     const bookedTimesForDay = this.getBookedTimesForDay(dateStr);
 
     return allTimes.some((time) => !bookedTimesForDay.includes(time));
-  };
+  }
 
   onDateSelected(date: Date | null): void {
     if (!date) {
@@ -269,7 +314,11 @@ export class AppointmentCalendarPickerComponent implements OnChanges {
     }
 
     const dateStr = formatDateToISO(normalizedDate);
-    const allTimes = generateTimeSlots(daySlot.startTime, daySlot.endTime);
+    const allTimes = generateTimeSlots(
+      daySlot.startTime,
+      daySlot.endTime,
+      this.stepMinutes,
+    );
     const bookedTimesForDay = this.getBookedTimesForDay(dateStr);
 
     this.timeSlots = allTimes.filter(

@@ -81,6 +81,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
     price: ['', Validators.required],
     contact: ['', Validators.required],
     availableDays: this.fb.nonNullable.control<string[]>([], Validators.required),
+    durationHours: [1, [Validators.required, Validators.min(0)]],
+    durationMins: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
+    breakHours: [0, [Validators.required, Validators.min(0)]],
+    breakMins: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
   });
 
   availabilitySlots: AvailabilitySlot[] = [];
@@ -178,6 +182,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       price: '',
       contact: '',
       availableDays: [],
+      durationHours: 1,
+      durationMins: 0,
+      breakHours: 0,
+      breakMins: 0,
     });
 
     this.showForm.set(true);
@@ -202,6 +210,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       price: service.price,
       contact: service.contact,
       availableDays: service.availableDays ?? [],
+      durationHours: Math.floor((service.durationMinutes ?? 60) / 60),
+      durationMins: (service.durationMinutes ?? 60) % 60,
+      breakHours: Math.floor((service.breakBetweenAppointmentsMinutes ?? 0) / 60),
+      breakMins: (service.breakBetweenAppointmentsMinutes ?? 0) % 60,
     });
 
     this.showForm.set(true);
@@ -220,6 +232,10 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       price: '',
       contact: '',
       availableDays: [],
+      durationHours: 1,
+      durationMins: 0,
+      breakHours: 0,
+      breakMins: 0,
     });
   }
 
@@ -237,10 +253,15 @@ export class ProviderDashboardComponent extends BaseComponent implements OnInit,
       return;
     }
 
-    const rawValue = this.serviceForm.getRawValue();
+    const raw = this.serviceForm.getRawValue();
+
+    // Converte horas+minutos (UI amigável) para o total em minutos do backend.
+    const { durationHours, durationMins, breakHours, breakMins, ...rest } = raw;
 
     const payload = {
-      ...rawValue,
+      ...rest,
+      durationMinutes: Math.max(1, durationHours * 60 + durationMins),
+      breakBetweenAppointmentsMinutes: Math.max(0, breakHours * 60 + breakMins),
       availabilitySlots: this.availabilitySlots.length
         ? this.availabilitySlots
         : undefined,
