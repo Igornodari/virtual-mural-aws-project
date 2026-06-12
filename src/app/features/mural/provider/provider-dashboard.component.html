@@ -399,4 +399,85 @@
                 {{ 'MURAL.PROVIDER.FORM.BREAK' | translate }}
               </p>
 
-      
+              <div class="d-flex align-items-start gap-10 flex-wrap">
+                <mat-form-field appearance="outline" class="duration-field">
+                  <mat-label>{{ 'MURAL.PROVIDER.FORM.HOURS' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="0"
+                    formControlName="breakHours"
+                  />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="duration-field">
+                  <mat-label>{{ 'MURAL.PROVIDER.FORM.MINUTES' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="0"
+                    max="59"
+                    formControlName="breakMins"
+                  />
+                </mat-form-field>
+              </div>
+
+              <span class="form-hint">
+                {{ 'MURAL.PROVIDER.FORM.BREAK_HELPER' | translate }}
+              </span>
+            </div>
+
+            <div class="form-field-wrapper d-flex flex-col gap-8">
+              <p class="form-field-label d-flex align-items-center gap-5 m-0">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">
+                  event_available
+                </mat-icon>
+
+                {{ 'MURAL.PROVIDER.FORM.AVAILABILITY' | translate }}
+              </p>
+
+              <app-weekly-availability-picker
+                [value]="availabilitySlots"
+                (valueChange)="onAvailabilitySlotsChange($event)"
+              />
+
+              @if (
+                serviceForm.controls.availableDays.touched &&
+                serviceForm.controls.availableDays.invalid
+              ) {
+                <span class="form-error">
+                  {{ 'MURAL.PROVIDER.FORM.DAYS_REQUIRED' | translate }}
+                </span>
+              }
+            </div>
+
+            <div class="form-actions d-flex justify-content-end flex-wrap gap-10">
+              <button mat-stroked-button type="button" (click)="closeForm()">
+                {{ 'COMMON.ACTIONS.CANCEL' | translate }}
+              </button>
+
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="serviceForm.invalid || isSaving()"
+              >
+                @if (isSaving()) {
+                  <mat-spinner diameter="18" />
+                }
+
+                {{
+                  (
+                    editingId()
+                      ? 'COMMON.ACTIONS.SAVE'
+                      : 'MURAL.PROVIDER.FORM.PUBLISH'
+                  ) | translate
+                }}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+</div>

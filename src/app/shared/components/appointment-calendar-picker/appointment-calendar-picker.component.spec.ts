@@ -69,12 +69,13 @@ describe('AppointmentCalendarPickerComponent', () => {
 
     it('bloqueia o dia quando TODOS os horários estão confirmados', () => {
       component.availabilitySlots = [
-        { day: dayName, startTime: '09:00', endTime: '12:00' }, // 09,10,11
+        { day: dayName, startTime: '09:00', endTime: '12:00' }, // grade inclusiva: 09,10,11,12
       ];
       component.blockedSlots = [
         { date: iso, time: '09:00' },
         { date: iso, time: '10:00' },
         { date: iso, time: '11:00' },
+        { date: iso, time: '12:00' },
       ];
       expect(component.dateFilter(target)).toBe(false);
     });
