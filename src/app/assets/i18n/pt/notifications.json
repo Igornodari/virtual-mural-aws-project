@@ -13,6 +13,7 @@
       "ENABLE_PUSH": "Ativar notificações push",
       "PUSH_ENABLED": "Notificações push ativadas",
       "PUSH_DENIED": "Notificações bloqueadas no navegador",
+      "PUSH_ERROR": "Não foi possível ativar as notificações. Tente novamente.",
       "LOADING": "Carregando...",
       "JUST_NOW": "Agora mesmo",
       "MINUTES_AGO": "há {{count}} min",

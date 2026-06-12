@@ -13,6 +13,7 @@
       "ENABLE_PUSH": "Enable push notifications",
       "PUSH_ENABLED": "Push notifications enabled",
       "PUSH_DENIED": "Notifications blocked by the browser",
+      "PUSH_ERROR": "Couldn't enable notifications. Please try again.",
       "LOADING": "Loading...",
       "JUST_NOW": "Just now",
       "MINUTES_AGO": "{{count}}m ago",

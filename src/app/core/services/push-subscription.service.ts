@@ -84,10 +84,12 @@ export class PushSubscriptionService {
       throw new Error('Push notifications não suportadas neste dispositivo.');
     }
 
-    // 1. Registra SW (idempotente)
-    if (!this.registration) {
-      this.registration = await navigator.serviceWorker.register('/sw-push.js');
-    }
+    // 1. Registra o SW (idempotente) e aguarda a ATIVAÇÃO. Usar a
+    //    registration retornada por `register()` antes do SW ativar
+    //    faz `pushManager.subscribe()` lançar InvalidStateError em
+    //    vários navegadores Android — origem do bug em mobile.
+    await navigator.serviceWorker.register('/sw-push.js');
+    this.registration = await navigator.serviceWorker.ready;
 
     // 2. Pede permissão (se ainda não pedida)
     let permission = Notification.permission;
@@ -100,19 +102,24 @@ export class PushSubscriptionService {
       throw new Error('Permissão de notificação negada.');
     }
 
-    // 3. Busca VAPID public key
-    const { publicKey } = await firstValueFrom(this.api.vapidPublicKey());
-    if (!publicKey) {
-      throw new Error('Servidor sem VAPID public key configurada.');
+    // 3. Reutiliza a subscription existente, se houver. Recriar quando
+    //    já existe pode lançar InvalidStateError (applicationServerKey
+    //    divergente) e gera churn desnecessário no backend.
+    let subscription = await this.registration.pushManager.getSubscription();
+
+    // 4. Caso não exista, gera uma nova com a VAPID public key.
+    if (!subscription) {
+      const { publicKey } = await firstValueFrom(this.api.vapidPublicKey());
+      if (!publicKey) {
+        throw new Error('Servidor sem VAPID public key configurada.');
+      }
+      subscription = await this.registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: this.urlBase64ToUint8Array(publicKey),
+      });
     }
 
-    // 4. Gera subscription
-    const subscription = await this.registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: this.urlBase64ToUint8Array(publicKey),
-    });
-
-    // 5. Envia ao backend
+    // 5. Envia (ou reenvia) a subscription ao backend
     const json = subscription.toJSON();
     await firstValueFrom(
       this.api.registerPush({

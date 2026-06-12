@@ -3,7 +3,7 @@ export const environment = {
   apiBaseUrl: 'https://mural-virtual-backend.up.railway.app/api/v1',
   version: '0.0.1',
   sentryDsn: '',  // Configure: variável de ambiente SENTRY_DSN no Vercel
-  stripePublishableKey: 'pk_test_51Stc9CENa5vvo4XzaLtiHrX2gCNjm6YJ89UF7y5N7DxajFHccfR6ahRVgCVae3K5ZwfMYNZmII1pMUlGKBfVwEh200jEqJbfS1',
+  stripePublishableKey: 'pk_live_51Stc9CENa5vvo4XzQyZXR9vBGd3MWCQEhbmeUBi4rjO6aB7qAKemvCOywmIwHpFUsvFpyMH9nYvACWMSkXfKWl5J00gN0GxJDJ',
   aws: {
     region: 'sa-east-1',
     userPoolId: 'sa-east-1_NiMyy2V3k',

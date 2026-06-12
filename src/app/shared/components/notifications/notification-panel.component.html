@@ -41,9 +41,24 @@
   @if (push.status() === 'default' || push.status() === 'granted-no-subscription') {
     <div class="notif-panel__push-banner">
       <mat-icon>notifications_active</mat-icon>
-      <span>{{ 'NOTIFICATIONS.PANEL.ENABLE_PUSH' | translate }}</span>
-      <button mat-stroked-button type="button" (click)="onEnablePush($event)">
-        {{ 'NOTIFICATIONS.PANEL.ENABLE_PUSH' | translate }}
+      <span>
+        @if (pushError()) {
+          {{ pushError() | translate }}
+        } @else {
+          {{ 'NOTIFICATIONS.PANEL.ENABLE_PUSH' | translate }}
+        }
+      </span>
+      <button
+        mat-stroked-button
+        type="button"
+        [disabled]="pushLoading()"
+        (click)="onEnablePush($event)"
+      >
+        @if (pushLoading()) {
+          <mat-spinner diameter="16"></mat-spinner>
+        } @else {
+          {{ 'NOTIFICATIONS.PANEL.ENABLE_PUSH' | translate }}
+        }
       </button>
     </div>
   }
